@@ -1,0 +1,4 @@
+[submodule "astropy_helpers"]
+	url = https://github.com/astropy/astropy-helpers.git
+	path = astropy_helpers
+	branch = refs/heads/v3.1
