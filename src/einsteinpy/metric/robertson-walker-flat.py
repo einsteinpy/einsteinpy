@@ -2,15 +2,15 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.utils import schwarzschild_radius
+from einsteinpy.utils import scalar_factor
 
 
-class Schwarzschild:
+class RobertsonWalkerFlat:
     """
-    Class for defining a Schwarzschild Metric
+    Class for defining a Robertson Walker Flat Metric
     """
 
-    def __init__(self,self, pos_vec, vel_vec, M):
+    def __init__(self, t, x, y, z, era='md'):
         """
         Constructor.
 
@@ -18,46 +18,44 @@ class Schwarzschild:
         ----------
         t : float
             Time for the event
-        r : float
-            Radial Schwarzschild coordinate
-        theta : float
-            Axial Schwarzschild coordinate
-        phi : float
-            Angular Schwarzschild coordinate
-        M : float
-            Mass of the body
+        x : float
+            Spatial Cartesian coordinates
+        y : float
+            Spatial Cartesian coordinates
+        z : float
+            Spatial Cartesian coordinates
+        era : string, optional
+            Can be chosen from md (Matter Dominant),
+            rd (Radiation Dominant) and ded (Dark Energy Dominant)
 
         """
-        self.initial_pos_vec = pos_vec
-        self.initial_vel_vec = vel_vec
-        self.vec = np.concatenate((initial_pos_vec, initial_vel_vec))
-        self.M = M
-        self.veclist = list()
+        self.t = t
+        self.x = x
+        self.y = y
+        self.z = z
+        self.era = era
 
     @classmethod
-    @u.quantity_input(t=u.h, r=u.km, theta=u.radian, phi=u.radian, M=u.kg)
-    def from_position(cls, t, r, theta, phi, M):
+    @u.quantity_input(x=u.km, y=u.km, z=u.km)
+    def from_position(cls, t, x, y, z, era):
         # TODO: Convert these to Astropy Coordinates
-        return cls(t, r, theta, phi, M)
-
-    def _rused(self):
-        return schwarzschild_radius(self.M) / self.r
+        return cls(t, x, y, z, era)
 
     @property
     def g00(self):
-        return self._rused() - 1
+        return -1
 
     @property
     def g11(self):
-        return 1 / (1 - self._rused())
+        return -1 * (1 / (1 - self._rused()))
 
     @property
     def g22(self):
-        return self.r ** 2
+        return -1 * (self.r ** 2)
 
     @property
     def g33(self):
-        return (self.r ** 2) * (np.sin(self.theta) ** 2)
+        return -1 * (self.r ** 2) * (np.sin(self.theta) ** 2)
 
     @property
     def christ_sym1_00(self):
