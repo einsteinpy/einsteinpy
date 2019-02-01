@@ -2,125 +2,147 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.utils import schwarzschild_radius
+from einsteinpy.utils import schwarzschild_radius, time_velocity
 
+_G = constant.G.value
+_c = constant.c.value
 
 class Schwarzschild:
     """
     Class for defining a Schwarzschild Metric
     """
 
-    def __init__(self,self, pos_vec, vel_vec, M):
+    @u.quantity_input(time=u.s, M=u.kg)
+    def __init__(self, pos_vec, vel_vec, time, M):
         """
-        Constructor.
+        Constructor. Provide values in SI units.
 
         Parameters
         ----------
-        t : float
-            Time for the event
-        r : float
-            Radial Schwarzschild coordinate
-        theta : float
-            Axial Schwarzschild coordinate
-        phi : float
-            Angular Schwarzschild coordinate
+        pos_vector : ~numpy.array
+            Vector with r, theta, phi components
+        vel_vector : ~numpy.array
+            Vector with velocities of r, theta, phi components
+        time : float
+            Time of start
         M : float
             Mass of the body
 
         """
-        self.initial_pos_vec = pos_vec
-        self.initial_vel_vec = vel_vec
-        self.vec = np.concatenate((initial_pos_vec, initial_vel_vec))
         self.M = M
-        self.veclist = list()
+        self.pos_vec = pos_vec
+        self.vel_vec = vel_vec
+        self.time = time
+        self.time_vel = time_velocity(pos_vec, vel_vec, M)
+        self.initial_vec = np.hstack((time.value, pos_vec, self.time_vel.value, vel_vec))
+        self.vec_units = [u.s, u.m, u.rad, u.one, u.one, u.m/u.s, u.one/u.s, u.one/u.s]
+        self.schwarzschild_r = schwarzschild_radius(M)
+
 
     @classmethod
-    @u.quantity_input(t=u.h, r=u.km, theta=u.radian, phi=u.radian, M=u.kg)
-    def from_position(cls, t, r, theta, phi, M):
-        # TODO: Convert these to Astropy Coordinates
-        return cls(t, r, theta, phi, M)
+    @u.quantity_input(time=u.s, M=u.kg)
+    def from_values(cls, pos_vec, vel_vec, time, M):
+        # # TODO: Convert these to Astropy Coordinates
+        return cls(time, pos_vec, vel_vec, M)
 
-    def _rused(self):
-        return schwarzschild_radius(self.M) / self.r
 
-    @property
-    def g00(self):
-        return self._rused() - 1
+    def christ_sym1_00(self, vec):
+        num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
+        num2 = _G * self.M.value
+        deno1 = (_c ** 4)
+        deno2 = (vec[1] ** 3)
+        return (num1/deno1) * (num2/deno2)
 
-    @property
-    def g11(self):
-        return 1 / (1 - self._rused())
 
-    @property
-    def g22(self):
-        return self.r ** 2
-
-    @property
-    def g33(self):
-        return (self.r ** 2) * (np.sin(self.theta) ** 2)
-
-    @property
-    def christ_sym1_00(self):
-        num1 = (-2 * constant.G * self.M) + ((constant.c ** 2) * self.r)
-        num2 = constant.G * self.M
-        deno = (constant.c ** 4) * (self.r ** 3)
-        return num1 * num2 / deno
-
-    @property
-    def christ_sym1_11(self):
-        num = constant.G * self.M
-        deno1 = 2 * constant.G * self.M * self.r
-        deno2 = (constant.c ** 2) * (self.r ** 2)
+    def christ_sym1_11(self, vec):
+        num = _G * self.M.value
+        deno1 = 2 * _G * self.M.value * vec[1]
+        deno2 = (_c ** 2) * (vec[1] ** 2)
         deno = deno1 - deno2
         return num / deno
 
-    @property
-    def christ_sym1_22(self):
-        return schwarzschild_radius(self.M) - self.r
 
-    @property
-    def christ_sym1_33(self):
+    def christ_sym1_22(self, vec):
+        return self.schwarzschild_r.value - vec[1]
+
+
+    def christ_sym1_33(self, vec):
         return (
-            (-1 + (schwarzschild_radius(self.M) / self.r))
-            * self.r
-            * np.sin(self.theta) ** 2
+            (-1 + (self.schwarzschild_r.value / vec[1]))
+            * vec[1]
+            * np.sin(vec[2]) ** 2
         )
 
-    @property
-    def christ_sym0_01(self):
-        num = constant.G * self.M
-        deno = self.r * (-2 * constant.G * self.M + (constant.c ** 2) * self.r)
-        return num / deno
 
-    @property
-    def christ_sym2_21(self):
-        return 1 / self.r
+    def christ_sym0_01(self, vec):
+        num = _G * self.M.value
+        deno1 = (-2 * _G * self.M.value + (_c ** 2) * vec[1])
+        deno2 = vec[1]
+        return (num/deno1)*(1/deno2)
 
-    @property
-    def christ_sym2_33(self):
-        return -1 * np.cos(self.theta) * np.sin(self.theta)
 
-    @property
-    def christ_sym3_31(self):
-        return 1 / self.r
+    def christ_sym2_21(self, vec):
+        return (1 / vec[1])
 
-    @property
-    def christ_sym3_32(self):
-        return 1 / np.tan(self.theta)
 
-    def get_metric(self):
-        """
-        Utility to get the Schwarzschild Metric in the form of numpy array.
+    def christ_sym2_33(self, vec):
+        return (-1 * np.cos(vec[2]) * np.sin(vec[2]))
 
-        Returns
-        -------
-        metric : ~numpy.array
-             Schwarzschild Metric
 
-        """
-        metric = np.zeros((4, 4), dtype=float)
-        metric[0][0] = self.g00
-        metric[1][1] = self.g11
-        metric[2][2] = self.g22
-        metric[3][3] = self.g33
-        return metric
+    def christ_sym3_31(self, vec):
+        return 1 / vec[1]
+
+
+    def christ_sym3_32(self, vec):
+        return np.cos(vec[2])/np.sin(vec[2])
+
+    
+    def f(self, i, vec):
+        if i==0:
+            return vec[4]
+        elif i==1:
+            return vec[5]
+        elif i==2:
+            return vec[6]
+        elif i==3:
+            return vec[7]
+        elif i==4:
+            term1 = self.christ_sym0_01(vec) * vec[4] * vec[5]
+            return -2 * term1 
+        elif i==5:
+            term1 = self.christ_sym1_00(vec) * vec[4] * vec[4]
+            term2 = self.christ_sym1_11(vec) * vec[5] * vec[5]
+            term3 = self.christ_sym1_22(vec) * vec[6] * vec[6]
+            term4 = self.christ_sym1_33(vec) * vec[7] * vec[7]
+            return -1 * (term1 + term2 + term3 + term4) 
+        elif i==6:
+            term1 = self.christ_sym2_21(vec) * vec[6] * vec[5]
+            term2 = self.christ_sym2_33(vec) * vec[7] * vec[7]
+            return -1 * (2 * term1 + term2) 
+        elif i==7:
+            term1 = self.christ_sym3_31(vec) * vec[7] * vec[5]
+            term2 = self.christ_sym3_32(vec) * vec[7] * vec[6]
+            return -1 * (2 * term1 + term2)
+
+    def f_vec(self,vec):
+        f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
+        for i in range(len(vec)):
+            f_vec_vals[i] = self.f(i,vec)
+        return f_vec_vals
+
+    def calculate_trajectory(self, steplen = 0.0002, start_lambda=0.0, end_lambda=5.0):
+        self.vec = self.initial_vec
+        self.vec_list = list()
+        self.lambda_list = list()
+        #
+        for ld in np.arange(start_lambda, end_lambda, steplen):
+            k0 = self.f_vec(self.vec)
+            k1 = self.f_vec(self.vec + (steplen/2.0)*k0)
+            k2 = self.f_vec(self.vec + (steplen/2.0)*k1)
+            k3 = self.f_vec(self.vec + (steplen)*k2)
+            #
+            newvec = self.vec + (steplen/6.0)*(k0 + 2*k1 + 2*k2 + k3)
+            self.lambda_list.append(ld)
+            self.vec_list.append(self.vec)
+            self.vec = newvec
+        return (self.lambda_list, self.vec_list)        
