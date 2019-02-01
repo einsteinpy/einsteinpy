@@ -14,6 +14,19 @@ class Schwarzschild:
 
     @u.quantity_input(time=u.s, M=u.kg)
     def __init__(self, pos_vec, vel_vec, time, M):
+        self.M = M
+        self.pos_vec = pos_vec
+        self.vel_vec = vel_vec
+        self.time = time
+        self.time_vel = time_velocity(pos_vec, vel_vec, M)
+        self.initial_vec = np.hstack((time.value, pos_vec, self.time_vel.value, vel_vec))
+        self.vec_units = [u.s, u.m, u.rad, u.one, u.one, u.m/u.s, u.one/u.s, u.one/u.s]
+        self.schwarzschild_r = schwarzschild_radius(M)
+
+
+    @classmethod
+    @u.quantity_input(time=u.s, M=u.kg)
+    def from_values(cls, pos_vec, vel_vec, time, M):
         """
         Constructor. Provide values in SI units.
 
@@ -29,21 +42,8 @@ class Schwarzschild:
             Mass of the body
 
         """
-        self.M = M
-        self.pos_vec = pos_vec
-        self.vel_vec = vel_vec
-        self.time = time
-        self.time_vel = time_velocity(pos_vec, vel_vec, M)
-        self.initial_vec = np.hstack((time.value, pos_vec, self.time_vel.value, vel_vec))
-        self.vec_units = [u.s, u.m, u.rad, u.one, u.one, u.m/u.s, u.one/u.s, u.one/u.s]
-        self.schwarzschild_r = schwarzschild_radius(M)
-
-
-    @classmethod
-    @u.quantity_input(time=u.s, M=u.kg)
-    def from_values(cls, pos_vec, vel_vec, time, M):
         # # TODO: Convert these to Astropy Coordinates
-        return cls(time, pos_vec, vel_vec, M)
+        return cls(pos_vec, vel_vec, time, M)
 
 
     def christ_sym1_00(self, vec):
@@ -130,7 +130,24 @@ class Schwarzschild:
             f_vec_vals[i] = self.f(i,vec)
         return f_vec_vals
 
-    def calculate_trajectory(self, steplen = 0.0002, start_lambda=0.0, end_lambda=5.0):
+    def calculate_trajectory(self, steplen = 0.1, start_lambda=0.0, end_lambda=5.0):
+        """
+        Calculate trajectory in manifold according to geodesic equation
+
+        Parameters
+        ----------
+        steplen : float
+            Length of each advance in lambda, defaults to 0.1
+        start_lambda : float
+            Starting lambda, defaults to 0.0
+        end_lamdba : float
+            Lambda where iteartions will stop, defaults to 5.0
+        
+        Returns
+        -------
+        tuple of lists
+
+        """
         self.vec = self.initial_vec
         self.vec_list = list()
         self.lambda_list = list()

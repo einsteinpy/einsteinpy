@@ -10,8 +10,8 @@ pos_vec = np.array([1000, np.pi/2, 0.])
 vel_vec = np.array([0, 0, 6.6447e-6])
 M = 5.972e25 * u.kg
 time = 0 * u.s
-cl = Schwarzschild(pos_vec, vel_vec, time, M)
-ANS = cl.calculate_trajectory(end_lambda=6000000,steplen =4.0)
+cl = Schwarzschild.from_values(pos_vec, vel_vec, time, M)
+ANS = cl.calculate_trajectory(end_lambda=300000,steplen =4.0)
 ans = ANS[1]
 print('calculate done')
 
@@ -24,5 +24,4 @@ x = r * np.cos(phi)
 y = r*np.sin(phi)
 plt.scatter(x,y, c=time, cmap='Oranges')
 plt.scatter(0,0, color='black')
-#plt.axis(xmin=-10000,xmax=10000,ymin=-10000,ymax=10000)
 plt.show()

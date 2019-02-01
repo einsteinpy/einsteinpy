@@ -58,6 +58,22 @@ def scalar_factor(era, t, tuning_param=1):
 @u.quantity_input(mass=u.kg)
 def time_velocity(pos_vec, vel_vec, mass):
     """
+    Velocity of time calculated from einstein's equation.
+    See http://www.physics.usu.edu/Wheeler/GenRel/Lectures/GRNotesDecSchwarzschildGeodesicsPost.pdf
+
+    Parameters
+    ----------
+    pos_vector : ~numpy.array
+        Vector with r, theta, phi components
+    vel_vector : ~numpy.array
+        Vector with velocities of r, theta, phi components
+    mass : float
+        Mass of the body
+
+    Returns
+    -------
+    Velocity of time
+
     """
     # this function considers SI units only
     a = schwarzschild_radius( mass ).value
