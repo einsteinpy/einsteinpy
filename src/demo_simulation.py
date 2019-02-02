@@ -13,6 +13,7 @@ M = 5.972e25 * u.kg
 time = 0 * u.s
 cl = Schwarzschild.from_values(pos_vec, vel_vec, time, M)
 ANS = cl.calculate_trajectory(end_lambda=300000, OdeMethodKwargs={'stepsize':4.0})
+# ANS = cl.calculate_trajectory(end_lambda=300000, OdeMethodKwargs={'vectorized':True})
 ans = ANS[1]
 print('calculate done')
 
