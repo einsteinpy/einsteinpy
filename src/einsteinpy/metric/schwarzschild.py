@@ -1,6 +1,7 @@
 import warnings
 import astropy.units as u
 import numpy as np
+from scipy.integrate import RK45 
 
 from einsteinpy import constant
 from einsteinpy.utils import schwarzschild_radius, time_velocity
@@ -125,7 +126,7 @@ class Schwarzschild:
             term2 = self.christ_sym3_32(vec) * vec[7] * vec[6]
             return -1 * (2 * term1 + term2)
 
-    def f_vec(self,vec):
+    def f_vec(self, ld, vec):
         f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
         for i in range(len(vec)):
             f_vec_vals[i] = self.f(i,vec)
@@ -157,10 +158,10 @@ class Schwarzschild:
         #
         singularity_reached = False
         for ld in np.arange(start_lambda, end_lambda, steplen):
-            k0 = self.f_vec(self.vec)
-            k1 = self.f_vec(self.vec + (steplen/2.0)*k0)
-            k2 = self.f_vec(self.vec + (steplen/2.0)*k1)
-            k3 = self.f_vec(self.vec + (steplen)*k2)
+            k0 = self.f_vec(ld, self.vec)
+            k1 = self.f_vec(ld + (steplen/2.0), self.vec + (steplen/2.0)*k0)
+            k2 = self.f_vec(ld + (steplen/2.0), self.vec + (steplen/2.0)*k1)
+            k3 = self.f_vec(ld + steplen, self.vec + (steplen)*k2)
             #
             newvec = self.vec + (steplen/6.0)*(k0 + 2*k1 + 2*k2 + k3)
             self.lambda_list.append(ld)
@@ -172,4 +173,5 @@ class Schwarzschild:
                     break
                 else:
                     singularity_reached = True
-        return (self.lambda_list, self.vec_list)        
+        return (self.lambda_list, self.vec_list)
+        
