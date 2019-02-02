@@ -1,3 +1,4 @@
+import warnings
 import astropy.units as u
 import numpy as np
 
@@ -130,7 +131,7 @@ class Schwarzschild:
             f_vec_vals[i] = self.f(i,vec)
         return f_vec_vals
 
-    def calculate_trajectory(self, steplen = 0.1, start_lambda=0.0, end_lambda=5.0):
+    def calculate_trajectory(self, steplen = 0.1, start_lambda=0.0, end_lambda=5.0, stop_on_singularity=True):
         """
         Calculate trajectory in manifold according to geodesic equation
 
@@ -142,7 +143,9 @@ class Schwarzschild:
             Starting lambda, defaults to 0.0
         end_lamdba : float
             Lambda where iteartions will stop, defaults to 5.0
-        
+        stop_on_singularity : bool
+            Whether to stop further computation on reaching singularity, defaults to True
+
         Returns
         -------
         tuple of lists
@@ -152,6 +155,7 @@ class Schwarzschild:
         self.vec_list = list()
         self.lambda_list = list()
         #
+        singularity_reached = False
         for ld in np.arange(start_lambda, end_lambda, steplen):
             k0 = self.f_vec(self.vec)
             k1 = self.f_vec(self.vec + (steplen/2.0)*k0)
@@ -162,4 +166,10 @@ class Schwarzschild:
             self.lambda_list.append(ld)
             self.vec_list.append(self.vec)
             self.vec = newvec
+            if (not singularity_reached) and (newvec[1] <= self.schwarzschild_r.value):
+                warnings.warn('r component of position vector reached Schwarzchild Radius. ', RuntimeWarning)
+                if stop_on_singularity:
+                    break
+                else:
+                    singularity_reached = True
         return (self.lambda_list, self.vec_list)        
