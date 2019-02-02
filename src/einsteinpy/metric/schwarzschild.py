@@ -1,10 +1,10 @@
 import warnings
 import astropy.units as u
 import numpy as np
-from scipy.integrate import RK45 
 
 from einsteinpy import constant
 from einsteinpy.utils import schwarzschild_radius, time_velocity
+from einsteinpy import OdeMethods
 
 _G = constant.G.value
 _c = constant.c.value
@@ -132,7 +132,7 @@ class Schwarzschild:
             f_vec_vals[i] = self.f(i,vec)
         return f_vec_vals
 
-    def calculate_trajectory(self, steplen = 0.1, start_lambda=0.0, end_lambda=5.0, stop_on_singularity=True):
+    def calculate_trajectory(self, start_lambda=0.0, end_lambda=5.0, stop_on_singularity=True, OdeMethodKwargs={}):
         """
         Calculate trajectory in manifold according to geodesic equation
 
@@ -152,22 +152,16 @@ class Schwarzschild:
         tuple of lists
 
         """
-        self.vec = self.initial_vec
         self.vec_list = list()
         self.lambda_list = list()
         #
         singularity_reached = False
-        for ld in np.arange(start_lambda, end_lambda, steplen):
-            k0 = self.f_vec(ld, self.vec)
-            k1 = self.f_vec(ld + (steplen/2.0), self.vec + (steplen/2.0)*k0)
-            k2 = self.f_vec(ld + (steplen/2.0), self.vec + (steplen/2.0)*k1)
-            k3 = self.f_vec(ld + steplen, self.vec + (steplen)*k2)
-            #
-            newvec = self.vec + (steplen/6.0)*(k0 + 2*k1 + 2*k2 + k3)
-            self.lambda_list.append(ld)
-            self.vec_list.append(self.vec)
-            self.vec = newvec
-            if (not singularity_reached) and (newvec[1] <= self.schwarzschild_r.value):
+        ODE = OdeMethods.RK4thOrder(self.f_vec, start_lambda, self.initial_vec, **OdeMethodKwargs)
+        while ODE.t < end_lambda:
+            self.vec_list.append(ODE.y)
+            self.lambda_list.append(ODE.t)
+            ODE.step()
+            if (not singularity_reached) and (ODE.y[1] <= self.schwarzschild_r.value):
                 warnings.warn('r component of position vector reached Schwarzchild Radius. ', RuntimeWarning)
                 if stop_on_singularity:
                     break
