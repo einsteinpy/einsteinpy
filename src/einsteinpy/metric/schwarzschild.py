@@ -18,10 +18,10 @@ class Schwarzschild:
     def __init__(self, pos_vec, vel_vec, time, M):
         self.M = M
         self.pos_vec = pos_vec
-        self.vel_vec = vel_vec
+        self.vel_vec = vel_vec 
         self.time = time
         self.time_vel = time_velocity(pos_vec, vel_vec, M)
-        self.initial_vec = np.hstack((time.value, pos_vec, self.time_vel.value, vel_vec))
+        self.initial_vec = np.hstack((time.value, self.pos_vec, self.time_vel.value, self.vel_vec/_c))
         self.vec_units = [u.s, u.m, u.rad, u.one, u.one, u.m/u.s, u.one/u.s, u.one/u.s]
         self.schwarzschild_r = schwarzschild_radius(M)
 
@@ -101,13 +101,13 @@ class Schwarzschild:
     
     def f(self, i, vec):
         if i==0:
-            return vec[4]
+            return vec[4] 
         elif i==1:
-            return vec[5]
+            return vec[5] 
         elif i==2:
-            return vec[6]
+            return vec[6] 
         elif i==3:
-            return vec[7]
+            return vec[7] 
         elif i==4:
             term1 = self.christ_sym0_01(vec) * vec[4] * vec[5]
             return -2 * term1 
@@ -124,7 +124,7 @@ class Schwarzschild:
         elif i==7:
             term1 = self.christ_sym3_31(vec) * vec[7] * vec[5]
             term2 = self.christ_sym3_32(vec) * vec[7] * vec[6]
-            return -1 * (2 * term1 + term2)
+            return -1 * (2 * term1 + term2) 
 
     def f_vec(self, ld, vec):
         f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
@@ -132,35 +132,33 @@ class Schwarzschild:
             f_vec_vals[i] = self.f(i,vec)
         return f_vec_vals
 
-    def calculate_trajectory(self, start_lambda=0.0, end_lambda=5.0, stop_on_singularity=True, OdeMethodKwargs={}):
+    def calculate_trajectory(self, start_lambda=0.0, end_lambda=1e7, stop_on_singularity=True, OdeMethodKwargs={}):
         """
         Calculate trajectory in manifold according to geodesic equation
 
         Parameters
         ----------
-        steplen : float
-            Length of each advance in lambda, defaults to 0.1
         start_lambda : float
-            Starting lambda, defaults to 0.0
+            Starting lambda, defaults to 0.0, ( c*lambda ~= t)
         end_lamdba : float
-            Lambda where iteartions will stop, defaults to 5.0
+            Lambda where iteartions will stop, defaults to 10000000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
 
         Returns
         -------
-        tuple of lists
+        tuple of 2 numpy.array
 
         """
-        self.vec_list = list()
-        self.lambda_list = list()
+        vec_list = list()
+        lambda_list = list()
         #
         singularity_reached = False
         ODE = OdeMethods.RK4thOrder(fun=self.f_vec, t0=start_lambda, y0=self.initial_vec, t_bound=end_lambda, **OdeMethodKwargs)
         # ODE = OdeMethods.RK45Scipy(fun=self.f_vec, t0=start_lambda, y0=self.initial_vec, t_bound=end_lambda, **OdeMethodKwargs)
         while ODE.t < end_lambda:
-            self.vec_list.append(ODE.y)
-            self.lambda_list.append(ODE.t)
+            vec_list.append(ODE.y)
+            lambda_list.append(ODE.t)
             ODE.step()
             if (not singularity_reached) and (ODE.y[1] <= self.schwarzschild_r.value):
                 warnings.warn('r component of position vector reached Schwarzchild Radius. ', RuntimeWarning)
@@ -168,5 +166,6 @@ class Schwarzschild:
                     break
                 else:
                     singularity_reached = True
-        return (self.lambda_list, self.vec_list)
+        scaling_factors = np.array([1/_c ,1. ,1. ,1. ,1. ,_c ,_c ,_c])
+        return (np.array(lambda_list), np.array(vec_list)*scaling_factors)
         
