@@ -9,12 +9,12 @@ from einsteinpy import constant
 M = 1.989e30 * u.kg
 pos_vec = np.array([150e9, np.pi/2, 0.])
 real_omega = 29951.68/150e9
-vel_vec = np.array([0, 0., real_omega])
+vel_vec = np.array([0, 0., real_omega/16.5])
 
 
 time = 0 * u.s
 cl = Schwarzschild.from_values(pos_vec, vel_vec, time, M)
-ANS = cl.calculate_trajectory(end_lambda=31558464*constant.c.value, OdeMethodKwargs={'stepsize':constant.c.value*3000})
+ANS = cl.calculate_trajectory(end_lambda=10558464, OdeMethodKwargs={'stepsize':80})
 # ANS = cl.calculate_trajectory(end_lambda=300000, OdeMethodKwargs={'vectorized':True})
 ans = ANS[1]
 print('calculate done')

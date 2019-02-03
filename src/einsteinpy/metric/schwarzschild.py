@@ -130,7 +130,7 @@ class Schwarzschild:
         f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
         for i in range(len(vec)):
             f_vec_vals[i] = self.f(i,vec)
-        return f_vec_vals
+        return (_c * f_vec_vals)
 
     def calculate_trajectory(self, start_lambda=0.0, end_lambda=1e7, stop_on_singularity=True, OdeMethodKwargs={}):
         """
@@ -139,9 +139,9 @@ class Schwarzschild:
         Parameters
         ----------
         start_lambda : float
-            Starting lambda, defaults to 0.0, ( c*lambda ~= t)
+            Starting lambda, defaults to 0.0, ( c ~= t)
         end_lamdba : float
-            Lambda where iteartions will stop, defaults to 10000000
+            Lambda where iteartions will stop, defaults to 100000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
 
