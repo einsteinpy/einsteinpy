@@ -1,153 +1,28 @@
-# We set the language to c because python isn't supported on the MacOS X nodes
-# on Travis. However, the language ends up being irrelevant anyway, since we
-# install Python ourselves using conda.
-language: c
+language: generic
+os: osx
 
-os:
-    - linux
-
-# Setting sudo to false opts in to Travis-CI container-based builds.
-sudo: false
-
-# The apt packages below are needed for sphinx builds. A full list of packages
-# that can be included can be found here:
-#
-# https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-
-addons:
-    apt:
-        packages:
-            - graphviz
-            - texlive-latex-extra
-            - dvipng
+branches:
+  only:
+    - master
 
 env:
-    global:
+  global:
+    - MPLBACKEND="Agg"
 
-        # The following versions are the 'default' for tests, unless
-        # overridden underneath. They are defined here in order to save having
-        # to repeat them for all configurations.
-        - PYTHON_VERSION=3.7
-        - NUMPY_VERSION=stable
-        - ASTROPY_VERSION=stable
-        - MAIN_CMD='python setup.py'
-        - SETUP_CMD='test'
-        - EVENT_TYPE='pull_request push'
-
-        
-        # List runtime dependencies for the package that are available as conda
-        # packages here.
-        - CONDA_DEPENDENCIES=''
-        - CONDA_DEPENDENCIES_DOC='sphinx-astropy'
-        
-        # List other runtime dependencies for the package that are available as
-        # pip packages here.
-        - PIP_DEPENDENCIES=''
-
-        # Conda packages for affiliated packages are hosted in channel
-        # "astropy" while builds for astropy LTS with recent numpy versions
-        # are in astropy-ci-extras. If your package uses either of these,
-        # add the channels to CONDA_CHANNELS along with any other channels
-        # you want to use.
-        - CONDA_CHANNELS='astropy-ci-extras astropy'
-
-        # If there are matplotlib or other GUI tests, uncomment the following
-        # line to use the X virtual framebuffer.
-        # - SETUP_XVFB=True
-
-        # If you want to ignore certain flake8 errors, you can list them
-        # in FLAKE8_OPT, for example:
-        # - FLAKE8_OPT='--ignore=E501'
-        - FLAKE8_OPT=''
-
-    matrix:
-        # Make sure that egg_info works without dependencies
-        - PYTHON_VERSION=3.7 SETUP_CMD='egg_info'
-
-
-matrix:
-
-    # Don't wait for allowed failures
-    fast_finish: true
-
-    include:
-        # Try MacOS X
-        - os: osx
-          env: SETUP_CMD='test'
-
-        # Do a coverage test.
-        - os: linux
-          env: SETUP_CMD='test --coverage'
-
-        # Check for sphinx doc build warnings - we do this first because it
-        # may run for a long time
-        - os: linux
-          env: SETUP_CMD='build_docs -w'
-               CONDA_DEPENDENCIES=$CONDA_DEPENDENCIES_DOC
-
-        # Now try Astropy dev with the latest Python and LTS with Python 2.7 and 3.x.
-        - os: linux
-          env: ASTROPY_VERSION=development
-               EVENT_TYPE='pull_request push cron'
-        - os: linux
-          env: ASTROPY_VERSION=lts
-
-        # Try all python versions and Numpy versions. Since we can assume that
-        # the Numpy developers have taken care of testing Numpy with different
-        # versions of Python, we can vary Python and Numpy versions at the same
-        # time.
-
-        - os: linux
-          env: PYTHON_VERSION=3.5 NUMPY_VERSION=1.12
-        - os: linux
-          env: PYTHON_VERSION=3.6 NUMPY_VERSION=1.13
-        - os: linux
-          env: NUMPY_VERSION=1.14
-
-        # Try numpy pre-release
-        - os: linux
-          env: NUMPY_VERSION=prerelease
-               EVENT_TYPE='pull_request push cron'
-
-        # Do a PEP8 test with flake8
-        - os: linux
-          env: MAIN_CMD='flake8 core --count --show-source --statistics $FLAKE8_OPT' SETUP_CMD=''
-
-    allow_failures:
-        # Do a PEP8 test with flake8
-        # (allow to fail unless your code completely compliant)
-        - os: linux
-          env: MAIN_CMD='flake8 core --count --show-source --statistics $FLAKE8_OPT' SETUP_CMD=''
+before_install:
+  - HOMEBREW_NO_AUTO_UPDATE=1 brew install python3
+  - python3 -m venv venv
+  - source venv/bin/activate
+  - python3 -m pip install --upgrade pip
 
 install:
-
-    # We now use the ci-helpers package to set up our testing environment.
-    # This is done by using Miniconda and then using conda and pip to install
-    # dependencies. Which dependencies are installed using conda and pip is
-    # determined by the CONDA_DEPENDENCIES and PIP_DEPENDENCIES variables,
-    # which should be space-delimited lists of package names. See the README
-    # in https://github.com/astropy/ci-helpers for information about the full
-    # list of environment variables that can be used to customize your
-    # environment. In some cases, ci-helpers may not offer enough flexibility
-    # in how to install a package, in which case you can have additional
-    # commands in the install: section below.
-
-    - git clone --depth 1 git://github.com/astropy/ci-helpers.git
-    - source ci-helpers/travis/setup_conda.sh
-
-    # As described above, using ci-helpers, you should be able to set up an
-    # environment with dependencies installed using conda and pip, but in some
-    # cases this may not provide enough flexibility in how to install a
-    # specific dependency (and it will not be able to install non-Python
-    # dependencies). Therefore, you can also include commands below (as
-    # well as at the start of the install section or in the before_install
-    # section if they are needed before setting up conda) to install any
-    # other dependencies.
+  #- pip install numpy  # Required
+  #- pip install .  # Test installation correctness
+  #- pip install .[dev]  # Test development dependencies
+  - pip install black --quiet
 
 script:
-   - $MAIN_CMD $SETUP_CMD
+  # - pytest -vv  # Test against installed code
+  - black src/ setup.py --check
 
-after_success:
-    # If coveralls.io is set up for this package, uncomment the line below.
-    # The coveragerc file may be customized as needed for your package.
-    # - if [[ $SETUP_CMD == *coverage* ]]; then coveralls --rcfile='core/tests/coveragerc'; fi
+sudo: false
