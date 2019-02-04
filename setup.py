@@ -28,6 +28,8 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "numpy",
+        "astropy",
+        "matplotlib"
     ],
     extras_require={
         "dev": [
