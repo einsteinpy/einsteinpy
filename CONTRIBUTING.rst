@@ -45,16 +45,16 @@ And point your browser to http://0.0.0.0:8000.
 Code writing
 ------------
 
-.. .. image:: https://img.shields.io/waffle/label/poliastro/poliastro/1%20-%20Ready.svg?style=flat-square
-..    :target: https://waffle.io/poliastro/poliastro
-..    :alt: 'Stories in Ready'
+.. image:: https://img.shields.io/waffle/label/einsteinpy/einsteinpy/1%20-%20Ready.svg?style=flat-square
+    :target: https://waffle.io/einsteinpy/einsteinpy
+    :alt: 'Stories in Ready'
 
-.. Code contributions are welcome! If you are looking for a place to start,
-.. help us fixing bugs in poliastro and check out the `"easy" tag`_. Those
-.. should be easier to fix than the others and require less knowledge about the
-.. library.
+Code contributions are welcome! If you are looking for a place to start,
+help us fixing bugs in einsteinpy and check out the `"easy" tag`_. Those
+should be easier to fix than the others and require less knowledge about the
+library.
 
-.. _`"easy" tag`: https://github.com/poliastro/poliastro/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy
+.. _`"easy" tag`: https://github.com/einsteinpy/einsteinpy/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy
 
 If you are hesitant on what IDE or editor to use, just choose one that
 you find comfortable and stick to it while you are learning. People have
@@ -77,9 +77,10 @@ following `the Try Git tutorial`_.
 If you already know how all this works and would like to contribute new
 features then that's awesome! Before rushing out though please make sure it
 is within the scope of the library so you don't waste your time -
-`email`_ us.
+`email`_ us or `chat`_ with us on Riot!.
 
 .. _`email`: einsteinpy.project@gmail.com
+.. _`chat`: https://riot.im/app/#/room/#einsteinpy:matrix.org
 
 If the feature you suggest happens to be useful and within scope, you will
 probably be advised to create a new `wiki`_ page with some information
@@ -91,11 +92,11 @@ effort and to make it understandable to a broader audience.
 
 .. _`wiki`: https://github.com/einsteinpy/einsteinpy/wiki
 
-.. All new features should be thoroughly tested, and in the ideal case the
-.. coverage rate should increase or stay the same. Automatic services will ensure
-.. your code works on all the operative systems and package combinations
-.. poliastro support - specifically, note that einsteinpy is a Python 3 only
-.. library.
+All new features should be thoroughly tested, and in the ideal case the
+coverage rate should increase or stay the same. Automatic services will ensure
+your code works on all the operative systems and package combinations
+einsteinpy support - specifically, note that einsteinpy is a Python 3 only
+library.
 
 Development environment
 -----------------------

@@ -19,6 +19,7 @@ def schwarzschild_radius(mass):
     deno = constant.c ** 2
     return num / deno
 
+
 def scalar_factor(era, t, tuning_param=1):
     """
     Acceleration of the universe in cosmological models of Robertson Walker
@@ -44,16 +45,17 @@ def scalar_factor(era, t, tuning_param=1):
     ValueError : If era is not 'md' , 'rd', and 'ded'.
 
     """
-    if era == 'md':
-        return tuning_param * (t ** (2/3))
-    elif era == 'rd':
+    if era == "md":
+        return tuning_param * (t ** (2 / 3))
+    elif era == "rd":
         return tuning_param * (t ** (0.5))
-    elif era == 'ded':
+    elif era == "ded":
         hubble_const = (constant.Cosmo_Const / 3) ** 0.5
         val = np.e ** (hubble_const * t)
         return tuning_param * val
     else:
-        raise ValueError('Passed era is out of syllabus!')
+        raise ValueError("Passed era is out of syllabus!")
+
 
 @u.quantity_input(mass=u.kg)
 def time_velocity(pos_vec, vel_vec, mass):
@@ -76,12 +78,14 @@ def time_velocity(pos_vec, vel_vec, mass):
 
     """
     # this function considers SI units only
-    a = schwarzschild_radius( mass ).value
+    a = schwarzschild_radius(mass).value
     c = constant.c.value
-    num1 = (1/((c ** 2) * (1 + (a/pos_vec[0]))))*(vel_vec[0] ** 2)
-    num2 = ((pos_vec[0] ** 2)/(c **2)) * (vel_vec[1] ** 2)
-    num3 = ((pos_vec[0] ** 2)/(c **2)) * (np.sin(pos_vec[1]) ** 2) * (vel_vec[2] ** 2)
-    deno = 1 + (a/pos_vec[0])
-    time_vel_squared = (1 + num1 + num2 + num3)/deno
+    num1 = (1 / ((c ** 2) * (1 + (a / pos_vec[0])))) * (vel_vec[0] ** 2)
+    num2 = ((pos_vec[0] ** 2) / (c ** 2)) * (vel_vec[1] ** 2)
+    num3 = (
+        ((pos_vec[0] ** 2) / (c ** 2)) * (np.sin(pos_vec[1]) ** 2) * (vel_vec[2] ** 2)
+    )
+    deno = 1 + (a / pos_vec[0])
+    time_vel_squared = (1 + num1 + num2 + num3) / deno
     time_vel = np.sqrt(time_vel_squared)
     return time_vel * u.one

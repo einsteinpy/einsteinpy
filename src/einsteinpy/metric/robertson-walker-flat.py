@@ -10,7 +10,7 @@ class RobertsonWalkerFlat:
     Class for defining a Robertson Walker Flat Metric
     """
 
-    def __init__(self, t, x, y, z, era='md'):
+    def __init__(self, t, x, y, z, era="md"):
         """
         Constructor.
 
