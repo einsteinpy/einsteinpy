@@ -4,7 +4,7 @@ import numpy as np
 
 from einsteinpy import constant
 from einsteinpy.utils import schwarzschild_radius, time_velocity
-from einsteinpy.intergrators import ODESolver
+from einsteinpy.integrators import ODESolver
 
 _G = constant.G.value
 _c = constant.c.value
