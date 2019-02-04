@@ -154,8 +154,8 @@ class Schwarzschild:
         lambda_list = list()
         #
         singularity_reached = False
-        ODE = OdeMethods.RK4thOrder(fun=self.f_vec, t0=start_lambda, y0=self.initial_vec, t_bound=end_lambda, **OdeMethodKwargs)
-        # ODE = OdeMethods.RK45Scipy(fun=self.f_vec, t0=start_lambda, y0=self.initial_vec, t_bound=end_lambda, **OdeMethodKwargs)
+        ODE = OdeMethods.RK4(fun=self.f_vec, t0=start_lambda, y0=self.initial_vec, t_bound=end_lambda, **OdeMethodKwargs)
+        # ODE = integrate.RK45(fun=self.f_vec, t0=start_lambda, y0=self.initial_vec, t_bound=end_lambda, **OdeMethodKwargs)
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)

@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 
-class RK4thOrder():
+class RK4():
     """
     Class for Defining Runge-Kutta 4th Order ODE solving method
     """
