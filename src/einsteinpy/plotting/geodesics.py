@@ -6,21 +6,24 @@ import matplotlib as mpl
 import numpy as np
 
 from einsteinpy.metric import Schwarzschild
+from einsteinpy.utils import schwarzschild_radius
 
 
-class StaticGeodesicPlotter:
+class ScatterGeodesicPlotter:
     """
-    Class for plotting static matplotlib plots.
+    Class for plotting scatter matplotlib plots for better intuition.
     """
 
     def __init__(self, mass, time=0):
         self.mass = mass
         self.time = time
+        self._attractor_present = False
 
-    def plot_attractor(self):
+    def _plot_attractor(self):
+        self._attractor_present = True
         plt.scatter(0, 0, color="black")
 
-    def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3):
+    def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, cmap="Oranges"):
         swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
 
         vals = swc.calculate_trajectory(
@@ -35,7 +38,10 @@ class StaticGeodesicPlotter:
         pos_x = r * np.cos(phi)
         pos_y = r * np.sin(phi)
 
-        plt.scatter(pos_x, pos_y, s=1, c=time, cmap="Oranges")
+        plt.scatter(pos_x, pos_y, s=1, c=time, cmap=cmap)
+
+        if not self._attractor_present:
+            self._plot_attractor()
 
     def show(self):
         plt.show()
@@ -50,6 +56,7 @@ class StaticGeodesicPlotter:
         self.ax = ax
         if not self.ax:
             _, self.ax = plt.subplots(figsize=(6, 6))
+
         self.time = time
         self.mass = mass
         self._attractor_present = False
