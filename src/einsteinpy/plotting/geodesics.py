@@ -10,20 +10,19 @@ class StaticGeodesicPlotter:
     Class for plotting static matplotlib plots.
     """
 
-    def __init__(self, mass, time=0, step_size=1e-3):
-        self.mass = mass * u.kg
-        self.time = time * u.s
-        self._step_size = step_size
+    def __init__(self, mass, time=0):
+        self.mass = mass
+        self.time = time
 
     def plot_attractor(self):
         plt.scatter(0, 0, color='black')
 
 
-    def plot(self, pos_vec, vel_vec, end_lambda=10):
+    def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3):
         swc = Schwarzschild.from_values(pos_vec, vel_vec, self.time, self.mass)
 
         vals = swc.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": self._step_size}
+            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
         )[1]
 
         time = np.array([coord[0] for coord in vals])
