@@ -4,7 +4,7 @@ import numpy as np
 
 from einsteinpy import constant
 from einsteinpy.utils import schwarzschild_radius, time_velocity
-from einsteinpy.integrators import ODESolver
+from einsteinpy.integrators import RK4naive, RK45
 
 _G = constant.G.value
 _c = constant.c.value
@@ -158,7 +158,7 @@ class Schwarzschild:
         vec_list = list()
         lambda_list = list()
         singularity_reached = False
-        ODE = ODESolver(
+        ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
             y0=self.initial_vec,
