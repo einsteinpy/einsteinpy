@@ -30,6 +30,7 @@ setup(
         "numpy",
         "astropy",
         "matplotlib"
+        "scipy>=1.0"
     ],
     extras_require={
         "dev": [
