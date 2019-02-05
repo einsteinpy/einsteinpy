@@ -19,7 +19,7 @@ class StaticGeodesicPlotter:
 
 
     def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3):
-        swc = Schwarzschild.from_values(pos_vec, vel_vec, self.time, self.mass)
+        swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
 
         vals = swc.calculate_trajectory(
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}

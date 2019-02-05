@@ -29,7 +29,7 @@ class Schwarzschild:
 
     @classmethod
     @u.quantity_input(time=u.s, M=u.kg)
-    def from_values(cls, pos_vec, vel_vec, time, M):
+    def from_spherical(cls, pos_vec, vel_vec, time, M):
         """
         Constructor
 
