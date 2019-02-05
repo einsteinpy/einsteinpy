@@ -1,5 +1,8 @@
+import random
+
 import astropy.units as u
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 
 from einsteinpy.metric import Schwarzschild
@@ -51,6 +54,9 @@ class StaticGeodesicPlotter:
 
     def __init__(self, mass, time=0, ax=None):
         self.ax = ax
+        if not self.ax:
+            _, self.ax = plt.subplots(figsize=(6, 6))
+
         self.time = time
         self.mass = mass
         self._attractor_present = False
@@ -84,7 +90,14 @@ class StaticGeodesicPlotter:
 
         self.ax.add_patch(mpl.patches.Circle((0, 0), radius.value, lw=0, color=color))
 
-    def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, color=None):
+    def plot(
+        self,
+        pos_vec,
+        vel_vec,
+        end_lambda=10,
+        step_size=1e-3,
+        color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
+    ):
 
         self.plot_attractor()
 
