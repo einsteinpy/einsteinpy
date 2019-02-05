@@ -1,9 +1,10 @@
 import warnings
 
 import numpy as np
+from scipy import integrate
 
 
-class ODESolver:
+class RK4naive:
     """
     Class for Defining Runge-Kutta 4th Order ODE solving method
     """
@@ -31,14 +32,14 @@ class ODESolver:
         self.t_bound = t_bound
         self.step_size = stepsize
         self._fun = fun
-        self._postive_direction = self.t_bound >= t0
+        self.direction = 1 * (self.t_bound >= t0) - 1 * (not self.t_bound < t0)
 
     def step(self):
         """
         Updates the value of self.t and self.y
         """
-        if (self.t >= self.t_bound and self._postive_direction) or (
-            self.t <= self.t_bound and not self._postive_direction
+        if (self.t >= self.t_bound and self.direction == 1) or (
+            self.t <= self.t_bound and self.direction == -1
         ):
             warnings.warn("Out of bounds set by t_bound. ", RuntimeWarning)
             return
@@ -52,3 +53,39 @@ class ODESolver:
         k3 = self._fun(self.t + self.step_size, self.y + (self.step_size) * k2)
         self.y = self.y + ((self.step_size / 6.0) * (k0 + 2 * k1 + 2 * k2 + k3))
         self.t = self.t + self.step_size
+
+
+class RK45(integrate.RK45):
+    """
+    This Class inherits Scipy.integrate.RK45 Class
+    """
+
+    def __init__(self, fun, t0, y0, t_bound, stepsize, rtol=None, atol=None):
+        vectorized = not type(y0) == float
+        self._t_bound = t_bound
+        if rtol is None:
+            rtol = 0.2 * stepsize
+        if atol is None:
+            atol = rtol / 0.8e3
+        super(RK45, self).__init__(
+            fun=fun,
+            t0=t0,
+            y0=y0,
+            t_bound=self._t_bound,
+            first_step=0.8 * stepsize,
+            max_step=8.0 * stepsize,
+            rtol=rtol,
+            atol=atol,
+            vectorized=vectorized,
+        )
+
+    def step(self):
+        """
+        Updates the value of self.t and self.y
+        """
+        if (self.t >= self._t_bound and self.direction == 1) or (
+            self.t <= self._t_bound and self.direction == -1
+        ):
+            warnings.warn("Out of bounds set by t_bound. ", RuntimeWarning)
+            return
+        super(RK45, self).step()
