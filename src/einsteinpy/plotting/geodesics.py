@@ -1,8 +1,8 @@
 import random
 
 import astropy.units as u
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 
 from einsteinpy.metric import Schwarzschild
@@ -11,19 +11,18 @@ from einsteinpy.utils import schwarzschild_radius
 
 class ScatterGeodesicPlotter:
     """
-    Class for plotting scatter matplotlib plots for better intuition.
+    Class for plotting static matplotlib plots.
     """
 
     def __init__(self, mass, time=0):
         self.mass = mass
-        self.time = time
+        self.time = time * u.s
         self._attractor_present = False
 
     def _plot_attractor(self):
-        self._attractor_present = True
         plt.scatter(0, 0, color="black")
 
-    def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, cmap="Oranges"):
+    def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3):
         swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
 
         vals = swc.calculate_trajectory(
@@ -38,7 +37,7 @@ class ScatterGeodesicPlotter:
         pos_x = r * np.cos(phi)
         pos_y = r * np.sin(phi)
 
-        plt.scatter(pos_x, pos_y, s=1, c=time, cmap=cmap)
+        plt.scatter(pos_x, pos_y, s=1, c=time, cmap="Oranges")
 
         if not self._attractor_present:
             self._plot_attractor()
@@ -56,8 +55,7 @@ class StaticGeodesicPlotter:
         self.ax = ax
         if not self.ax:
             _, self.ax = plt.subplots(figsize=(6, 6))
-
-        self.time = time
+        self.time = time * u.s
         self.mass = mass
         self._attractor_present = False
 
@@ -84,8 +82,8 @@ class StaticGeodesicPlotter:
         if not self._attractor_present:
             self._draw_attractor()
 
-    def _draw_attractor(self, min_radius=0 * u.km):
-        radius = max(schwarzschild_radius(self.mass * u.km), min_radius.to(u.km))
+    def _draw_attractor(self, min_radius=10 * u.km):
+        radius = max(schwarzschild_radius(self.mass) * 10000, min_radius.to(u.km))
         color = "#ffcc00"
 
         self.ax.add_patch(mpl.patches.Circle((0, 0), radius.value, lw=0, color=color))
