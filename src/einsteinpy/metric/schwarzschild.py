@@ -25,38 +25,40 @@ class Schwarzschild:
         self.initial_vec = np.hstack(
             (time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
         )
-        self.vec_units = [
-            u.s,
-            u.m,
-            u.rad,
-            u.one,
-            u.one,
-            u.m / u.s,
-            u.one / u.s,
-            u.one / u.s,
-        ]
         self.schwarzschild_r = schwarzschild_radius(M)
 
     @classmethod
     @u.quantity_input(time=u.s, M=u.kg)
     def from_values(cls, pos_vec, vel_vec, time, M):
         """
-        Constructor. Provide values in SI units.
+        Constructor
 
         Parameters
         ----------
-        pos_vector : ~numpy.array
-            Vector with r, theta, phi components
-        vel_vector : ~numpy.array
-            Vector with velocities of r, theta, phi components
-        time : float
+        pos_vector : list
+            list of r, theta & phi components along with astropy units
+        vel_vector : list
+            list of velocities of r, theta & phi components along with astropy units
+        time : ~astropy.units.s
             Time of start
-        M : float
+        M : ~astropy.units.kg
             Mass of the body
 
         """
-        # # TODO: Convert these to Astropy Coordinates
-        return cls(pos_vec, vel_vec, time, M)
+        cls.units_list = [
+            u.s,
+            u.m,
+            u.rad,
+            u.rad,
+            u.one,
+            u.m / u.s,
+            u.rad / u.s,
+            u.rad / u.s,
+        ]
+        pos_vec_vals = [pos_vec[i].to(cls.units_list[i+1]).value for i in range(len(pos_vec))]
+        vel_vec_vals = [vel_vec[i].to(cls.units_list[i+5]).value for i in range(len(vel_vec))]
+        cls.input_units_list = [time.unit] + [pos_vec[i].unit for i in range(len(pos_vec))] + [u.one] + [vel_vec[i].unit for i in range(len(vel_vec))]
+        return cls(np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg))
 
     def christ_sym1_00(self, vec):
         num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
