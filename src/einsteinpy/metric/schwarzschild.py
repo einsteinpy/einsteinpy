@@ -55,10 +55,21 @@ class Schwarzschild:
             u.rad / u.s,
             u.rad / u.s,
         ]
-        pos_vec_vals = [pos_vec[i].to(cls.units_list[i+1]).value for i in range(len(pos_vec))]
-        vel_vec_vals = [vel_vec[i].to(cls.units_list[i+5]).value for i in range(len(vel_vec))]
-        cls.input_units_list = [time.unit] + [pos_vec[i].unit for i in range(len(pos_vec))] + [u.one] + [vel_vec[i].unit for i in range(len(vel_vec))]
-        return cls(np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg))
+        pos_vec_vals = [
+            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
+        ]
+        vel_vec_vals = [
+            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
+        ]
+        cls.input_units_list = (
+            [time.unit]
+            + [pos_vec[i].unit for i in range(len(pos_vec))]
+            + [u.one]
+            + [vel_vec[i].unit for i in range(len(vel_vec))]
+        )
+        return cls(
+            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg)
+        )
 
     def christ_sym1_00(self, vec):
         num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
