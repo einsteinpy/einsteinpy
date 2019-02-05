@@ -29,7 +29,7 @@ setup(
     install_requires=[
         "numpy",
         "astropy",
-        "matplotlib"
+        "matplotlib",
         "scipy>=1.0"
     ],
     extras_require={
