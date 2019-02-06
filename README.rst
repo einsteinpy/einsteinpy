@@ -95,9 +95,7 @@ License
 |license|
 
 EinsteinPy is released under the MIT license, hence allowing commercial
-use of the library. Please refer to `COPYING`_. 
-
-.. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/master/COPYING
+use of the library. Please refer to the COPYING file.
 
 FAQ
 ===
