@@ -19,19 +19,9 @@ setup(
     url="https://einsteinpy.readthedocs.io",
     download_url="https://github.com/einsteinpy/einsteinpy",
     license="MIT",
-    keywords=[
-        "general relativity",
-        "geodesics",
-        "relativity",
-        "tensors",
-    ],
+    keywords=["general relativity", "geodesics", "relativity", "tensors"],
     python_requires=">=3.6",
-    install_requires=[
-        "numpy",
-        "astropy",
-        "matplotlib",
-        "scipy>=1.0"
-    ],
+    install_requires=["numpy", "astropy", "matplotlib", "scipy>=1.0"],
     extras_require={
         "dev": [
             "black ; python_version>='3.6'",
