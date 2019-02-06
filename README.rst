@@ -2,7 +2,7 @@
 
 .. image:: http://einsteinpy.github.io/img/logo.png
    :target: http://einsteinpy.github.io/
-   :alt: einsteinpy logo
+   :alt: EinsteinPy logo
    :width: 675px
    :align: center
 
@@ -46,7 +46,7 @@ https://docs.einsteinpy.org/
 Requirements
 ============
 
-einsteinpy requires the following Python packages:
+EinsteinPy requires the following Python packages:
 
 * NumPy, for basic numerical routines
 * Astropy, for physical units and time handling
@@ -72,7 +72,7 @@ Contributing
    :target: https://waffle.io/einsteinpy/einsteinpy
    :alt: 'Stories in Ready'
 
-einsteinpy is a community project, hence all contributions are more than
+EinsteinPy is a community project, hence all contributions are more than
 welcome! For more information, head to `CONTRIBUTING.rst`_.
 
 .. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/master/CONTRIBUTING.rst
@@ -94,7 +94,7 @@ License
 
 |license|
 
-einsteinpy is released under the MIT license, hence allowing commercial
+EinsteinPy is released under the MIT license, hence allowing commercial
 use of the library. Please refer to the COPYING file.
 
 FAQ
@@ -103,19 +103,19 @@ FAQ
 What's up with the name?
 ------------------------
 
-einsteinpy comes from the name of the famous physicist, nobel laureate, revolutionary person, Prof. Albert Einstein. 
+EinsteinPy comes from the name of the famous physicist, nobel laureate, revolutionary person, Prof. Albert Einstein. 
 This is a small tribute from our part for the amazing work he did for the science.
 
-Can I do <insert awesome thing> with poliastro?
+Can I do <insert awesome thing> with EinsteinPy?
 -----------------------------------------------
 
-einsteinpy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it. 
+EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it. 
 We welcome every contribution and will be happy to include it in einteinpy.
 
 What's the future of the project?
 ---------------------------------
 
-einsteinpy is actively maintained and we hope to receive an influx of new contributors.
+EinsteinPy is actively maintained and we hope to receive an influx of new contributors.
 The best way to get an idea of the roadmap is to see the `Milestones`_ of
 the project.
 
