@@ -19,7 +19,7 @@ jobs:
           name: check Black style
           command: |
             . venv/bin/activate
-            isort -c -rc setup.py src/ -p poliastro -sd THIRDPARTY  # This avoids installing poliastro
+            isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY  # This avoids installing einsteinpy
             black src/ setup.py --check
       - run:
           name: check MyPy
