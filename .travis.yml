@@ -3,7 +3,6 @@
 # This is not a problem because Python will be installed through conda
 
 language: python
-os: linux
 
 branches:
   only:
@@ -13,17 +12,20 @@ env:
   global:
     - MPLBACKEND="Agg"
 
+matrix:
+  include:
+    - os: linux
+      python: 3.5
+    - os: linux
+      python: 3.6
+
 before_install:
-  - apt install python3
-  - python3 -m venv venv
-  - source venv/bin/activate
   - python3 -m pip install --upgrade pip
 
 install:
   - pip install black isort mypy --quiet
 
 script:
-  - . venv/bin/activate
   - isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY
   - black src/ setup.py --check
   - mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
