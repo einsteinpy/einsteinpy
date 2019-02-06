@@ -21,12 +21,15 @@
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
    :target: https://einsteinpy.readthedocs.io/en/latest/?badge=latest
+   
+.. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
+   :target: https://travis-ci.org/einsteinpy/einsteinpy
 
 :Name: einsteinpy
 :Website: https://einsteinpy.github.io/
 :Version: 0.1.dev0
 
-|astropy| |mailing| |gitter| |license|
+|astropy| |mailing| |gitter| |license| |travisci|
 
 EinsteinPy is an open source pure Python package dedicated to problems arising in General Relativity and relativistic physics, such as goedesics plotting for schwartzschild space-time model, calculation of schwartzschild radius for any mass given. Features like visualisation of geodesics of curved black holes and 3D visualisations are some of the features which are planned.
 It is released under the MIT license.
