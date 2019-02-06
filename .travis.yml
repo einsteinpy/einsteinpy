@@ -15,8 +15,6 @@ env:
 matrix:
   include:
     - os: linux
-      python: 3.5
-    - os: linux
       python: 3.6
 
 before_install:
