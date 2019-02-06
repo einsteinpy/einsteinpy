@@ -2,7 +2,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.utils import scalar_factor
+from einsteinpy.utils import scalar_factor, schwarzschild_radius
 
 
 class RobertsonWalkerFlat:

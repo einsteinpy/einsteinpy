@@ -1,0 +1,31 @@
+# The only current way of using OS X virtual machines in Travis CI
+# is setting up a generic environment
+# This is not a problem because Python will be installed through conda
+
+language: python
+
+branches:
+  only:
+    - master
+
+env:
+  global:
+    - MPLBACKEND="Agg"
+
+matrix:
+  include:
+    - os: linux
+      python: 3.6
+
+before_install:
+  - python3 -m pip install --upgrade pip
+
+install:
+  - pip install black isort mypy --quiet
+
+script:
+  - isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY
+  - black src/ setup.py --check
+  - mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
+
+sudo: false
