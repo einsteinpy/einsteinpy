@@ -14,8 +14,14 @@ def schwarzschild_radius(mass):
     Parameters
     ----------
     mass : float
+
+    Returns
+    -------
+    r : ~astropy.units
+        Schwarzschild radius for a given mass
     """
-    num = 2 * constant.G * mass
+    M = mass.to(u.kg)
+    num = 2 * constant.G * M
     deno = constant.c ** 2
     return num / deno
 
@@ -66,9 +72,9 @@ def time_velocity(pos_vec, vel_vec, mass):
     Parameters
     ----------
     pos_vector : ~numpy.array
-        Vector with r, theta, phi components
+        Vector with r, theta, phi components in SI units
     vel_vector : ~numpy.array
-        Vector with velocities of r, theta, phi components
+        Vector with velocities of r, theta, phi components in SI units
     mass : float
         Mass of the body
 

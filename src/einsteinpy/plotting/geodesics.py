@@ -14,9 +14,9 @@ class ScatterGeodesicPlotter:
     Class for plotting static matplotlib plots.
     """
 
-    def __init__(self, mass, time=0):
+    def __init__(self, mass, time=0*u.s):
         self.mass = mass
-        self.time = time * u.s
+        self.time = time
         self._attractor_present = False
 
     def _plot_attractor(self):
@@ -51,11 +51,11 @@ class StaticGeodesicPlotter:
     Class for plotting static matplotlib plots
     """
 
-    def __init__(self, mass, time=0, ax=None):
+    def __init__(self, mass, time=0*u.s, ax=None):
         self.ax = ax
         if not self.ax:
             _, self.ax = plt.subplots(figsize=(6, 6))
-        self.time = time * u.s
+        self.time = time
         self.mass = mass
         self._attractor_present = False
 
