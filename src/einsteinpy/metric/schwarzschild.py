@@ -1,10 +1,11 @@
 import warnings
+
 import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
+from einsteinpy.integrators import RK45, RK4naive
 from einsteinpy.utils import schwarzschild_radius, time_velocity
-from einsteinpy.integrators import RK4naive, RK45
 
 _G = constant.G.value
 _c = constant.c.value
