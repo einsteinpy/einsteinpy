@@ -29,10 +29,11 @@ class ScatterGeodesicPlotter:
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
         )[1]
 
-        time = np.array([coord[0] for coord in vals])
-        r = np.array([coord[1] for coord in vals])
-        theta = np.array([coord[2] for coord in vals])
-        phi = np.array([coord[3] for coord in vals])
+        time = vals[:, 0]
+        r = vals[:, 1]
+        # Currently not being used (might be useful in future)
+        # theta = vals[:, 2]
+        phi = vals[:, 3]
 
         pos_x = r * np.cos(phi)
         pos_y = r * np.sin(phi)

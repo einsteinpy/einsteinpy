@@ -38,7 +38,6 @@ class RobertsonWalkerFlat:
     @classmethod
     @u.quantity_input(x=u.km, y=u.km, z=u.km)
     def from_position(cls, t, x, y, z, era):
-        # TODO: Convert these to Astropy Coordinates
         return cls(t, x, y, z, era)
 
     @property
