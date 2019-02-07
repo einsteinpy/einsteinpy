@@ -113,27 +113,32 @@ class Schwarzschild:
         return np.cos(vec[2]) / np.sin(vec[2])
 
     def f(self, i, vec):
-        if i in range(4):
-            value = vec[i + 4]
-        elif i == 4:
+        def f0_3():
+            return vec[i + 4]
+
+        def f4():
             term1 = self.christ_sym0_01(vec) * vec[4] * vec[5]
-            value = -2 * term1
-        elif i == 5:
+            return -2 * term1
+
+        def f5():
             term1 = self.christ_sym1_00(vec) * vec[4] * vec[4]
             term2 = self.christ_sym1_11(vec) * vec[5] * vec[5]
             term3 = self.christ_sym1_22(vec) * vec[6] * vec[6]
             term4 = self.christ_sym1_33(vec) * vec[7] * vec[7]
-            value = -1 * (term1 + term2 + term3 + term4)
-        elif i == 6:
+            return -1 * (term1 + term2 + term3 + term4)
+
+        def f6():
             term1 = self.christ_sym2_21(vec) * vec[6] * vec[5]
             term2 = self.christ_sym2_33(vec) * vec[7] * vec[7]
-            value = -1 * (2 * term1 + term2)
-        elif i == 7:
+            return -1 * (2 * term1 + term2)
+
+        def f7():
             term1 = self.christ_sym3_31(vec) * vec[7] * vec[5]
             term2 = self.christ_sym3_32(vec) * vec[7] * vec[6]
-            value = -1 * (2 * term1 + term2)
+            return -1 * (2 * term1 + term2)
 
-        return value
+        f_dict = {0: f0_3, 1: f0_3, 2: f0_3, 3: f0_3, 4: f4, 5: f5, 6: f6, 7: f7}
+        return f_dict[i]()
 
     def f_vec(self, ld, vec):
         f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
