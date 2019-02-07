@@ -13,7 +13,7 @@ _c = constant.c.value
 
 class Schwarzschild:
     """
-    Class for defining a Schwarzschild Metric
+    Class for defining a Schwarzschild Geometry methods
     """
 
     @u.quantity_input(time=u.s, M=u.kg)
@@ -36,9 +36,9 @@ class Schwarzschild:
 
         Parameters
         ----------
-        pos_vector : list
+        pos_vec : list
             list of r, theta & phi components along with astropy units
-        vel_vector : list
+        vel_vec : list
             list of velocities of r, theta & phi components along with astropy units
         time : ~astropy.units.s
             Time of start
