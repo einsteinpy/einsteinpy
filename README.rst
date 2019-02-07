@@ -29,6 +29,9 @@
    :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
    :alt: Maintainability
 
+.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=circleci
+   :target: https://circleci.com/gh/einsteinpy/einsteinpy
+
 
 
 :Name: einsteinpy
@@ -37,7 +40,7 @@
 
 |astropy| |mailing| |gitter| |license|
 
-|travisci| |codeclimate|
+|travisci| |codeclimate| |circleci|
 
 EinsteinPy is an open source pure Python package dedicated to problems arising in General Relativity and relativistic physics, such as goedesics plotting for schwartzschild space-time model, calculation of schwartzschild radius for any mass given. Features like visualisation of geodesics of curved black holes and 3D visualisations are some of the features which are planned.
 It is released under the MIT license.
