@@ -20,7 +20,7 @@
    :target: https://github.com/einsteinpy/einsteinpy/raw/master/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://einsteinpy.readthedocs.io/en/latest/?badge=latest
+   :target: https://einsteinpy-project.readthedocs.io/en/latest/?badge=latest
    
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
