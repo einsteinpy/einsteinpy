@@ -4,7 +4,6 @@
 *.o
 *.so
 __pycache__
-.vscode
 
 # Ignore .c files by default to avoid including generated code. If you want to
 # add a non-generated .c extension, use `git add -f filename.c`.
@@ -46,6 +45,7 @@ sdist
 develop-eggs
 .installed.cfg
 distribute-*.tar.gz
+pip-wheel-metadata
 
 # Other
 .cache
@@ -58,3 +58,6 @@ distribute-*.tar.gz
 
 # Mac OSX
 .DS_Store
+
+# VS Code
+.vscode
