@@ -25,11 +25,19 @@
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
+.. |codeclimate| image:: https://api.codeclimate.com/v1/badges/6efb3f754d20777d8b8d/maintainability
+   :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
+   :alt: Maintainability
+
+
+
 :Name: einsteinpy
 :Website: https://einsteinpy.github.io/
 :Version: 0.1.dev0
 
-|astropy| |mailing| |gitter| |license| |travisci|
+|astropy| |mailing| |gitter| |license|
+
+|travisci| |codeclimate|
 
 EinsteinPy is an open source pure Python package dedicated to problems arising in General Relativity and relativistic physics, such as goedesics plotting for schwartzschild space-time model, calculation of schwartzschild radius for any mass given. Features like visualisation of geodesics of curved black holes and 3D visualisations are some of the features which are planned.
 It is released under the MIT license.
@@ -42,7 +50,7 @@ Documentation
 Complete documentation, including a user guide and an API reference, can be read on
 the wonderful `Read the Docs`_.
 
-https://docs.einsteinpy.org/
+https://einsteinpy-project.readthedocs.io/
 
 .. _`Read the Docs`: https://readthedocs.org/
 
@@ -58,7 +66,7 @@ EinsteinPy requires the following Python packages:
 * SciPy, for solving ordinary differential equations.
 
 einstienpy is usually tested on Linux, Windows and OS X on Python
-3.5, 3.6 and 3.7 against latest NumPy.
+3.6 and 3.7 against latest NumPy.
 
 Problems
 ========
