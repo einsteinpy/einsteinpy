@@ -5,7 +5,8 @@ import numpy as np
 
 from einsteinpy import constant
 from einsteinpy.integrators import RK45, RK4naive
-from einsteinpy.utils import scalar_factor as sf, scalar_factor_derivative as sfd
+from einsteinpy.utils import scalar_factor as sf
+from einsteinpy.utils import scalar_factor_derivative as sfd
 from einsteinpy.utils import time_velocity
 
 _G = constant.G.value
