@@ -68,25 +68,23 @@ def test_calculate_trajectory(
     assert_allclose(testarray, comparearray, 1e-3)
 
 
-# def test_constructor_values():
-#     pass
-
-
-# def test_christoffel_symbols_values():
-#     pass
-
-
-# def test_f_values():
-#     pass
-
-
-# def test_f_vec_values():
-#     pass
-
-
-# def test_calculate_trajectory_four_velocity_constant():
-#     pass
-
-
-# def test_calculate_trajectory_vec_values():
-#     pass
+def test_calculate_trajectory2():
+    # based on the revolution of earth around sun
+    # data from https://en.wikipedia.org/wiki/Earth%27s_orbit
+    M = 1.989e30 * u.kg
+    distance_at_perihelion = 147.10e6 * u.km
+    speed_at_perihelion = 30.29 * u.km / u.s
+    angular_vel = (speed_at_perihelion / distance_at_perihelion) * u.rad
+    pos_vec = [distance_at_perihelion, np.pi / 2 * u.rad, 0 * u.rad]
+    vel_vec = [0 * u.km / u.s, 0 * u.rad / u.s, angular_vel]
+    end_lambda = ((1 * u.year).to(u.s)).value
+    cl = Schwarzschild.from_spherical(pos_vec, vel_vec, 0 * u.s, M)
+    ans = cl.calculate_trajectory(
+        start_lambda=0.0,
+        end_lambda=end_lambda,
+        OdeMethodKwargs={"stepsize": end_lambda / 5e3},
+    )[1]
+    # velocity should be 29.29 km/s at apehelion(where r is max)
+    i = np.argmax(ans[:, 1])  # index whre radial distance is max
+    v_apehelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
+    assert_allclose(v_apehelion, 29.29, atol=0.01)
