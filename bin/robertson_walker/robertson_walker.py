@@ -157,8 +157,8 @@ class RobertsonWalker:
         val = np.cos(vec[2]) / np.sin(vec[2])
         return val
 
-    def christ_sym3_32(self, vec):
-        return self.christ_sym3_23(vec)
+    # def christ_sym3_32(self, vec):
+    #     return self.christ_sym3_23(vec)
 
     def f(self, i, vec):
         def f0_3():
