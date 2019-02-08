@@ -64,7 +64,6 @@ def test_calculate_trajectory(
         (ans[:, 5] ** 2 + ans[:, 6] ** 2 + ans[:, 7] ** 2) / (_c ** 2)
     )
     comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
-    print(max(abs(comparearray - testarray)))
     assert_allclose(testarray, comparearray, 1e-3)
 
 
@@ -87,4 +86,4 @@ def test_calculate_trajectory2():
     # velocity should be 29.29 km/s at apehelion(where r is max)
     i = np.argmax(ans[:, 1])  # index whre radial distance is max
     v_apehelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
-    assert_allclose(v_apehelion, 29.29, atol=0.01)
+    assert_allclose(v_apehelion, 29.29, rtol=0.01)
