@@ -24,7 +24,7 @@ class Schwarzschild:
         self.time = time
         self.time_vel = time_velocity(pos_vec, vel_vec, M)
         self.initial_vec = np.hstack(
-            (time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
+            (self.time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
         )
         self.schwarzschild_r = schwarzschild_radius(M)
 

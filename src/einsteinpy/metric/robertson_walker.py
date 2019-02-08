@@ -26,7 +26,7 @@ class RobertsonWalker:
         self.time = time
         self.time_vel = time_velocity(pos_vec, vel_vec, M)
         self.initial_vec = np.hstack(
-            (time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
+            (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
         )
         self.era = era
         self.tuning_param = tuning_param
@@ -189,8 +189,8 @@ class RobertsonWalker:
 
     def f_vec(self, ld, vec):
         f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
-        for i in range(len(vec)):
-            f_vec_vals[i] = self.f(i, vec)
+        for t in range(len(vec)):
+            f_vec_vals[t] = self.f(t, vec)
         return f_vec_vals
 
     def calculate_trajectory(
@@ -215,17 +215,17 @@ class RobertsonWalker:
         """
         vec_list = list()
         lambda_list = list()
-        ODE = RK45(
+        ODE = RK4naive(
             fun=self.f_vec,
             t0=start_lambda,
             y0=self.initial_vec,
             t_bound=end_lambda,
             **OdeMethodKwargs
         )
-        while ODE.t < end_lambda:
+        while ODE.t < end_lambda-110*OdeMethodKwargs['stepsize']:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
             ODE.step()
         scaling_factors = 1.0
-        # scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
+        #scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
         return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
