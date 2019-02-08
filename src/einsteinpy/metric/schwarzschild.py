@@ -24,7 +24,7 @@ class Schwarzschild:
         self.time = time
         self.time_vel = time_velocity(pos_vec, vel_vec, M)
         self.initial_vec = np.hstack(
-            (time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
+            (self.time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
         )
         self.schwarzschild_r = schwarzschild_radius(M)
 
@@ -135,7 +135,7 @@ class Schwarzschild:
         def f7():
             term1 = self.christ_sym3_31(vec) * vec[7] * vec[5]
             term2 = self.christ_sym3_32(vec) * vec[7] * vec[6]
-            return -1 * (2 * term1 + term2)
+            return -1 * (2 * term1 + 2 * term2)
 
         f_dict = {0: f0_3, 1: f0_3, 2: f0_3, 3: f0_3, 4: f4, 5: f5, 6: f6, 7: f7}
         return f_dict[i]()
@@ -149,9 +149,9 @@ class Schwarzschild:
     def calculate_trajectory(
         self,
         start_lambda=0.0,
-        end_lambda=1e7,
+        end_lambda=10.0,
         stop_on_singularity=True,
-        OdeMethodKwargs={},
+        OdeMethodKwargs={"stepsize": 1e-3},
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
