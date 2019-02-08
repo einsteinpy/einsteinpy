@@ -24,7 +24,7 @@ class RobertsonWalker:
         self.pos_vec = pos_vec
         self.vel_vec = vel_vec
         self.time = time
-        self.time_vel = time_velocity(pos_vec, vel_vec, M)
+        self.time_vel = 1.*u.one
         self.initial_vec = np.hstack(
             (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
         )
@@ -190,8 +190,13 @@ class RobertsonWalker:
     def f_vec(self, ld, vec):
         f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
         for t in range(len(vec)):
-            f_vec_vals[t] = self.f(t, vec)
-        return f_vec_vals
+            try:
+                f_vec_vals[t] = self.f(t, vec)
+            except:
+                print(self.f(t, vec))
+                print(vec,t,type(vec), type(t))
+                exit()
+        return f_vec_vals 
 
     def calculate_trajectory(
         self, start_lambda=0.0, end_lambda=10.0, OdeMethodKwargs={"stepsize": 1e-3}
@@ -222,10 +227,10 @@ class RobertsonWalker:
             t_bound=end_lambda,
             **OdeMethodKwargs
         )
-        while ODE.t < end_lambda-110*OdeMethodKwargs['stepsize']:
+        while ODE.t < end_lambda: #-110*OdeMethodKwargs['stepsize']:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
             ODE.step()
         scaling_factors = 1.0
-        #scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
+        # scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
         return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
