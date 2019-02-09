@@ -174,3 +174,25 @@ def S2C_units(pos_vec, vel_vec):
     nvel_vec = SphericalToCartesian_vel(np.array(pos_vec_vals), np.array(vel_vec_vals))
     nvel_vec = [e1 * e2 for e1, e2 in zip(nvel_vec, new_vel_units_list)]
     return (npos_vec, nvel_vec)
+
+
+def S2C_8dim(vec):
+    """
+    Function to convert spherical 8-length numpy array coordinates to cartesian
+
+    Parameters
+    ----------
+    vec : ~numpy.array
+        Array of shape (n,8) in the form [t,r,theta,phi,vt,vr,vtheta,vphi] in SI units.
+
+    Returns
+    -------
+    a : ~numpy.array
+        Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
+    """
+    # TODO : vectorize the below used functions using numpy.vectorize
+    newvec = np.copy(vec)
+    for i in range(len(vec)):
+        newvec[i, 1:4] = SphericalToCartesian_pos(vec[i, 1:4])
+        newvec[i, 5:8] = SphericalToCartesian_vel(vec[i, 1:4], vec[i, 5:8])
+    return newvec
