@@ -5,7 +5,9 @@ import numpy as np
 
 from einsteinpy import constant
 from einsteinpy.integrators import RK45, RK4naive
-from einsteinpy.utils import C2S_units, S2C_units, schwarzschild_radius, time_velocity
+from einsteinpy.utils import C2S_units, S2C_units
+from einsteinpy.utils import schwarzschild_radius as scr
+from einsteinpy.utils import time_velocity
 
 _G = constant.G.value
 _c = constant.c.value
@@ -26,7 +28,7 @@ class Schwarzschild:
         self.initial_vec = np.hstack(
             (self.time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
         )
-        self.schwarzschild_r = schwarzschild_radius(M)
+        self.schwarzschild_r = scr(M)
 
     @classmethod
     def _classmethod_handler(cls, pos_vec, vel_vec, time, M):
