@@ -190,7 +190,7 @@ def S2C_8dim(vec):
     a : ~numpy.array
         Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
     """
-    # TODO : vectorize the below used functions using numpy.vectorize
+    # todo : vectorize the below used functions using numpy.vectorize
     newvec = np.copy(vec)
     for i in range(len(vec)):
         newvec[i, 1:4] = SphericalToCartesian_pos(vec[i, 1:4])
