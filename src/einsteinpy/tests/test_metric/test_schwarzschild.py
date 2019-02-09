@@ -81,7 +81,7 @@ def test_calculate_trajectory2():
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
-        OdeMethodKwargs={"stepsize": end_lambda / 5e3},
+        OdeMethodKwargs={"stepsize": end_lambda / 2e3},
     )[1]
     # velocity should be 29.29 km/s at apehelion(where r is max)
     i = np.argmax(ans[:, 1])  # index whre radial distance is max
@@ -92,6 +92,7 @@ def test_calculate_trajectory2():
 def test_calculate_trajectory3():
     # same test as with test_calculate_trajectory2(),
     # but initialialized with cartesian coordinates
+    # and function returning cartesian coordinates
     M = 1.989e30 * u.kg
     distance_at_perihelion = 147.10e6 * u.km
     speed_at_perihelion = 30.29 * u.km / u.s
@@ -110,9 +111,15 @@ def test_calculate_trajectory3():
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
-        OdeMethodKwargs={"stepsize": end_lambda / 5e3},
+        return_cartesian=True,
+        OdeMethodKwargs={"stepsize": end_lambda / 2e3},
     )[1]
     # velocity should be 29.29 km/s at apehelion(where r is max)
-    i = np.argmax(ans[:, 1])  # index whre radial distance is max
-    v_apehelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
+    R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
+    i = np.argmax(R)  # index whre radial distance is max
+    v_apehelion = (
+        (np.sqrt(ans[i, 5] ** 2 + ans[i, 6] ** 2 + ans[i, 7] ** 2) * (u.m / u.s)).to(
+            u.km / u.s
+        )
+    ).value
     assert_allclose(v_apehelion, 29.29, rtol=0.01)
