@@ -87,3 +87,32 @@ def test_calculate_trajectory2():
     i = np.argmax(ans[:, 1])  # index whre radial distance is max
     v_apehelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
     assert_allclose(v_apehelion, 29.29, rtol=0.01)
+
+
+def test_calculate_trajectory3():
+    # same test as with test_calculate_trajectory2(),
+    # but initialialized with cartesian coordinates
+    M = 1.989e30 * u.kg
+    distance_at_perihelion = 147.10e6 * u.km
+    speed_at_perihelion = 30.29 * u.km / u.s
+    pos_vec = [
+        distance_at_perihelion / np.sqrt(2),
+        distance_at_perihelion / np.sqrt(2),
+        0 * u.km,
+    ]
+    vel_vec = [
+        -1 * speed_at_perihelion / np.sqrt(2),
+        speed_at_perihelion / np.sqrt(2),
+        0 * u.km / u.h,
+    ]
+    end_lambda = ((1 * u.year).to(u.s)).value
+    cl = Schwarzschild.from_cartesian(pos_vec, vel_vec, 0 * u.min, M)
+    ans = cl.calculate_trajectory(
+        start_lambda=0.0,
+        end_lambda=end_lambda,
+        OdeMethodKwargs={"stepsize": end_lambda / 5e3},
+    )[1]
+    # velocity should be 29.29 km/s at apehelion(where r is max)
+    i = np.argmax(ans[:, 1])  # index whre radial distance is max
+    v_apehelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
+    assert_allclose(v_apehelion, 29.29, rtol=0.01)

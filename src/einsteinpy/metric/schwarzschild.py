@@ -5,7 +5,7 @@ import numpy as np
 
 from einsteinpy import constant
 from einsteinpy.integrators import RK45, RK4naive
-from einsteinpy.utils import schwarzschild_radius, time_velocity
+from einsteinpy.utils import C2S_units, S2C_units, schwarzschild_radius, time_velocity
 
 _G = constant.G.value
 _c = constant.c.value
@@ -29,6 +29,28 @@ class Schwarzschild:
         self.schwarzschild_r = schwarzschild_radius(M)
 
     @classmethod
+    def _classmethod_handler(cls, pos_vec, vel_vec, time, M):
+        cls.units_list = [
+            u.s,
+            u.m,
+            u.rad,
+            u.rad,
+            u.one,
+            u.m / u.s,
+            u.rad / u.s,
+            u.rad / u.s,
+        ]
+        pos_vec_vals = [
+            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
+        ]
+        vel_vec_vals = [
+            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
+        ]
+        return cls(
+            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg)
+        )
+
+    @classmethod
     @u.quantity_input(time=u.s, M=u.kg)
     def from_spherical(cls, pos_vec, vel_vec, time, M):
         """
@@ -46,31 +68,42 @@ class Schwarzschild:
             Mass of the body
 
         """
-        cls.units_list = [
-            u.s,
-            u.m,
-            u.rad,
-            u.rad,
-            u.one,
-            u.m / u.s,
-            u.rad / u.s,
-            u.rad / u.s,
-        ]
-        pos_vec_vals = [
-            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
-        ]
-        vel_vec_vals = [
-            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
-        ]
+        cls.input_coord_system = "Spherical"
         cls.input_units_list = (
             [time.unit]
             + [pos_vec[i].unit for i in range(len(pos_vec))]
             + [u.one]
             + [vel_vec[i].unit for i in range(len(vel_vec))]
         )
-        return cls(
-            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg)
+        return cls._classmethod_handler(pos_vec, vel_vec, time, M)
+
+    @classmethod
+    @u.quantity_input(time=u.s, M=u.kg)
+    def from_cartesian(cls, pos_vec, vel_vec, time, M):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        pos_vec : list
+            list of x, y and z components along with astropy units
+        vel_vec : list
+            list of velocities of x, y, and z components along with astropy units
+        time : ~astropy.units.s
+            Time of start
+        M : ~astropy.units.kg
+            Mass of the body
+
+        """
+        cls.input_coord_system = "Cartesian"
+        cls.input_units_list = (
+            [time.unit]
+            + [pos_vec[i].unit for i in range(len(pos_vec))]
+            + [u.one]
+            + [vel_vec[i].unit for i in range(len(vel_vec))]
         )
+        sp_pos_vec, sp_vel_vec = C2S_units(pos_vec, vel_vec)
+        return cls._classmethod_handler(sp_pos_vec, sp_vel_vec, time, M)
 
     def christ_sym1_00(self, vec):
         num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
