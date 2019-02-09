@@ -234,10 +234,15 @@ class Schwarzschild:
                 else:
                     singularity_reached = True
         scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
-        if not return_cartesian:
+
+        def _not_cartesian():
             return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
-        else:
+
+        def _cartesian():
             return (
                 np.array(lambda_list),
                 S2C_8dim(np.array(vec_list) * scaling_factors),
             )
+
+        choice_dict = {0: _not_cartesian, 1: _cartesian}
+        return choice_dict[int(return_cartesian)]()
