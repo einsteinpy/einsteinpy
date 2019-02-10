@@ -1,0 +1,8 @@
+[paths]
+source = src
+
+[run]
+branch = True
+source = src
+omit =
+    src/einsteinpy/tests/*

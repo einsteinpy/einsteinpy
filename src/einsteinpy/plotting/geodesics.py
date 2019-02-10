@@ -20,6 +20,7 @@ class ScatterGeodesicPlotter:
         self._attractor_present = False
 
     def _plot_attractor(self):
+        self._attractor_present = True
         plt.scatter(0, 0, color="black")
 
     def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3):
