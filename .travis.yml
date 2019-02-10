@@ -2,7 +2,8 @@
 # is setting up a generic environment
 # This is not a problem because Python will be installed through conda
 
-language: python
+language: generic
+os: osx
 
 branches:
   only:
@@ -12,20 +13,21 @@ env:
   global:
     - MPLBACKEND="Agg"
 
-matrix:
-  include:
-    - os: linux
-      python: 3.6
+before_install:
+  - HOMEBREW_NO_AUTO_UPDATE=1 brew install python3
+  - python3 -m venv venv
+  - source venv/bin/activate
+  - python3 -m pip install --upgrade pip
 
 before_install:
   - python3 -m pip install --upgrade pip
 
 install:
-  - pip install black isort mypy --quiet
+  - pip install numpy  # Required
+  - pip install .  # Test installation correctness
+  - pip install .[dev]  # Test development dependencies
 
 script:
-  - isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY
-  - black src/ setup.py --check
-  - mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
+  - pytest -vv  # Test against installed code
 
 sudo: false
