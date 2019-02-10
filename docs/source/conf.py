@@ -25,7 +25,7 @@ html_theme_options = {
     "logo_name": True,
     "logo_text_align": "center",
     "travis_button": True,
-    # 'codecov_button': True,
+    "codecov_button": True,
     "description": "General Relativity in Python",
     "body_text_align": "left",
     "github_user": "einsteinpy",
