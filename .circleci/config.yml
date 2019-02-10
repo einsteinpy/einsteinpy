@@ -45,6 +45,10 @@ jobs:
             pip install . --quiet
             pip install .[dev] --quiet
       - run:
+          name: cleanup
+          command: |
+            find . -name \*.pyc -delete
+      - run:
           name: run tests
           command: |
             . venv/bin/activate
