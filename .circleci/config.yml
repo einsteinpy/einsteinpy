@@ -48,7 +48,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            MPLBACKEND=Agg pytest -vv  # Test against installed code
+            MPLBACKEND=Agg pytest -vv  # Test against installed code (Can use --doctest-modules)
   test_py36:
     <<: *test-template
     docker:
