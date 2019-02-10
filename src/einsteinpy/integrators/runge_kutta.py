@@ -15,15 +15,15 @@ class RK4naive:
 
         Parameters
         ----------
-        fun : Function
+        fun : function
             Should accept t, y as parameters, and return same type as y
-        t0 : Float
+        t0 : float
             Initial t
-        y0 : Numpy.array or Float
+        y0 : ~numpy.array or float
             Initial y
-        t_bound : Float
+        t_bound : float
             Boundary time - the integration won’t continue beyond it. It also determines the direction of the integration.
-        stepsize : Float
+        stepsize : float
             Size of each increment in t
 
         """
@@ -57,10 +57,31 @@ class RK4naive:
 
 class RK45(integrate.RK45):
     """
-    This Class inherits Scipy.integrate.RK45 Class
+    This Class inherits ~scipy.integrate.RK45 Class
     """
 
     def __init__(self, fun, t0, y0, t_bound, stepsize, rtol=None, atol=None):
+        """
+        Initialization
+
+        Parameters
+        ----------
+        fun : function
+            Should accept t, y as parameters, and return same type as y
+        t0 : float
+            Initial t
+        y0 : ~numpy.array or float
+            Initial y
+        t_bound : float
+            Boundary time - the integration won’t continue beyond it. It also determines the direction of the integration.
+        stepsize : float
+            Size of each increment in t
+        rtol : float
+            Relative tolerance, defaults to 0.2*stepsize
+        atol : float
+            Absolute tolerance, defaults to rtol/0.8e3
+        
+        """
         vectorized = not type(y0) == float
         self._t_bound = t_bound
         if rtol is None:
