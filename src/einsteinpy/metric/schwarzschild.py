@@ -5,7 +5,9 @@ import numpy as np
 
 from einsteinpy import constant
 from einsteinpy.integrators import RK45, RK4naive
-from einsteinpy.utils import schwarzschild_radius, time_velocity
+from einsteinpy.utils import C2S_units, S2C_8dim, S2C_units
+from einsteinpy.utils import schwarzschild_radius as scr
+from einsteinpy.utils import time_velocity
 
 _G = constant.G.value
 _c = constant.c.value
@@ -26,7 +28,29 @@ class Schwarzschild:
         self.initial_vec = np.hstack(
             (self.time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
         )
-        self.schwarzschild_r = schwarzschild_radius(M)
+        self.schwarzschild_r = scr(M)
+
+    @classmethod
+    def _classmethod_handler(cls, pos_vec, vel_vec, time, M):
+        cls.units_list = [
+            u.s,
+            u.m,
+            u.rad,
+            u.rad,
+            u.one,
+            u.m / u.s,
+            u.rad / u.s,
+            u.rad / u.s,
+        ]
+        pos_vec_vals = [
+            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
+        ]
+        vel_vec_vals = [
+            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
+        ]
+        return cls(
+            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg)
+        )
 
     @classmethod
     @u.quantity_input(time=u.s, M=u.kg)
@@ -46,31 +70,42 @@ class Schwarzschild:
             Mass of the body
 
         """
-        cls.units_list = [
-            u.s,
-            u.m,
-            u.rad,
-            u.rad,
-            u.one,
-            u.m / u.s,
-            u.rad / u.s,
-            u.rad / u.s,
-        ]
-        pos_vec_vals = [
-            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
-        ]
-        vel_vec_vals = [
-            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
-        ]
+        cls.input_coord_system = "Spherical"
         cls.input_units_list = (
             [time.unit]
             + [pos_vec[i].unit for i in range(len(pos_vec))]
             + [u.one]
             + [vel_vec[i].unit for i in range(len(vel_vec))]
         )
-        return cls(
-            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg)
+        return cls._classmethod_handler(pos_vec, vel_vec, time, M)
+
+    @classmethod
+    @u.quantity_input(time=u.s, M=u.kg)
+    def from_cartesian(cls, pos_vec, vel_vec, time, M):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        pos_vec : list
+            list of x, y and z components along with astropy units
+        vel_vec : list
+            list of velocities of x, y, and z components along with astropy units
+        time : ~astropy.units.s
+            Time of start
+        M : ~astropy.units.kg
+            Mass of the body
+
+        """
+        cls.input_coord_system = "Cartesian"
+        cls.input_units_list = (
+            [time.unit]
+            + [pos_vec[i].unit for i in range(len(pos_vec))]
+            + [u.one]
+            + [vel_vec[i].unit for i in range(len(vel_vec))]
         )
+        sp_pos_vec, sp_vel_vec = C2S_units(pos_vec, vel_vec)
+        return cls._classmethod_handler(sp_pos_vec, sp_vel_vec, time, M)
 
     def christ_sym1_00(self, vec):
         num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
@@ -151,6 +186,7 @@ class Schwarzschild:
         start_lambda=0.0,
         end_lambda=10.0,
         stop_on_singularity=True,
+        return_cartesian=False,
         OdeMethodKwargs={"stepsize": 1e-3},
     ):
         """
@@ -164,6 +200,10 @@ class Schwarzschild:
             Lambda where iteartions will stop, defaults to 100000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
+        return_cartesian : bool
+            True if coordinates and velocities are required in cartesian coordinates, defaults to False
+        OdeMethodKwargs : dict
+            Kwargs to be supplied to the ODESolver.
 
         Returns
         -------
@@ -194,4 +234,25 @@ class Schwarzschild:
                 else:
                     singularity_reached = True
         scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
-        return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
+
+        def _not_cartesian():
+            return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
+
+        def _cartesian():
+            self.units_list = [
+                u.s,
+                u.m,
+                u.m,
+                u.m,
+                u.one,
+                u.m / u.s,
+                u.m / u.s,
+                u.m / u.s,
+            ]
+            return (
+                np.array(lambda_list),
+                S2C_8dim(np.array(vec_list) * scaling_factors),
+            )
+
+        choice_dict = {0: _not_cartesian, 1: _cartesian}
+        return choice_dict[int(return_cartesian)]()
