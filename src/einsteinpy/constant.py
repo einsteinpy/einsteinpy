@@ -1,5 +1,5 @@
+import astropy.units as u
 from astropy import constants
-from astropy import units as u
 
 c = constants.c.value * (u.m / u.s)
 
