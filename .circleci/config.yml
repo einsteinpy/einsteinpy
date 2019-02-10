@@ -48,6 +48,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
+	    find . -name \*.pyc -delete
             MPLBACKEND=Agg pytest --doctest-modules -vv  # Test against installed code
   test_py36:
     <<: *test-template
