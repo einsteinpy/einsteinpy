@@ -5,4 +5,4 @@ source = src
 branch = True
 source = src
 omit =
-    src/poliastro/tests/*
+    src/einsteinpy/tests/*
