@@ -20,7 +20,7 @@ setup(
     download_url="https://github.com/einsteinpy/einsteinpy",
     license="MIT",
     keywords=["general relativity", "geodesics", "relativity", "tensors"],
-    python_requires=">=3.6",
+    python_requires=">=3.5",
     install_requires=["numpy", "astropy", "matplotlib", "scipy>=1.0"],
     extras_require={
         "dev": [
@@ -50,6 +50,7 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Topic :: Scientific/Engineering",
