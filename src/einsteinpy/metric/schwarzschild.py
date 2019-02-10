@@ -239,6 +239,16 @@ class Schwarzschild:
             return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
 
         def _cartesian():
+            self.units_list = [
+                u.s,
+                u.m,
+                u.m,
+                u.m,
+                u.one,
+                u.m / u.s,
+                u.m / u.s,
+                u.m / u.s,
+            ]
             return (
                 np.array(lambda_list),
                 S2C_8dim(np.array(vec_list) * scaling_factors),
