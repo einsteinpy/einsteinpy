@@ -61,9 +61,9 @@ class Schwarzschild:
         Parameters
         ----------
         pos_vec : list
-            list of r, theta & phi components along with astropy units
+            list of r, theta & phi components along with ~astropy.units
         vel_vec : list
-            list of velocities of r, theta & phi components along with astropy units
+            list of velocities of r, theta & phi components along with ~astropy.units
         time : ~astropy.units.s
             Time of start
         M : ~astropy.units.kg
@@ -88,9 +88,9 @@ class Schwarzschild:
         Parameters
         ----------
         pos_vec : list
-            list of x, y and z components along with astropy units
+            list of x, y and z components along with ~astropy.units
         vel_vec : list
-            list of velocities of x, y, and z components along with astropy units
+            list of velocities of x, y, and z components along with ~astropy.units
         time : ~astropy.units.s
             Time of start
         M : ~astropy.units.kg
@@ -195,19 +195,20 @@ class Schwarzschild:
         Parameters
         ----------
         start_lambda : float
-            Starting lambda, defaults to 0.0, ( c ~= t)
+            Starting lambda, defaults to 0.0, (lambda ~= t)
         end_lamdba : float
             Lambda where iteartions will stop, defaults to 100000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
         return_cartesian : bool
-            True if coordinates and velocities are required in cartesian coordinates, defaults to False
+            True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to False
         OdeMethodKwargs : dict
             Kwargs to be supplied to the ODESolver.
 
         Returns
         -------
-        tuple of 2 numpy.array
+        a : tuple of 2 ~numpy.array
+            (~numpy.array of lambda, 8-length ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
 
         """
         vec_list = list()

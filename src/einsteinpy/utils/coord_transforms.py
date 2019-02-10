@@ -39,6 +39,7 @@ def CartesianToSpherical_vel(pos_vec, vel_vec):
     -------
     a : ~numpy.array
         3-length numpy array with V_r, V_theta, V_phi (m/s, rad/s, rad/s)
+
     """
     v_vec = np.zeros(shape=(3,), dtype=float)
     tempvar1 = pos_vec[0] ** 2 + pos_vec[1] ** 2
@@ -67,6 +68,7 @@ def SphericalToCartesian_pos(pos_vec):
     -------
     a : ~numpy.array
         3-length numpy array with x, y, z in m.
+
     """
     r_vec = np.zeros(shape=(3,), dtype=float)
     r_vec[0] = pos_vec[0] * np.cos(pos_vec[2]) * np.sin(pos_vec[1])
@@ -90,6 +92,7 @@ def SphericalToCartesian_vel(pos_vec, vel_vec):
     -------
     a : ~numpy.array
         3-length numpy array having vx, vy, vz in SI units(m/s)
+
     """
     v_vec = np.zeros(shape=(3,), dtype=float)
     v_vec[0] = (
@@ -127,8 +130,9 @@ def C2S_units(pos_vec, vel_vec):
     -------
     a : tuple
         consisting of 2 lists
-        ([r, theta, phi], [vr, vtheta, vphi])
+        ([r, theta, phi], [vr, vtheta, vphi]) in units
         ([u.m, u.rad, u.rad],[u.m/u.s, u.rad/u.s, u.rad/u.s])
+
     """
     units_list = [u.s, u.m, u.m, u.m, u.one, u.m / u.s, u.m / u.s, u.m / u.s]
     pos_vec_vals = [pos_vec[i].to(units_list[i + 1]).value for i in range(len(pos_vec))]
@@ -161,8 +165,9 @@ def S2C_units(pos_vec, vel_vec):
     -------
     a : tuple
         consisting of 2 lists
-        ([x, y, z], [vx, vy, vz])
+        ([x, y, z], [vx, vy, vz]) in units
         ([u.m, u.m, u.m],[u.m/u.s, u.m/u.s, u.m/u.s])
+
     """
     units_list = [u.s, u.m, u.rad, u.rad, u.one, u.m / u.s, u.rad / u.s, u.rad / u.s]
     pos_vec_vals = [pos_vec[i].to(units_list[i + 1]).value for i in range(len(pos_vec))]
@@ -189,6 +194,7 @@ def S2C_8dim(vec):
     -------
     a : ~numpy.array
         Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
+        
     """
     # todo : vectorize the below used functions using numpy.vectorize
     newvec = np.copy(vec)
