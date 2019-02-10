@@ -45,14 +45,14 @@ jobs:
             pip install . --quiet
             pip install .[dev] --quiet
       - run:
-          name: cleanup
+          name: env_var
           command: |
-            find . -name \*.pyc -delete
+            echo 'PY_IGNORE_IMPORTMISMATCH=1' >> $BASH_ENV
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            MPLBACKEND=Agg pytest PY_IGNORE_IMPORTMISMATCH=1 --doctest-modules -vv  # Test against installed code
+            MPLBACKEND=Agg pytest --doctest-modules -vv  # Test against installed code
   test_py36:
     <<: *test-template
     docker:
