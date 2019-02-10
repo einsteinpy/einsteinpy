@@ -52,7 +52,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            MPLBACKEND=Agg pytest --doctest-modules -vv  # Test against installed code
+            MPLBACKEND=Agg pytest PY_IGNORE_IMPORTMISMATCH=1 --doctest-modules -vv  # Test against installed code
   test_py36:
     <<: *test-template
     docker:
