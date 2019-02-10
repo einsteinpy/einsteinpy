@@ -5,7 +5,7 @@ import numpy as np
 
 from einsteinpy import constant
 from einsteinpy.integrators import RK45, RK4naive
-from einsteinpy.utils import C2S_units, S2C_8dim, S2C_units
+from einsteinpy.utils import *
 from einsteinpy.utils import schwarzschild_radius as scr
 from einsteinpy.utils import time_velocity
 
@@ -186,8 +186,8 @@ class Schwarzschild:
         start_lambda=0.0,
         end_lambda=10.0,
         stop_on_singularity=True,
-        return_cartesian=False,
         OdeMethodKwargs={"stepsize": 1e-3},
+        return_cartesian=False,
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
@@ -200,20 +200,22 @@ class Schwarzschild:
             Lambda where iteartions will stop, defaults to 100000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
+        OdeMethodKwargs : dict
+            Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
+            Dictionary with key 'stepsize' along with an float value is expected.
         return_cartesian : bool
             True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to False
-        OdeMethodKwargs : dict
-            Kwargs to be supplied to the ODESolver.
 
         Returns
         -------
         a : tuple of 2 ~numpy.array
-            (~numpy.array of lambda, 8-length ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+            (~numpy.array of lambda, (n,8) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
 
         """
         vec_list = list()
         lambda_list = list()
         singularity_reached = False
+        scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -221,11 +223,12 @@ class Schwarzschild:
             t_bound=end_lambda,
             **OdeMethodKwargs
         )
+        _scr = self.schwarzschild_r.value * 1.001
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= self.schwarzschild_r.value):
+            if (not singularity_reached) and (ODE.y[1] <= _scr):
                 warnings.warn(
                     "r component of position vector reached Schwarzchild Radius. ",
                     RuntimeWarning,
@@ -234,7 +237,6 @@ class Schwarzschild:
                     break
                 else:
                     singularity_reached = True
-        scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
 
         def _not_cartesian():
             return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
@@ -257,3 +259,83 @@ class Schwarzschild:
 
         choice_dict = {0: _not_cartesian, 1: _cartesian}
         return choice_dict[int(return_cartesian)]()
+
+    def calculate_trajectory_iterator(
+        self,
+        start_lambda=0.0,
+        stop_on_singularity=True,
+        OdeMethodKwargs={"stepsize": 1e-3},
+        return_cartesian=False,
+    ):
+        """
+        Calculate trajectory in manifold according to geodesic equation
+        Yields an iterator
+
+        Parameters
+        ----------
+        start_lambda : float
+            Starting lambda, defaults to 0.0, (lambda ~= t)
+        stop_on_singularity : bool
+            Whether to stop further computation on reaching singularity, defaults to True
+        OdeMethodKwargs : dict
+            Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
+            Dictionary with key 'stepsize' along with an float value is expected.
+        return_cartesian : bool
+            True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to Falsed
+
+        Yields
+        ------
+        tuple
+            (lambda, (8,) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+
+        """
+        singularity_reached = False
+        scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
+        ODE = RK45(
+            fun=self.f_vec,
+            t0=start_lambda,
+            y0=self.initial_vec,
+            t_bound=1e300,
+            **OdeMethodKwargs
+        )
+        _scr = self.schwarzschild_r.value * 1.001
+
+        def yielder_func():
+            nonlocal singularity_reached
+            while True:
+                if not return_cartesian:
+                    yield (ODE.t, np.multiply(ODE.y, scaling_factors))
+                else:
+                    temp = np.copy(ODE.y)
+                    temp[0] *= scaling_factors[0]
+                    temp[1:4] = SphericalToCartesian_pos(
+                        np.multiply(ODE.y[1:4], scaling_factors[1:4])
+                    )
+                    temp[5:8] = SphericalToCartesian_vel(
+                        np.multiply(ODE.y[1:4], scaling_factors[1:4]),
+                        np.multiply(ODE.y[5:8], scaling_factors[5:8]),
+                    )
+                    yield (ODE.t, temp)
+                ODE.step()
+                if (not singularity_reached) and (ODE.y[1] <= _scr):
+                    warnings.warn(
+                        "r component of position vector reached Schwarzchild Radius. ",
+                        RuntimeWarning,
+                    )
+                    if stop_on_singularity:
+                        break
+                    else:
+                        singularity_reached = True
+
+        if return_cartesian:
+            self.units_list = [
+                u.s,
+                u.m,
+                u.m,
+                u.m,
+                u.one,
+                u.m / u.s,
+                u.m / u.s,
+                u.m / u.s,
+            ]
+        return yielder_func()

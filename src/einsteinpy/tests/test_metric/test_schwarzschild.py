@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pytest
 from astropy import units as u
@@ -27,7 +29,7 @@ _c = constant.c.value
             0 * u.s,
             5.972e24 * u.kg,
             0.0,
-            0.000001,
+            0.0001,
             {"stepsize": 0.5e-6},
         ),
         (
@@ -45,7 +47,7 @@ _c = constant.c.value
             0 * u.s,
             5.972e24 * u.kg,
             0.0,
-            0.00001,
+            0.0001,
             {"stepsize": 0.5e-6},
         ),
     ],
@@ -123,3 +125,96 @@ def test_calculate_trajectory3():
         )
     ).value
     assert_allclose(v_apehelion, 29.29, rtol=0.01)
+
+
+@pytest.mark.parametrize(
+    "pos_vec, vel_vec, time, M, start_lambda, end_lambda, OdeMethodKwargs, return_cartesian",
+    [
+        (
+            [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad],
+            [0 * u.m / u.s, 0.1 * u.rad / u.s, 951.0 * u.rad / u.s],
+            0 * u.s,
+            4e24 * u.kg,
+            0.0,
+            0.0003,
+            {"stepsize": 0.3e-6},
+            True,
+        ),
+        (
+            [1 * u.km, 0.15 * u.rad, np.pi / 2 * u.rad],
+            [_c * u.m / u.s, 0.5e-5 * _c * u.rad / u.s, 1e-4 * _c * u.rad / u.s],
+            0 * u.s,
+            5.972e24 * u.kg,
+            0.0,
+            0.0004,
+            {"stepsize": 0.5e-6},
+            False,
+        ),
+    ],
+)
+def test_calculate_trajectory_iterator(
+    pos_vec,
+    vel_vec,
+    time,
+    M,
+    start_lambda,
+    end_lambda,
+    OdeMethodKwargs,
+    return_cartesian,
+):
+    cl1 = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    arr1 = cl1.calculate_trajectory(
+        start_lambda=start_lambda,
+        end_lambda=end_lambda,
+        OdeMethodKwargs=OdeMethodKwargs,
+        return_cartesian=return_cartesian,
+    )[1]
+    cl2 = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    it = cl2.calculate_trajectory_iterator(
+        start_lambda=start_lambda,
+        OdeMethodKwargs=OdeMethodKwargs,
+        return_cartesian=return_cartesian,
+    )
+    arr2_list = list()
+    for _, val in zip(range(100), it):
+        arr2_list.append(val[1])
+    arr2 = np.array(arr2_list)
+    assert_allclose(arr1[:100, :], arr2, rtol=1e-10)
+
+
+def test_calculate_trajectory_iterator_RuntimeWarning():
+    pos_vec = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
+    vel_vec = [0 * u.m / u.s, 0.01 * u.rad / u.s, 10 * u.rad / u.s]
+    time = 0 * u.s
+    M = 1e25 * u.kg
+    start_lambda = 0.0
+    OdeMethodKwargs = {"stepsize": 0.4e-6}
+    cl = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    with warnings.catch_warnings(record=True) as w:
+        it = cl.calculate_trajectory_iterator(
+            start_lambda=start_lambda,
+            OdeMethodKwargs=OdeMethodKwargs,
+            stop_on_singularity=True,
+        )
+        for _, _ in zip(range(1000), it):
+            pass
+        assert len(w) == 1
+
+
+def test_calculate_trajectory_iterator_RuntimeWarning2():
+    pos_vec = [306 * u.m, np.pi / 2 * u.rad, np.pi / 3 * u.rad]
+    vel_vec = [0 * u.m / u.s, 0.01 * u.rad / u.s, 10 * u.rad / u.s]
+    time = 0 * u.s
+    M = 1e25 * u.kg
+    start_lambda = 0.0
+    OdeMethodKwargs = {"stepsize": 0.4e-6}
+    cl = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    with warnings.catch_warnings(record=True) as w:
+        it = cl.calculate_trajectory_iterator(
+            start_lambda=start_lambda,
+            OdeMethodKwargs=OdeMethodKwargs,
+            stop_on_singularity=False,
+        )
+        for _, _ in zip(range(1000), it):
+            pass
+        assert len(w) > 1

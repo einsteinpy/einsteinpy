@@ -104,9 +104,11 @@ class RK45(integrate.RK45):
         """
         Updates the value of self.t and self.y
         """
-        if (self.t >= self._t_bound and self.direction == 1) or (
-            self.t <= self._t_bound and self.direction == -1
-        ):
-            warnings.warn("Out of bounds set by t_bound. ", RuntimeWarning)
-            return
-        super(RK45, self).step()
+
+        try:
+            super(RK45, self).step()
+        except RuntimeError:
+            warnings.warn(
+                "Attempt to step on a failed or finished solver. (Invalid Value or out of bounds of t_bound)",
+                RuntimeWarning,
+            )
