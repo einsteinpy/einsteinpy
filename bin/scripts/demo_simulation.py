@@ -13,7 +13,7 @@ vel_vec = np.array([0, 0., real_omega/15.5])
 
 
 time = 0 * u.s
-cl = Schwarzschild.from_values(pos_vec, vel_vec, time, M)
+cl = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
 ANS = cl.calculate_trajectory(end_lambda=10558464, OdeMethodKwargs={'stepsize':100})
 # ANS = cl.calculate_trajectory(end_lambda=10558464, OdeMethodKwargs={'vectorized':True, 'first_step':100.0})
 ans = ANS[1]
