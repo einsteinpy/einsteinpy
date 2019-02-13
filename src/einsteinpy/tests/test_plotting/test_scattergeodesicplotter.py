@@ -4,7 +4,7 @@ import astropy.units as u
 import numpy as np
 import pytest
 
-from einsteinpy.plotting import ScatterGeodesicPlotter, StaticGeodesicPlotter
+from einsteinpy.plotting import ScatterGeodesicPlotter
 
 
 @pytest.fixture()
