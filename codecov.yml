@@ -1,2 +1,5 @@
+coverage:
+  precision: 3
 ignore:
   - "src/einsteinpy/tests"
+  - "bin"
