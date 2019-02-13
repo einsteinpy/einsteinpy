@@ -6,3 +6,4 @@ branch = True
 source = src
 omit =
     src/einsteinpy/tests/*
+    bin/*
