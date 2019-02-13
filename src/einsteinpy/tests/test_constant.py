@@ -1,5 +1,5 @@
-import pytest
 import astropy.units as u
+import pytest
 from astropy import constants
 
 from einsteinpy.constant import Cosmo_Const, Cosmo_Const_base
@@ -21,6 +21,6 @@ def test_Cosmo_const_is_astropy_constant_with_unit_and_uncert():
 
 def test_Cosmo_Const_has_correct_metadata():
     cnst = Cosmo_Const_base
-    assert cnst.name == 'Cosmological Constant'
+    assert cnst.name == "Cosmological Constant"
     assert cnst.system == "si" and cnst.abbrev == "lambda"
     assert cnst.reference == "Wikipedia"
