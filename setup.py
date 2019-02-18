@@ -24,6 +24,7 @@ setup(
     install_requires=["numpy", "astropy", "matplotlib", "scipy>=1.0"],
     extras_require={
         "dev": [
+            "sympy>=1.1",
             "black ; python_version>='3.6'",
             "coverage",
             "isort",
@@ -37,8 +38,7 @@ setup(
             "jupyter-client",
             "ipykernel",
             "ipywidgets",
-        ],
-        "Symbolic-GR": ["sympy>=1.1"],
+        ]
     },
     packages=find_packages("src"),
     package_dir={"": "src"},
