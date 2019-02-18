@@ -13,7 +13,7 @@ with open(os.path.join("src", "einsteinpy", "__init__.py")) as fp:
 setup(
     name="einsteinpy",
     version=version["__version__"],
-    description="Python package for Orbital Mechanics",
+    description="Python package for General Relativity",
     author="Shreyas Bapat",
     author_email="bapat.shreyas@gmail.com",
     url="https://einsteinpy.readthedocs.io",
@@ -24,6 +24,7 @@ setup(
     install_requires=["numpy", "astropy", "matplotlib", "scipy>=1.0"],
     extras_require={
         "dev": [
+            "sympy>=1.1",
             "black ; python_version>='3.6'",
             "coverage",
             "isort",
