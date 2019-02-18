@@ -2,6 +2,41 @@ import numpy as np
 from sympy import Matrix, diff, eye, sin, symbols, zeros
 
 
+def riemann_curvature_tensor(list2d, syms):
+    """
+    Function to calculate Riemann Curvature Tensor of a given metric
+
+    Parameters
+    ----------
+    list2d : list
+        d list (Matrix) representing metric, containing ~sympy expressions
+    syms : list
+        1d list containing representaion of [x0,x1,x2...] in ~sympy expressions
+
+    Returns
+    -------
+    a : list
+        4d list of ~sympy expressions containing components of Riemann Tensor
+
+    """
+    christs = christoffels(list2d, syms)
+    dims = len(syms)
+    riemann_list = (np.zeros(shape=(dims, dims, dims, dims), dtype=int)).tolist()
+    _counterlist = [i for i in range(dims ** 4)]
+    for i in _counterlist:
+        t = i % dims
+        s = (int(t / dims)) % (dims)
+        r = (int(t / (dims ** 2))) % (dims)
+        n = (int(t / (dims ** 3))) % (dims)
+        temp = diff(christs[t][s][n], syms[r]) - diff(christs[t][r][n], syms[s])
+        for p in range(dims):
+            temp += (christs[p][s][n] * christs[t][p][r]) - christs[p][r][n] * christs[
+                t
+            ][p][s]
+        riemann_list[t][s][r][n] = temp
+    return riemann_list
+
+
 def christoffels(list2d, syms):
     """
     Function to calculate christoffel symbols of a given metric
@@ -23,14 +58,14 @@ def christoffels(list2d, syms):
     christlist = (np.zeros(shape=(dims, dims, dims), dtype=int)).tolist()
     mat = Matrix(list2d)
     mat_inv = mat.inv()
-    momocow = [i for i in range(dims * dims * dims)]
-    for t in momocow:
+    _counterlist = [i for i in range(dims ** 3)]
+    for t in _counterlist:
         # i,j,k each has goes from 0 to (dims-1)
         # could be done with 3 nested 'for loops' but codeclimate fucks around
         # sorry for the shitty hack
         k = t % dims
         j = (int(t / dims)) % (dims)
-        i = (int(t / (dims * dims))) % (dims)
+        i = (int(t / (dims ** 2))) % (dims)
         temp = 0
         for n in range(dims):
             temp += (mat_inv[i, n] / 2) * (

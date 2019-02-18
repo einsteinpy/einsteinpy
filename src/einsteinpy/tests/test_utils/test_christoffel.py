@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 from sympy import cos, simplify, sin, symbols
 
@@ -18,3 +19,15 @@ def test_schwarzschild_christoffels():
         )
         == 0
     )
+
+
+def test_riemann_curvature_tensor():
+    symbolstr = "r theta phi"
+    syms = symbols(symbolstr)
+    list2d = (np.zeros(shape=(3, 3), dtype=int)).tolist()
+    list2d[0][0] = 1
+    list2d[1][1] = syms[0] ** 2
+    list2d[2][2] = (syms[0] ** 2) * (sin(syms[1]) ** 2)
+    T = christoffel.riemann_curvature_tensor(list2d, syms)
+    Tnp = np.array(T)
+    assert np.all(Tnp == 0)
