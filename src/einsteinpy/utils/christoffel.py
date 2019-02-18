@@ -25,6 +25,9 @@ def christoffels(list2d, syms):
     mat_inv = mat.inv()
     momocow = [i for i in range(dims * dims * dims)]
     for t in momocow:
+        # i,j,k each has goes from 0 to (dims-1)
+        # could be done with 3 nested 'for loops' but codeclimate fucks around
+        # sorry for the shitty hack
         k = t % dims
         j = (int(t / dims)) % (dims)
         i = (int(t / (dims * dims))) % (dims)
