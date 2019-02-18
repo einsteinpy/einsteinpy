@@ -49,7 +49,7 @@
 
 |circleci| |travisci| |appveyor| |codecov| |codeclimate|
 
-EinsteinPy is an open source pure Python package dedicated to problems arising in General Relativity and relativistic physics, such as goedesics plotting for schwartzschild space-time model, calculation of schwartzschild radius for any mass given. Features like visualisation of geodesics of curved black holes and 3D visualisations are some of the features which are planned.
+EinsteinPy is an open source pure Python package dedicated to problems arising in General Relativity and relativistic physics, such as goedesics plotting for schwartzschild space-time model, calculation of schwartzschild radius for any mass given, symbolic calculation of various functions related to GR such as christoffel symbols. Features like visualisation of geodesics of curved black holes and 3D visualisations are some of the features which are planned.
 It is released under the MIT license.
 
 Documentation
@@ -74,6 +74,7 @@ EinsteinPy requires the following Python packages:
 * numba (optional), for accelerating the code
 * matplotlib, for geodesics plotting and visualisations.
 * SciPy, for solving ordinary differential equations.
+* SymPy (optional), for symbolic calculations related to GR.
 
 EinstienPy is usually tested on Linux, Windows and OS X on Python
 3.5, 3.6 and 3.7 against latest NumPy.
