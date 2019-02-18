@@ -24,7 +24,6 @@ before_install:
 
 install:
   - pip install numpy  # Required
-  - pip install sympy
   - pip install .  # Test installation correctness
   - pip install .[dev]  # Test development dependencies
 

@@ -22,7 +22,6 @@ install:
   - "choco install pandoc"
 
   - "%PIP_BIN% install numpy"
-  - "%PIP_BIN% install sympy"
   - "%PIP_BIN% install .[dev]"  # Test installation correctness
 
 build: off
