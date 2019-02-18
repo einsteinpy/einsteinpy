@@ -38,7 +38,7 @@ setup(
             "ipykernel",
             "ipywidgets",
         ],
-        "Symbolic-GR": ["sympy>=1.1"]
+        "Symbolic-GR": ["sympy>=1.1"],
     },
     packages=find_packages("src"),
     package_dir={"": "src"},
