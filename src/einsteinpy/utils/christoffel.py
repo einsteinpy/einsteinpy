@@ -15,7 +15,7 @@ def riemann_curvature_tensor(list2d, syms):
 
     Returns
     -------
-    a : list
+    list
         4d list of ~sympy expressions containing components of Riemann Tensor
 
     """
@@ -24,10 +24,12 @@ def riemann_curvature_tensor(list2d, syms):
     riemann_list = (np.zeros(shape=(dims, dims, dims, dims), dtype=int)).tolist()
     _counterlist = [i for i in range(dims ** 4)]
     for i in _counterlist:
-        t = i % dims
-        s = (int(t / dims)) % (dims)
-        r = (int(t / (dims ** 2))) % (dims)
-        n = (int(t / (dims ** 3))) % (dims)
+        # t,s,r,n each goes from 0 to (dims-1)
+        # hack for codeclimate. Could be done with 4 nested for loops
+        n = i % dims
+        r = (int(i / dims)) % (dims)
+        s = (int(i / (dims ** 2))) % (dims)
+        t = (int(i / (dims ** 3))) % (dims)
         temp = diff(christs[t][s][n], syms[r]) - diff(christs[t][r][n], syms[s])
         for p in range(dims):
             temp += (christs[p][s][n] * christs[t][p][r]) - christs[p][r][n] * christs[
@@ -50,7 +52,7 @@ def christoffels(list2d, syms):
 
     Returns
     -------
-    a : list
+    list
         3d list of ~sympy expressions containing christoffel symbols
 
     """
@@ -60,9 +62,8 @@ def christoffels(list2d, syms):
     mat_inv = mat.inv()
     _counterlist = [i for i in range(dims ** 3)]
     for t in _counterlist:
-        # i,j,k each has goes from 0 to (dims-1)
-        # could be done with 3 nested 'for loops' but codeclimate fucks around
-        # sorry for the shitty hack
+        # i,j,k each goes from 0 to (dims-1)
+        # hack for codeclimate. Could be done with 3 nested for loops
         k = t % dims
         j = (int(t / dims)) % (dims)
         i = (int(t / (dims ** 2))) % (dims)
