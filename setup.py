@@ -13,7 +13,7 @@ with open(os.path.join("src", "einsteinpy", "__init__.py")) as fp:
 setup(
     name="einsteinpy",
     version=version["__version__"],
-    description="Python package for Orbital Mechanics",
+    description="Python package for General Relativity",
     author="Shreyas Bapat",
     author_email="bapat.shreyas@gmail.com",
     url="https://einsteinpy.readthedocs.io",
@@ -37,7 +37,8 @@ setup(
             "jupyter-client",
             "ipykernel",
             "ipywidgets",
-        ]
+        ],
+        "Symbolic-GR": ["sympy>=1.1"]
     },
     packages=find_packages("src"),
     package_dir={"": "src"},
