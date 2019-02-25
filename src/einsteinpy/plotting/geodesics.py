@@ -82,7 +82,6 @@ class StaticGeodesicPlotter:
 
     def plot_attractor(self):
         if not self._attractor_present:
-            self._attractor_present = True
             self._draw_attractor()
 
     def _draw_attractor(self, min_radius=10 * u.km):
@@ -100,6 +99,7 @@ class StaticGeodesicPlotter:
     ):
 
         self.plot_attractor()
+        self._attractor_present = True
 
         lines, x0, y0 = self.plot_trajectory(
             pos_vec, vel_vec, end_lambda, step_size, color
