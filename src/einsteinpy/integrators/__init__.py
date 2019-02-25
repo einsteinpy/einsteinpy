@@ -1,1 +1,1 @@
-from .runge_kutta import RK4naive, RK45
+from .runge_kutta import RK45, RK4naive
