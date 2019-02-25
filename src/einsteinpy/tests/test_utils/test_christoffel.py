@@ -33,3 +33,15 @@ def test_riemann_curvature_tensor():
     T = christoffel.riemann_curvature_tensor(list2d, syms)
     Tnp = np.array(T)
     assert np.all(Tnp == 0)
+
+
+def test_simplify_christoffels():
+    a = sympy.symbols("a")
+    b = a ** 2 - (1 / (1 / (a ** 3 / a))) - 1 + sympy.sin(a) ** 2 + sympy.cos(a) ** 2
+    c = christoffel.simplify_christoffels([[[b]]], 1)
+    assert c[0][0][0] == 0
+
+
+def test_kerr_christoffels():
+    a = christoffel.kerr_christoffels()
+    assert a[0][0][0] == 0
