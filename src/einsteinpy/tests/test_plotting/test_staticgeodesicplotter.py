@@ -36,7 +36,7 @@ def test_plot_calls_plot_attractor(mock_plot_attractor):
     m = 4e24 * u.kg
     el = 0.002
     ss = 0.5e-6
-    cl = ScatterGeodesicPlotter(m)
+    cl = StaticGeodesicPlotter(m)
     cl.plot(r, v, el, ss)
     mock_plot_attractor.assert_called_with()
     assert cl._attractor_present
