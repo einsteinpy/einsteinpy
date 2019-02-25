@@ -82,12 +82,12 @@ class StaticGeodesicPlotter:
 
     def plot_attractor(self):
         if not self._attractor_present:
+            self._attractor_present = True
             self._draw_attractor()
 
     def _draw_attractor(self, min_radius=10 * u.km):
         radius = max(schwarzschild_radius(self.mass) * 10000, min_radius.to(u.km))
         color = "#ffcc00"
-
         self.ax.add_patch(mpl.patches.Circle((0, 0), radius.value, lw=0, color=color))
 
     def plot(
