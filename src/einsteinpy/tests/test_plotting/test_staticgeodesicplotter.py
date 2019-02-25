@@ -39,4 +39,4 @@ def test_plot_calls_plot_attractor(mock_plot_attractor):
     cl = ScatterGeodesicPlotter(m)
     cl.plot(r, v, el, ss)
     mock_plot_attractor.assert_called_with()
-    assert cl._attractor_present == False
+    assert cl._attractor_present == True
