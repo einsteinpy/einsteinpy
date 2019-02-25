@@ -7,6 +7,7 @@ from numpy.testing import assert_allclose
 
 from einsteinpy import constant
 from einsteinpy.metric import Schwarzschild
+from einsteinpy.utils import schwarzschild_radius
 
 _c = constant.c.value
 
@@ -25,7 +26,11 @@ _c = constant.c.value
         ),
         (
             [1 * u.km, 0.15 * u.rad, np.pi / 2 * u.rad],
-            [_c * u.m / u.s, 0.5e-5 * _c * u.rad / u.s, 1e-4 * _c * u.rad / u.s],
+            [
+                0.1 * _c * u.m / u.s,
+                0.5e-5 * _c * u.rad / u.s,
+                0.5e-4 * _c * u.rad / u.s,
+            ],
             0 * u.s,
             5.972e24 * u.kg,
             0.0,
@@ -41,15 +46,6 @@ _c = constant.c.value
             0.001,
             {"stepsize": 5e-6},
         ),
-        (
-            [1 * u.km, 0.8 * np.pi * u.rad, np.pi / 2 * u.rad],
-            [1.3 * _c * u.m / u.s, 1e-6 * _c * u.rad / u.s, 3e-5 * _c * u.rad / u.s],
-            0 * u.s,
-            5.972e24 * u.kg,
-            0.0,
-            0.0001,
-            {"stepsize": 0.5e-6},
-        ),
     ],
 )
 def test_calculate_trajectory(
@@ -61,12 +57,16 @@ def test_calculate_trajectory(
         end_lambda=end_lambda,
         OdeMethodKwargs=OdeMethodKwargs,
     )
+    _c, _scr = constant.c.value, schwarzschild_radius(M).value
     ans = ans[1]
-    testarray = ans[:, 4] ** 2 - (
-        (ans[:, 5] ** 2 + ans[:, 6] ** 2 + ans[:, 7] ** 2) / (_c ** 2)
+    testarray = (
+        (1 - (_scr / ans[:, 1])) * np.square(ans[:, 4])
+        - (np.square(ans[:, 5])) / ((1 - (_scr / ans[:, 1])) * (_c ** 2))
+        - np.square(ans[:, 1] / _c)
+        * (np.square(ans[:, 6]) + np.square(np.sin(ans[:, 2])) * np.square(ans[:, 7]))
     )
     comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
-    assert_allclose(testarray, comparearray, 1e-3)
+    assert_allclose(testarray, comparearray, 1e-4)
 
 
 def test_calculate_trajectory2():
@@ -198,7 +198,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning():
         )
         for _, _ in zip(range(1000), it):
             pass
-        assert len(w) == 1
+        assert len(w) >= 1
 
 
 def test_calculate_trajectory_iterator_RuntimeWarning2():
@@ -217,4 +217,4 @@ def test_calculate_trajectory_iterator_RuntimeWarning2():
         )
         for _, _ in zip(range(1000), it):
             pass
-        assert len(w) > 1
+        assert len(w) >= 1
