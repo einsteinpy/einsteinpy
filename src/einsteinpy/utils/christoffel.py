@@ -80,6 +80,18 @@ def christoffels(list2d, syms):
     return christlist
 
 
+def simplify_christoffels(list3d, dims=4):
+    """Returns a 3d list of simplified christoffel symbols."""
+    _counterlist = [i for i in range(dims ** 3)]
+    new_list3d = (np.zeros(shape=(dims, dims, dims), dtype=int)).tolist()
+    for t in _counterlist:
+        k = t % dims
+        j = (int(t / dims)) % (dims)
+        i = (int(t / (dims ** 2))) % (dims)
+        new_list3d[i][j][k] = sympy.simplify(list3d[i][j][k])
+    return new_list3d
+
+
 def schwarzschild_christoffels(symbolstr="t r theta phi"):
     """Returns the 3d list of christoffel symbols of Schwarzschild Metric."""
     list2d = [[0 for i in range(4)] for i in range(4)]
@@ -89,4 +101,23 @@ def schwarzschild_christoffels(symbolstr="t r theta phi"):
     list2d[1][1] = -1 / ((1 - (a / syms[1])) * (c ** 2))
     list2d[2][2] = -1 * (syms[1] ** 2) / (c ** 2)
     list2d[3][3] = -1 * (syms[1] ** 2) * (sympy.sin(syms[2]) ** 2) / (c ** 2)
+    return christoffels(list2d, syms)
+
+
+def kerr_christoffels(symbolstr="t r theta phi"):
+    """Returns the 3d list of christoffel symbols of Kerr metric in Plank units : G=1, c=1."""
+    list2d = [[0 for i in range(4)] for i in range(4)]
+    syms = sympy.symbols(symbolstr)
+    a, R = sympy.symbols("a R")
+    A = syms[1] ** 2 - R * syms[1] + a ** 2
+    sigma = syms[1] ** 2 + (a ** 2) * (sympy.cos(syms[2]) ** 2)
+    list2d[0][0] = (R * syms[1] / sigma) - 1
+    list2d[1][1] = sigma / A
+    list2d[2][2] = sigma
+    list2d[3][3] = (
+        (sympy.sin(syms[2]) ** 2)
+        * ((a ** 2 + syms[1] ** 2) ** 2 - (a ** 2) * (A * (sympy.sin(syms[2]) ** 2)))
+    ) / sigma
+    list2d[3][0] = -1 * (R * a * (syms[1])) * (sympy.sin(syms[2]) ** 2) / sigma
+    list2d[0][3] = list2d[3][0]
     return christoffels(list2d, syms)
