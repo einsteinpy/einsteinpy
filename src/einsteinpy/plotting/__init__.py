@@ -1,1 +1,1 @@
-from .geodesics import StaticGeodesicPlotter, ScatterGeodesicPlotter
+from .geodesics import ScatterGeodesicPlotter, StaticGeodesicPlotter

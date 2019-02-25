@@ -26,7 +26,7 @@ def test_staticgeodesicplotter_has_axes(dummy_data):
     cl = StaticGeodesicPlotter(m)
     assert isinstance(cl.ax, mpl.axes.SubplotBase)
     assert cl.time.value == 0.0
-    assert cl._attractor_present == False
+    assert cl._attractor_present is False
 
 
 @mock.patch("einsteinpy.plotting.geodesics.StaticGeodesicPlotter.plot_attractor")
@@ -39,4 +39,4 @@ def test_plot_calls_plot_attractor(mock_plot_attractor):
     cl = ScatterGeodesicPlotter(m)
     cl.plot(r, v, el, ss)
     mock_plot_attractor.assert_called_with()
-    assert cl._attractor_present == True
+    assert cl._attractor_present
