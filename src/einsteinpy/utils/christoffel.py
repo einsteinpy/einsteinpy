@@ -81,7 +81,22 @@ def christoffels(list2d, syms):
 
 
 def simplify_christoffels(list3d, dims=4):
-    """Returns a 3d list of simplified christoffel symbols."""
+    """
+    Returns a 3d list of simplified christoffel symbols.
+    
+    Parameters
+    ----------
+    list3d : list
+        3d list containing christoffel symbols expression
+    dims : int
+        dimension of space, defaults to 4
+    
+    Returns
+    -------
+    list
+        3d list containing simplified christoffel symbols
+    
+    """
     _counterlist = [i for i in range(dims ** 3)]
     new_list3d = (np.zeros(shape=(dims, dims, dims), dtype=int)).tolist()
     for t in _counterlist:
@@ -93,7 +108,20 @@ def simplify_christoffels(list3d, dims=4):
 
 
 def schwarzschild_christoffels(symbolstr="t r theta phi"):
-    """Returns the 3d list of christoffel symbols of Schwarzschild Metric."""
+    """
+    Returns the 3d list of christoffel symbols of Schwarzschild Metric.
+    
+    Parameters
+    ----------
+    symbolstr : string
+        symbols to be used to define schwarzschild space, defaults to 't r theta phi'
+
+    Returns
+    -------
+    list
+        3d list of christoffel symbols for schwarzschild metric
+    
+    """
     list2d = [[0 for i in range(4)] for i in range(4)]
     syms = sympy.symbols(symbolstr)
     c, a = sympy.symbols("c a")
@@ -105,7 +133,20 @@ def schwarzschild_christoffels(symbolstr="t r theta phi"):
 
 
 def kerr_christoffels(symbolstr="t r theta phi"):
-    """Returns the 3d list of christoffel symbols of Kerr metric in Plank units : G=1, c=1."""
+    """
+    Returns the 3d list of christoffel symbols of Kerr metric(BL coordinates) in Plank units : G=1, c=1.
+
+    Parameters
+    ----------
+    symbolstr : string
+        symbols to be used to define kerr space in BL coordinates, defaults to 't r theta phi'
+
+    Returns
+    -------
+    list
+        3d list of christoffel symbols for kerr metric
+    
+    """
     list2d = [[0 for i in range(4)] for i in range(4)]
     syms = sympy.symbols(symbolstr)
     a, R = sympy.symbols("a R")
