@@ -1,5 +1,5 @@
-Schwartzschild Geometry Utilities
-=================================
+Schwarzschild Geometry Utilities
+================================
 
-.. automodule:: einsteinpy.utils.schwartzschild_utils
+.. automodule:: einsteinpy.utils.schwarzschild_utils
     :members:
