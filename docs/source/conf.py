@@ -20,6 +20,8 @@ intersphinx_mapping = {
     "matplotlib": ("http://matplotlib.org", None),
 }
 
+autodoc_member_order = 'bysource'
+
 html_theme_options = {
     "logo": "logo_HD.png",
     "logo_name": True,
@@ -42,7 +44,24 @@ add_function_parentheses = True
 add_module_names = True
 
 needs_sphinx = "1.3"
-extensions = ["alabaster"]
+extensions = [
+    'alabaster',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.todo',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.intersphinx',
+    'nbsphinx',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'sphinx.ext.mathjax', #New module for matrix visualization
+    'sphinx.ext.graphviz', # For creating the diagrams
+]
+
+def setup(app):
+    # https://docs.readthedocs.io/en/latest/guides/adding-custom-css.html
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx.application.Sphinx.add_js_file
+    app.add_js_file('https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js')
+    app.add_js_file("https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js")
 
 templates_path = ["_templates"]
 
@@ -56,6 +75,7 @@ html_theme_path = [alabaster.get_path()]
 
 html_title = "EinsteinPy"
 
+htmlhelp_basename = 'einsteinpydoc'
 html_sidebars = {
     "**": [
         "about.html",
