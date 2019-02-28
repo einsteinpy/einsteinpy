@@ -21,7 +21,7 @@
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
    :target: https://einsteinpy-project.readthedocs.io/en/latest/?badge=latest
-   
+
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
@@ -50,5 +50,8 @@ Contents
 
 .. toctree::
     :maxdepth: 2
-    
-    Getting_started
+
+    getting_started
+    jupyter
+    changelog
+    api/index
