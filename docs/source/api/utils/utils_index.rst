@@ -8,6 +8,6 @@ of the schwartzschild radius, calculation of the rate of expansion of the univer
     :maxdepth: 2
 
     christoffel
-    coord_transformations
+    coord_transforms
     scalar_factor
-    schwartzschild_utils
+    schwarzschild_utils

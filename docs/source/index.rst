@@ -1,4 +1,5 @@
-.. einsteinpy
+EinsteinPy - Making Einstein possible in Python
+===============================================
 
 .. image:: http://einsteinpy.github.io/img/logo.png
    :target: http://einsteinpy.github.io/
