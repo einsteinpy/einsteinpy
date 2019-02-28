@@ -1,6 +1,6 @@
 ---
-name: Custom issue template
-about: Issue for every other thing!
+name: General Issue (For Maintainers)
+about: Maintainers - Open this!
 title: ''
 labels: ''
 assignees: ''
