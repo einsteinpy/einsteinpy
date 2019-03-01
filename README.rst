@@ -16,6 +16,9 @@
    :alt: Join the chat at https://gitter.im/EinsteinPy-Project/EinsteinPy
    :target: https://gitter.im/EinsteinPy-Project/EinsteinPy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
+.. |riotchat| image:: https://img.shields.io/matrix/einsteinpy:matrix.org.svg?style=flat-square
+   :target: https://riot.im/app/#/room/#einsteinpy:matrix.org
+
 .. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
    :target: https://github.com/einsteinpy/einsteinpy/raw/master/COPYING
 
@@ -45,7 +48,7 @@
 :Website: https://einsteinpy.github.io/
 :Version: 0.1.dev0
 
-|astropy| |mailing| |gitter| |license| |docs|
+|astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
 |circleci| |travisci| |appveyor| |codecov| |codeclimate|
 
