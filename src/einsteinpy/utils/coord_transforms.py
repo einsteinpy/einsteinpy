@@ -13,7 +13,7 @@ def CartesianToSpherical_pos(pos_vec):
     
     Returns
     -------
-    a : ~numpy.array
+    ~numpy.array
         3-length numpy array with r, theta, phi (m, rad, rad)
     """
     r_vec = np.zeros(shape=(3,), dtype=float)
@@ -37,7 +37,7 @@ def CartesianToSpherical_vel(pos_vec, vel_vec):
 
     Returns
     -------
-    a : ~numpy.array
+    ~numpy.array
         3-length numpy array with V_r, V_theta, V_phi (m/s, rad/s, rad/s)
 
     """
@@ -66,7 +66,7 @@ def SphericalToCartesian_pos(pos_vec):
     
     Returns
     -------
-    a : ~numpy.array
+    ~numpy.array
         3-length numpy array with x, y, z in m.
 
     """
@@ -90,7 +90,7 @@ def SphericalToCartesian_vel(pos_vec, vel_vec):
 
     Returns
     -------
-    a : ~numpy.array
+    ~numpy.array
         3-length numpy array having vx, vy, vz in SI units(m/s)
 
     """
@@ -128,7 +128,7 @@ def C2S_units(pos_vec, vel_vec):
 
     Returns
     -------
-    a : tuple
+    tuple
         consisting of 2 lists
         ([r, theta, phi], [vr, vtheta, vphi]) in units
         ([u.m, u.rad, u.rad],[u.m/u.s, u.rad/u.s, u.rad/u.s])
@@ -163,7 +163,7 @@ def S2C_units(pos_vec, vel_vec):
 
     Returns
     -------
-    a : tuple
+    tuple
         consisting of 2 lists
         ([x, y, z], [vx, vy, vz]) in units
         ([u.m, u.m, u.m],[u.m/u.s, u.m/u.s, u.m/u.s])
@@ -192,7 +192,7 @@ def S2C_8dim(vec):
 
     Returns
     -------
-    a : ~numpy.array
+    ~numpy.array
         Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
         
     """

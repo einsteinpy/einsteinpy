@@ -208,7 +208,7 @@ class Schwarzschild:
 
         Returns
         -------
-        a : tuple of 2 ~numpy.array
+        tuple
             (~numpy.array of lambda, (n,8) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
 
         """

@@ -44,7 +44,7 @@ def time_velocity(pos_vec, vel_vec, mass):
 
     Returns
     -------
-    a : ~astropy.units.one
+    ~astropy.units.one
         Velocity of time
 
     """
