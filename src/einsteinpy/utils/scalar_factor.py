@@ -22,7 +22,7 @@ def scalar_factor(t, era="md", tuning_param=1.0):
 
     Returns
     -------
-    a : float
+    float
         Value of scalar factor at time t.
 
     Raises
@@ -61,7 +61,7 @@ def scalar_factor_derivative(t, era="md", tuning_param=1.0):
 
     Returns
     -------
-    a : float
+    float
         Value of derivative of scalar factor at time t.
 
     Raises

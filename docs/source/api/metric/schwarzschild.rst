@@ -1,8 +1,7 @@
-Geodesics module
-================
+schwarzschild module
+====================
 
-This module contains the basic classes for static plottings in
-2-dimensions for scatter and line:
+This module contains the basic class for calculating time-like geodesics in 4d Space-Time:
 
 .. automodule:: einsteinpy.metric.schwarzschild
     :members:
