@@ -36,15 +36,24 @@ EinsteinPy - Making Einstein possible in Python
 .. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
 
+.. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
+   :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
+   
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/b95ml54ebspx6sm9?svg=true
+   :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy
+
+.. |orcid-shreyas| image:: https://img.shields.io/badge/id-0000--0002--0870--4665-a6ce39.svg
+   :target: https://orcid.org/0000-0002-0870-4665
+
 
 
 :Name: einsteinpy
 :Website: https://einsteinpy.github.io/
 :Version: 0.1.dev0
 
-|astropy| |mailing| |gitter| |riotchat| |license|
+|astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
-|travisci| |codeclimate| |circleci|
+|circleci| |travisci| |appveyor| |codecov| |codeclimate|
 
 EinsteinPy is an open source pure Python package dedicated to problems arising in General Relativity and relativistic physics, such as goedesics plotting for schwartzschild space-time model, calculation of schwartzschild radius for any mass given. Features like visualisation of geodesics of curved black holes and 3D visualisations are some of the features which are planned.
 It is released under the MIT license.
