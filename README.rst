@@ -12,6 +12,9 @@
 .. |mailing| image:: https://img.shields.io/badge/mailing%20list-groups.io-8cbcd1.svg?style=flat-square
    :target: https://groups.io/g/einsteinpy-dev
 
+.. |doi| image:: https://zenodo.org/badge/168302584.svg?style=flat-square
+   :target: https://zenodo.org/badge/latestdoi/168302584
+
 .. |gitter| image:: https://badges.gitter.im/EinsteinPy-Project/EinsteinPy.svg
    :alt: Join the chat at https://gitter.im/EinsteinPy-Project/EinsteinPy
    :target: https://gitter.im/EinsteinPy-Project/EinsteinPy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
@@ -24,7 +27,7 @@
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
    :target: https://einsteinpy-project.readthedocs.io/en/latest/?badge=latest
-   
+
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
@@ -34,10 +37,10 @@
 
 .. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
-   
+
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
    :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
-   
+
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/b95ml54ebspx6sm9?svg=true
    :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy
 
@@ -122,13 +125,35 @@ Feel free to join!
 
 https://groups.io/g/einsteinpy-dev
 
+Please join our `[matrix]`_ channel or `gitter`_ chat room for further queries.
+
+.. _`[matrix]`: https://matrix.to/#/#einsteinpy:matrix.org
+
+.. _`gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
+
+Citing
+======
+
+If you use poliastro on your project, please
+`drop us a line <mailto:einsteinpy.project@gmail.com>`_.
+
+You can also use the DOI to cite it in your publications. This is the latest
+one:
+
+|doi|
+
+And this is an example citation format::
+
+ Shreyas Bapat et al.. (2019). EinsteinPy: einsteinpy 0.1.0. Zenodo. 10.5281/zenodo.2582388
+
+
 License
 =======
 
 |license|
 
 EinsteinPy is released under the MIT license, hence allowing commercial
-use of the library. Please refer to `COPYING`_. 
+use of the library. Please refer to `COPYING`_.
 
 .. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/master/COPYING
 
@@ -138,13 +163,13 @@ FAQ
 What's up with the name?
 ------------------------
 
-EinsteinPy comes from the name of the famous physicist, nobel laureate, revolutionary person, Prof. Albert Einstein. 
+EinsteinPy comes from the name of the famous physicist, nobel laureate, revolutionary person, Prof. Albert Einstein.
 This is a small tribute from our part for the amazing work he did for the science.
 
 Can I do <insert awesome thing> with EinsteinPy?
 -----------------------------------------------
 
-EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it. 
+EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it.
 We welcome every contribution and will be happy to include it in einteinpy.
 
 What's the future of the project?
@@ -159,8 +184,7 @@ the project.
 Inspiration
 -----------
 
-The whole documentation, and code structure is shamelessly inspired by `poliastro`_ . We really thank the developers to 
+The whole documentation, and code structure is shamelessly inspired by `poliastro`_ . We really thank the developers to
 help us acheive this.
 
 .. _`poliastro`: https://docs.poliastro.space/
-
