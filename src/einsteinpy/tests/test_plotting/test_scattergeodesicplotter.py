@@ -27,7 +27,9 @@ def test_plot_attractor_is_called_only_once(dummy_data):
     assert cl._attractor_present == True
 
 
-@mock.patch("einsteinpy.plotting.geodesics_static.ScatterGeodesicPlotter._plot_attractor")
+@mock.patch(
+    "einsteinpy.plotting.geodesics_static.ScatterGeodesicPlotter._plot_attractor"
+)
 def test_plot_calls_plot_attractor(mock_plot_attractor):
     r = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
     v = [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s]
