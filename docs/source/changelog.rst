@@ -12,10 +12,14 @@ and will be supported only until late 2019.
 Features
 ........
 
-* Schwarzschild Geometry Analysis
+* Schwarzschild Geometry Analysis and trajectory calculation
+* Symbolic Calculation of various tensors in GR
+  * Christoffel Symbols
+  * Riemann Curvature Tensor
 * Static Geodesic Plotting
-* Calculation of Universe expansion
+* Velocity of Coordinate time w.r.t proper time
 * Easy Calculation of Schwarzschild Radius
+* Coordinate conversion with unit handling
 
 
 Contributors
@@ -28,3 +32,4 @@ This is the complete list of the people that contributed to this release, with a
 * Bhavya Bhatt+
 * Priyanshu Khandelwal+
 * Gaurav Kumar+
+* Hrishikesh Sarode+
