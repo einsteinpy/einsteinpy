@@ -55,7 +55,7 @@ def CartesianToBL_vel(pos_vec, vel_vec, a):
         (dw_dt / 2)
         + (
             (w * dw_dt + 4 * (a ** 2) * pos_vec[2] * vel_vec[2])
-            / np.sqrt((w ** 2) + (4 * (a ** 2) * (pos_vec[2] ** 2)))
+            / (2 * np.sqrt((w ** 2) + (4 * (a ** 2) * (pos_vec[2] ** 2))))
         )
     )
     v_vec[1] = (-1 / np.sqrt(1 - np.square(pos_vec[2] / r))) * (
