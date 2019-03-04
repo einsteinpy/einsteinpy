@@ -2,7 +2,30 @@ import numpy as np
 
 
 def CartesianToBL_pos(pos_vec, a):
-    pass
+    """
+    Function to convert Cartesian to Boyer-Lindquits coordinates (position vector)
+
+    Parameters
+    ----------
+    pos_vec : ~numpy.array
+        3-length numpy array having x, y, z coordinates in SI units(m)
+    a : float
+        Any constant
+
+    Returns
+    -------
+    ~numpy.array
+        3-length numpy array with r, theta, phi in (m, rad, rad)
+
+    """
+    r_vec = np.zeros(shape=(3,), dtype=float)
+    w = np.sum(np.square(pos_vec[:3])) - (a ** 2)
+    r_vec[0] = np.sqrt(
+        0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (pos_vec[2] ** 2))))
+    )
+    r_vec[1] = np.arccos(pos_vec[2] / r_vec[0])
+    r_vec[2] = np.arctan2(pos_vec[1], pos_vec[0])
+    return r_vec
 
 
 def CartesianToBL_vel(pos_vec, vel_vec, a):
