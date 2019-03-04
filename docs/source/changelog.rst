@@ -14,12 +14,17 @@ Features
 
 * Schwarzschild Geometry Analysis and trajectory calculation
 * Symbolic Calculation of various tensors in GR
-  * Christoffel Symbols
-  * Riemann Curvature Tensor
+
+ * Christoffel Symbols
+ * Riemann Curvature Tensor
+
 * Static Geodesic Plotting
 * Velocity of Coordinate time w.r.t proper time
 * Easy Calculation of Schwarzschild Radius
 * Coordinate conversion with unit handling
+
+ * Spherical/Cartesian Coordinates
+ * Boyer-Lindquist/Cartesian Coordinates
 
 
 Contributors

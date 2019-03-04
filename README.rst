@@ -134,7 +134,7 @@ Please join our `[matrix]`_ channel or `gitter`_ chat room for further queries.
 Citing
 ======
 
-If you use poliastro on your project, please
+If you use EinsteinPy on your project, please
 `drop us a line <mailto:einsteinpy.project@gmail.com>`_.
 
 You can also use the DOI to cite it in your publications. This is the latest
@@ -167,7 +167,7 @@ EinsteinPy comes from the name of the famous physicist, nobel laureate, revoluti
 This is a small tribute from our part for the amazing work he did for the science.
 
 Can I do <insert awesome thing> with EinsteinPy?
------------------------------------------------
+------------------------------------------------
 
 EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it.
 We welcome every contribution and will be happy to include it in einteinpy.
@@ -179,7 +179,7 @@ EinsteinPy is actively maintained and we hope to receive an influx of new contri
 The best way to get an idea of the roadmap is to see the `Milestones`_ of
 the project.
 
-.. _`Milestones`: https://github.com/poliastro/poliastro/milestones
+.. _`Milestones`: https://github.com/einsteinpy/einsteinpy/milestones
 
 Inspiration
 -----------
