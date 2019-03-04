@@ -29,7 +29,42 @@ def CartesianToBL_pos(pos_vec, a):
 
 
 def CartesianToBL_vel(pos_vec, vel_vec, a):
-    pass
+    """
+    Function to convert velocity in Cartesian coordinates to velocity in Boyer-Lindquist coordinates
+
+    Parameters
+    ----------
+    pos_vec : ~numpy.array
+        3-length numpy array having x, y, z coordinates in SI units(m)
+    vel_vec : ~numpy.array
+        3-length numpy array with vx, vy, vz in (m/s)
+    a : float
+        Any constant
+
+    Returns
+    -------
+    ~numpy.array
+        3-length numpy array having v_r, v_theta, v_phi in (m/s, rad/s, rad/s)
+    
+    """
+    v_vec = np.zeros(shape=(3,), dtype=float)
+    w = np.sum(np.square(pos_vec[:3])) - (a ** 2)
+    dw_dt = 2 * np.sum(np.multiply(pos_vec, vel_vec))
+    r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (pos_vec[2] ** 2)))))
+    v_vec[0] = (1 / (2 * r)) * (
+        (dw_dt / 2)
+        + (
+            (w * dw_dt + 4 * (a ** 2) * pos_vec[2] * vel_vec[2])
+            / np.sqrt((w ** 2) + (4 * (a ** 2) * (pos_vec[2] ** 2)))
+        )
+    )
+    v_vec[1] = (-1 / np.sqrt(1 - np.square(pos_vec[2] / r))) * (
+        (vel_vec[2] * r - v_vec[0] * pos_vec[2]) / (r ** 2)
+    )
+    v_vec[2] = (1 / (1 + np.square(pos_vec[1] / pos_vec[0]))) * (
+        (vel_vec[1] * pos_vec[0] - vel_vec[0] * pos_vec[1]) / (pos_vec[0] ** 2)
+    )
+    return v_vec
 
 
 def BLToCartesian_pos(pos_vec, a):
