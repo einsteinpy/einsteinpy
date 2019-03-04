@@ -20,7 +20,7 @@ def CartesianToSpherical_pos(pos_vec):
     tempvar = np.sqrt(pos_vec[0] ** 2 + pos_vec[1] ** 2 + pos_vec[2] ** 2)
     r_vec[0] = tempvar
     r_vec[1] = np.arccos(pos_vec[2] / tempvar)
-    r_vec[2] = np.arctan(pos_vec[1] / pos_vec[0])
+    r_vec[2] = np.arctan2(pos_vec[1], pos_vec[0])
     return r_vec
 
 
