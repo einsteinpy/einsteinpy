@@ -33,8 +33,8 @@ class KerrNull:
 
     @classmethod
     def _classmethod_handler(cls, pos_vec, vel_dir, freq, time, M, a):
-        E = constant.h.value * freq
-        total_p = constant.h.value * freq  # total momentum
+        E = 1  # constant.h.value * freq
+        total_p = 1  # constant.h.value * freq  # total momentum
         # breaking momentum into components
         cs_vel_dir = utils.BLToCartesian_vel(pos_vec, vel_dir, a)
         cs_pos_vec = utils.BLToCartesian_pos(pos_vec, a)
@@ -148,6 +148,7 @@ class KerrNull:
     def f_vec(self, ld, sixvec):
         sigma = self.sigma(sixvec[1], sixvec[2], self.a)
         delta = self.delta(sixvec[1], self.schwarzschild_r, self.a)
+        sd = sigma * delta
         # carters_const = self.carters_const(sixvec[2], sixvec[5], self.E, self.Lz)
         kappa = self.kappa(sixvec[2], sixvec[5], self.E, self.Lz)
 
@@ -156,7 +157,7 @@ class KerrNull:
                 2 * sixvec[1] * ((sixvec[1] ** 2) + (self.a ** 2)) * self.E
                 - 2 * self.a * self.Lz
             )
-            return self.E + (num / (sigma * delta))
+            return self.E + (num / sd)
 
         def f_r():
             return delta * sixvec[4] / sigma
@@ -167,14 +168,14 @@ class KerrNull:
         def f_phi():
             num1 = 2 * self.a * sixvec[1] * self.E
             num2 = (sigma - 2 * sixvec[1]) * self.Lz / (np.sin(sixvec[2]) ** 2)
-            return (num1 + num2) / (sigma * delta)
+            return (num1 + num2) / sd
 
         def f_p_r():
             term1 = kappa * (1 - sixvec[1])
             term2 = 2 * sixvec[1] * ((sixvec[1] ** 2) + (self.a ** 2)) * self.E
             term3 = -2 * self.a * self.E * self.Lz
             term4 = 2 * (sixvec[4] ** 2) * (sixvec[1] - 1) / sigma
-            return ((term1 + term2 + term3) / (sigma * delta)) - term4
+            return ((term1 + term2 + term3) / sd) - term4
 
         def f_p_theta():
             term1 = np.sin(sixvec[2]) * np.cos(sixvec[2]) / sigma
@@ -188,7 +189,7 @@ class KerrNull:
 
     def calculate_trajectory(self, end_lambda, OdeMethodKwargs):
         vec_list, lambda_list = list(), list()
-        ODE = RK45(self.f_vec, 0., self.initial_sixvec, 1e300, **OdeMethodKwargs)
+        ODE = RK45(self.f_vec, 0.0, self.initial_sixvec, 1e300, **OdeMethodKwargs)
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
