@@ -57,6 +57,9 @@ pip-wheel-metadata
 .pydevproject
 .settings
 
+# folder for personal use (running test scripts while development)
+_scratchpad
+
 # Mac OSX
 .DS_Store
 
