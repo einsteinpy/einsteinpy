@@ -1,9 +1,11 @@
 import astropy.units as u
+import numpy as np
 from astropy import constants
 
-c = constants.c.value * (u.m / u.s)
-
-G = constants.G.value * ((u.m ** 3) / (u.kg * u.s ** 2))
+h = constants.h  # planck's constant
+h_red = constants.h / (2 * np.pi)  # Reduced planck's constant
+c = constants.c  # speed of light
+G = constants.G  # Gravitational Constant
 
 Cosmo_Const_base = constants.Constant(
     "lambda",
