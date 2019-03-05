@@ -145,7 +145,7 @@ class KerrNull:
             + (self.a ** 2 * E ** 2)
         )
 
-    def f_vec(self, sixvec):
+    def f_vec(self, ld, sixvec):
         sigma = self.sigma(sixvec[1], sixvec[2], self.a)
         delta = self.delta(sixvec[1], self.schwarzschild_r, self.a)
         # carters_const = self.carters_const(sixvec[2], sixvec[5], self.E, self.Lz)
@@ -185,3 +185,13 @@ class KerrNull:
         return np.array(
             [f_t(), f_r(), f_theta(), f_phi(), f_p_r(), f_p_theta()], dtype=float
         )
+
+    def calculate_trajectory(self, end_lambda, OdeMethodKwargs):
+        vec_list, lambda_list = list(), list()
+        ODE = RK45(self.f_vec, 0., self.initial_sixvec, 1e300, **OdeMethodKwargs)
+        while ODE.t < end_lambda:
+            vec_list.append(ODE.y)
+            lambda_list.append(ODE.t)
+            ODE.step()
+
+        return (np.array(lambda_list), np.array(vec_list))
