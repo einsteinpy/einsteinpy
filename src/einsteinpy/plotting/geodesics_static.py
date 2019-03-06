@@ -47,6 +47,12 @@ class ScatterGeodesicPlotter:
     def show(self):
         plt.show()
 
+    def _save_plot(self, name=None):
+        if name is None:
+            plt.savefig("scatter_geodesic.png")
+        else:
+            plt.savefig("{}.png".format(name))
+
 
 class StaticGeodesicPlotter:
     """
@@ -113,3 +119,9 @@ class StaticGeodesicPlotter:
         self.ax.set_aspect(1)
 
         return lines
+
+    def _save_plot(self, name=None):
+        if name is None:
+            plt.savefig("static_geodesic.png")
+        else:
+            plt.savefig("{}.png".format(name))
