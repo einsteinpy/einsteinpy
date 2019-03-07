@@ -11,6 +11,7 @@ version = einsteinpy.__version__
 release = version
 highlight_language = "python"
 pygments_style = "sphinx"
+autoclass_content = "both"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
