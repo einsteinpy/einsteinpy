@@ -38,3 +38,4 @@ This is the complete list of the people that contributed to this release, with a
 * Priyanshu Khandelwal+
 * Gaurav Kumar+
 * Hrishikesh Sarode+
+* Sashank Mishra+

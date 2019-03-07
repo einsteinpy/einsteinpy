@@ -47,11 +47,8 @@ class ScatterGeodesicPlotter:
     def show(self):
         plt.show()
 
-    def save(self, name=None):
-        if name is None:
-            plt.savefig("scatter_geodesic.png")
-        else:
-            plt.savefig(name)
+    def save(self, name="scatter_geodesic.png"):
+        plt.savefig(name)
 
 
 class StaticGeodesicPlotter:
@@ -120,8 +117,5 @@ class StaticGeodesicPlotter:
 
         return lines
 
-    def save(self, name=None):
-        if name is None:
-            plt.savefig("static_geodesic.png")
-        else:
-            plt.savefig(name)
+    def save(self, name="static_geodesic.png"):
+        plt.savefig(name)
