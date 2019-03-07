@@ -79,7 +79,6 @@ Contents
     :maxdepth: 2
 
     getting_started
-    user_guide
     jupyter
     changelog
     api/index
