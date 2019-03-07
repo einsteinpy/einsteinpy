@@ -24,7 +24,7 @@ intersphinx_mapping = {
 autodoc_member_order = 'bysource'
 
 html_theme_options = {
-    "logo": "logo_HD.png",
+    "logo": "logo_small.png",
     "logo_name": True,
     "logo_text_align": "center",
     "travis_button": True,
