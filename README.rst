@@ -23,23 +23,23 @@
    :target: https://riot.im/app/#/room/#einsteinpy:matrix.org
 
 .. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
-   :target: https://github.com/einsteinpy/einsteinpy/raw/master/COPYING
+   :target: https://github.com/einsteinpy/einsteinpy/raw/0.1.0/COPYING
 
-.. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://einsteinpy-project.readthedocs.io/en/latest/?badge=latest
+.. |docs| image:: https://img.shields.io/badge/docs-v0.1.0-brightgreen.svg?style=flat-square
+   :target: https://einsteinpy-project.readthedocs.io/en/v0.1.0/?badge=v0.1.0
 
-.. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
+.. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/0.1.0.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
 .. |codeclimate| image:: https://api.codeclimate.com/v1/badges/6efb3f754d20777d8b8d/maintainability
    :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
    :alt: Maintainability
 
-.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=circleci
+.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/0.1.0.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
-   :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
+   :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=0.1.0
 
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/b95ml54ebspx6sm9?svg=true
    :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy
@@ -49,7 +49,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.github.io/
-:Version: 0.1.dev0
+:Version: 0.1.0
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
@@ -111,7 +111,7 @@ Contributing
 EinsteinPy is a community project, hence all contributions are more than
 welcome! For more information, head to `CONTRIBUTING.rst`_.
 
-.. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/master/CONTRIBUTING.rst
+.. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/0.1.0/CONTRIBUTING.rst
 
 Support
 =======
@@ -155,7 +155,7 @@ License
 EinsteinPy is released under the MIT license, hence allowing commercial
 use of the library. Please refer to `COPYING`_.
 
-.. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/master/COPYING
+.. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/0.1.0/COPYING
 
 FAQ
 ===

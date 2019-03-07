@@ -8,6 +8,7 @@ os: osx
 branches:
   only:
     - master
+    - 0.1.x
 
 env:
   global:
