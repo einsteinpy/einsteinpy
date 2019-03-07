@@ -52,3 +52,17 @@ def test_plot_show_shows_plot(mock_show):
     cl.plot(r, v, el, ss)
     cl.show()
     mock_show.assert_called_with()
+
+
+@mock.patch("einsteinpy.plotting.geodesics_static.plt.savefig")
+def test_plot_save_saves_plot(mock_save):
+    r = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
+    v = [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s]
+    m = 4e24 * u.kg
+    el = 0.002
+    ss = 0.5e-6
+    cl = ScatterGeodesicPlotter(m)
+    cl.plot(r, v, el, ss)
+    name = "test_plot.png"
+    cl.save(name)
+    mock_save.assert_called_with(name)
