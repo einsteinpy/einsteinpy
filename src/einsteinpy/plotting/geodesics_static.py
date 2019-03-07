@@ -51,7 +51,7 @@ class ScatterGeodesicPlotter:
         if name is None:
             plt.savefig("scatter_geodesic.png")
         else:
-            plt.savefig("{}.png".format(name))
+            plt.savefig(name)
 
 
 class StaticGeodesicPlotter:
@@ -124,4 +124,4 @@ class StaticGeodesicPlotter:
         if name is None:
             plt.savefig("static_geodesic.png")
         else:
-            plt.savefig("{}.png".format(name))
+            plt.savefig(name)
