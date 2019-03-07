@@ -85,6 +85,7 @@ Development Version
 
   .. code-block:: sh
 
+       $ git clone your_account/einsteinpy.git
        $ pip install --editable /path/to/einsteinpy[dev]
 
 Please open an issue `here`_ if you feel any
