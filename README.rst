@@ -49,7 +49,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.github.io/
-:Version: 0.1.dev0
+:Version: 0.2.dev0
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
