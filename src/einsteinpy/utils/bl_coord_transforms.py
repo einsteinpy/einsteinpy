@@ -19,7 +19,7 @@ def CartesianToBL_pos(pos_vec, a):
 
     """
     r_vec = np.zeros(shape=(3,), dtype=float)
-    w = np.sum(np.square(pos_vec[:3])) - (a ** 2)
+    w = float(np.sum(np.square(pos_vec[:3])) - (a ** 2))
     r_vec[0] = np.sqrt(
         0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (pos_vec[2] ** 2))))
     )
@@ -48,8 +48,8 @@ def CartesianToBL_vel(pos_vec, vel_vec, a):
     
     """
     v_vec = np.zeros(shape=(3,), dtype=float)
-    w = np.sum(np.square(pos_vec[:3])) - (a ** 2)
-    dw_dt = 2 * np.sum(np.multiply(pos_vec, vel_vec))
+    w = float(np.sum(np.square(pos_vec[:3])) - (a ** 2))
+    dw_dt = float(2 * np.sum(np.multiply(pos_vec, vel_vec)))
     r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (pos_vec[2] ** 2)))))
     v_vec[0] = (1 / (2 * r)) * (
         (dw_dt / 2)
