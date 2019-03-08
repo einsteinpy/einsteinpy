@@ -85,3 +85,74 @@ Utilities: :py:class:`~einsteinpy.utils`
 
 EinsteinPy provides a great set of utility functions which are frequently used in general and numerical relativity.
 
+* Conversion of Coordinates (both position & velocity)
+ 
+ * Cartesian/Spherical
+ * Cartesian/Boyer-Lindquist
+
+* Symbolic calculation of relevant terms in GR 
+
+ * Christoffel Symbols
+ * Riemann Curvature Tensor
+
+* Calculation of Schwarzschild Geometry related quantities
+
+ * Schwarzschild Radius
+ * Rate of change of coordinate time w.r.t. proper time
+
+Coordinate Conversion
+=====================
+
+In a short example, we would see coordinate conversion between Cartesian and Boyer-Lindquist Coordinates.
+
+Using the functions:
+
+* :py:class:`~einsteinpy.utils.bl_coord_transforms.CartesianToBL_pos`
+* :py:class:`~einsteinpy.utils.bl_coord_transforms.CartesianToBL_vel`
+* :py:class:`~einsteinpy.utils.bl_coord_transforms.BLToCartesian_pos`
+* :py:class:`~einsteinpy.utils.bl_coord_transforms.BLToCartesian_vel`
+
+    .. code-block:: python
+
+        from einsteinpy import utils
+
+        pos_vec = np.array([200, -100, 20.5])
+        vel_vec = np.array([-12, 14, 0.5])
+        a = 0.5
+        bl_pos_vec = utils.CartesianToBL_pos(pos_vec, a)
+        bl_vel_vec = utils.CartesianToBL_vel(pos_vec, vel_vec, a)
+        cs_pos_vec = utils.BLToCartesian_pos(bl_pos_vec, a)
+        cs_vel_vec = utils.BLToCartesian_vel(bl_pos_vec, bl_vel_vec, a)
+        print(pos_vec)
+        print(bl_pos_vec)
+
+    .. code-block:: python
+
+        [ 200.  -100.    20.5]
+        [224.54398697   1.47937288  -0.46364761]
+
+Symbolic Calculations
+=====================
+EinsteinPy also supports smbolic calculations in :py:class:`~einsteinpy.utils.christoffel`
+
+    .. code-block:: python
+
+        import sympy
+        from einsteinpy.utils import christoffel
+
+        syms = sympy.symbols('t r theta phi')
+        kch = christoffel.christkerr_christoffels()
+        print(sympy.simplify(kch[0][0][1]))
+
+    .. code-block:: python
+
+        R*(-a**4*cos(theta)**2 - a**2*r**2*cos(theta)**2 + a**2*r**2 + r**4)/(2*(a**2*cos(theta)**2 + r**2)**2*(-R*r + a**2 + r**2))
+
+    
+Future Plans
+============
+
+* Support for more geometries, like Kerr, Kerr-Newman
+* Support for null-geodesics in different geometries
+* Ultimate goal is providing numerical solutions for Einstein's equations for arbitarily complex matter distribution.
+* Relativistic hydrodynamics
