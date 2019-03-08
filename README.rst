@@ -28,14 +28,14 @@
 .. |docs| image:: https://img.shields.io/badge/docs-v0.1.0-brightgreen.svg?style=flat-square
    :target: https://einsteinpy-project.readthedocs.io/en/v0.1.0/?badge=v0.1.0
 
-.. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/0.1.0.svg?style=flat-square&logo=travis
+.. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/0.1.x.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
 .. |codeclimate| image:: https://api.codeclimate.com/v1/badges/6efb3f754d20777d8b8d/maintainability
    :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
    :alt: Maintainability
 
-.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/0.1.0.svg?style=flat-square&logo=circleci
+.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/0.1.x.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
