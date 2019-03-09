@@ -4,10 +4,9 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.integrators import RK45, RK4naive
+from einsteinpy.integrators import RK45
 from einsteinpy.utils import *
 from einsteinpy.utils import schwarzschild_radius as scr
-from einsteinpy.utils import time_velocity
 
 _G = constant.G.value
 _c = constant.c.value
@@ -26,7 +25,7 @@ class Schwarzschild:
         self.time = time
         self.time_vel = time_velocity(pos_vec, vel_vec, M)
         self.initial_vec = np.hstack(
-            (self.time.value * _c, self.pos_vec, self.time_vel.value, self.vel_vec / _c)
+            (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
         )
         self.schwarzschild_r = scr(M)
 
@@ -110,7 +109,7 @@ class Schwarzschild:
     def christ_sym1_00(self, vec):
         num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
         num2 = _G * self.M.value
-        deno1 = _c ** 4
+        deno1 = _c ** 2
         deno2 = vec[1] ** 3
         return (num1 / deno1) * (num2 / deno2)
 
@@ -179,7 +178,7 @@ class Schwarzschild:
         f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
         for i in range(len(vec)):
             f_vec_vals[i] = self.f(i, vec)
-        return _c * f_vec_vals
+        return f_vec_vals
 
     def calculate_trajectory(
         self,
@@ -215,7 +214,6 @@ class Schwarzschild:
         vec_list = list()
         lambda_list = list()
         singularity_reached = False
-        scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -239,7 +237,7 @@ class Schwarzschild:
                     singularity_reached = True
 
         def _not_cartesian():
-            return (np.array(lambda_list), np.array(vec_list) * scaling_factors)
+            return (np.array(lambda_list), np.array(vec_list))
 
         def _cartesian():
             self.units_list = [
@@ -252,10 +250,7 @@ class Schwarzschild:
                 u.m / u.s,
                 u.m / u.s,
             ]
-            return (
-                np.array(lambda_list),
-                S2C_8dim(np.array(vec_list) * scaling_factors),
-            )
+            return (np.array(lambda_list), S2C_8dim(np.array(vec_list)))
 
         choice_dict = {0: _not_cartesian, 1: _cartesian}
         return choice_dict[int(return_cartesian)]()
@@ -290,7 +285,6 @@ class Schwarzschild:
 
         """
         singularity_reached = False
-        scaling_factors = np.array([1 / _c, 1.0, 1.0, 1.0, 1.0, _c, _c, _c])
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -304,17 +298,11 @@ class Schwarzschild:
             nonlocal singularity_reached
             while True:
                 if not return_cartesian:
-                    yield (ODE.t, np.multiply(ODE.y, scaling_factors))
+                    yield (ODE.t, ODE.y)
                 else:
                     temp = np.copy(ODE.y)
-                    temp[0] *= scaling_factors[0]
-                    temp[1:4] = SphericalToCartesian_pos(
-                        np.multiply(ODE.y[1:4], scaling_factors[1:4])
-                    )
-                    temp[5:8] = SphericalToCartesian_vel(
-                        np.multiply(ODE.y[1:4], scaling_factors[1:4]),
-                        np.multiply(ODE.y[5:8], scaling_factors[5:8]),
-                    )
+                    temp[1:4] = SphericalToCartesian_pos(ODE.y[1:4])
+                    temp[5:8] = SphericalToCartesian_vel(ODE.y[1:4], ODE.y[5:8])
                     yield (ODE.t, temp)
                 ODE.step()
                 if (not singularity_reached) and (ODE.y[1] <= _scr):
