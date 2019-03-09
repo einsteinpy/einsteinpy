@@ -80,12 +80,12 @@ def christoffels(list2d, syms):
     return christlist
 
 
-def simplify_tensor_helper(v):
+def _simplify_tensor_helper(v):
     returnval = None
     if isinstance(v, list):
         newlist = list()
         for t in v:
-            newlist.append(simplify_tensor_helper(t))
+            newlist.append(_simplify_tensor_helper(t))
         returnval = newlist
     else:
         returnval = sympy.simplify(v)
@@ -107,7 +107,7 @@ def simplify_tensor(ndlist):
         N-Dimensional list
     
     """
-    return simplify_tensor_helper(ndlist)
+    return _simplify_tensor_helper(ndlist)
 
 
 def simplify_christoffels(list3d, dims=4):
