@@ -45,3 +45,15 @@ def test_simplify_christoffels():
 def test_kerr_christoffels():
     a = christoffel.kerr_christoffels()
     assert a[0][0][0] == 0
+
+
+def tets_simplify_tensor1():
+    a = sympy.symbols("a")
+    assert christoffel.simplify_tensor(2 * a - ((a ** 2) / a)) == a
+
+
+def test_simplify_tensor2():
+    a = sympy.symbols("a")
+    l = [[0, a ** 2], [sympy.sin(a), 3 * a]]
+    new_l = christoffel.simplify_tensor(l)
+    assert new_l[0][1] == l[0][1] and new_l[1][0] == l[1][0] and new_l[1][1] == l[1][1]

@@ -80,6 +80,34 @@ def christoffels(list2d, syms):
     return christlist
 
 
+def simplify_tensor(ndlist):
+    """
+    Returns a N-Dimensional list of simplified symbolic tensor
+    
+    Parameters
+    ----------
+    ndlist : list
+        N-Dimensional list of sympy expressions representing some tensor
+    
+    Returns
+    -------
+    list
+        N-Dimensional list
+    
+    """
+
+    def helper(v):
+        if type(v) == list:
+            newlist = list()
+            for t in v:
+                newlist.append(helper(t))
+            return newlist
+        else:
+            return sympy.simplify(v)
+
+    return helper(ndlist)
+
+
 def simplify_christoffels(list3d, dims=4):
     """
     Returns a 3d list of simplified christoffel symbols.
