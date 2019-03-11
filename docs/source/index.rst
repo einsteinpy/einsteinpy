@@ -23,10 +23,12 @@ View `source code`_ of EinsteinPy!
 Key features of EinsteinPy are:
 
 * Schwarzschild Geometry Analysis and trajectory calculation
+* Kerr Geometry Analysis and trajectory calculation
 * Symbolic Calculation of various tensors in GR
 
  * Christoffel Symbols
  * Riemann Curvature Tensor
+ * Simplification of symbolic expressions
 
 * Static Geodesic Plotting
 * Velocity of Coordinate time w.r.t proper time
