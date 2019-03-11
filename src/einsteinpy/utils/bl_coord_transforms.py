@@ -1,3 +1,4 @@
+import astropy.units as u
 import numpy as np
 
 
@@ -127,3 +128,102 @@ def BLToCartesian_vel(pos_vec, vel_vec, a):
         pos_vec[0] * np.sin(pos_vec[1]) * vel_vec[1]
     )
     return v_vec
+
+
+def C2BL_units(pos_vec, vel_vec, a):
+    """
+    Function to convert Cartesian to Boyer-Lindquist Coordinates along with handling units
+
+    Parameters
+    ----------
+    pos_vec : list
+        list of 3 position coordinates along with appropriate units
+        [x, y, z]
+        (u.m, u.m, u.m)
+    vel_vec : list
+        list of 3 velocity coordinates along with appropriate units
+        [vx, vy, vz]
+        (u.m/u.s, u.m/u.s, u.m/u.s)
+    a : float
+        Any constant
+
+    Returns
+    -------
+    tuple
+        consisting of 2 lists
+        ([r, theta, phi], [vr, vtheta, vphi]) in units
+        ([u.m, u.rad, u.rad],[u.m/u.s, u.rad/u.s, u.rad/u.s])
+
+    """
+    units_list = [u.s, u.m, u.m, u.m, u.one, u.m / u.s, u.m / u.s, u.m / u.s]
+    pos_vec_vals = [pos_vec[i].to(units_list[i + 1]).value for i in range(len(pos_vec))]
+    vel_vec_vals = [vel_vec[i].to(units_list[i + 5]).value for i in range(len(vel_vec))]
+    new_pos_units_list = [u.m, u.rad, u.rad]
+    new_vel_units_list = [u.m / u.s, u.rad / u.s, u.rad / u.s]
+    npos_vec = CartesianToBL_pos(np.array(pos_vec_vals), a).tolist()
+    npos_vec = [e1 * e2 for e1, e2 in zip(npos_vec, new_pos_units_list)]
+    nvel_vec = CartesianToBL_vel(np.array(pos_vec_vals), np.array(vel_vec_vals), a)
+    nvel_vec = [e1 * e2 for e1, e2 in zip(nvel_vec, new_vel_units_list)]
+    return (npos_vec, nvel_vec)
+
+
+def BL2C_units(pos_vec, vel_vec, a):
+    """
+    Function to convert Boyer-Lindquist to Cartesian Coordinates along with handling units
+
+    Parameters
+    ----------
+    pos_vec : list
+        list of 3 position coordinates along with appropriate units
+        [r, theta, phi]
+        (u.m, u.rad, u.rad)
+    vel_vec : list
+        list of 3 velocity coordinates along with appropriate units
+        [vr, vtheta, vphi]
+        (u.m/u.s, u.rad/u.s, u.rad/u.s)
+    a : float
+        Any constant
+
+    Returns
+    -------
+    tuple
+        consisting of 2 lists
+        ([x, y, z], [vx, vy, vz]) in units
+        ([u.m, u.m, u.m],[u.m/u.s, u.m/u.s, u.m/u.s])
+
+    """
+    units_list = [u.s, u.m, u.rad, u.rad, u.one, u.m / u.s, u.rad / u.s, u.rad / u.s]
+    pos_vec_vals = [pos_vec[i].to(units_list[i + 1]).value for i in range(len(pos_vec))]
+    vel_vec_vals = [vel_vec[i].to(units_list[i + 5]).value for i in range(len(vel_vec))]
+    new_pos_units_list = [u.m, u.m, u.m]
+    new_vel_units_list = [u.m / u.s, u.m / u.s, u.m / u.s]
+    npos_vec = BLToCartesian_pos(np.array(pos_vec_vals), a).tolist()
+    npos_vec = [e1 * e2 for e1, e2 in zip(npos_vec, new_pos_units_list)]
+    nvel_vec = BLToCartesian_vel(np.array(pos_vec_vals), np.array(vel_vec_vals), a)
+    nvel_vec = [e1 * e2 for e1, e2 in zip(nvel_vec, new_vel_units_list)]
+    return (npos_vec, nvel_vec)
+
+
+def BL2C_8dim(vec, a):
+    """
+    Function to convert Boyer-Lindquist 8-length numpy array coordinates to Cartesian
+
+    Parameters
+    ----------
+    vec : ~numpy.array
+        Array of shape (n,8) in the form [t,r,theta,phi,vt,vr,vtheta,vphi] in SI units.
+    a : float
+        Any constant
+
+    Returns
+    -------
+    ~numpy.array
+        Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
+        
+    """
+    # todo : vectorize the below used functions using numpy.vectorize
+    newvec = np.copy(vec)
+    for i in range(len(vec)):
+        newvec[i, 1:4] = BLToCartesian_pos(vec[i, 1:4], a)
+        newvec[i, 5:8] = BLToCartesian_vel(vec[i, 1:4], vec[i, 5:8], a)
+    return newvec

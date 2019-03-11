@@ -82,7 +82,7 @@ class RK45(integrate.RK45):
             Absolute tolerance, defaults to rtol/0.8e3
         
         """
-        vectorized = not type(y0) == float
+        vectorized = not isinstance(y0, float)
         self._t_bound = t_bound
         if rtol is None:
             rtol = 0.2 * stepsize
