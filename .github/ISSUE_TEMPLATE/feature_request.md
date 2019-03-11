@@ -11,10 +11,10 @@ assignees: ''
 
 WELCOME ABOARD!
 
-Hi and welcome to the poliastro project. We appreciate bug reports, questions
+Hi and welcome to the einsteinpy project. We appreciate bug reports, questions
 about documentation, and suggestions for new features.
 
-IMPORTANT: If you are reporting a problem with poliastro, please follow the
+IMPORTANT: If you are reporting a problem with einsteinpy, please follow the
 template below. If it's a suggestion, a possible new addition to the library,
 or just want to say "Thank you!", you can remove all this text and start
 from scratch.
