@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from astropy import units as u
 from numpy.testing import assert_allclose
 
 from einsteinpy import utils
@@ -102,3 +103,20 @@ def test_cycle_vel(pos_vec, vel_vec, a):
     # pos_vec3 = utils.BLToCartesian_pos(pos_vec2, a)
     vel_vec3 = utils.BLToCartesian_vel(pos_vec2, vel_vec2, a)
     assert_allclose(vel_vec, vel_vec3, rtol=0.0, atol=1e-5)
+
+
+@pytest.mark.parametrize(
+    "pos_vec, vel_vec, a, ans_vel_vec",
+    [
+        (
+            [20 * u.m, 90 * u.deg, 45 * u.deg],
+            [0.0 * u.km / u.s, 0.0 * u.rad / u.s, 10 * u.rad / u.s],
+            0.0,
+            np.array([-200 / np.sqrt(2), 200 / np.sqrt(2), 0]),
+        )
+    ],
+)
+def test_BL2C_units(pos_vec, vel_vec, a, ans_vel_vec):
+    a = utils.BL2C_units(pos_vec, vel_vec, a)
+    tmp = np.array([t.value for t in a[1]])
+    assert_allclose(ans_vel_vec, tmp, rtol=0.0, atol=1e-5)
