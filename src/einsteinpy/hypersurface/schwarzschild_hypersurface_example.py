@@ -1,8 +1,12 @@
-import numpy as np
-import os
-import pandas as pd
 import math
+import os
+
 import matplotlib.pyplot as plt
+import numpy as np
+import panda as pd
+
+from mpl_toolkits import mplot3d
+
 
 def gradient(mass, r):
     R = r / math.sqrt(1 - (2 * mass / r))
@@ -51,15 +55,14 @@ def get_values_surface(mass, alpha):
     z_values = []
     
     # for values greater than schwarzschild radius
-    z = 0
-    r = r_initial
-    while (r < 10 * mass):
-        R_values.append(R(mass, r))
-        z_values.append(z)
-        z = z + gradient(mass, r) * r_step
-        r = r + r_step
+    #z = 0
+    #r = r_initial
+    #while (r < 10 * mass):
+     #   R_values.append(R(mass, r))
+     #   z_values.append(z)
+     #   z = z + gradient(mass, r) * r_step
+     #   r = r + r_step
     
-    """
     # for values less than schwarzschild radius but greater than 9m/4
     z = 0
     r = r_initial
@@ -68,7 +71,7 @@ def get_values_surface(mass, alpha):
         z_values.append(z)
         z = z + gradient(mass, r) * r_step
         r = r - r_step
-    """
+    
     R_values = np.array(R_values)
     R_values, phi_values = np.meshgrid(R_values, phi_values)
     
@@ -93,7 +96,6 @@ plt.scatter(x_values, y_values)
 plt.show()
 
 # plot the 3d hypersurface
-from mpl_toolkits import mplot3d
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 X, Y, Z = get_values_surface(10, 100)
