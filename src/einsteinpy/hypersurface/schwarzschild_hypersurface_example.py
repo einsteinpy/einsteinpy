@@ -3,9 +3,9 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-import panda as pd
-
 from mpl_toolkits import mplot3d
+
+import panda as pd
 
 
 def gradient(mass, r):
