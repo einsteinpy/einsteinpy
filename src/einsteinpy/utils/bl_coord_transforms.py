@@ -221,13 +221,17 @@ def BL2C_8dim(vec, a):
         Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
         
     """
-    
+
     newvec = np.copy(vec)
-    
-    vectorized_BLToCartesian_pos = np.vectorize(BLToCartesian_pos, signature='(n),()->(n)')
-    vectorized_BLToCartesian_vel = np.vectorize(BLToCartesian_vel, signature='(n),(n),()->(n)')
-    
+
+    vectorized_BLToCartesian_pos = np.vectorize(
+        BLToCartesian_pos, signature="(n),()->(n)"
+    )
+    vectorized_BLToCartesian_vel = np.vectorize(
+        BLToCartesian_vel, signature="(n),(n),()->(n)"
+    )
+
     newvec[:, 1:4] = vectorized_BLToCartesian_pos(vec[:, 1:4], a)
     newvec[:, 5:8] = vectorized_BLToCartesian_vel(vec[:, 1:4], vec[:, 5:8], a)
-    
+
     return newvec

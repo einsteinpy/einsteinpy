@@ -196,12 +196,16 @@ def S2C_8dim(vec):
         Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
         
     """
-    
+
     newvec = np.copy(vec)
-    
-    vectorized_SphericalToCartesian_pos = np.vectorize(SphericalToCartesian_pos, signature='(n)->(n)')
-    vectorized_SphericalToCartesian_vel = np.vectorize(SphericalToCartesian_vel, signature='(n),(n)->(n)')
-    
+
+    vectorized_SphericalToCartesian_pos = np.vectorize(
+        SphericalToCartesian_pos, signature="(n)->(n)"
+    )
+    vectorized_SphericalToCartesian_vel = np.vectorize(
+        SphericalToCartesian_vel, signature="(n),(n)->(n)"
+    )
+
     newvec[:, 1:4] = vectorized_SphericalToCartesian_pos(vec[:, 1:4])
     newvec[:, 5:8] = vectorized_SphericalToCartesian_vel(vec[:, 1:4], vec[:, 5:8])
 
