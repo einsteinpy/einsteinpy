@@ -7,10 +7,10 @@ from einsteinpy.utils import schwarzschild_radius as scr
 nonzero_christoffels_list = [
     (0, 0, 1),
     (0, 0, 2),
-    (0, 1, 0),
     (0, 1, 3),
-    (0, 2, 0),
     (0, 2, 3),
+    (0, 1, 0),
+    (0, 2, 0),
     (0, 3, 1),
     (0, 3, 2),
     (1, 0, 0),
@@ -249,11 +249,11 @@ def christoffels(c, r, theta, Rs, a):
     invg = metric_inv(c, r, theta, Rs, a)
     dmdx = dmetric_dx(c, r, theta, Rs, a)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
-    for _, k, l in nonzero_christoffels_list[0:8]:
+    for _, k, l in nonzero_christoffels_list[0:4]:
         val1 = dmdx[l][0][k] + dmdx[k][0][l] - dmdx[0][k][l]
         val2 = dmdx[l][3][k] + dmdx[k][3][l] - dmdx[3][k][l]
-        chl[0][k][l] = 0.5 * (invg[0][0] * (val1) + invg[0][3] * (val2))
-        chl[3][k][l] = 0.5 * (invg[3][0] * (val1) + invg[3][3] * (val2))
+        chl[0][k][l] = chl[0][l][k] = 0.5 * (invg[0][0] * (val1) + invg[0][3] * (val2))
+        chl[3][k][l] = chl[3][l][k] = 0.5 * (invg[3][0] * (val1) + invg[3][3] * (val2))
     for i, k, l in nonzero_christoffels_list[8:24]:
         chl[i][k][l] = 0.5 * (
             invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
