@@ -61,3 +61,34 @@ def test_SphericalToCartesian_vel(pos_vec, vel_vec, ans_vec):
 def test_CartesianToSpherical_vel(pos_vec, vel_vec, ans_vec):
     ans = utils.CartesianToSpherical_vel(pos_vec, vel_vec)
     assert_allclose(ans, ans_vec, rtol=0.0, atol=1e-5)
+
+
+@pytest.mark.parametrize(
+    "vec",
+    [
+        (
+            np.array(
+                [
+                    [21.0, 300, 0.33, 4.0, 1.0, -10.0, -1, -2],
+                    [1.0, 3, 0.1, 5.0, 1.0, 100.0, -11, 2],
+                    [1.0, 3, 0.1, 0, 1.0, 0, -11, 2],
+                ]
+            )
+        )
+    ],
+)
+def test_S2C_8dim(vec):
+    list1 = list()
+    for v in vec:
+        nv = np.hstack(
+            (
+                v[0],
+                utils.SphericalToCartesian_pos(v[1:4]),
+                v[4],
+                utils.SphericalToCartesian_vel(v[1:4], v[5:8]),
+            )
+        )
+        list1.append(nv)
+    arr1 = np.array(list1)
+    arr2 = utils.S2C_8dim(vec)
+    assert_allclose(arr1, arr2, rtol=0.0, atol=1e-5)

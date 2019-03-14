@@ -8,3 +8,4 @@ various space-time geometries including schwarzschild, kerr etc.
     :maxdepth: 2
 
     schwarzschild
+    kerr

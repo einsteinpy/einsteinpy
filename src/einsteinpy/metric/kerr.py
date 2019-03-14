@@ -6,31 +6,35 @@ import numpy as np
 from einsteinpy import constant
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import *
+from einsteinpy.utils import kerr_utils
 from einsteinpy.utils import schwarzschild_radius as scr
 
 _G = constant.G.value
 _c = constant.c.value
 
 
-class Schwarzschild:
+class Kerr:
     """
-    Class for defining a Schwarzschild Geometry methods
+    Class for defining Kerr Goemetry Methdos
     """
 
     @u.quantity_input(time=u.s, M=u.kg)
-    def __init__(self, pos_vec, vel_vec, time, M):
+    def __init__(self, pos_vec, vel_vec, time, M, a):
         self.M = M
+        self.a = a
         self.pos_vec = pos_vec
         self.vel_vec = vel_vec
         self.time = time
-        self.time_vel = time_velocity(pos_vec, vel_vec, M)
+        self.time_vel = kerr_utils.kerr_time_velocity(
+            self.pos_vec, self.vel_vec, self.M, self.a
+        )
         self.initial_vec = np.hstack(
             (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
         )
         self.schwarzschild_r = scr(M)
 
     @classmethod
-    def _classmethod_handler(cls, pos_vec, vel_vec, time, M):
+    def _classmethod_handler(cls, pos_vec, vel_vec, time, M, a):
         cls.units_list = [
             u.s,
             u.m,
@@ -48,14 +52,15 @@ class Schwarzschild:
             vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
         ]
         return cls(
-            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg)
+            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg), a
         )
 
     @classmethod
     @u.quantity_input(time=u.s, M=u.kg)
-    def from_spherical(cls, pos_vec, vel_vec, time, M):
+    def from_BL(cls, pos_vec, vel_vec, time, M, a):
         """
         Constructor
+        Initialize from Boyer-Lindquist Coordinates
 
         Parameters
         ----------
@@ -67,22 +72,24 @@ class Schwarzschild:
             Time of start
         M : ~astropy.units.kg
             Mass of the body
+        a : float
+            Spin factor of massive body
 
         """
-        cls.input_coord_system = "Spherical"
+        cls.input_coord_system = "Boyer-Lindquist"
         cls.input_units_list = (
             [time.unit]
             + [pos_vec[i].unit for i in range(len(pos_vec))]
             + [u.one]
             + [vel_vec[i].unit for i in range(len(vel_vec))]
         )
-        return cls._classmethod_handler(pos_vec, vel_vec, time, M)
+        return cls._classmethod_handler(pos_vec, vel_vec, time, M, a)
 
     @classmethod
-    @u.quantity_input(time=u.s, M=u.kg)
-    def from_cartesian(cls, pos_vec, vel_vec, time, M):
+    def from_cartesian(cls, pos_vec, vel_vec, time, M, a):
         """
         Constructor
+        Initialize from Cartesian Coordinates
 
         Parameters
         ----------
@@ -94,6 +101,8 @@ class Schwarzschild:
             Time of start
         M : ~astropy.units.kg
             Mass of the body
+        a : float
+            Spin factor of massive body
 
         """
         cls.input_coord_system = "Cartesian"
@@ -103,82 +112,45 @@ class Schwarzschild:
             + [u.one]
             + [vel_vec[i].unit for i in range(len(vel_vec))]
         )
-        sp_pos_vec, sp_vel_vec = C2S_units(pos_vec, vel_vec)
-        return cls._classmethod_handler(sp_pos_vec, sp_vel_vec, time, M)
-
-    def christ_sym1_00(self, vec):
-        num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
-        num2 = _G * self.M.value
-        deno1 = _c ** 2
-        deno2 = vec[1] ** 3
-        return (num1 / deno1) * (num2 / deno2)
-
-    def christ_sym1_11(self, vec):
-        num = _G * self.M.value
-        deno1 = 2 * _G * self.M.value * vec[1]
-        deno2 = (_c ** 2) * (vec[1] ** 2)
-        deno = deno1 - deno2
-        return num / deno
-
-    def christ_sym1_22(self, vec):
-        return self.schwarzschild_r.value - vec[1]
-
-    def christ_sym1_33(self, vec):
-        return (
-            (-1 + (self.schwarzschild_r.value / vec[1])) * vec[1] * np.sin(vec[2]) ** 2
-        )
-
-    def christ_sym0_01(self, vec):
-        num = _G * self.M.value
-        deno1 = -2 * _G * self.M.value + (_c ** 2) * vec[1]
-        deno2 = vec[1]
-        return (num / deno1) * (1 / deno2)
-
-    def christ_sym2_21(self, vec):
-        return 1 / vec[1]
-
-    def christ_sym2_33(self, vec):
-        return -1 * np.cos(vec[2]) * np.sin(vec[2])
-
-    def christ_sym3_31(self, vec):
-        return 1 / vec[1]
-
-    def christ_sym3_32(self, vec):
-        return np.cos(vec[2]) / np.sin(vec[2])
-
-    def f(self, i, vec):
-        def f0_3():
-            return vec[i + 4]
-
-        def f4():
-            term1 = self.christ_sym0_01(vec) * vec[4] * vec[5]
-            return -2 * term1
-
-        def f5():
-            term1 = self.christ_sym1_00(vec) * vec[4] * vec[4]
-            term2 = self.christ_sym1_11(vec) * vec[5] * vec[5]
-            term3 = self.christ_sym1_22(vec) * vec[6] * vec[6]
-            term4 = self.christ_sym1_33(vec) * vec[7] * vec[7]
-            return -1 * (term1 + term2 + term3 + term4)
-
-        def f6():
-            term1 = self.christ_sym2_21(vec) * vec[6] * vec[5]
-            term2 = self.christ_sym2_33(vec) * vec[7] * vec[7]
-            return -1 * (2 * term1 + term2)
-
-        def f7():
-            term1 = self.christ_sym3_31(vec) * vec[7] * vec[5]
-            term2 = self.christ_sym3_32(vec) * vec[7] * vec[6]
-            return -1 * (2 * term1 + 2 * term2)
-
-        f_dict = {0: f0_3, 1: f0_3, 2: f0_3, 3: f0_3, 4: f4, 5: f5, 6: f6, 7: f7}
-        return f_dict[i]()
+        bl_pos_vec, bl_vel_vec = C2BL_units(pos_vec, vel_vec, a)
+        return cls._classmethod_handler(bl_pos_vec, bl_vel_vec, time, M, a)
 
     def f_vec(self, ld, vec):
-        f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
-        for i in range(len(vec)):
-            f_vec_vals[i] = self.f(i, vec)
-        return f_vec_vals
+        chl = kerr_utils.christoffels(
+            _c, vec[1], vec[2], self.schwarzschild_r.value, self.a
+        )
+        vals = np.zeros(shape=(8,), dtype=float)
+        for i in range(4):
+            vals[i] = vec[i + 4]
+        vals[4] = -2.0 * (
+            chl[0][0][1] * vec[4] * vec[5]
+            + chl[0][0][2] * vec[4] * vec[6]
+            + chl[0][1][3] * vec[5] * vec[7]
+            + chl[0][2][3] * vec[6] * vec[7]
+        )
+        vals[5] = -1.0 * (
+            chl[1][0][0] * vec[4] * vec[4]
+            + 2 * chl[1][0][3] * vec[4] * vec[7]
+            + chl[1][1][1] * vec[5] * vec[5]
+            + 2 * chl[1][1][2] * vec[5] * vec[6]
+            + chl[1][2][2] * vec[6] * vec[6]
+            + chl[1][3][3] * vec[7] * vec[7]
+        )
+        vals[6] = -1.0 * (
+            chl[2][0][0] * vec[4] * vec[4]
+            + 2 * chl[2][0][3] * vec[4] * vec[7]
+            + chl[2][1][1] * vec[5] * vec[5]
+            + 2 * chl[2][1][2] * vec[5] * vec[6]
+            + chl[2][2][2] * vec[6] * vec[6]
+            + chl[2][3][3] * vec[7] * vec[7]
+        )
+        vals[7] = -2.0 * (
+            chl[3][0][1] * vec[4] * vec[5]
+            + chl[3][0][2] * vec[4] * vec[6]
+            + chl[3][1][3] * vec[5] * vec[7]
+            + chl[3][2][3] * vec[6] * vec[7]
+        )
+        return vals
 
     def calculate_trajectory(
         self,
@@ -250,7 +222,7 @@ class Schwarzschild:
                 u.m / u.s,
                 u.m / u.s,
             ]
-            return (np.array(lambda_list), S2C_8dim(np.array(vec_list)))
+            return (np.array(lambda_list), BL2C_8dim(np.array(vec_list), self.a))
 
         choice_dict = {0: _not_cartesian, 1: _cartesian}
         return choice_dict[int(return_cartesian)]()
@@ -301,8 +273,8 @@ class Schwarzschild:
                     yield (ODE.t, ODE.y)
                 else:
                     temp = np.copy(ODE.y)
-                    temp[1:4] = SphericalToCartesian_pos(ODE.y[1:4])
-                    temp[5:8] = SphericalToCartesian_vel(ODE.y[1:4], ODE.y[5:8])
+                    temp[1:4] = BLToCartesian_pos(ODE.y[1:4], self.a)
+                    temp[5:8] = BLToCartesian_vel(ODE.y[1:4], ODE.y[5:8], self.a)
                     yield (ODE.t, temp)
                 ODE.step()
                 if (not singularity_reached) and (ODE.y[1] <= _scr):
