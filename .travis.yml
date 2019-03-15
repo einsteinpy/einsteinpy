@@ -20,9 +20,6 @@ before_install:
   - source venv/bin/activate
   - python3 -m pip install --upgrade pip
 
-before_install:
-  - python3 -m pip install --upgrade pip
-
 install:
   - pip install numpy  # Required
   - pip install .  # Test installation correctness

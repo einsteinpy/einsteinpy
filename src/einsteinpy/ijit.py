@@ -17,9 +17,10 @@ def ijit(first=None, *args, **kwargs):
         return f
 
     if inspect.isfunction(first):
-        return first
+        retval = first
     else:
-        return _jit
+        retval = _jit
+    return retval
 
 
 try:
