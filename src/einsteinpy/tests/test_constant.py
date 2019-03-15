@@ -1,8 +1,10 @@
 import astropy.units as u
+import numpy as np
 import pytest
 from astropy import constants
+from numpy.testing import assert_allclose
 
-from einsteinpy.constant import Cosmo_Const, Cosmo_Const_base
+from einsteinpy.constant import Cosmo_Const, Cosmo_Const_base, pi_by_2
 
 
 def test_Cosmo_Const_returns_correct_value_units():
@@ -24,3 +26,7 @@ def test_Cosmo_Const_has_correct_metadata():
     assert cnst.name == "Cosmological Constant"
     assert cnst.system == "si" and cnst.abbrev == "lambda"
     assert cnst.reference == "Wikipedia"
+
+
+def test_check_pi_by_2():
+    assert_allclose(pi_by_2, np.pi / 2, rtol=0.0, atol=1e-10)
