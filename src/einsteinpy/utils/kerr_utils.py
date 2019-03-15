@@ -13,7 +13,6 @@ nonzero_christoffels_list = [
     (0, 2, 0),
     (0, 3, 1),
     (0, 3, 2),
-    
     (1, 0, 0),
     (1, 0, 3),
     (1, 1, 1),
@@ -28,15 +27,10 @@ nonzero_christoffels_list = [
     (2, 3, 3),
     (1, 2, 1),
     (1, 3, 0),
-<<<<<<< HEAD
     (2, 2, 1),
     (2, 3, 0),
-=======
-    
     (2, 2, 1),
     (2, 3, 0),
-    
->>>>>>> e05498516f4905ae199bc0776e2610b510a41fdf
     (3, 0, 1),
     (3, 0, 2),
     (3, 1, 0),
@@ -263,13 +257,9 @@ def christoffels(c, r, theta, Rs, a):
         chl[0][k][l] = chl[0][l][k] = 0.5 * (invg[0][0] * (val1) + invg[0][3] * (val2))
         chl[3][k][l] = chl[3][l][k] = 0.5 * (invg[3][0] * (val1) + invg[3][3] * (val2))
     for i, k, l in nonzero_christoffels_list[8:20]:
-<<<<<<< HEAD
-        val = 0.5 * (invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l]))
-=======
         val =  0.5 * (
             invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
         )
->>>>>>> e05498516f4905ae199bc0776e2610b510a41fdf
         chl[i][k][l] = chl[i][l][k] = val
         return chl
 
