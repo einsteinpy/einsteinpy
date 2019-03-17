@@ -257,7 +257,7 @@ def christoffels(c, r, theta, Rs, a):
     for i, k, l in nonzero_christoffels_list[8:12]:
         dmdxVal = dmdx[l]
         val1 = 0.5 * (invg[i][i] * (2 * dmdxVal[i][l] - dmdx[i][k][l]))
-        val2 = 0.5 * (invg[i + 1][i + 1] * (2 * dmdxVal[i + 1] - dmdx[i + 1][k][l]))
+        val2 = 0.5 * (invg[i + 1][i + 1] * (2 * dmdxVal[i + 1][k] - dmdx[i + 1][k][l]))
 
         chl[i][k][l] = val1
         chl[i + 1][k][l] = val2
