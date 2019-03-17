@@ -43,36 +43,7 @@ nonzero_christoffels_list = [
 def sigma(r, theta, a):
     """
     Returns the value r^2 + a^2 * cos^2(theta)
-    Specific to Boyer-Lindquist coordinates
-
-    Parameters
-    ----------
-    r : float
-        Component r in vector
-    theta : float
-        Component theta in vector
-    a : float
-        Any constant
-
-    Returns
-    -------
-    float
-        The value r^2 + a^2 * cos^2(theta)
-    
-    """
-    return (r ** 2) + ((a * np.cos(theta)) ** 2)
-
-
-def delta(r, Rs, a):
-    """
-    Returns the value r^2 - Rs * r + a^2
-    Specific to Boyer-Lindquist coordinates
-
-    Parameters
-    ----------
-    r : float
-        Component r in vector
-    Rs : float
+    Specific to Boyer-Lt
         Schwarzschild radius
     a : float
         Any constant
