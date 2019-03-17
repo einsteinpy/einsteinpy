@@ -43,7 +43,36 @@ nonzero_christoffels_list = [
 def sigma(r, theta, a):
     """
     Returns the value r^2 + a^2 * cos^2(theta)
-    Specific to Boyer-Lt
+    Specific to Boyer-Lindquist coordinates
+
+    Parameters
+    ----------
+    r : float
+        Component r in vector
+    theta : float
+        Component theta in vector
+    a : float
+        Any constant
+
+    Returns
+    -------
+    float
+        The value r^2 + a^2 * cos^2(theta)
+    
+    """
+    return (r ** 2) + ((a * np.cos(theta)) ** 2)
+
+
+def delta(r, Rs, a):
+    """
+    Returns the value r^2 - Rs * r + a^2
+    Specific to Boyer-Lindquist coordinates
+
+    Parameters
+    ----------
+    r : float
+        Component r in vector
+    Rs : float
         Schwarzschild radius
     a : float
         Any constant
@@ -225,10 +254,17 @@ def christoffels(c, r, theta, Rs, a):
         val2 = dmdx[l][3][k] + dmdx[k][3][l]
         chl[0][k][l] = chl[0][l][k] = 0.5 * (invg[0][0] * (val1) + invg[0][3] * (val2))
         chl[3][k][l] = chl[3][l][k] = 0.5 * (invg[3][0] * (val1) + invg[3][3] * (val2))
-    for i, k, l in nonzero_christoffels_list[8:16]:
-        chl[i][k][l] = 0.5 * (
-            invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
+    for i, k, l in nonzero_christoffels_list[8:12]:
+        dmdxVal = dmdx[l]
+        val1 =  0.5 * (
+            invg[i][i] * (dmdxVal[i][k] + dmdxVal[i][l] - dmdx[i][k][l])
         )
+        val2 =  0.5 * (
+            invg[i+1][i+1] * (dmdxVal[i+1][k] + dmdxVal[i+1][l] - dmdx[i+1][k][l])
+        )
+
+        chl[i][k][l] = val1
+        chl[i+1][k][l] = val2
     for i, k, l in nonzero_christoffels_list[16:20]:
         chl[i][k][l] = chl[i][l][k] = 0.5 * (
             invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
