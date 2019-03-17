@@ -30,12 +30,12 @@ def test_event_horizon_for_nonrotating_case():
     assert_allclose(a1[0], _scr, rtol=0.0, atol=1e-5)
 
 
-def test_ergosphere_for_nonrotating_case():
+def test_radius_ergosphere_for_nonrotating_case():
     M = 5e27
     a = 0.0
     _scr = utils.schwarzschild_radius(M * u.kg).value
-    a1 = kerr_utils.ergosphere(_scr, a, np.pi / 5)
-    a2 = kerr_utils.ergosphere(_scr, a, np.pi / 5, "Spherical")
+    a1 = kerr_utils.radius_ergosphere(_scr, a, np.pi / 5)
+    a2 = kerr_utils.radius_ergosphere(_scr, a, np.pi / 5, "Spherical")
     assert_allclose(a1, a2, rtol=0.0, atol=1e-5)
     assert_allclose(a1[0], _scr, rtol=0.0, atol=1e-5)
 
@@ -58,5 +58,4 @@ def test_christoffels(c, r, theta, Rs, a):
                 dmdx[l, m, k] + dmdx[k, m, l] - dmdx[m, k, l]
             )
     chl2 = np.multiply(chl2, 0.5)
-    # compare
     assert_allclose(chl2, chl1, rtol=1e-8)

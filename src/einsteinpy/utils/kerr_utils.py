@@ -358,7 +358,7 @@ def spin_factor(J, M, c):
     return J / (M * c)
 
 
-def event_horizon(Rs, a, theta=constant.pi_by_2, coord="BL"):
+def event_horizon(Rs, a, theta=np.pi / 2, coord="BL"):
     """
     Calculate the radius of event horizon of Kerr black hole
 
@@ -369,7 +369,7 @@ def event_horizon(Rs, a, theta=constant.pi_by_2, coord="BL"):
     a : float
         Black hole spin factor
     theta : float
-        Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'.
+        Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
     coord : str
         Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
 
@@ -389,7 +389,7 @@ def event_horizon(Rs, a, theta=constant.pi_by_2, coord="BL"):
     return ans
 
 
-def ergosphere(Rs, a, theta=constant.pi_by_2, coord="BL"):
+def radius_ergosphere(Rs, a, theta=np.pi / 2, coord="BL"):
     """
     Calculate the radius of ergospere of Kerr black hole at a specific azimuthal angle
 
@@ -400,7 +400,7 @@ def ergosphere(Rs, a, theta=constant.pi_by_2, coord="BL"):
     a : float
         Black hole spin factor
     theta : float
-        Angle from z-axis in Boyer-Lindquist coordinates in radians.
+        Angle from z-axis in Boyer-Lindquist coordinates in radians. Defaults to pi/2.
     coord : str
         Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
 
