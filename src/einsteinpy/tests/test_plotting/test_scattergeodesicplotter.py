@@ -22,9 +22,9 @@ def dummy_data():
 def test_plot_attractor_is_called_only_once(dummy_data):
     r, v, _, m, _, el, ss = dummy_data
     cl = ScatterGeodesicPlotter(m)
-    assert cl._attractor_present == False
+    assert not cl._attractor_present
     cl.plot(r, v, el, ss)
-    assert cl._attractor_present == True
+    assert cl._attractor_present
 
 
 @mock.patch(

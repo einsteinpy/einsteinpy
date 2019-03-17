@@ -12,7 +12,7 @@ checks:
       threshold: 9
   file-lines:
     config:
-      threshold: 400
+      threshold: 1000
 exclude_patterns:
   - "docs/source"
   - "src/einsteinpy/metric/schwarzschild.py"

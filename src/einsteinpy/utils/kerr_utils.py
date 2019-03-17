@@ -1,8 +1,7 @@
 import astropy.units as u
 import numpy as np
 
-from einsteinpy import constant
-from einsteinpy.utils import schwarzschild_radius as scr
+from einsteinpy import constant, utils
 
 nonzero_christoffels_list = [
     (0, 0, 1),
@@ -14,21 +13,21 @@ nonzero_christoffels_list = [
     (0, 3, 1),
     (0, 3, 2),
     (1, 0, 0),
-    (1, 0, 3),
     (1, 1, 1),
-    (1, 1, 2),
-    (1, 2, 1),
     (1, 2, 2),
-    (1, 3, 0),
     (1, 3, 3),
     (2, 0, 0),
-    (2, 0, 3),
     (2, 1, 1),
-    (2, 1, 2),
-    (2, 2, 1),
     (2, 2, 2),
-    (2, 3, 0),
     (2, 3, 3),
+    (1, 0, 3),
+    (1, 1, 2),
+    (2, 0, 3),
+    (2, 1, 2),
+    (1, 2, 1),
+    (1, 3, 0),
+    (2, 2, 1),
+    (2, 3, 0),
     (3, 0, 1),
     (3, 0, 2),
     (3, 1, 0),
@@ -250,12 +249,16 @@ def christoffels(c, r, theta, Rs, a):
     dmdx = dmetric_dx(c, r, theta, Rs, a)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     for _, k, l in nonzero_christoffels_list[0:4]:
-        val1 = dmdx[l][0][k] + dmdx[k][0][l] - dmdx[0][k][l]
-        val2 = dmdx[l][3][k] + dmdx[k][3][l] - dmdx[3][k][l]
+        val1 = dmdx[l][0][k] + dmdx[k][0][l]
+        val2 = dmdx[l][3][k] + dmdx[k][3][l]
         chl[0][k][l] = chl[0][l][k] = 0.5 * (invg[0][0] * (val1) + invg[0][3] * (val2))
         chl[3][k][l] = chl[3][l][k] = 0.5 * (invg[3][0] * (val1) + invg[3][3] * (val2))
-    for i, k, l in nonzero_christoffels_list[8:24]:
+    for i, k, l in nonzero_christoffels_list[8:16]:
         chl[i][k][l] = 0.5 * (
+            invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
+        )
+    for i, k, l in nonzero_christoffels_list[16:20]:
+        chl[i][k][l] = chl[i][l][k] = 0.5 * (
             invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
         )
     return chl
@@ -283,7 +286,7 @@ def kerr_time_velocity(pos_vec, vel_vec, mass, a):
         Velocity of time
 
     """
-    _scr = scr(mass).value
+    _scr = utils.schwarzschild_radius(mass).value
     g = metric(constant.c.value, pos_vec[0], pos_vec[1], _scr, a)
     A = g[0][0]
     B = 2 * g[0][3]
@@ -331,3 +334,87 @@ def nonzero_christoffels():
         if chl[i][k][l]:
             vcl.append((i, k, l))
     return vcl
+
+
+def spin_factor(J, M, c):
+    """
+    Calculate spin factor(a) of kerr body
+
+    Parameters
+    ----------
+    J : float
+        Angular momentum in SI units(kg m2 s-2)
+    M : float
+        Mass of body in SI units(kg)
+    c : float
+        Speed of light
+
+    Returns
+    -------
+    float
+        Spin factor (J/(Mc))
+    
+    """
+    return J / (M * c)
+
+
+def event_horizon(Rs, a, theta=np.pi / 2, coord="BL"):
+    """
+    Calculate the radius of event horizon of Kerr black hole
+
+    Parameters
+    ----------
+    Rs : float
+        Schwarzschild Radius
+    a : float
+        Black hole spin factor
+    theta : float
+        Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
+    coord : str
+        Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+
+    Returns
+    -------
+    ~numpy.array
+        [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
+    
+    """
+    Rh = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2)))
+    if coord == "BL":
+        ans = np.array([Rh, theta], dtype=float)
+    else:
+        ans = utils.CartesianToSpherical_pos(
+            utils.BLToCartesian_pos(np.array([Rh, theta, 0.0]), a)
+        )[:2]
+    return ans
+
+
+def radius_ergosphere(Rs, a, theta=np.pi / 2, coord="BL"):
+    """
+    Calculate the radius of ergospere of Kerr black hole at a specific azimuthal angle
+
+    Parameters
+    ----------
+    Rs : float
+        Schwarzschild Radius
+    a : float
+        Black hole spin factor
+    theta : float
+        Angle from z-axis in Boyer-Lindquist coordinates in radians. Defaults to pi/2.
+    coord : str
+        Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+
+    Returns
+    -------
+    ~numpy.array
+        [Radius of ergosphere(R), angle from z axis(theta)] in BL/Spherical coordinates
+    
+    """
+    Re = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2) * (np.cos(theta) ** 2)))
+    if coord == "BL":
+        ans = np.array([Re, theta], dtype=float)
+    else:
+        ans = utils.CartesianToSpherical_pos(
+            utils.BLToCartesian_pos(np.array([Re, theta, 0.0]), a)
+        )[:2]
+    return ans

@@ -2,7 +2,6 @@ import astropy.units as u
 from astropy import constants
 
 c = constants.c.value * (u.m / u.s)
-
 G = constants.G.value * ((u.m ** 3) / (u.kg * u.s ** 2))
 
 Cosmo_Const_base = constants.Constant(
