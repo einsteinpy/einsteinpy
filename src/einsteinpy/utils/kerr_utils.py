@@ -254,21 +254,18 @@ def christoffels(c, r, theta, Rs, a):
         val2 = dmdx[l][3][k] + dmdx[k][3][l]
         chl[0][k][l] = chl[0][l][k] = 0.5 * (invg[0][0] * (val1) + invg[0][3] * (val2))
         chl[3][k][l] = chl[3][l][k] = 0.5 * (invg[3][0] * (val1) + invg[3][3] * (val2))
-    for i, k, l in nonzero_christoffels_list[8:12]:
+    for i, k, l in nonzero_christoffels_list[8:16]:
         dmdxVal = dmdx[l]
-        val1 = 0.5 * (invg[i][i] * (2 * dmdxVal[i][l] - dmdx[i][k][l]))
-        val2 = 0.5 * (invg[i + 1][i + 1] * (2 * dmdxVal[i + 1][k] - dmdx[i + 1][k][l]))
+        chl[i][k][l] = 0.5 * (
+            invg[i][i] * (2.0*dmdxVal[i][k] - dmdx[i][k][l])
+        )
 
-        chl[i][k][l] = val1
-        chl[i + 1][k][l] = val2
-    for i, k, l in nonzero_christoffels_list[16:18]:
+    for i, k, l in nonzero_christoffels_list[16:20]:
         dmdxVal = dmdx[l]
-        val1 = 0.5 * (invg[i][i] * (2 * dmdxVal[i][k] - dmdx[i][k][l]))
-        val2 = 0.5 * (invg[i + 1][i + 1] * (2 * dmdxVal[i + 1][k] - dmdx[i + 1][k][l]))
-
-        chl[i][k][l] = chl[i][l][k] = val1
-        chl[i + 1][k][l] = chl[i + 1][l][k] = val2
-        return chl
+        chl[i][k][l] = chl[i][l][k] = 0.5 * (
+            invg[i][i] * (2*dmdxVal[i][k]  - dmdx[i][k][l])
+        )
+    return chl
 
 
 @u.quantity_input(mass=u.kg)
