@@ -59,3 +59,20 @@ def test_christoffels(c, r, theta, Rs, a):
             )
     chl2 = np.multiply(chl2, 0.5)
     assert_allclose(chl2, chl1, rtol=1e-8)
+
+
+@pytest.mark.parametrize("a", [1.1, -0.1])
+def test_scaled_spin_factor_raises_error(a):
+    try:
+        kerr_utils.scaled_spin_factor(a, 3e20)
+        assert False
+    except ValueError:
+        assert True
+
+
+@pytest.mark.parametrize("a", [0.8])
+def test_scaled_spin_factor(a):
+    M = 5e24 * u.kg
+    a1 = kerr_utils.scaled_spin_factor(a, M.value)
+    a2 = utils.schwarzschild_radius(M).value * a * 0.5
+    assert_allclose(a2, a1, rtol=1e-9)
