@@ -13,3 +13,4 @@ of the schwartzschild radius, calculation of the rate of expansion of the univer
     scalar_factor
     schwarzschild_utils
     kerr_utils
+    kerrnewman_utils

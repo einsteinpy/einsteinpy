@@ -9,3 +9,4 @@ various space-time geometries including schwarzschild, kerr etc.
 
     schwarzschild
     kerr
+    kerrnewman
