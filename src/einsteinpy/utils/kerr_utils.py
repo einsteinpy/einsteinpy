@@ -39,6 +39,38 @@ nonzero_christoffels_list = [
 ]  #: Precomputed list of tuples consisting of indices of christoffel symbols which are non-zero in Kerr Metric
 
 
+def scaled_spin_factor(a, M, c=constant.c.value, G=constant.G.value):
+    """
+    Returns a scaled version of spin factor(a)
+
+    Parameters
+    ----------
+    a : float
+        Number between 0 & 1
+    M : float
+        Mass of massive body
+    c : float
+        Speed of light. Defaults to speed in SI units.
+    G : float
+        Gravitational constant. Defaults to Gravitaional Constant in SI units.
+
+    Returns
+    -------
+    float
+        Scaled spinf factor to consider changed units
+
+    Raises
+    ------
+    ValueError
+        If a not between 0 & 1
+
+    """
+    half_scr = G * M / (c ** 2)
+    if a < 0 or a > 1:
+        raise ValueError("a to be supplied between 0 and 1")
+    return a * half_scr
+
+
 def sigma(r, theta, a):
     """
     Returns the value r^2 + a^2 * cos^2(theta)
@@ -112,16 +144,15 @@ def metric(c, r, theta, Rs, a):
     sg, dl = sigma(r, theta, a), delta(r, Rs, a)
     c2 = c ** 2
     # set the diagonal/off-diagonal terms of metric
-    m[0][0] = 1 - (Rs * r / sg)
-    m[1][1] = (sg / dl) * (-1 / c2)
-    m[2][2] = -1 * sg / c2
-    m[3][3] = (
+    m[0, 0] = 1 - (Rs * r / sg)
+    m[1, 1] = (sg / dl) * (-1 / c2)
+    m[2, 2] = -1 * sg / c2
+    m[3, 3] = (
         (-1 / c2)
         * ((r ** 2) + (a ** 2) + (Rs * r * (np.sin(theta) ** 2) * ((a ** 2) / sg)))
         * (np.sin(theta) ** 2)
     )
-    m[0][3] = Rs * r * a * (np.sin(theta) ** 2) / (sg * c)
-    m[3][0] = m[0][3]
+    m[0, 3] = m[3, 0] = Rs * r * a * (np.sin(theta) ** 2) / (sg * c)
     return m
 
 
@@ -179,7 +210,6 @@ def dmetric_dx(c, r, theta, Rs, a):
     dmdx = np.zeros(shape=(4, 4, 4), dtype=float)
     sg, dl = sigma(r, theta, a), delta(r, Rs, a)
     c2 = c ** 2
-
     # metric is invariant on t & phi
     # differentiation of metric wrt r
     def due_to_r():
@@ -187,35 +217,33 @@ def dmetric_dx(c, r, theta, Rs, a):
         dsdr = 2 * r
         dddr = 2 * r - Rs
         tmp = (Rs * (sg - r * dsdr) / sg) * (1 / sg)
-        dmdx[1][0][0] = -1 * tmp
-        dmdx[1][1][1] = (-1 / c2) * (dsdr - (sg * (dddr / dl))) / dl
-        dmdx[1][2][2] = (-1 / c2) * dsdr
-        dmdx[1][3][3] = (
+        dmdx[1, 0, 0] = -1 * tmp
+        dmdx[1, 1, 1] = (-1 / c2) * (dsdr - (sg * (dddr / dl))) / dl
+        dmdx[1, 2, 2] = (-1 / c2) * dsdr
+        dmdx[1, 3, 3] = (
             (-1 / c2)
             * (2 * r + (a ** 2) * (np.sin(theta) ** 2) * tmp)
             * (np.sin(theta) ** 2)
         )
-        dmdx[1][0][3] = (1 / c) * (a * (np.sin(theta) ** 2) * tmp)
-        dmdx[1][3][0] = dmdx[1][0][3]
+        dmdx[1, 0, 3] = dmdx[1, 3, 0] = (1 / c) * (a * (np.sin(theta) ** 2) * tmp)
 
     # differentiation of metric wrt theta
     def due_to_theta():
         nonlocal dmdx
         dsdth = -2 * (a ** 2) * np.cos(theta) * np.sin(theta)
         tmp = (-1 / sg) * Rs * r * dsdth / sg
-        dmdx[2][0][0] = -1 * tmp
-        dmdx[2][1][1] = (-1 / c2) * (dsdth / dl)
-        dmdx[2][2][2] = (-1 / c2) * dsdth
-        dmdx[2][3][3] = (-1 / c2) * (
+        dmdx[2, 0, 0] = -1 * tmp
+        dmdx[2, 1, 1] = (-1 / c2) * (dsdth / dl)
+        dmdx[2, 2, 2] = (-1 / c2) * dsdth
+        dmdx[2, 3, 3] = (-1 / c2) * (
             2 * np.sin(theta) * np.cos(theta) * ((r ** 2) + (a ** 2))
             + tmp * (a ** 2) * (np.sin(theta) ** 4)
             + (4 * (np.sin(theta) ** 3) * np.cos(theta) * (a ** 2) * r * Rs / sg)
         )
-        dmdx[2][0][3] = (a / c) * (
+        dmdx[2, 0, 3] = dmdx[2, 3, 0] = (a / c) * (
             (np.sin(theta) ** 2) * tmp
             + (2 * np.sin(theta) * np.cos(theta) * Rs * r / sg)
         )
-        dmdx[2][3][0] = dmdx[2][0][3]
 
     due_to_r()
     due_to_theta()
@@ -249,17 +277,17 @@ def christoffels(c, r, theta, Rs, a):
     dmdx = dmetric_dx(c, r, theta, Rs, a)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     for _, k, l in nonzero_christoffels_list[0:4]:
-        val1 = dmdx[l][0][k] + dmdx[k][0][l]
-        val2 = dmdx[l][3][k] + dmdx[k][3][l]
-        chl[0][k][l] = chl[0][l][k] = 0.5 * (invg[0][0] * (val1) + invg[0][3] * (val2))
-        chl[3][k][l] = chl[3][l][k] = 0.5 * (invg[3][0] * (val1) + invg[3][3] * (val2))
+        val1 = dmdx[l, 0, k] + dmdx[k, 0, l]
+        val2 = dmdx[l, 3, k] + dmdx[k, 3, l]
+        chl[0, k, l] = chl[0, l, k] = 0.5 * (invg[0, 0] * (val1) + invg[0, 3] * (val2))
+        chl[3, k, l] = chl[3, l, k] = 0.5 * (invg[3, 0] * (val1) + invg[3, 3] * (val2))
     for i, k, l in nonzero_christoffels_list[8:16]:
-        chl[i][k][l] = 0.5 * (
-            invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
+        chl[i, k, l] = 0.5 * (
+            invg[i, i] * (dmdx[l, i, k] + dmdx[k, i, l] - dmdx[i, k, l])
         )
     for i, k, l in nonzero_christoffels_list[16:20]:
-        chl[i][k][l] = chl[i][l][k] = 0.5 * (
-            invg[i][i] * (dmdx[l][i][k] + dmdx[k][i][l] - dmdx[i][k][l])
+        chl[i, k, l] = chl[i, l, k] = 0.5 * (
+            invg[i, i] * (dmdx[l, i, k] + dmdx[k, i, l] - dmdx[i, k, l])
         )
     return chl
 

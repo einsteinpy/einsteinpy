@@ -1,8 +1,11 @@
 import astropy.units as u
+import numpy as np
 from astropy import constants
 
-c = constants.c.value * (u.m / u.s)
-G = constants.G.value * ((u.m ** 3) / (u.kg * u.s ** 2))
+c = constants.c
+G = constants.G
+eps0 = constants.eps0
+coulombs_const = 1 / (4 * np.pi * eps0)
 
 Cosmo_Const_base = constants.Constant(
     "lambda",
