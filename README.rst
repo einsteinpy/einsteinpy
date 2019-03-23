@@ -221,7 +221,7 @@ Can I do <insert awesome thing> with EinsteinPy?
 ------------------------------------------------
 
 EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it.
-We welcome every contribution and will be happy to include it in einteinpy.
+We welcome every contribution and will be happy to include it in EinsteinPy.
 
 What's the future of the project?
 ---------------------------------
