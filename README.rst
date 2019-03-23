@@ -115,6 +115,18 @@ OS X            Travis CI     |travisci|
 Windows x64     Appveyor      |appveyor|
 ==============  ============  ===================
 
+Installation
+============
+
+The easiest and fastest way to get the package up and running is to
+install EinsteinPy using `conda <http://conda.io>`_::
+
+  $ conda install einsteinpy --channel conda-forge
+
+Please check out the `guide for alternative installation methods`_.
+
+.. _`guide for alternative installation methods`: https://einsteinpy.github.io/installation/
+
 Testing
 =======
 
