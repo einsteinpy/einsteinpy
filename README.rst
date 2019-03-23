@@ -75,6 +75,23 @@ https://einsteinpy-project.readthedocs.io/
 
 .. _`Read the Docs`: https://readthedocs.org/
 
+Examples
+========
+
+.. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
+   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+
+|mybinder|
+
+In the examples directory you can find several Jupyter notebooks with specific
+applications of einsteinpy. You can consider theses Jupyter Notebooks as tutorials for einsteinpy.
+You can launch a cloud Jupyter server using `binder`_ to edit
+the notebooks without installing anything. Try it out!
+
+https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+
+.. _binder: https://beta.mybinder.org/
+
 Requirements
 ============
 
