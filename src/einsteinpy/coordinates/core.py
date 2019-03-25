@@ -81,9 +81,15 @@ class Cartesian:
 
         return Spherical(r, theta, phi)
 
-    def to_bl(self):
+    @u.quantity_input(a=u.km)
+    def to_bl(self, a):
         """
         Method for conversion to boyer-lindquist coordinates.
+
+        Parameters
+        ----------
+        a : float
+             a = J/M , the angular momentum per unit mass of the black hole.
 
         Returns
         -------
@@ -91,11 +97,14 @@ class Cartesian:
             BL representation of the Cartesian Coordinates.
 
         """
-        r = self.norm()
+        w = self.norm()**2 - a ** 2
+        r = np.sqrt(
+            0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (self.z ** 2))))
+        )
         theta = np.arccos(self.z / r)
         phi = np.arctan2(self.y, self.x)
 
-        return Spherical(r, theta, phi)
+        return BoyerLindquist(r, theta, phi)
 
 
 class Spherical:
@@ -108,6 +117,7 @@ class Spherical:
         self.r = r
         self.theta = theta
         self.phi = phi
+
 
 class BoyerLindquist:
     """
