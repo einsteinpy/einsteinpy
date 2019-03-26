@@ -152,3 +152,88 @@ def test_BL2C_8dim(vec, a):
     arr1 = np.array(list1)
     arr2 = utils.BL2C_8dim(vec, a)
     assert_allclose(arr1, arr2, rtol=0.0, atol=1e-5)
+
+
+# test for Spherical/BL transforms
+
+
+@pytest.mark.parametrize(
+    "pos_vec", [np.array([12, 20 * np.pi / 180, 60 * np.pi / 180])]
+)
+def test_BLToSpherical_pos_a0(pos_vec):
+    ans_vec = utils.BLToSpherical_pos(pos_vec, 0.0)
+    assert_allclose(ans_vec, pos_vec)
+
+
+@pytest.mark.parametrize(
+    "pos_vec", [np.array([12, 20 * np.pi / 180, 60 * np.pi / 180])]
+)
+def test_SphericalToBL_pos_a0(pos_vec):
+    ans_vec = utils.SphericalToBL_pos(pos_vec, 0.0)
+    assert_allclose(ans_vec, pos_vec)
+
+
+@pytest.mark.parametrize(
+    "pos_vec, vel_vec",
+    [(np.array([12, 20 * np.pi / 180, 60 * np.pi / 180]), np.array([0.0, 0.0, 10]))],
+)
+def test_BLToSpherical_vel_a0(pos_vec, vel_vec):
+    ans_vec = utils.BLToSpherical_vel(pos_vec, vel_vec, 0.0)
+    assert_allclose(vel_vec, ans_vec)
+
+
+@pytest.mark.parametrize(
+    "pos_vec, vel_vec",
+    [(np.array([12, 20 * np.pi / 180, 60 * np.pi / 180]), np.array([0.0, 0.0, 10]))],
+)
+def test_SphericalToBL_vel_a0(pos_vec, vel_vec):
+    ans_vec = utils.SphericalToBL_vel(pos_vec, vel_vec, 0.0)
+    assert_allclose(vel_vec, ans_vec)
+
+
+@pytest.mark.parametrize(
+    "pos_vec, a",
+    [
+        (np.array([100, 2 * np.pi / 3, 1.0]), 11.11),
+        (np.array([10, np.pi / 3, 2.5]), 0.5),
+        (np.array([1, 1e-3, 0]), 0.1),
+    ],
+)
+def test_BLToSpherical_cycle_pos(pos_vec, a):
+    pos_vec2 = utils.SphericalToBL_pos(pos_vec, a)
+    pos_vec3 = utils.BLToSpherical_pos(pos_vec2, a)
+    assert_allclose(pos_vec, pos_vec3, atol=1e-6)
+
+
+@pytest.mark.parametrize(
+    "pos_vec, vel_vec, a",
+    [
+        (np.array([100, 2 * np.pi / 3, 1.0]), np.array([-2, -2, -2]), 11.11),
+        (np.array([10, np.pi / 3, 2.5]), np.array([0, 0, 0]), 0.5),
+        (np.array([1, 1e-3, 0]), np.array([100, 100, -100]), 0.1),
+    ],
+)
+def test_BLToSpherical_cycle_vel(pos_vec, vel_vec, a):
+    pos_vec2 = utils.SphericalToBL_pos(pos_vec, a)
+    vel_vec2 = utils.SphericalToBL_vel(pos_vec, vel_vec, a)
+    vel_vec3 = utils.BLToSpherical_vel(pos_vec2, vel_vec2, a)
+    assert_allclose(vel_vec, vel_vec3, rtol=0.0, atol=1e-5)
+
+
+@pytest.mark.parametrize(
+    "pos_vec, vel_vec, ans_vel_vec",
+    [
+        (
+            [20 * u.m, 90 * u.deg, 45 * u.deg],
+            [-1 * u.m / u.s, 1 * u.deg / u.s, 0 * u.rad / u.s],
+            np.array([-1, np.pi / 180, 0]),
+        )
+    ],
+)
+def test_BL_Spherical_units(pos_vec, vel_vec, ans_vel_vec):
+    a = utils.BL2S_units(pos_vec, vel_vec, 0.0)
+    tmp = np.array([t.value for t in a[1]])
+    assert_allclose(ans_vel_vec, tmp, rtol=0.0, atol=1e-5)
+    a = utils.S2BL_units(pos_vec, vel_vec, 0.0)
+    tmp = np.array([t.value for t in a[1]])
+    assert_allclose(ans_vel_vec, tmp, rtol=0.0, atol=1e-5)
