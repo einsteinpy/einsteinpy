@@ -41,8 +41,6 @@ class CartesianDifferential(Cartesian):
         )
 
 
-
-
 class SphericalDifferential(Spherical):
     """
     Class for calculating and transforming the velocity
