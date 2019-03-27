@@ -1,9 +1,11 @@
 import astropy.units as u
 
+
 class _BaseCoordinates:
     """
     Parent Class for defining coordinate systems
     """
+
     def __init__(self, param1, param2, param3):
 
         self.param1 = param1
@@ -12,6 +14,3 @@ class _BaseCoordinates:
 
     def norm(self):
         raise NotImplementedError
-
-
-
