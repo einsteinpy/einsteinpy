@@ -99,7 +99,7 @@ Running your first code using the library
 
 Various examples can be found in the `examples`_ folder.
 
-.. _`examples` : https://github.com/einsteinpy/einsteinpy/tree/master/docs/source/examples
+.. _`examples` : https://einsteinpy-project.readthedocs.io/en/latest/jupyter.html
 
 Contribute
 ----------
