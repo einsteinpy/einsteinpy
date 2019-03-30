@@ -15,7 +15,7 @@
 .. |doi| image:: https://zenodo.org/badge/168302584.svg?style=flat-square
    :target: https://zenodo.org/badge/latestdoi/168302584
 
-.. |gitter| image:: https://badges.gitter.im/EinsteinPy-Project/EinsteinPy.svg
+.. |gitter| image:: https://img.shields.io/gitter/room/EinsteinPy-Project/EinsteinPy.svg?logo=gitter&style=flat-square
    :alt: Join the chat at https://gitter.im/EinsteinPy-Project/EinsteinPy
    :target: https://gitter.im/EinsteinPy-Project/EinsteinPy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
@@ -31,7 +31,7 @@
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
-.. |codeclimate| image:: https://api.codeclimate.com/v1/badges/6efb3f754d20777d8b8d/maintainability
+.. |codeclimate| image:: https://img.shields.io/codeclimate/maintainability/einsteinpy/einsteinpy.svg?logo=code-climate&style=flat-square
    :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
    :alt: Maintainability
 
