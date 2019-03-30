@@ -19,7 +19,7 @@
    :alt: Join the chat at https://gitter.im/EinsteinPy-Project/EinsteinPy
    :target: https://gitter.im/EinsteinPy-Project/EinsteinPy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-.. |riotchat| image:: https://img.shields.io/matrix/einsteinpy:matrix.org.svg?style=flat-square
+.. |riotchat| image:: https://img.shields.io/matrix/einsteinpy:matrix.org.svg?logo=riot&style=flat-square
    :target: https://riot.im/app/#/room/#einsteinpy:matrix.org
 
 .. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
@@ -41,7 +41,7 @@
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
    :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/b95ml54ebspx6sm9?svg=true
+.. |appveyor| image:: https://img.shields.io/codeclimate/maintainability/einsteinpy/einsteinpy.svg?logo=code-climate&style=flat-square
    :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy
 
 .. |orcid-shreyas| image:: https://img.shields.io/badge/id-0000--0002--0870--4665-a6ce39.svg
