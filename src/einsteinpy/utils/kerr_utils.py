@@ -316,12 +316,12 @@ def kerr_time_velocity(pos_vec, vel_vec, mass, a):
     """
     _scr = utils.schwarzschild_radius(mass).value
     g = metric(constant.c.value, pos_vec[0], pos_vec[1], _scr, a)
-    A = g[0][0]
-    B = 2 * g[0][3]
+    A = g[0, 0]
+    B = 2 * g[0, 3]
     C = (
-        g[1][1] * (vel_vec[0] ** 2)
-        + g[2][2] * (vel_vec[1] ** 2)
-        + g[3][3] * (vel_vec[2] ** 2)
+        g[1, 1] * (vel_vec[0] ** 2)
+        + g[2, 2] * (vel_vec[1] ** 2)
+        + g[3, 3] * (vel_vec[2] ** 2)
         - 1
     )
     D = (B ** 2) - (4 * A * C)
@@ -342,13 +342,13 @@ def nonzero_christoffels():
     # Below is the code for algorithmically calculating the indices of nonzero christoffel symbols in Kerr Metric.
     invg = np.zeros(shape=(4, 4), dtype=bool)
     dmdx = np.zeros(shape=(4, 4, 4), dtype=bool)
-    invg[3][0] = invg[0][3] = True
-    dmdx[1][3][0] = dmdx[1][0][3] = True
-    dmdx[2][0][3] = dmdx[2][3][0] = True
+    invg[3, 0] = invg[0, 3] = True
+    dmdx[1, 3, 0] = dmdx[1, 0, 3] = True
+    dmdx[2, 0, 3] = dmdx[2, 3, 0] = True
     # Code Climate cyclomatic complexity hack ; Instead of "for i in range(4)"
-    invg[0][0] = invg[1][1] = invg[2][2] = invg[3][3] = True
-    dmdx[1][0][0] = dmdx[1][1][1] = dmdx[1][2][2] = dmdx[1][3][3] = True
-    dmdx[2][0][0] = dmdx[2][1][1] = dmdx[2][2][2] = dmdx[2][3][3] = True
+    invg[0, 0] = invg[1, 1] = invg[2, 2] = invg[3, 3] = True
+    dmdx[1, 0, 0] = dmdx[1, 1, 1] = dmdx[1, 2, 2] = dmdx[1, 3, 3] = True
+    dmdx[2, 0, 0] = dmdx[2, 1, 1] = dmdx[2, 2, 2] = dmdx[2, 3, 3] = True
     # hack ends
     chl = np.zeros(shape=(4, 4, 4), dtype=bool)
     tmp = np.array([i for i in range(4 ** 3)])
@@ -358,8 +358,8 @@ def nonzero_christoffels():
         k = int(t / 4) % 4
         l = t % 4
         for m in range(4):
-            chl[i][k][l] |= invg[i][m] & (dmdx[l][m][k] | dmdx[k][m][l] | dmdx[m][k][l])
-        if chl[i][k][l]:
+            chl[i, k, l] |= invg[i, m] & (dmdx[l, m, k] | dmdx[k, m, l] | dmdx[m, k, l])
+        if chl[i, k, l]:
             vcl.append((i, k, l))
     return vcl
 
