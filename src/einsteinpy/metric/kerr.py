@@ -32,6 +32,7 @@ class Kerr:
             (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
         )
         self.schwarzschild_r = scr(M)
+        self.kerr_r = kerr_utils.event_horizon(self.schwarzschild_r, self.a, theta=np.pi / 2)
 
     @classmethod
     def _classmethod_handler(cls, pos_vec, vel_vec, time, M, a):
@@ -194,13 +195,14 @@ class Kerr:
             **OdeMethodKwargs
         )
         _scr = self.schwarzschild_r.value * 1.001
+        _kerr_r = kerr_r * 1.001
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _scr):
+            if (not singularity_reached) and (ODE.y[1] <= _kerr_r):
                 warnings.warn(
-                    "r component of position vector reached Schwarzchild Radius. ",
+                    "r component of position vector reached Kerr Radius. ",
                     RuntimeWarning,
                 )
                 if stop_on_singularity:
@@ -265,6 +267,7 @@ class Kerr:
             **OdeMethodKwargs
         )
         _scr = self.schwarzschild_r.value * 1.001
+        _kerr_r = kerr*1.001
 
         def yielder_func():
             nonlocal singularity_reached
@@ -274,12 +277,12 @@ class Kerr:
                 else:
                     temp = np.copy(ODE.y)
                     temp[1:4] = BLToCartesian_pos(ODE.y[1:4], self.a)
-                    temp[5:8] = BLToCartesian_vel(ODE.y[1:4], ODE.y[5:8], self.a)
+                    temp[5:8] = BLToCartesian_vel(ODE.y[1:4], ODE.y[5:d], self.a)
                     yield (ODE.t, temp)
                 ODE.step()
-                if (not singularity_reached) and (ODE.y[1] <= _scr):
+                if (not singularity_reached) and (ODE.y[1] <= _kerr_r):
                     warnings.warn(
-                        "r component of position vector reached Schwarzchild Radius. ",
+                        "r component of position vector reached Kerr Radius. ",
                         RuntimeWarning,
                     )
                     if stop_on_singularity:
