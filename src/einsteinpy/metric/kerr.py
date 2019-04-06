@@ -277,7 +277,7 @@ class Kerr:
                 else:
                     temp = np.copy(ODE.y)
                     temp[1:4] = BLToCartesian_pos(ODE.y[1:4], self.a)
-                    temp[5:8] = BLToCartesian_vel(ODE.y[1:4], ODE.y[5:d], self.a)
+                    temp[5:8] = BLToCartesian_vel(ODE.y[1:4], ODE.y[5:8], self.a)
                     yield (ODE.t, temp)
                 ODE.step()
                 if (not singularity_reached) and (ODE.y[1] <= _kerr_r):
