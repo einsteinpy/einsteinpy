@@ -124,32 +124,32 @@ class Kerr:
         for i in range(4):
             vals[i] = vec[i + 4]
         vals[4] = -2.0 * (
-            chl[0][0][1] * vec[4] * vec[5]
-            + chl[0][0][2] * vec[4] * vec[6]
-            + chl[0][1][3] * vec[5] * vec[7]
-            + chl[0][2][3] * vec[6] * vec[7]
+            chl[0,0,1] * vec[4] * vec[5]
+            + chl[0,0,2] * vec[4] * vec[6]
+            + chl[0,1,3] * vec[5] * vec[7]
+            + chl[0,2,3] * vec[6] * vec[7]
         )
         vals[5] = -1.0 * (
-            chl[1][0][0] * vec[4] * vec[4]
-            + 2 * chl[1][0][3] * vec[4] * vec[7]
-            + chl[1][1][1] * vec[5] * vec[5]
-            + 2 * chl[1][1][2] * vec[5] * vec[6]
-            + chl[1][2][2] * vec[6] * vec[6]
-            + chl[1][3][3] * vec[7] * vec[7]
+            chl[1,0,0] * vec[4] * vec[4]
+            + 2 * chl[1,0,3] * vec[4] * vec[7]
+            + chl[1,1,1] * vec[5] * vec[5]
+            + 2 * chl[1,1,2] * vec[5] * vec[6]
+            + chl[1,2,2] * vec[6] * vec[6]
+            + chl[1,3,3] * vec[7] * vec[7]
         )
         vals[6] = -1.0 * (
-            chl[2][0][0] * vec[4] * vec[4]
-            + 2 * chl[2][0][3] * vec[4] * vec[7]
-            + chl[2][1][1] * vec[5] * vec[5]
-            + 2 * chl[2][1][2] * vec[5] * vec[6]
-            + chl[2][2][2] * vec[6] * vec[6]
-            + chl[2][3][3] * vec[7] * vec[7]
+            chl[2,0,0] * vec[4] * vec[4]
+            + 2 * chl[2,0,3] * vec[4] * vec[7]
+            + chl[2,1,1] * vec[5] * vec[5]
+            + 2 * chl[2,1,2] * vec[5] * vec[6]
+            + chl[2,2,2] * vec[6] * vec[6]
+            + chl[2,3,3] * vec[7] * vec[7]
         )
         vals[7] = -2.0 * (
-            chl[3][0][1] * vec[4] * vec[5]
-            + chl[3][0][2] * vec[4] * vec[6]
-            + chl[3][1][3] * vec[5] * vec[7]
-            + chl[3][2][3] * vec[6] * vec[7]
+            chl[3,0,1] * vec[4] * vec[5]
+            + chl[3,0,2] * vec[4] * vec[6]
+            + chl[3,1,3] * vec[5] * vec[7]
+            + chl[3,2,3] * vec[6] * vec[7]
         )
         return vals
 
@@ -194,7 +194,7 @@ class Kerr:
             t_bound=end_lambda,
             **OdeMethodKwargs
         )
-        _scr = self.schwarzschild_r.value * 1.001
+      # _scr = self.schwarzschild_r.value * 1.001
         _kerr_r = kerr_r * 1.001
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
