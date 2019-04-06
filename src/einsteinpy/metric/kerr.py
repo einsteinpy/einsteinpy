@@ -195,7 +195,7 @@ class Kerr:
             **OdeMethodKwargs
         )
       # _scr = self.schwarzschild_r.value * 1.001
-        _kerr_r = kerr_r * 1.001
+        _kerr_r = self.kerr_r.value * 1.001
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
