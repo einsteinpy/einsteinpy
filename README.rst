@@ -1,7 +1,7 @@
 .. einsteinpy
 
-.. image:: http://einsteinpy.github.io/img/logo.png
-   :target: http://einsteinpy.github.io/
+.. image:: https://einsteinpy.org/img/logo.png
+   :target: https://einsteinpy.org/
    :alt: EinsteinPy logo
    :width: 675px
    :align: center
@@ -26,7 +26,7 @@
    :target: https://github.com/einsteinpy/einsteinpy/raw/master/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://einsteinpy-project.readthedocs.io/en/latest/?badge=latest
+   :target: https://docs.einsteinpy.org/en/latest/?badge=latest
 
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
@@ -48,7 +48,7 @@
    :target: https://orcid.org/0000-0002-0870-4665
 
 :Name: EinsteinPy
-:Website: https://einsteinpy.github.io/
+:Website: https://einsteinpy.org/
 :Version: 0.2.dev0
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
@@ -72,7 +72,7 @@ Documentation
 Complete documentation, including a user guide and an API reference, can be read on
 the wonderful `Read the Docs`_.
 
-https://einsteinpy-project.readthedocs.io/
+https://docs.einsteinpy.org/
 
 .. _`Read the Docs`: https://readthedocs.org/
 

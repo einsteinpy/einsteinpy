@@ -37,7 +37,7 @@ html_theme_options = {
     "show_powered_by": False,
     "page_width": "80%",
     "github_banner": True,
-    "extra_nav_links": {"Blog": "https://einsteinpy.github.io/"},
+    "extra_nav_links": {"Blog": "https://einsteinpy.org/"},
 }
 
 add_function_parentheses = True
