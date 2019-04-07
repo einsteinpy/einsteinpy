@@ -16,7 +16,7 @@ setup(
     description="Python package for General Relativity",
     author="Shreyas Bapat",
     author_email="bapat.shreyas@gmail.com",
-    url="https://einsteinpy-project.readthedocs.io",
+    url="https://einsteinpy.org/",
     download_url="https://github.com/einsteinpy/einsteinpy",
     license="MIT",
     keywords=["general relativity", "geodesics", "relativity", "kerr"],
