@@ -202,7 +202,7 @@ class Kerr:
             ODE.step()
             if (not singularity_reached) and (ODE.y[1] <= _event_hor):
                 warnings.warn(
-                    "r component of position vector reached Kerr Radius. ",
+                    "r component of position vector reached event horizon. ",
                     RuntimeWarning,
                 )
                 if stop_on_singularity:
@@ -284,7 +284,7 @@ class Kerr:
                 ODE.step()
                 if (not singularity_reached) and (ODE.y[1] <= _event_hor):
                     warnings.warn(
-                        "r component of position vector reached Kerr Radius. ",
+                        "r component of position vector reached event horizon. ",
                         RuntimeWarning,
                     )
                     if stop_on_singularity:
