@@ -10,6 +10,4 @@ with open(os.path.join("src", "einsteinpy", "__init__.py")) as fp:
 
 
 # http://blog.ionelmc.ro/2014/05/25/python-packaging/
-setup(    
-    version=version["__version__"]
-)
+setup(version=version["__version__"])
