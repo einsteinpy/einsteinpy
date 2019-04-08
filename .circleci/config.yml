@@ -72,7 +72,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install --upgrade pip --quiet
+            pip install --upgrade pip --quiets
             pip install numpy --quiet
             pip install --editable .[dev] --quiet
       - run:
