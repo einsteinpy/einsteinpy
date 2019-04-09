@@ -63,16 +63,15 @@ def test_calculate_trajectory(
     )
     ans = ans[1]
     testarray = list()
-    for ansi in ans:
-        g = kerr_utils.metric(_c, ansi[1], ansi[2], _scr, a)
-        tmp = (
-            g[0][0] * (ansi[4] ** 2)
-            + g[1][1] * (ansi[5] ** 2)
-            + g[2][2] * (ansi[6] ** 2)
-            + g[3][3] * (ansi[7] ** 2)
-            + 2 * g[0][3] * ansi[4] * ansi[7]
+    for i in ans:
+        g = kerr_utils.metric(_c, i[1], i[2], _scr, a)
+        testarray.append(
+            g[0][0] * (i[4] ** 2)
+            + g[1][1] * (i[5] ** 2)
+            + g[2][2] * (i[6] ** 2)
+            + g[3][3] * (i[7] ** 2)
+            + 2 * g[0][3] * i[4] * i[7]
         )
-        testarray.append(tmp)
     testarray = np.array(testarray, dtype=float)
     comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
     assert_allclose(testarray, comparearray, 1e-4)
