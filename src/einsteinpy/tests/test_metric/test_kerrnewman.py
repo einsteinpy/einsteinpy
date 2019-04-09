@@ -80,6 +80,7 @@ def test_input():
     ss = 1.0
     return (q, a, Q, el, ss)
 
+
 def test_compare_calculate_trajectory_iterator_bl(test_input):
     pos_vec = [1000.0 * u.km, 0.6 * np.pi * u.rad, np.pi / 8 * u.rad]
     vel_vec = [10000 * u.m / u.s, -0.01 * u.rad / u.s, 0.0 * u.rad / u.s]
