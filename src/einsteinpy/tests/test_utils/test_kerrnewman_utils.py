@@ -22,6 +22,7 @@ def test_input():
     a = 0.99
     return (c, G, Cc, r, theta, M, a)
 
+
 def test_compare_kerr_kerrnewman_metric_inv(test_input):
     c, G, Cc, r, theta, M, a = test_input
     # inverse of metric for kerr and kerr-newman metric should be equal when Q=0
@@ -44,7 +45,7 @@ def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
 
 def test_christoffels1(test_input):
     # compare christoffel symbols output by optimized function and by brute force
-    c, G, Cc, r, theta, M, a  = test_input
+    c, G, Cc, r, theta, M, a = test_input
     Q = 1.0
     scr = M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M, c, G)
