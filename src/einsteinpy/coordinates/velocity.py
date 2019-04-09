@@ -42,6 +42,30 @@ class CartesianDifferential(Cartesian):
             v_p,
         )
 
+    def boyerlindquistdifferential(self, a):
+        """
+        Function to convert velocity in Cartesian coordinates to velocity in Boyer-Lindquist coordinates
+        """
+        transformed_bl = self.to_bl(a)
+        w = (self.x ** 2 + self.y ** 2 + self.z ** 2) - (a ** 2)
+        dw_dt = 2 * (self.x * self.v_x + self.y * self.v_y + self.z * self.v_z)
+        v_r = (1 / (2 * transformed_bl.r)) * (
+            (dw_dt / 2)
+            + (
+                (w * dw_dt + 4 * (a ** 2) * self.z * self.v_z)
+                / (2 * np.sqrt((w ** 2) + (4 * (a ** 2) * (self.z ** 2))))
+            )
+        )
+        v_t = (-1 / np.sqrt(1 - np.square(self.z / transformed_bl.r))) * (
+            (self.v_z * transformed_bl.r - v_r * self.z) / (transformed_bl.r ** 2)
+        )
+        v_p = (1 / (1 + np.square(self.y / self.x))) * (
+            (self.v_y * self.x - self.v_x * self.y) / (self.x ** 2)
+        )
+        return BoyerLindquistDifferential(
+            transformed_bl.r, transformed_bl.theta, transformed_bl.phi, v_r, v_t, v_p
+        )
+
 
 class SphericalDifferential(Spherical):
     """
