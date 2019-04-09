@@ -43,7 +43,7 @@ class CartesianDifferential(Cartesian):
             v_p,
         )
 
-    def boyerlindquistdifferential(self, a):
+    def boyerlindquist_differential(self, a):
         """
         Function to convert velocity in Cartesian coordinates to velocity in Boyer-Lindquist coordinates
         """
@@ -59,10 +59,10 @@ class CartesianDifferential(Cartesian):
         )
         v_t = (-1 / np.sqrt(1 - np.square(self.z / transformed_bl.r))) * (
             (self.v_z * transformed_bl.r - v_r * self.z) / (transformed_bl.r ** 2)
-        )
+        ) * u.rad
         v_p = (1 / (1 + np.square(self.y / self.x))) * (
             (self.v_y * self.x - self.v_x * self.y) / (self.x ** 2)
-        )
+        ) * u.rad
         return BoyerLindquistDifferential(
             transformed_bl.r, transformed_bl.theta, transformed_bl.phi, v_r, v_t, v_p
         )
@@ -110,12 +110,12 @@ class SphericalDifferential(Spherical):
             v_z,
         )
 
-    def boyerlindquistdifferential(self, a):
+    def boyerlindquist_differential(self, a):
         """
         Function to convert velocity in spherical coordinates to velocity in Boyer-Lindquist coordinates
         """
         transformed_cartesian = self.cartesian_differential()
-        return transformed_cartesian.boyerlindquistdifferential(a)
+        return transformed_cartesian.boyerlindquist_differential(a)
 
 
 class BoyerLindquistDifferential(BoyerLindquist):
@@ -123,8 +123,40 @@ class BoyerLindquistDifferential(BoyerLindquist):
     Class for calculating and transforming the velocity
     """
 
+    @u.quantity_input(
+        r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=u.rad / u.s, v_p=u.rad / u.s
+    )
     def __init__(self, r, theta, phi, v_r, v_t, v_p):
         super(BoyerLindquistDifferential, self).__init__(r, theta, phi)
         self.v_r = v_r
         self.v_t = v_t
         self.v_p = v_p
+
+    def cartesian_differential(self, a):
+        transformed_cartesian = self.to_cartesian(a)
+        xa = np.sqrt(self.r ** 2 + a ** 2)
+        v_x = (
+            (self.r * self.v_r * np.sin(self.theta) * np.cos(self.phi) / xa)
+            + (xa * np.cos(self.theta) * np.cos(self.phi) * self.v_t / u.rad)
+            - (xa * np.sin(self.theta) * np.sin(self.phi) * self.v_p / u.rad)
+        )
+        v_y = (
+            (self.r * self.v_r * np.sin(self.theta) * np.sin(self.phi) / xa)
+            + (xa * np.cos(self.theta) * np.sin(self.phi) * self.v_t / u.rad)
+            + (xa * np.sin(self.theta) * np.cos(self.phi) * self.v_p / u.rad)
+        )
+        v_z = (self.v_r * np.cos(self.theta)) - (
+            self.r * np.sin(self.theta) * self.v_t / u.rad
+        )
+        return CartesianDifferential(
+            transformed_cartesian.x,
+            transformed_cartesian.y,
+            transformed_cartesian.z,
+            v_x,
+            v_y,
+            v_z,
+        )
+
+    def spherical_differential(self, a):
+        transformed_cartesian = self.cartesian_differential(a)
+        return transformed_cartesian.spherical_differential()
