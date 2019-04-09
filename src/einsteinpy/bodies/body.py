@@ -18,6 +18,10 @@ class Body:
 
         Parameters
         ----------
+        pos_vec : list
+            list of 3 components (3 dimensions) along with ~astropy.units
+        vel_vec : list
+            list of velocities of 3 components (3 dimensions) along with ~astropy.units
         time : ~astropy.units.s
             Time of start
         M : ~astropy.units.kg
@@ -35,11 +39,11 @@ class Body:
     def __init__(
         self, pos_vec, vel_vec, M, time=0 * u.s, a=0, is_attractor=False, desc="Empty"
     ):
-        self.M = M
-        self.a = a
         self.pos_vec = pos_vec
         self.vel_vec = vel_vec
         self.time = time
+        self.a = a
+        self.M = M
         self.is_attractor = is_attractor
         self.desc = desc
 
@@ -70,7 +74,7 @@ class Body:
     def from_cartesian(cls, pos_vec, vel_vec, M, time=0 * u.s, a=0):
         """
         Constructor
-        Initialize from Cartesian Coordinates
+        Initialize the Body object from the Cartesian Coordinates
 
         Parameters
         ----------
@@ -130,26 +134,126 @@ class Body:
         """
         Function to convert the coordinates of position vector from Cartesian to Spherical.
         It used the function CartesianToSperical_pos in coord_transforms module in utils.
+
+        templist1 : List which stores only the values and then converted to numpy array
+                    After that it is transformed from Cartesian to Spherical
+        templist2 : The values of templist1 are appended to this list and the units are provided.
+
         """
-        self.pos_vec = CartesianToSpherical_pos(self.pos_vec)
+        templist1 = []
+        for i in self.pos_vec:
+            templist1.append(i.value)  # get only the values
+
+        templist1 = np.asarray(templist1, dtype=object)  # convert to numpy array
+        templist1 = CartesianToSpherical_pos(templist1)  # tranformation
+
+        templist2 = []
+        for i in templist1:
+            templist2.append(i)
+
+        # Adding units
+        templist2[0] = templist2[0] * u.m
+        templist2[1] = templist2[1] * u.rad
+        templist2[2] = templist2[2] * u.rad
+        self.pos_vec = templist2
 
     def pos_SphericalToCartesian(self):
         """
         Function to convert the coordinates of position vector from Spherical to Cartesian.
         It used the function SphericalToCartesian_pos in coord_transforms module in utils.
+        
+        templist1 : List which stores only the values and then converted to numpy array
+                    After that it is transformed from Spherical to Cartesian.
+        templist2 : The values of templist1 are appended to this list and the units are provided.
+
         """
-        self.pos_vec = SphericalToCartesian_pos(self.pos_vec)
+        templist1 = []
+        for i in self.pos_vec:
+            templist1.append(i.value)  # get only the values
+
+        templist1 = np.asarray(templist1, dtype=object)  # convert to numpy array
+        templist1 = SphericalToCartesian_pos(templist1)  # tranformation
+
+        templist2 = []
+        for i in templist1:
+            templist2.append(i)
+
+        # Adding units
+        templist2[0] = templist2[0] * u.m
+        templist2[1] = templist2[1] * u.m
+        templist2[2] = templist2[2] * u.m
+        self.pos_vec = templist2
 
     def vel_CartesianToSpherical(self):
         """
         Function to convert the coordinates of velocity vector from Cartesian to Spherical.
         It used the function CartesianToSpherical_vel in coord_transforms module in utils.
+
+        templist1p : List which stores only the values of position vector and then is converted 
+                     to numpy array.
+        templist1v : List which stores only the values of velocity vector and then is converted 
+                     to numpy array. This contains the transformed coordinates from Cartesian to 
+                     Spherical.
+        templist2v : List which is formed from the numpy array. Units are provided. 
+
+        Note : The position vector must be in the same coordinate system as velocity vector.
         """
-        self.vel_vec = CartesianToSpherical_vel(self.pos_vec, self.vel_vec)
+
+        templist1p = []
+        for i in self.pos_vec:
+            templist1p.append(i.value)  # get only the values
+        templist1p = np.asarray(templist1p, dtype=object)  # convert to numpy array
+
+        templist1v = []
+        for i in self.vel_vec:
+            templist1v.append(i.value)  # get only the values
+        templist1v = np.asarray(templist1v, dtype=object)  # convert to numpy array
+
+        templist1v = CartesianToSpherical_vel(templist1p, templist1v)  # tranformation
+
+        templist2v = []
+        for i in templist1v:
+            templist2v.append(i)
+
+        # Adding units
+        templist2v[0] = templist2v[0] * u.m / u.s
+        templist2v[1] = templist2v[1] * u.rad / u.s
+        templist2v[2] = templist2v[2] * u.rad / u.s
+        self.vel_vec = templist2v
 
     def vel_SphericalToCartesian(self):
         """
         Function to convert the coordinates of velocity vector from Spherical to Cartesian.
         It used the function SphericalToCartesian_vel in coord_transforms module in utils.
+        
+        templist1p : List which stores only the values of position vector and then is converted 
+                     to numpy array.
+        templist1v : List which stores only the values of velocity vector and then is converted 
+                     to numpy array. This contains the transformed coordinates from Spherical to 
+                     Cartesian.
+        templist2v : List which is formed from the numpy array. Units are provided.
+
+        Note : The position vector must be in the same coordinate system as velocity vector. 
+
         """
-        self.vel_vec = SphericalToCartesian_vel(self.pos_vec, self.vel_vec)
+        templist1p = []
+        for i in self.pos_vec:
+            templist1p.append(i.value)  # get only the values
+        templist1p = np.asarray(templist1p, dtype=object)  # convert to numpy array
+
+        templist1v = []
+        for i in self.vel_vec:
+            templist1v.append(i.value)  # get only the values
+        templist1v = np.asarray(templist1v, dtype=object)  # convert to numpy array
+
+        templist1v = SphericalToCartesian_vel(templist1p, templist1v)  # tranformation
+
+        templist2v = []
+        for i in templist1v:
+            templist2v.append(i)
+
+        # Adding units
+        templist2v[0] = templist2v[0] * u.m / u.s
+        templist2v[1] = templist2v[1] * u.m / u.s
+        templist2v[2] = templist2v[2] * u.m / u.s
+        self.vel_vec = templist2v
