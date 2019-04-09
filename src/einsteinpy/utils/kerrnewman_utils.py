@@ -1,6 +1,5 @@
 import astropy.units as u
 import numpy as np
-
 from einsteinpy import constant, utils
 
 nonzero_christoffels_list = [
@@ -117,6 +116,51 @@ def delta(r, Rs, a, Q, c, G, Cc):
     
     """
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
+
+
+def event_horizon(Rs, a, Q, c, G, Cc, theta=np.pi / 2, coord="BL"):
+    """
+    Calculate the radius of event horizon of Kerr-Newman black hole
+
+    Parameters
+    ----------
+    Rs : float
+        Schwarzschild Radius
+    a : float
+        Black hole spin factor
+    theta : float
+        Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
+    Q : float
+        Charge on the massive body
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
+    coord : str
+        Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+
+    Returns
+    -------
+    ~numpy.array
+        [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
+    
+    """
+
+    Rh = 0.5 * (
+        Rs
+        + np.sqrt(
+            (Rs ** 2) - 4 * ((a ** 2) + ((charge_length_scale(Q, c, G, Cc)) ** 2))
+        )
+    )
+    if coord == "BL":
+        ans = np.array([Rh, theta], dtype=float)
+    else:
+        ans = utils.CartesianToSpherical_pos(
+            utils.BLToCartesian_pos(np.array([Rh, theta, 0.0]), a)
+        )[:2]
+    return ans
 
 
 def metric(c, G, Cc, r, theta, Rs, a, Q):
