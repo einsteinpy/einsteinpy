@@ -70,6 +70,14 @@ html_theme_path = [alabaster.get_path()]
 
 html_title = "EinsteinPy"
 
+html_static_path =['_static']
+
+html_context = {
+    'css_files': [
+        '_static/override.css',
+        ],
+    }
+
 htmlhelp_basename = 'einsteinpydoc'
 html_sidebars = {
     "**": [
