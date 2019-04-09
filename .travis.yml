@@ -21,9 +21,9 @@ before_install:
   - python3 -m pip install --upgrade pip
 
 install:
-  - pip install numpy  # Required
-  - pip install .  # Test installation correctness
-  - pip install .[dev]  # Test development dependencies
+  - pip install numpy --quiet # Required
+  - pip install . --quiet # Test installation correctness
+  - pip install .[dev] --quiet # Test development dependencies
 
 script:
   - pytest -vv  # Test against installed code
