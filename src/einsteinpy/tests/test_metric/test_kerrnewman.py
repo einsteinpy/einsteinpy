@@ -52,11 +52,12 @@ def test_calculate_trajectory0():
     assert_allclose(v_apehelion, 29.29, rtol=0.01)
 
 
-@pytest.mark.parametrize(
-    "M, r, end_lambda, stepsize", [(0.5 * 5.972e24 * u.kg, 1000.0 * u.km, 1000.0, 0.5)]
-)
-def test_calculate_trajectory1(M, r, end_lambda, stepsize):
+def test_calculate_trajectory1():
     # the test particle should not move as gravitational & electromagnetic forces are balanced
+    M = 0.5 * 5.972e24 * u.kg
+    r = 1000.0 * u.km
+    end_lambda = 1000.0
+    stepsize = 0.5
     tmp = _G * M.value / _cc
     q = tmp * u.C / u.kg
     print(tmp, 5.900455 * tmp ** 3)
@@ -70,22 +71,20 @@ def test_calculate_trajectory1(M, r, end_lambda, stepsize):
     assert_allclose(ans[1][0][1], ans[1][-1][1], 1e-2)
 
 
-@pytest.mark.parametrize(
-    "pos_vec, vel_vec, q, M, a, Q, el, ss",
-    [
-        (
-            [1000.0 * u.km, 0.6 * np.pi * u.rad, np.pi / 8 * u.rad],
-            [10000 * u.m / u.s, -0.01 * u.rad / u.s, 0.0 * u.rad / u.s],
-            1 * u.C / u.g,
-            0.5 * 5.972e24 * u.kg,
-            1e-6,
-            100 * u.C,
-            200.0,
-            1.0,
-        )
-    ],
-)
-def test_compare_calculate_trajectory_iterator_bl(pos_vec, vel_vec, q, M, a, Q, el, ss):
+@pytest.fixture()
+def test_input():
+    q = 1 * u.C / u.g
+    a = 1e-6
+    Q = 100 * u.C
+    el = 200.0
+    ss = 1.0
+    return (q, a, Q, el, ss)
+
+def test_compare_calculate_trajectory_iterator_bl(test_input):
+    pos_vec = [1000.0 * u.km, 0.6 * np.pi * u.rad, np.pi / 8 * u.rad]
+    vel_vec = [10000 * u.m / u.s, -0.01 * u.rad / u.s, 0.0 * u.rad / u.s]
+    M = 0.5 * 5.972e24 * u.kg
+    q, a, Q, el, ss = test_input
     cl1 = KerrNewman.from_BL(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
     cl2 = KerrNewman.from_BL(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
     ans1 = cl1.calculate_trajectory(end_lambda=el, OdeMethodKwargs={"stepsize": ss})[1]
@@ -98,24 +97,11 @@ def test_compare_calculate_trajectory_iterator_bl(pos_vec, vel_vec, q, M, a, Q, 
     assert_allclose(ans1[:20], ans2)
 
 
-@pytest.mark.parametrize(
-    "pos_vec, vel_vec, q, M, a, Q, el, ss",
-    [
-        (
-            [1000000 * u.m, 1000000 * u.m, 20.5 * u.m],
-            [10000 * u.m / u.s, 10000 * u.m / u.s, -30 * u.m / u.s],
-            1 * u.C / u.g,
-            2e24 * u.kg,
-            1e-6,
-            100 * u.C,
-            200.0,
-            1.0,
-        )
-    ],
-)
-def test_compare_calculate_trajectory_iterator_cartesians(
-    pos_vec, vel_vec, q, M, a, Q, el, ss
-):
+def test_compare_calculate_trajectory_iterator_cartesians(test_input):
+    pos_vec = [1000000 * u.m, 1000000 * u.m, 20.5 * u.m]
+    vel_vec = [10000 * u.m / u.s, 10000 * u.m / u.s, -30 * u.m / u.s]
+    M = 2e24 * u.kg
+    q, a, Q, el, ss = test_input
     cl1 = KerrNewman.from_cartesian(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
     cl2 = KerrNewman.from_cartesian(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
     ans1 = cl1.calculate_trajectory(

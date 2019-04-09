@@ -40,9 +40,13 @@ def test_radius_ergosphere_for_nonrotating_case():
     assert_allclose(a1[0], _scr, rtol=0.0, atol=1e-5)
 
 
-@pytest.mark.parametrize("c, r, theta, Rs, a", [(3e8, 100.0, np.pi / 5, 1.0, 0.2)])
-def test_christoffels(c, r, theta, Rs, a):
+def test_christoffels():
     # output produced by the optimized function
+    c = 3e8
+    r = 100.0
+    theta = np.pi / 5
+    Rs = 1.0
+    a = 0.2
     chl1 = kerr_utils.christoffels(c, r, theta, Rs, a)
     # calculate by formula
     invg = kerr_utils.metric_inv(c, r, theta, Rs, a)
@@ -70,8 +74,8 @@ def test_scaled_spin_factor_raises_error(a):
         assert True
 
 
-@pytest.mark.parametrize("a", [0.8])
-def test_scaled_spin_factor(a):
+def test_scaled_spin_factor():
+    a = 0.8
     M = 5e24 * u.kg
     a1 = kerr_utils.scaled_spin_factor(a, M.value)
     a2 = utils.schwarzschild_radius(M).value * a * 0.5
