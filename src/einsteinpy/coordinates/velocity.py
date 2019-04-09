@@ -25,7 +25,6 @@ class CartesianDifferential(Cartesian):
         transformed_spherical = self.to_spherical()
         n1 = self.x ** 2 + self.y ** 2
         n2 = n1 + self.z ** 2
-        v_r = (self.x * self.v_x + self.y * self.v_y + self.z * self.v_z) / n2
         v_r = (self.x * self.v_x + self.y * self.v_y + self.z * self.v_z) / np.sqrt(n2)
 
         v_t = (self.z * (self.x * self.v_x + self.y * self.v_y) - n1 * self.v_z) / (
