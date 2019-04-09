@@ -27,11 +27,13 @@ class CartesianDifferential(Cartesian):
         n2 = n1 + self.z ** 2
         v_r = (self.x * self.v_x + self.y * self.v_y + self.z * self.v_z) / np.sqrt(n2)
 
-        v_t = (self.z * (self.x * self.v_x + self.y * self.v_y) - n1 * self.v_z) / (
-            n2 * np.sqrt(n1)
+        v_t = (
+            (self.z * (self.x * self.v_x + self.y * self.v_y) - n1 * self.v_z)
+            / (n2 * np.sqrt(n1))
+            * u.rad
         )
 
-        v_p = -1 * (self.v_x * self.y - self.x * self.v_y) / n1
+        v_p = (-1 * (self.v_x * self.y - self.x * self.v_y) / n1) * u.rad
         return SphericalDifferential(
             transformed_spherical.r,
             transformed_spherical.theta,
@@ -71,11 +73,49 @@ class SphericalDifferential(Spherical):
     Class for calculating and transforming the velocity
     """
 
+    @u.quantity_input(
+        r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=u.rad / u.s, v_p=u.rad / u.s
+    )
     def __init__(self, r, theta, phi, v_r, v_t, v_p):
         super(SphericalDifferential, self).__init__(r, theta, phi)
         self.v_r = v_r
         self.v_t = v_t
         self.v_p = v_p
+
+    def cartesian_differential(self):
+        """
+        Function to convert spherical to cartesian coordinates
+        """
+        transformed_cartesian = self.to_cartesian()
+        v_x = (
+            np.sin(self.theta) * np.cos(self.phi) * self.v_r
+            - self.r * np.sin(self.theta) * np.sin(self.phi) * self.v_p / u.rad
+            + self.r * np.cos(self.theta) * np.cos(self.phi) * self.v_t / u.rad
+        )
+        v_y = (
+            np.sin(self.theta) * np.sin(self.phi) * self.v_r
+            + self.r * np.cos(self.theta) * np.sin(self.phi) * self.v_t / u.rad
+            + self.r * np.sin(self.theta) * np.cos(self.phi) * self.v_p / u.rad
+        )
+        v_z = (
+            np.cos(self.theta) * self.v_r
+            - self.r * np.sin(self.theta) * self.v_t / u.rad
+        )
+        return CartesianDifferential(
+            transformed_cartesian.x,
+            transformed_cartesian.y,
+            transformed_cartesian.z,
+            v_x,
+            v_y,
+            v_z,
+        )
+
+    def boyerlindquistdifferential(self, a):
+        """
+        Function to convert velocity in spherical coordinates to velocity in Boyer-Lindquist coordinates
+        """
+        transformed_cartesian = self.cartesian_differential()
+        return transformed_cartesian.boyerlindquistdifferential(a)
 
 
 class BoyerLindquistDifferential(BoyerLindquist):
