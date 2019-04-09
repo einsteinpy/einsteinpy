@@ -2,6 +2,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant, utils
+from einsteinpy.ijit import jit
 
 nonzero_christoffels_list = [
     (0, 0, 1),
@@ -89,7 +90,7 @@ def sigma(r, theta, a):
     -------
     float
         The value r^2 + a^2 * cos^2(theta)
-    
+
     """
     return (r ** 2) + ((a * np.cos(theta)) ** 2)
 
@@ -112,11 +113,11 @@ def delta(r, Rs, a):
     -------
     float
         The value r^2 - Rs * r + a^2
-    
+
     """
     return (r ** 2) - (Rs * r) + (a ** 2)
 
-
+@jit
 def metric(c, r, theta, Rs, a):
     """
     Returns the Kerr Metric
@@ -155,7 +156,7 @@ def metric(c, r, theta, Rs, a):
     m[0, 3] = m[3, 0] = Rs * r * a * (np.sin(theta) ** 2) / (sg * c)
     return m
 
-
+@jit
 def metric_inv(c, r, theta, Rs, a):
     """
     Returns the inverse of Kerr Metric
@@ -182,7 +183,7 @@ def metric_inv(c, r, theta, Rs, a):
     m = metric(c, r, theta, Rs, a)
     return np.linalg.inv(m)
 
-
+@jit
 def dmetric_dx(c, r, theta, Rs, a):
     """
     Returns differentiation of each component of Kerr metric tensor w.r.t. t, r, theta, phi
@@ -249,7 +250,7 @@ def dmetric_dx(c, r, theta, Rs, a):
     due_to_theta()
     return dmdx
 
-
+@jit
 def christoffels(c, r, theta, Rs, a):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Kerr Metric
@@ -381,7 +382,7 @@ def spin_factor(J, M, c):
     -------
     float
         Spin factor (J/(Mc))
-    
+
     """
     return J / (M * c)
 
@@ -405,7 +406,7 @@ def event_horizon(Rs, a, theta=np.pi / 2, coord="BL"):
     -------
     ~numpy.array
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
-    
+
     """
     Rh = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2)))
     if coord == "BL":
@@ -436,7 +437,7 @@ def radius_ergosphere(Rs, a, theta=np.pi / 2, coord="BL"):
     -------
     ~numpy.array
         [Radius of ergosphere(R), angle from z axis(theta)] in BL/Spherical coordinates
-    
+
     """
     Re = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2) * (np.cos(theta) ** 2)))
     if coord == "BL":

@@ -2,6 +2,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant, utils
+from einsteinpy.ijit import jit
 
 nonzero_christoffels_list = [
     (0, 0, 1),
@@ -83,7 +84,7 @@ def rho(r, theta, a):
     -------
     float
         The value sqrt(r^2 + a^2 * cos^2(theta))
-    
+
     """
     return np.sqrt((r ** 2) + ((a * np.cos(theta)) ** 2))
 
@@ -114,11 +115,11 @@ def delta(r, Rs, a, Q, c, G, Cc):
     -------
     float
         The value r^2 - Rs * r + a^2 + Rq^2
-    
+
     """
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
-
+@jit
 def metric(c, G, Cc, r, theta, Rs, a, Q):
     """
     Returns the Kerr-Newman Metric
@@ -165,7 +166,7 @@ def metric(c, G, Cc, r, theta, Rs, a, Q):
     )
     return m
 
-
+@jit
 def metric_inv(c, G, Cc, r, theta, Rs, a, Q):
     """
     Returns the inverse of Kerr-Newman Metric
@@ -197,7 +198,7 @@ def metric_inv(c, G, Cc, r, theta, Rs, a, Q):
     """
     return np.linalg.inv(metric(c, G, Cc, r, theta, Rs, a, Q))
 
-
+@jit
 def dmetric_dx(c, G, Cc, r, theta, Rs, a, Q):
     """
     Returns differentiation of each component of Kerr-Newman metric tensor w.r.t. t, r, theta, phi
@@ -287,7 +288,7 @@ def dmetric_dx(c, G, Cc, r, theta, Rs, a, Q):
     due_to_theta()
     return dmdx
 
-
+@jit
 def christoffels(c, G, Cc, r, theta, Rs, a, Q):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Kerr-Newman Metric
@@ -363,7 +364,7 @@ def em_potential(c, G, Cc, r, theta, a, Q, M):
     -------
     ~numpy.array
         Numpy array of shape (4,)
-    
+
     """
     rq, rh2, c2 = charge_length_scale(Q, c, G, Cc), rho(r, theta, a) ** 2, c ** 2
     vec = np.zeros((4,), dtype=float)
@@ -371,7 +372,7 @@ def em_potential(c, G, Cc, r, theta, a, Q, M):
     vec[3] = ((-c2) / (rh2 * G * M)) * a * r * rq * (np.sin(theta) ** 2)
     return vec
 
-
+@jit
 def maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M):
     """
     Returns a 2nd rank Tensor containing Maxwell Tensor with lower indices for Kerr-Newman Metric
@@ -418,7 +419,7 @@ def maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M):
         m[j, i] = -m[i, j]
     return m
 
-
+@jit
 def maxwell_tensor_contravariant(c, G, Cc, r, theta, a, Q, M):
     """
     Returns a 2nd rank Tensor containing Maxwell Tensor with upper indices for Kerr-Newman Metric

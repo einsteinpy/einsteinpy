@@ -2,6 +2,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
+from einsteinpy.ijit import jit
 
 
 @u.quantity_input(mass=u.kg)
