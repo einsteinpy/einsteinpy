@@ -22,7 +22,7 @@ install:
   # Install dependencies
   - "choco install pandoc"
 
-  - "%PIP_BIN% install --upgrade pip --quiet"
+  - "%PYTHON_BIN% -m pip install -U pip --quiet"
   - "%PIP_BIN% install numpy --quiet"
   - "%PIP_BIN% install .[dev] --quiet"  # Test installation correctness
 
