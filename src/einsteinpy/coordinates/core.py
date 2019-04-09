@@ -38,9 +38,9 @@ class Cartesian:
         y = self.y - o.y
         z = self.z - o.z
 
-        sum = x ** 2 + y ** 2 + z ** 2
+        sq = x ** 2 + y ** 2 + z ** 2
 
-        distance = sum ** 0.5
+        distance = sq ** 0.5
 
         return distance
 
