@@ -117,6 +117,7 @@ def delta(r, Rs, a):
     """
     return (r ** 2) - (Rs * r) + (a ** 2)
 
+
 @jit
 def metric(c, r, theta, Rs, a):
     """
@@ -156,6 +157,7 @@ def metric(c, r, theta, Rs, a):
     m[0, 3] = m[3, 0] = Rs * r * a * (np.sin(theta) ** 2) / (sg * c)
     return m
 
+
 @jit
 def metric_inv(c, r, theta, Rs, a):
     """
@@ -182,6 +184,7 @@ def metric_inv(c, r, theta, Rs, a):
     """
     m = metric(c, r, theta, Rs, a)
     return np.linalg.inv(m)
+
 
 @jit
 def dmetric_dx(c, r, theta, Rs, a):
@@ -249,6 +252,7 @@ def dmetric_dx(c, r, theta, Rs, a):
     due_to_r()
     due_to_theta()
     return dmdx
+
 
 @jit
 def christoffels(c, r, theta, Rs, a):

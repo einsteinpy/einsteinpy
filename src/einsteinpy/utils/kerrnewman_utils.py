@@ -119,6 +119,7 @@ def delta(r, Rs, a, Q, c, G, Cc):
     """
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
+
 @jit
 def metric(c, G, Cc, r, theta, Rs, a, Q):
     """
@@ -166,6 +167,7 @@ def metric(c, G, Cc, r, theta, Rs, a, Q):
     )
     return m
 
+
 @jit
 def metric_inv(c, G, Cc, r, theta, Rs, a, Q):
     """
@@ -197,6 +199,7 @@ def metric_inv(c, G, Cc, r, theta, Rs, a, Q):
 
     """
     return np.linalg.inv(metric(c, G, Cc, r, theta, Rs, a, Q))
+
 
 @jit
 def dmetric_dx(c, G, Cc, r, theta, Rs, a, Q):
@@ -288,6 +291,7 @@ def dmetric_dx(c, G, Cc, r, theta, Rs, a, Q):
     due_to_theta()
     return dmdx
 
+
 @jit
 def christoffels(c, G, Cc, r, theta, Rs, a, Q):
     """
@@ -372,6 +376,7 @@ def em_potential(c, G, Cc, r, theta, a, Q, M):
     vec[3] = ((-c2) / (rh2 * G * M)) * a * r * rq * (np.sin(theta) ** 2)
     return vec
 
+
 @jit
 def maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M):
     """
@@ -418,6 +423,7 @@ def maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M):
     for i, j in [(0, 1), (0, 2), (3, 1), (3, 2)]:
         m[j, i] = -m[i, j]
     return m
+
 
 @jit
 def maxwell_tensor_contravariant(c, G, Cc, r, theta, a, Q, M):
