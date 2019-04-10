@@ -1,6 +1,10 @@
 import astropy.units as u
 import numpy as np
+from astropy import constants
 from einsteinpy import constant, utils
+
+eps0 = constants.eps0
+coulombs_const = 1 / (4 * np.pi * eps0)
 
 nonzero_christoffels_list = [
     (0, 0, 1),
@@ -39,7 +43,7 @@ nonzero_christoffels_list = [
 
 
 def charge_length_scale(
-    Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value
+    Q, c=constant.c.value, G=constant.G.value, Cc=coulombs_const.value
 ):
     """
     Returns a length scale corrosponding to the Electric Charge Q of the mass
@@ -118,7 +122,7 @@ def delta(r, Rs, a, Q, c, G, Cc):
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
 
-def event_horizon(Rs, a, Q, c, G, Cc, theta=np.pi / 2, coord="BL"):
+def event_horizon(Rs, a, Q, c=constant.c.value, G=constant.G.value, Cc= coulombs_const.value, theta=np.pi / 2, coord="BL"):
     """
     Calculate the radius of event horizon of Kerr-Newman black hole
 
