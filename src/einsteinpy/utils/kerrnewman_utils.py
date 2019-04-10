@@ -3,6 +3,8 @@ import numpy as np
 from astropy import constants
 from einsteinpy import constant, utils
 
+c = constants.c
+G = constants.G
 eps0 = constants.eps0
 coulombs_const = 1 / (4 * np.pi * eps0)
 
