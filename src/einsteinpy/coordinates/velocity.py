@@ -57,12 +57,16 @@ class CartesianDifferential(Cartesian):
                 / (2 * np.sqrt((w ** 2) + (4 * (a ** 2) * (self.z ** 2))))
             )
         )
-        v_t = (-1 / np.sqrt(1 - np.square(self.z / transformed_bl.r))) * (
-            (self.v_z * transformed_bl.r - v_r * self.z) / (transformed_bl.r ** 2)
-        ) * u.rad
-        v_p = (1 / (1 + np.square(self.y / self.x))) * (
-            (self.v_y * self.x - self.v_x * self.y) / (self.x ** 2)
-        ) * u.rad
+        v_t = (
+            (-1 / np.sqrt(1 - np.square(self.z / transformed_bl.r)))
+            * ((self.v_z * transformed_bl.r - v_r * self.z) / (transformed_bl.r ** 2))
+            * u.rad
+        )
+        v_p = (
+            (1 / (1 + np.square(self.y / self.x)))
+            * ((self.v_y * self.x - self.v_x * self.y) / (self.x ** 2))
+            * u.rad
+        )
         return BoyerLindquistDifferential(
             transformed_bl.r, transformed_bl.theta, transformed_bl.phi, v_r, v_t, v_p
         )
