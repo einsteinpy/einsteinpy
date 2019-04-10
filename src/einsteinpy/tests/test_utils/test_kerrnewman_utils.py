@@ -20,7 +20,7 @@ def test_input():
     theta = 4 * np.pi / 5
     M = 1e23
     a = 0.99
-    return (c, G, Cc, r, theta, M, a)
+    return c, G, Cc, r, theta, M, a
 
 
 def test_compare_kerr_kerrnewman_metric_inv(test_input):
