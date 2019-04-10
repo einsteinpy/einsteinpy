@@ -3,7 +3,7 @@ jobs:
   quality:
     docker:
       - image: circleci/python:3.6
-
+    parallelism: 4
     working_directory: ~/repo
 
     steps:
@@ -48,7 +48,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            MPLBACKEND=Agg pytest -vv  # Test against installed code (Can use --doctest-modules)
+            MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
   test_py36:
     <<: *test-template
     docker:
