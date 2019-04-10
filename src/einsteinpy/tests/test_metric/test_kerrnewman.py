@@ -78,7 +78,7 @@ def test_input():
     Q = 100 * u.C
     el = 200.0
     ss = 1.0
-    return (q, a, Q, el, ss)
+    return q, a, Q, el, ss
 
 
 def test_compare_calculate_trajectory_iterator_bl(test_input):
