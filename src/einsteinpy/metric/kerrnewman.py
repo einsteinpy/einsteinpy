@@ -223,7 +223,7 @@ class KerrNewman:
 
         _event_hor = (
             kerrnewman_utils.event_horizon(
-                self.schwarzschild_r.value, self.a, self.Q, c, G, Cc
+                self.schwarzschild_r.value, self.a, self.Q
             )[0]
             * 1.001
         )
@@ -300,7 +300,7 @@ class KerrNewman:
 
         _event_hor = (
             kerrnewman_utils.event_horizon(
-                self.schwarzschild_r.value, self.a, self.Q, c, G, Cc
+                self.schwarzschild_r.value, self.a, self.Q
             )[0]
             * 1.001
         )

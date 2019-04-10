@@ -124,7 +124,16 @@ def delta(r, Rs, a, Q, c, G, Cc):
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
 
-def event_horizon(Rs, a, Q, c=constant.c.value, G=constant.G.value, Cc= coulombs_const.value, theta=np.pi / 2, coord="BL"):
+def event_horizon(
+    Rs,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=coulombs_const.value,
+    theta=np.pi / 2,
+    coord="BL",
+):
     """
     Calculate the radius of event horizon of Kerr-Newman black hole
 
