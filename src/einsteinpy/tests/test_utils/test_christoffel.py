@@ -1,8 +1,14 @@
 import numpy as np
 import pytest
-import sympy
 
 from einsteinpy.utils import christoffel
+
+try:
+    import sympy
+except ImportError:
+    import warnings
+
+    warnings.warn("SymPy is required but is not installed.")
 
 
 def test_schwarzschild_christoffels():

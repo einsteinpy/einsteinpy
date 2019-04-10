@@ -1,5 +1,11 @@
 import numpy as np
-import sympy
+
+try:
+    import sympy
+except ImportError:
+    import warnings
+
+    warnings.warn("SymPy is required but is not installed.")
 
 
 def riemann_curvature_tensor(list2d, syms):
@@ -95,17 +101,17 @@ def _simplify_tensor_helper(v):
 def simplify_tensor(ndlist):
     """
     Returns a N-Dimensional list of simplified symbolic tensor
-    
+
     Parameters
     ----------
     ndlist : list
         N-Dimensional list of sympy expressions representing some tensor
-    
+
     Returns
     -------
     list
         N-Dimensional list
-    
+
     """
     return _simplify_tensor_helper(ndlist)
 
@@ -113,19 +119,19 @@ def simplify_tensor(ndlist):
 def simplify_christoffels(list3d, dims=4):
     """
     Returns a 3d list of simplified christoffel symbols.
-    
+
     Parameters
     ----------
     list3d : list
         3d list containing christoffel symbols expression
     dims : int
         dimension of space, defaults to 4
-    
+
     Returns
     -------
     list
         3d list containing simplified christoffel symbols
-    
+
     """
     _counterlist = [i for i in range(dims ** 3)]
     new_list3d = (np.zeros(shape=(dims, dims, dims), dtype=int)).tolist()
@@ -140,7 +146,7 @@ def simplify_christoffels(list3d, dims=4):
 def schwarzschild_christoffels(symbolstr="t r theta phi"):
     """
     Returns the 3d list of christoffel symbols of Schwarzschild Metric.
-    
+
     Parameters
     ----------
     symbolstr : string
@@ -150,7 +156,7 @@ def schwarzschild_christoffels(symbolstr="t r theta phi"):
     -------
     list
         3d list of christoffel symbols for schwarzschild metric
-    
+
     """
     list2d = [[0 for i in range(4)] for i in range(4)]
     syms = sympy.symbols(symbolstr)
@@ -175,7 +181,7 @@ def kerr_christoffels(symbolstr="t r theta phi"):
     -------
     list
         3d list of christoffel symbols for kerr metric
-    
+
     """
     list2d = [[0 for i in range(4)] for i in range(4)]
     syms = sympy.symbols(symbolstr)
