@@ -37,6 +37,7 @@ This is the complete list of the people that contributed to this release, with a
 * Shilpi+
 * Rishi Sharma+
 * Varun Singh+
+* Alpesh Jamgade+
 
 einsteinpy 0.1.0 - 2019-03-08
 -----------------------------
