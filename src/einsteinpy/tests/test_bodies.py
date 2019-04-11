@@ -4,14 +4,14 @@ from einsteinpy.bodies import Earth, Sun
 
 
 def test_sun_base_properties():
-    assert Sun.parent == None
+    assert Sun.parent is None
     assert Sun.R == 695510 * u.km
     assert Sun.mass == 1.9891e30 * u.kg
 
 
 def test_sun_extras():
     assert Sun.a == 0
-    assert Sun.id == "Sun"
+    assert Sun.identifier == "Sun"
     assert Sun.q == 0 * u.C
 
 
@@ -23,5 +23,5 @@ def test_earth_base_properties():
 
 def test_earth_extras():
     assert Earth.a == 0
-    assert Earth.id == "Earth"
+    assert Earth.identifier == "Earth"
     assert Earth.q == 0 * u.C

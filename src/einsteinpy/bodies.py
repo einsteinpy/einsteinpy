@@ -29,7 +29,7 @@ class Body:
     @u.quantity_input(mass=u.kg, R=u.km)
     def __init__(
         self,
-        id,
+        identifier,
         mass=0 * u.kg,
         R=0 * u.km,
         differential=None,
@@ -68,17 +68,17 @@ class Body:
         self.R = R
         self.q = q
         self.mass = mass
-        self.id = id
+        self.identifier = identifier
         self.parent = parent
 
 
 class _Sun(Body):
     def __init__(self):
         parent = None
-        id = "Sun"
+        identifier = "Sun"
         R = constant.R_sun
         mass = constant.Solar_Mass
-        super(_Sun, self).__init__(id=id, mass=mass, R=R, parent=parent)
+        super(_Sun, self).__init__(identifier=identifier, mass=mass, R=R, parent=parent)
 
 
 Sun = _Sun()
@@ -87,10 +87,12 @@ Sun = _Sun()
 class _Earth(Body):
     def __init__(self):
         parent = Sun
-        id = "Earth"
+        identifier = "Earth"
         R = 6731 * u.km
         mass = 5.97219e24 * u.kg
-        super(_Earth, self).__init__(id=id, mass=mass, R=R, parent=parent)
+        super(_Earth, self).__init__(
+            identifier=identifier, mass=mass, R=R, parent=parent
+        )
 
 
 Earth = _Earth()
