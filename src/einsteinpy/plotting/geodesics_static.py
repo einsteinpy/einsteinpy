@@ -162,10 +162,16 @@ class StaticGeodesicPlotter:
             Lambda where iteartions will stop.
         step_size : float, optional
             Step size for the ODE.
-        color : string
-            Color of the Geodesic
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+        
+        Returns
+        -------
+        lines : list
+            A list of Line2D objects representing the plotted data.
 
         """
+
         self.__xarr, self.__yarr = self.__get_x_y(coords, end_lambda, step_size)
         self.plot_attractor()
         self._attractor_present = True
@@ -183,15 +189,30 @@ class StaticGeodesicPlotter:
 
     def animate(
         self,
-        pos_vec,
-        vel_vec,
+        coords,
         end_lambda=10,
         step_size=1e-3,
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
         interval=50,
     ):
+        """
 
-        pos_x, pos_y = self.get_trajectory(pos_vec, vel_vec, end_lambda, step_size)
+        Parameters
+        ----------
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
+        end_lambda : float, optional
+            Lambda where iteartions will stop.
+        step_size : float, optional
+            Step size for the ODE.
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+        interval : int, optional
+            Control the time between frames. Add time in milliseconds.
+
+        """
+
+        pos_x, pos_y = self.__get_x_y(coords, end_lambda, step_size)
         x_max, x_min = max(pos_x), min(pos_x)
         y_max, y_min = max(pos_y), min(pos_y)
         margin_x = (x_max - x_min) * 0.1
@@ -215,10 +236,9 @@ class StaticGeodesicPlotter:
             pic.set_ydata(pos_y[: frame + 1])
             return (pic,)
 
-        ani = FuncAnimation(
+        self.ani = FuncAnimation(
             self.fig, _update, frames=frames, interval=interval, blit=True
         )
-        plt.show()
 
     def save(self, name="static_geodesic.png"):
         plt.savefig(name)
