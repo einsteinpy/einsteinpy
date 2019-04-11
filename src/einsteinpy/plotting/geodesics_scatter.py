@@ -113,8 +113,7 @@ class ScatterGeodesicPlotter:
             pic.set_array(time[: frame + 1])
             return (pic,)
 
-        ani = FuncAnimation(fig, _update, frames=frames, interval=interval)
-        plt.show()
+        self.ani = FuncAnimation(fig, _update, frames=frames, interval=interval)
 
 >>>>>>> GeodesicsPlotter: Add inline docs for plot and animated plot method.
     def show(self):
