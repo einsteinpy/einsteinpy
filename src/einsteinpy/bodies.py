@@ -17,19 +17,27 @@ Data references can be found in :py:mod:`~einsteinpy.constant`
 
 import astropy.units as u
 
-from einsteinpy.coordinates import CartesianDifferential
 from einsteinpy import constant
+from einsteinpy.coordinates import CartesianDifferential
+
 
 class Body:
     """
     Class to create a generic Body
     """
+
     @u.quantity_input(mass=u.kg, R=u.km)
     def __init__(
-        self, id, mass=0*u.kg, R=0*u.km, differential=None, a=0, q=0*u.C, is_attractor=False, parent=None
+        self,
+        id,
+        mass=0 * u.kg,
+        R=0 * u.km,
+        differential=None,
+        a=0,
+        q=0 * u.C,
+        parent=None,
     ):
         """
-
         Parameters
         ----------
         id : str
@@ -50,7 +58,7 @@ class Body:
             The parent object of the body.
         """
         if differential:
-            if differential==CartesianDifferential:
+            if differential == CartesianDifferential:
                 self.pos_vec = [differential.x, differential.y, differential.z]
                 self.vel_vec = [differential.v_x, differential.v_y, differential.v_z]
             else:
@@ -61,21 +69,22 @@ class Body:
         self.q = q
         self.mass = mass
         self.id = id
+        self.parent = parent
+
 
 class _Sun(Body):
-
     def __init__(self):
         parent = None
         id = "Sun"
         R = constant.R_sun
         mass = constant.Solar_Mass
-        super(_Sun, self).__init__(id=id, mass=mass, R=R, is_attractor=True, parent=parent)
+        super(_Sun, self).__init__(id=id, mass=mass, R=R, parent=parent)
+
 
 Sun = _Sun()
 
 
 class _Earth(Body):
-
     def __init__(self):
         parent = Sun
         id = "Earth"
