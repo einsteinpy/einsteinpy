@@ -63,5 +63,5 @@ pip-wheel-metadata
 # VS Code
 .vscode
 
-#jupyter notebook
-*.ipynb_checkpoints
+# default pytest cache directory
+*/.pytest_cache
