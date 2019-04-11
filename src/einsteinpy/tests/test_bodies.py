@@ -1,6 +1,7 @@
 import astropy.units as u
 
-from einsteinpy.bodies import Earth, Sun
+from einsteinpy.bodies import Body, Earth, Sun
+from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
 
 
 def test_sun_base_properties():
@@ -25,3 +26,26 @@ def test_earth_extras():
     assert Earth.a == 0
     assert Earth.identifier == "Earth"
     assert Earth.q == 0 * u.C
+
+
+def test_differentials():
+    parent = Sun
+    identifier = "Earth"
+    R = 6731 * u.km
+    mass = 5.97219e24 * u.kg
+    differential1 = CartesianDifferential(
+        0 * u.km, 0 * u.km, 0 * u.km, 0 * u.km / u.s, 0 * u.km / u.s, 0 * u.km / u.s
+    )
+    differential2 = SphericalDifferential(
+        0 * u.km, 0 * u.rad, 0 * u.rad, 0 * u.km / u.s, 0 * u.rad / u.s, 0 * u.rad / u.s
+    )
+    a = Body(
+        identifier=identifier, mass=mass, R=R, differential=differential1, parent=parent
+    )
+    b = Body(
+        identifier=identifier, mass=mass, R=R, differential=differential2, parent=parent
+    )
+    assert isinstance(a.pos_vec, list)
+    assert isinstance(a.vel_vec, list)
+    assert isinstance(b.pos_vec, list)
+    assert isinstance(b.vel_vec, list)

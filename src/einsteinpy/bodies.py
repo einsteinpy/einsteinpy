@@ -58,7 +58,7 @@ class Body:
             The parent object of the body.
         """
         if differential:
-            if differential == CartesianDifferential:
+            if differential.system == "Cartesian":
                 self.pos_vec = [differential.x, differential.y, differential.z]
                 self.vel_vec = [differential.v_x, differential.v_y, differential.v_z]
             else:

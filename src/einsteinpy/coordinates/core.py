@@ -22,6 +22,7 @@ class Cartesian:
         self.x = x
         self.y = y
         self.z = z
+        self.system = "Cartesian"
 
     def __repr__(self):
         return "Cartesian x: {}, y: {}, z: {}".format(self.x, self.y, self.z)
@@ -135,6 +136,7 @@ class Spherical:
         self.r = r
         self.theta = theta
         self.phi = phi
+        self.system = "Spherical"
 
     def __repr__(self):
         return "Spherical r: {}, theta: {}, phi: {}".format(
