@@ -4,7 +4,7 @@ EinsteinPy API
 .. graphviz::
 
     digraph {
-        "einsteinpy" -> "integrators", "metric", "utils", "plotting", "constant", "units"
+        "einsteinpy" -> "integrators", "metric", "utils", "plotting", "constant", "units", "coordinates"
 
     }
 
@@ -16,5 +16,6 @@ EinsteinPy API
     metric/metric_index
     utils/utils_index
     plotting/plotting_index
+    coordinates/coordinates_index
     constant
     units

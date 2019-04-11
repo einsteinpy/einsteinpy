@@ -13,6 +13,18 @@ class CartesianDifferential(Cartesian):
         x=u.km, y=u.km, z=u.km, v_x=u.km / u.s, v_y=u.km / u.s, v_z=u.km / u.s
     )
     def __init__(self, x, y, z, v_x, v_y, v_z):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        x : ~astropy.units
+        y : ~astropy.units
+        z : ~astropy.units
+        v_x : ~astropy.units
+        v_y : ~astropy.units
+        v_z : ~astropy.units
+        """
         super(CartesianDifferential, self).__init__(x, y, z)
         self.v_x = v_x
         self.v_y = v_y
@@ -20,7 +32,13 @@ class CartesianDifferential(Cartesian):
 
     def spherical_differential(self):
         """
-        Function to convert cartesian to spherical coordinates
+        Function to convert velocity to spherical coordinates
+
+        Returns
+        -------
+        SphericalDifferential : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Spherical representation of the velocity in Cartesian Coordinates.
+
         """
         transformed_spherical = self.to_spherical()
         n1 = self.x ** 2 + self.y ** 2
@@ -43,9 +61,15 @@ class CartesianDifferential(Cartesian):
             v_p,
         )
 
-    def boyerlindquist_differential(self, a):
+    def bl_differential(self, a):
         """
-        Function to convert velocity in Cartesian coordinates to velocity in Boyer-Lindquist coordinates
+        Function to convert velocity to Boyer-Lindquist coordinates
+
+        Returns
+        -------
+        BoyerLindquistDifferential : ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
+            Boyer-Lindquist representation of the velocity in Cartesian Coordinates.
+
         """
         transformed_bl = self.to_bl(a)
         w = (self.x ** 2 + self.y ** 2 + self.z ** 2) - (a ** 2)
@@ -81,6 +105,18 @@ class SphericalDifferential(Spherical):
         r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=u.rad / u.s, v_p=u.rad / u.s
     )
     def __init__(self, r, theta, phi, v_r, v_t, v_p):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        r : ~astropy.units
+        theta : ~astropy.units
+        phi : ~astropy.units
+        v_r : ~astropy.units
+        v_t : ~astropy.units
+        v_p : ~astropy.units
+        """
         super(SphericalDifferential, self).__init__(r, theta, phi)
         self.v_r = v_r
         self.v_t = v_t
@@ -88,7 +124,13 @@ class SphericalDifferential(Spherical):
 
     def cartesian_differential(self):
         """
-        Function to convert spherical to cartesian coordinates
+        Function to convert velocity to cartesian coordinates
+
+        Returns
+        -------
+        CartesianDifferential : ~einsteinpy.coordinates.velocity.CartesianDifferential
+            Cartesian representation of the velocity in Spherical Coordinates.
+
         """
         transformed_cartesian = self.to_cartesian()
         v_x = (
@@ -114,12 +156,18 @@ class SphericalDifferential(Spherical):
             v_z,
         )
 
-    def boyerlindquist_differential(self, a):
+    def bl_differential(self, a):
         """
-        Function to convert velocity in spherical coordinates to velocity in Boyer-Lindquist coordinates
+        Function to convert velocity to Boyer-Lindquist coordinates
+
+        Returns
+        -------
+        BoyerLindquistDifferential : ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
+            Boyer-Lindquist representation of the velocity in Spherical Coordinates.
+
         """
         transformed_cartesian = self.cartesian_differential()
-        return transformed_cartesian.boyerlindquist_differential(a)
+        return transformed_cartesian.bl_differential(a)
 
 
 class BoyerLindquistDifferential(BoyerLindquist):
@@ -131,12 +179,39 @@ class BoyerLindquistDifferential(BoyerLindquist):
         r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=u.rad / u.s, v_p=u.rad / u.s
     )
     def __init__(self, r, theta, phi, v_r, v_t, v_p):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        r : ~astropy.units
+        theta : ~astropy.units
+        phi : ~astropy.units
+        v_r : ~astropy.units
+        v_t : ~astropy.units
+        v_p : ~astropy.units
+        """
         super(BoyerLindquistDifferential, self).__init__(r, theta, phi)
         self.v_r = v_r
         self.v_t = v_t
         self.v_p = v_p
 
+    @u.quantity_input(a=u.km)
     def cartesian_differential(self, a):
+        """
+        Function to convert velocity to cartesian coordinates
+
+        Parameters
+        ----------
+        a : float
+             a = J/M , the angular momentum per unit mass of the black hole.
+
+        Returns
+        -------
+        CartesianDifferential : ~einsteinpy.coordinates.velocity.CartesianDifferential
+            Cartesian representation of the velocity in Boyer-Lindquist Coordinates.
+
+        """
         transformed_cartesian = self.to_cartesian(a)
         xa = np.sqrt(self.r ** 2 + a ** 2)
         v_x = (
@@ -161,6 +236,21 @@ class BoyerLindquistDifferential(BoyerLindquist):
             v_z,
         )
 
+    @u.quantity_input(a=u.km)
     def spherical_differential(self, a):
+        """
+        Function to convert velocity to spherical coordinates
+
+        Parameters
+        ----------
+        a : float
+             a = J/M , the angular momentum per unit mass of the black hole.
+
+        Returns
+        -------
+        SphericalDifferential : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Spherical representation of the velocity in Boyer-Lindquist Coordinates.
+
+        """
         transformed_cartesian = self.cartesian_differential(a)
         return transformed_cartesian.spherical_differential()
