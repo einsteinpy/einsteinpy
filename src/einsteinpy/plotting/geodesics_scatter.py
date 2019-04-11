@@ -56,10 +56,14 @@ class ScatterGeodesicPlotter:
             self._plot_attractor()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     def plot_animated(
         self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, interval=50
     ):
+=======
+    def animate(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, interval=50):
+>>>>>>> GeodesicsPlotter: Rename plot_animated to animated.
         """
 
         Parameters

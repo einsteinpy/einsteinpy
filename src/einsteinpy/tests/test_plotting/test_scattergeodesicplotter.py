@@ -42,6 +42,18 @@ def test_plot_calls_plot_attractor(mock_plot_attractor):
 
 
 @mock.patch("einsteinpy.plotting.geodesics_scatter.plt.show")
+def test_plot_calls_plot_show(mock_animated_plt_show):
+    r = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
+    v = [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s]
+    m = 4e24 * u.kg
+    el = 0.002
+    ss = 0.5e-6
+    cl = ScatterGeodesicPlotter(m)
+    cl.animate(r, v, el, ss)
+    mock_animated_plt_show.assert_called_with()
+
+
+@mock.patch("einsteinpy.plotting.geodesics_scatter.plt.show")
 def test_plot_show_shows_plot(mock_show):
     r = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
     v = [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s]
