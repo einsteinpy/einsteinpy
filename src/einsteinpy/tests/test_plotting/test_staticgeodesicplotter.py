@@ -46,6 +46,19 @@ def test_plot_calls_plt_show(mock_show, dummy_data):
     assert cl._attractor_present
 
 
+@mock.patch("einsteinpy.plotting.geodesics_static.plt.show")
+def test_plot_calls_plot_show(mock_animated_plt_show):
+    r = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
+    v = [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s]
+    m = 4e24 * u.kg
+    el = 0.002
+    ss = 0.5e-6
+    cl = StaticGeodesicPlotter(m)
+    cl.animate(r, v, el, ss, interval=10)
+    mock_animated_plt_show.assert_called_with()
+    assert cl._attractor_present
+
+
 @mock.patch("einsteinpy.plotting.geodesics_static.plt.savefig")
 def test_plot_save_saves_plot(mock_save, dummy_data):
     sph_obj, _, m, _, el, ss = dummy_data
