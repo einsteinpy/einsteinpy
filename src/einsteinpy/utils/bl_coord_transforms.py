@@ -1,5 +1,11 @@
+import warnings
+
 import astropy.units as u
 import numpy as np
+
+warnings.warn(
+    "This module will be deprecated in EinsteinPy v0.3.0. Please switch to `einsteinpy.coordinates`."
+)
 
 
 def CartesianToBL_pos(pos_vec, a):
@@ -46,7 +52,7 @@ def CartesianToBL_vel(pos_vec, vel_vec, a):
     -------
     ~numpy.array
         3-length numpy array having v_r, v_theta, v_phi in (m/s, rad/s, rad/s)
-    
+
     """
     v_vec = np.zeros(shape=(3,), dtype=float)
     w = float(np.sum(np.square(pos_vec[:3])) - (a ** 2))
@@ -219,7 +225,7 @@ def BL2C_8dim(vec, a):
     -------
     ~numpy.array
         Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
-        
+
     """
 
     newvec = np.copy(vec)
