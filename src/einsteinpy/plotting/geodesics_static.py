@@ -22,7 +22,7 @@ class StaticGeodesicPlotter:
         self.mass = mass
         self._attractor_present = False
 
-    def plot_trajectory(self, pos_vec, vel_vec, end_lambda, step_size, color):
+    def get_trajectory(self, pos_vec, vel_vec, end_lambda, step_size):
         swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
 
         vals = swc.calculate_trajectory(
@@ -37,9 +37,7 @@ class StaticGeodesicPlotter:
         x = r * np.cos(phi)
         y = r * np.sin(phi)
 
-        lines = self.ax.plot(x, y, "--", color=color)
-
-        return lines, x[-1], y[-1]
+        return x, y
 
     def plot_attractor(self):
         if not self._attractor_present:
@@ -62,11 +60,10 @@ class StaticGeodesicPlotter:
         self.plot_attractor()
         self._attractor_present = True
 
-        lines, x0, y0 = self.plot_trajectory(
-            pos_vec, vel_vec, end_lambda, step_size, color
-        )
+        pos_x, pos_y = self.get_trajectory(pos_vec, vel_vec, end_lambda, step_size)
 
-        l, = self.ax.plot(x0, y0, "o", mew=0, color=lines[0].get_color())
+        lines = self.ax.plot(pos_x, pos_y, "--", color=color)
+        l, = self.ax.plot(pos_x[-1], pos_y[-1], "o", mew=0, color=lines[0].get_color())
         lines.append(l)
 
         self.ax.set_xlabel("$x$ (km)")
