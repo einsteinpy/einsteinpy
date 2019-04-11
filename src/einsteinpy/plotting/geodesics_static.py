@@ -57,6 +57,27 @@ class StaticGeodesicPlotter:
         step_size=1e-3,
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
     ):
+        """
+
+        Parameters
+        ----------
+        pos_vec : list
+            list of r, theta & phi components along with ~astropy.units.
+        vel_vec : list
+            list of velocities of r, theta & phi components along with ~astropy.units.
+        end_lambda : float, optional
+            Lambda where iteartions will stop.
+        step_size : float, optional
+            Step size for the ODE.
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+
+        Returns
+        -------
+        lines : list
+            A list of Line2D objects representing the plotted data.
+
+        """
 
         self.plot_attractor()
         self._attractor_present = True
@@ -82,6 +103,24 @@ class StaticGeodesicPlotter:
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
         interval=50,
     ):
+        """
+
+        Parameters
+        ----------
+        pos_vec : list
+            list of r, theta & phi components along with ~astropy.units.
+        vel_vec : list
+            list of velocities of r, theta & phi components along with ~astropy.units.
+        end_lambda : float, optional
+            Lambda where iteartions will stop.
+        step_size : float, optional
+            Step size for the ODE.
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+        interval : int, optional
+            Control the time between frames. Add time in milliseconds.
+
+        """
 
         pos_x, pos_y = self.get_trajectory(pos_vec, vel_vec, end_lambda, step_size)
         x_max, x_min = max(pos_x), min(pos_x)
