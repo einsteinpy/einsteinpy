@@ -61,6 +61,7 @@ class CartesianDifferential(Cartesian):
             v_p,
         )
 
+    @u.quantity_input(a=u.km)
     def bl_differential(self, a):
         """
         Function to convert velocity to Boyer-Lindquist coordinates
@@ -156,6 +157,7 @@ class SphericalDifferential(Spherical):
             v_z,
         )
 
+    @u.quantity_input(a=u.km)
     def bl_differential(self, a):
         """
         Function to convert velocity to Boyer-Lindquist coordinates
