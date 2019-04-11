@@ -1,6 +1,10 @@
+import sys
+from io import StringIO
+
 import astropy.units as u
 import numpy as np
 import pytest
+from numpy.testing import assert_allclose
 
 from einsteinpy import coordinates
 
@@ -31,120 +35,94 @@ def spherical_differential():
 
 @pytest.fixture()
 def bl_differential():
-    return (
-        coordinates.BoyerLindquistDifferential(
-            10.0 * u.km,
-            1.5707963267948966 * u.rad,
-            0.7853981633974483 * u.rad,
-            10.0 * u.km / u.s,
-            -20.0 * u.rad / u.s,
-            20.0 * u.rad / u.s,
-        ),
+    return coordinates.BoyerLindquistDifferential(
+        10.0 * u.km,
+        1.5707963267948966 * u.rad,
+        0.7853981633974483 * u.rad,
+        10.0 * u.km / u.s,
+        -20.0 * u.rad / u.s,
+        20.0 * u.rad / u.s,
         0.0 * u.km,
     )
-
-
-def assert_cartesian_pos(cartesian_differential, to_cartesian_differential):
-    assert abs(to_cartesian_differential.y - cartesian_differential.y) <= (1e-5) * u.km
-    assert abs(to_cartesian_differential.z - cartesian_differential.z) <= (1e-5) * u.km
-    assert (
-        abs(to_cartesian_differential.v_x - cartesian_differential.v_x)
-        <= (1e-5) * u.km / u.s
-    )
-
-
-def assert_cartesian_differential(cartesian_differential, to_cartesian_differential):
-    assert abs(to_cartesian_differential.x - cartesian_differential.x) <= (1e-5) * u.km
-
-    assert (
-        abs(to_cartesian_differential.v_y - cartesian_differential.v_y)
-        <= (1e-5) * u.km / u.s
-    )
-    assert (
-        abs(to_cartesian_differential.v_z - cartesian_differential.v_z)
-        <= (1e-5) * u.km / u.s
-    )
-
-
-def assert_spherical_pos(spherical_differential, to_spherical_differential):
-    assert abs(to_spherical_differential.r - spherical_differential.r) <= (1e-5) * u.km
-    assert (
-        abs(to_spherical_differential.theta - spherical_differential.theta)
-        <= (1e-5) * u.rad
-    )
-    assert (
-        abs(to_spherical_differential.phi - spherical_differential.phi)
-        <= (1e-5) * u.rad
-    )
-
-
-def assert_spherical_differential(spherical_differential, to_spherical_differential):
-    assert (
-        abs(to_spherical_differential.v_r - spherical_differential.v_r)
-        <= (1e-5) * u.km / u.s
-    )
-    assert (
-        abs(to_spherical_differential.v_t - spherical_differential.v_t)
-        <= (1e-5) * u.rad / u.s
-    )
-    assert (
-        abs(to_spherical_differential.v_p - spherical_differential.v_p)
-        <= (1e-5) * u.rad / u.s
-    )
-
-
-def assert_boyerlindquist_pos(bl_differential, to_bl_differential):
-    assert abs(to_bl_differential.r - bl_differential.r) <= (1e-5) * u.km
-    assert abs(to_bl_differential.theta - bl_differential.theta) <= (1e-5) * u.rad
-    assert abs(to_bl_differential.phi - bl_differential.phi) <= (1e-5) * u.rad
-
-
-def assert_bl_differential(bl_differential, to_bl_differential):
-
-    assert abs(to_bl_differential.v_r - bl_differential.v_r) <= (1e-5) * u.km / u.s
-    assert abs(to_bl_differential.v_t - bl_differential.v_t) <= (1e-5) * u.rad / u.s
-    assert abs(to_bl_differential.v_p - bl_differential.v_p) <= (1e-5) * u.rad / u.s
 
 
 def test_CartesianToSphericalDifferential(
     cartesian_differential, spherical_differential
 ):
     to_spherical_differential = cartesian_differential.spherical_differential()
-    assert_spherical_pos(spherical_differential, to_spherical_differential)
-    assert_spherical_differential(spherical_differential, to_spherical_differential)
+    assert_allclose(
+        to_spherical_differential.si_values(),
+        spherical_differential.si_values(),
+        rtol=0.0,
+        atol=1e-6,
+    )
 
 
 def test_CartesianToBoyerLindquistDifferential(cartesian_differential, bl_differential):
-    bl_differential, a = bl_differential
-    to_bl_differential = cartesian_differential.bl_differential(a)
-    assert_boyerlindquist_pos(bl_differential, to_bl_differential)
-    assert_bl_differential(bl_differential, to_bl_differential)
+    to_bl_differential = cartesian_differential.bl_differential(bl_differential.a)
+    assert_allclose(
+        to_bl_differential.si_values(), bl_differential.si_values(), rtol=0.0, atol=1e-6
+    )
 
 
 def test_SphericalToCartesianDifferential(
     spherical_differential, cartesian_differential
 ):
     to_cartesian_differential = spherical_differential.cartesian_differential()
-    assert_cartesian_pos(cartesian_differential, to_cartesian_differential)
-    assert_cartesian_differential(cartesian_differential, to_cartesian_differential)
+    assert_allclose(
+        to_cartesian_differential.si_values(),
+        cartesian_differential.si_values(),
+        rtol=0.0,
+        atol=1e-6,
+    )
 
 
 def test_SphericalToBoyerLindquistDifferential(spherical_differential, bl_differential):
-    bl_differential, a = bl_differential
-    to_bl_differential = spherical_differential.bl_differential(a)
-    assert_boyerlindquist_pos(bl_differential, to_bl_differential)
-    assert_bl_differential(bl_differential, to_bl_differential)
+    to_bl_differential = spherical_differential.bl_differential(bl_differential.a)
+    assert_allclose(
+        to_bl_differential.si_values(), bl_differential.si_values(), rtol=0.0, atol=1e-6
+    )
 
 
 def test_BoyerLindquistToCartesianDifferential(bl_differential, cartesian_differential):
-    bl_differential, a = bl_differential
-    to_cartesian_differential = bl_differential.cartesian_differential(a)
-    assert_cartesian_pos(cartesian_differential, to_cartesian_differential)
-    assert_cartesian_differential(cartesian_differential, to_cartesian_differential)
+    to_cartesian_differential = bl_differential.cartesian_differential()
+    assert_allclose(
+        to_cartesian_differential.si_values(),
+        cartesian_differential.si_values(),
+        rtol=0.0,
+        atol=1e-6,
+    )
 
 
 def test_BoyerLindquistToSphericalDifferential(bl_differential, spherical_differential):
-    bl_differential, a = bl_differential
-    to_spherical_differential = bl_differential.spherical_differential(a)
-    assert_spherical_pos(spherical_differential, to_spherical_differential)
-    assert_spherical_differential(spherical_differential, to_spherical_differential)
+    to_spherical_differential = bl_differential.spherical_differential()
+    assert_allclose(
+        to_spherical_differential.si_values(),
+        spherical_differential.si_values(),
+        rtol=0.0,
+        atol=1e-6,
+    )
+
+
+# Tests for object.__repr__ and object.__str__
+
+
+def test_print_core_objects(
+    cartesian_differential, spherical_differential, bl_differential
+):
+    old_stdout = sys.stdout
+    # change stdout
+    result = StringIO()
+    sys.stdout = result
+
+    print(str(cartesian_differential))
+    assert "object at 0x" not in result.getvalue()
+
+    print(str(spherical_differential))
+    assert "object at 0x" not in result.getvalue()
+
+    print(str(bl_differential))
+    assert "object at 0x" not in result.getvalue()
+
+    # again switch to old stdout
+    sys.stdout = old_stdout
