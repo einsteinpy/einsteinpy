@@ -5,4 +5,3 @@ This module contains the methods for static geodesic plotting using scatter plot
 
 .. automodule:: einsteinpy.plotting.geodesics_scatter
     :members:
-s
