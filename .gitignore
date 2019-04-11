@@ -65,3 +65,6 @@ pip-wheel-metadata
 
 #jupyter notebook
 *.ipynb_checkpoints
+
+#default pytest cache directory
+*/.pytest_cache
