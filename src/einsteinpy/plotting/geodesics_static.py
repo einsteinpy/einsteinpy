@@ -12,7 +12,7 @@ from einsteinpy.utils import schwarzschild_radius
 
 class StaticGeodesicPlotter:
     """
-    Class for plotting static matplotlib plots.
+    Class for plotting static matplotlib plots and animations.
     """
 
     def __init__(
