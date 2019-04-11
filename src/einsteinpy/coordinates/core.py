@@ -22,27 +22,36 @@ class Cartesian:
         self.y = y
         self.z = z
 
+    def __repr__(self):
+        return "Cartesian x: {}, y: {}, z: {}".format(self.x, self.y, self.z)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def si_values(self):
+        """
+        Function for returning values in SI units.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing values in SI units (m, m, m)
+
+        """
+        element_list = [self.x.to(u.m), self.y.to(u.m), self.z.to(u.m)]
+        return np.array([e.value for e in element_list], dtype=float)
+
     def norm(self):
         """
         Function for finding euclidean norm of a vector.
 
         Returns
         -------
-        distance : ~astropy.units
+        ~astropy.units
             Euclidean norm with units.
 
         """
-        o = Cartesian(0 * u.km, 0 * u.km, 0 * u.km)
-
-        x = self.x - o.x
-        y = self.y - o.y
-        z = self.z - o.z
-
-        sq = x ** 2 + y ** 2 + z ** 2
-
-        distance = sq ** 0.5
-
-        return distance
+        return np.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
 
     def dot(self, target):
         """
@@ -54,7 +63,7 @@ class Cartesian:
 
         Returns
         -------
-        dotproduct : ~astropy.units
+        ~astropy.units
             Dot product with units
 
         """
@@ -71,7 +80,7 @@ class Cartesian:
 
         Returns
         -------
-        spherical : ~einsteinpy.coordinates.core.Spherical
+        ~einsteinpy.coordinates.core.Spherical
             Spherical representation of the Cartesian Coordinates.
 
         """
@@ -88,12 +97,12 @@ class Cartesian:
 
         Parameters
         ----------
-        a : float
-             a = J/M , the angular momentum per unit mass of the black hole.
+        a : astropy.units
+            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
 
         Returns
         -------
-        bl : ~einsteinpy.coordinates.core.BoyerLindquist
+        ~einsteinpy.coordinates.core.BoyerLindquist
             BL representation of the Cartesian Coordinates.
 
         """
@@ -102,7 +111,7 @@ class Cartesian:
         theta = np.arccos(self.z / r)
         phi = np.arctan2(self.y, self.x)
 
-        return BoyerLindquist(r, theta, phi)
+        return BoyerLindquist(r, theta, phi, a)
 
 
 class Spherical:
@@ -125,13 +134,34 @@ class Spherical:
         self.theta = theta
         self.phi = phi
 
+    def __repr__(self):
+        return "Spherical r: {}, theta: {}, phi: {}".format(
+            self.r, self.theta, self.phi
+        )
+
+    def __str__(self):
+        return self.__repr__()
+
+    def si_values(self):
+        """
+        Function for returning values in SI units.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing values in SI units (m, rad, rad)
+
+        """
+        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
+        return np.array([e.value for e in element_list], dtype=float)
+
     def to_cartesian(self):
         """
         Method for conversion to cartesian coordinates.
 
         Returns
         -------
-        cartesian : ~einsteinpy.coordinates.core.Cartesian
+        ~einsteinpy.coordinates.core.Cartesian
             Cartesian representation of the Spherical Coordinates.
 
         """
@@ -148,18 +178,17 @@ class Spherical:
 
         Parameters
         ----------
-        a : float
-             a = J/M , the angular momentum per unit mass of the black hole.
+        a : astropy.units
+            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
 
         Returns
         -------
-        bl : ~einsteinpy.coordinates.core.BoyerLindquist
+        ~einsteinpy.coordinates.core.BoyerLindquist
             BL representation of the Spherical Coordinates.
 
         """
         cart = self.to_cartesian()
-        bl = cart.to_bl(a)
-        return bl
+        return cart.to_bl(a)
 
 
 class BoyerLindquist:
@@ -167,8 +196,8 @@ class BoyerLindquist:
     Class for Spherical Coordinates and related transformations.
     """
 
-    @u.quantity_input(r=u.km, theta=u.rad, phi=u.rad)
-    def __init__(self, r, theta, phi):
+    @u.quantity_input(r=u.km, theta=u.rad, phi=u.rad, a=u.km)
+    def __init__(self, r, theta, phi, a):
         """
         Constructor.
 
@@ -177,49 +206,60 @@ class BoyerLindquist:
         r : ~astropy.units
         theta : ~astropy.units
         phi : ~astropy.units
+        a : ~astropy.units
         """
         self.r = r
         self.theta = theta
         self.phi = phi
+        self.a = a
 
-    @u.quantity_input(a=u.km)
-    def to_cartesian(self, a):
+    def __repr__(self):
+        return "Boyer-Lindquist r: {}, theta: {}, phi: {} | a: {}".format(
+            self.r, self.theta, self.phi, self.a
+        )
+
+    def __str__(self):
+        return self.__repr__()
+
+    def si_values(self):
+        """
+        Function for returning values in SI units.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing values in SI units (m, rad, rad)
+
+        """
+        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
+        return np.array([e.value for e in element_list], dtype=float)
+
+    def to_cartesian(self):
         """
         Method for conversion to cartesian coordinates.
 
-        Parameters
-        ----------
-        a : float
-             a = J/M , the angular momentum per unit mass of the black hole.
-
         Returns
         -------
-        bl : ~einsteinpy.coordinates.core.Cartesian
+        ~einsteinpy.coordinates.core.Cartesian
             Cartesian representation of the BL Coordinates.
 
         """
-        sin_norm = np.sqrt(self.r ** 2 + a ** 2) * np.sin(self.theta)
+        sin_norm = np.sqrt(self.r ** 2 + self.a ** 2) * np.sin(self.theta)
         x = sin_norm * np.cos(self.phi)
         y = sin_norm * np.sin(self.phi)
         z = self.r * np.cos(self.theta)
+
         return Cartesian(x, y, z)
 
-    @u.quantity_input(a=u.km)
-    def to_spherical(self, a):
+    def to_spherical(self):
         """
         Method for conversion to spherical coordinates.
 
-        Parameters
-        ----------
-        a : float
-             a = J/M , the angular momentum per unit mass of the black hole.
-
         Returns
         -------
-        spherical : ~einsteinpy.coordinates.core.Spherical
+        ~einsteinpy.coordinates.core.Spherical
             Spherical representation of the BL Coordinates.
 
         """
-        cart = self.to_cartesian(a)
-        spherical = cart.to_spherical()
-        return spherical
+        cart = self.to_cartesian()
+        return cart.to_spherical()
