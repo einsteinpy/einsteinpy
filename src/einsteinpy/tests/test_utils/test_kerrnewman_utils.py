@@ -26,9 +26,9 @@ def test_input():
 def test_compare_kerr_kerrnewman_metric_inv(test_input):
     c, G, Cc, r, theta, M, a = test_input
     # inverse of metric for kerr and kerr-newman metric should be equal when Q=0
-    scr = 2*M * G / (c ** 2)
+    scr = 2 * M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M)
-    m1 = kerr_utils.metric_inv(r, theta, M*u.kg, a_scaled)
+    m1 = kerr_utils.metric_inv(r, theta, M * u.kg, a_scaled)
     m2 = kerrnewman_utils.metric_inv(r, theta, M, a_scaled, 0.0)
     assert_allclose(m1, m2, rtol=1e-10)
 
@@ -36,9 +36,9 @@ def test_compare_kerr_kerrnewman_metric_inv(test_input):
 def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
     c, G, Cc, r, theta, M, a = test_input
     # differentiation of metric for kerr and kerr-newman metric should be equal when Q=0
-    scr = 2*M * G / (c ** 2)
+    scr = 2 * M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M)
-    m1 = kerr_utils.dmetric_dx(r, theta, M*u.kg, a_scaled)
+    m1 = kerr_utils.dmetric_dx(r, theta, M * u.kg, a_scaled)
     m2 = kerrnewman_utils.dmetric_dx(r, theta, M, a_scaled, 0.0)
     assert_allclose(m1, m2, rtol=1e-10)
 
@@ -47,7 +47,7 @@ def test_christoffels1(test_input):
     # compare christoffel symbols output by optimized function and by brute force
     c, G, Cc, r, theta, M, a = test_input
     Q = 1.0
-    scr = 2*M * G / (c ** 2)
+    scr = 2 * M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M)
     chl1 = kerrnewman_utils.christoffels(r, theta, M, a_scaled, Q)
     # calculate by formula
@@ -70,9 +70,9 @@ def test_christoffels1(test_input):
 def test_compare_kerr_kerrnewman_christoffels(test_input):
     # christoffel symbols for kerr and kerr-newman metric should be equal when Q=0
     c, G, Cc, r, theta, M, a = test_input
-    scr = 2*M * G / (c ** 2)
+    scr = 2 * M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M)
-    c1 = kerr_utils.christoffels(r, theta, M*u.kg, a_scaled)
+    c1 = kerr_utils.christoffels(r, theta, M * u.kg, a_scaled)
     c2 = kerrnewman_utils.christoffels(r, theta, M, a_scaled, 0.0)
     assert_allclose(c1, c2, rtol=1e-8)
 
@@ -92,9 +92,7 @@ def test_compare_kerr_kerrnewman_time_velocity():
     vel_vec = np.array([-0.1, -0.01, 0.05])
     mass = 1e24 * u.kg
     a01 = 0.85
-    a = kerr_utils.scaled_spin_factor(
-        a01, mass.to(u.kg).value
-    )
+    a = kerr_utils.scaled_spin_factor(a01, mass.to(u.kg).value)
     t1 = kerr_utils.kerr_time_velocity(pos_vec, vel_vec, mass, a)
     t2 = kerrnewman_utils.kerrnewman_time_velocity(pos_vec, vel_vec, mass, a, 0.0 * u.C)
     assert_allclose(t1.value, t2.value, rtol=1e-10)

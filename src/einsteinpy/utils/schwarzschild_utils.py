@@ -4,7 +4,6 @@ import numpy as np
 from einsteinpy import constant, utils
 
 
-
 def schwarzschild_radius(mass):
     """
     Schwarzschild radius is the radius defining the event horizon of a
@@ -22,7 +21,7 @@ def schwarzschild_radius(mass):
 
     """
     if type(mass) != u.quantity.Quantity:
-        mass = mass*u.kg
+        mass = mass * u.kg
     M = mass.to(u.kg)
     num = 2 * constant.G * M
     deno = constant.c ** 2
@@ -64,7 +63,7 @@ def time_velocity(pos_vec, vel_vec, mass):
     return time_vel * u.one
 
 
-def metric(r, theta, M, c = constant.c.value):
+def metric(r, theta, M, c=constant.c.value):
     """
     Returns the Schwarzschild Metric
 
@@ -95,7 +94,7 @@ def metric(r, theta, M, c = constant.c.value):
     return m
 
 
-def christoffels(r, theta, M, c = constant.c.value):
+def christoffels(r, theta, M, c=constant.c.value):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Schwarzschild Metric
 

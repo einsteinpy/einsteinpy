@@ -65,7 +65,7 @@ def scaled_spin_factor(a, M, c=constant.c.value, G=constant.G.value):
         If a not between 0 & 1
 
     """
-    half_scr = (utils.schwarzschild_radius(M).value)/2
+    half_scr = (utils.schwarzschild_radius(M).value) / 2
     if a < 0 or a > 1:
         raise ValueError("a to be supplied between 0 and 1")
     return a * half_scr
@@ -118,7 +118,7 @@ def delta(r, M, a):
     return (r ** 2) - (Rs * r) + (a ** 2)
 
 
-def metric(r, theta, M, a, c = constant.c.value):
+def metric(r, theta, M, a, c=constant.c.value):
     """
     Returns the Kerr Metric
 
@@ -158,7 +158,7 @@ def metric(r, theta, M, a, c = constant.c.value):
     return m
 
 
-def metric_inv(r, theta, M, a, c = constant.c.value):
+def metric_inv(r, theta, M, a, c=constant.c.value):
     """
     Returns the inverse of Kerr Metric
 
@@ -185,7 +185,7 @@ def metric_inv(r, theta, M, a, c = constant.c.value):
     return np.linalg.inv(m)
 
 
-def dmetric_dx(r, theta, M, a, c= constant.c.value):
+def dmetric_dx(r, theta, M, a, c=constant.c.value):
     """
     Returns differentiation of each component of Kerr metric tensor w.r.t. t, r, theta, phi
 
@@ -253,7 +253,7 @@ def dmetric_dx(r, theta, M, a, c= constant.c.value):
     return dmdx
 
 
-def christoffels(r, theta, M, a, c= constant.c.value):
+def christoffels(r, theta, M, a, c=constant.c.value):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Kerr Metric
 

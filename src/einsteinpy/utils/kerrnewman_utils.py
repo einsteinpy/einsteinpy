@@ -88,7 +88,9 @@ def rho(r, theta, a):
     return np.sqrt((r ** 2) + ((a * np.cos(theta)) ** 2))
 
 
-def delta(r, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def delta(
+    r, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value
+):
     """
     Returns the value r^2 - Rs * r + a^2
     Specific to Boyer-Lindquist coordinates
@@ -120,7 +122,16 @@ def delta(r, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulom
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
 
-def metric(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def metric(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns the Kerr-Newman Metric
 
@@ -167,7 +178,16 @@ def metric(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constan
     return m
 
 
-def metric_inv(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def metric_inv(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns the inverse of Kerr-Newman Metric
 
@@ -199,7 +219,16 @@ def metric_inv(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=con
     return np.linalg.inv(metric(r, theta, M, a, Q, c, G, Cc))
 
 
-def dmetric_dx(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def dmetric_dx(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns differentiation of each component of Kerr-Newman metric tensor w.r.t. t, r, theta, phi
 
@@ -290,7 +319,16 @@ def dmetric_dx(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=con
     return dmdx
 
 
-def christoffels(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def christoffels(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Kerr-Newman Metric
 
@@ -338,7 +376,16 @@ def christoffels(r, theta, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=c
     return chl
 
 
-def em_potential(r, theta, a, Q, M, c = constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def em_potential(
+    r,
+    theta,
+    a,
+    Q,
+    M,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns a 4-d vector(for each component of 4-d space-time) containing the electromagnetic potential around a Kerr-Newman body
 
@@ -374,7 +421,16 @@ def em_potential(r, theta, a, Q, M, c = constant.c.value, G=constant.G.value, Cc
     return vec
 
 
-def maxwell_tensor_covariant(r, theta, a, Q, M, c = constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def maxwell_tensor_covariant(
+    r,
+    theta,
+    a,
+    Q,
+    M,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns a 2nd rank Tensor containing Maxwell Tensor with lower indices for Kerr-Newman Metric
 
@@ -421,7 +477,16 @@ def maxwell_tensor_covariant(r, theta, a, Q, M, c = constant.c.value, G=constant
     return m
 
 
-def maxwell_tensor_contravariant(r, theta, a, Q, M, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value):
+def maxwell_tensor_contravariant(
+    r,
+    theta,
+    a,
+    Q,
+    M,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns a 2nd rank Tensor containing Maxwell Tensor with upper indices for Kerr-Newman Metric
 
@@ -483,13 +548,7 @@ def kerrnewman_time_velocity(pos_vec, vel_vec, mass, a, Q):
     """
     _scr = utils.schwarzschild_radius(mass).value
     Qc = Q.to(u.C)
-    g = metric(
-        pos_vec[0],
-        pos_vec[1],
-        mass,
-        a,
-        Qc.value,
-    )
+    g = metric(pos_vec[0], pos_vec[1], mass, a, Qc.value)
     A = g[0, 0]
     B = 2 * g[0, 3]
     C = (

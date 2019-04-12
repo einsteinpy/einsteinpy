@@ -141,9 +141,7 @@ class KerrNewman:
         maxwell = kerrnewman_utils.maxwell_tensor_contravariant(
             vec[1], vec[2], self.a, self.Q.value, self.M.value
         )
-        metric = kerrnewman_utils.metric(
-            vec[1], vec[2], self.M, self.a, self.Q.value
-        )
+        metric = kerrnewman_utils.metric(vec[1], vec[2], self.M, self.a, self.Q.value)
         vals = np.zeros(shape=(8,), dtype=float)
         for i in range(4):
             vals[i] = vec[i + 4]
