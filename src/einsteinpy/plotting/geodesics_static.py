@@ -4,7 +4,6 @@ import astropy.units as u
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.animation import FuncAnimation
 
 from einsteinpy.metric import Schwarzschild
 from einsteinpy.utils import schwarzschild_radius
