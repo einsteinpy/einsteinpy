@@ -46,6 +46,19 @@ def bl_differential():
     )
 
 
+@pytest.fixture()
+def bl_differential2():
+    return coordinates.BoyerLindquistDifferential(
+        4 * u.km,
+        2 * u.rad,
+        1 * u.rad,
+        -100 * u.m / u.s,
+        -1 * u.rad / u.s,
+        10 * u.deg / u.s,
+        100 * u.m,
+    )
+
+
 def test_CartesianToSphericalDifferential(
     cartesian_differential, spherical_differential
 ):
@@ -102,6 +115,20 @@ def test_BoyerLindquistToSphericalDifferential(bl_differential, spherical_differ
         rtol=0.0,
         atol=1e-6,
     )
+
+
+def test_cycle_BLSphericalDifferential(bl_differential2):
+    bl_diff = bl_differential2
+    sph_diff = bl_diff.spherical_differential()
+    bl_diff2 = sph_diff.bl_differential(bl_diff.a)
+    assert_allclose(bl_diff2.si_values(), bl_diff.si_values(), rtol=0.0, atol=1e-6)
+
+
+def test_cycle_BLCartesianDifferential(bl_differential2):
+    bl_diff = bl_differential2
+    cart_diff = bl_diff.cartesian_differential()
+    bl_diff2 = cart_diff.bl_differential(bl_diff.a)
+    assert_allclose(bl_diff2.si_values(), bl_diff.si_values(), rtol=0.0, atol=1e-6)
 
 
 # Tests for object.__repr__ and object.__str__
