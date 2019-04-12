@@ -20,7 +20,7 @@ def schwarzschild_radius(mass):
         Schwarzschild radius for a given mass
 
     """
-    if isinstance(mass, u.quantity.Quantity) == False:
+    if not isinstance(mass, u.quantity.Quantity):
         mass = mass * u.kg
     M = mass.to(u.kg)
     num = 2 * constant.G * M
@@ -69,15 +69,15 @@ def metric(r, theta, M, c=constant.c.value):
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-
+    M : float
+        Mass of the massive body
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
@@ -100,14 +100,15 @@ def christoffels(r, theta, M, c=constant.c.value):
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of the massive body
+    c : float
+        Speed of light
 
     Returns
     -------

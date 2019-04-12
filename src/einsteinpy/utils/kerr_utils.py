@@ -103,8 +103,8 @@ def delta(r, M, a):
     ----------
     r : float
         Component r in vector
-    Rs : float
-        Schwarzschild radius
+    M : float
+        Mass of massive body
     a : float
         Any constant
 
@@ -124,17 +124,17 @@ def metric(r, theta, M, a, c=constant.c.value):
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
@@ -164,17 +164,17 @@ def metric_inv(r, theta, M, a, c=constant.c.value):
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
@@ -191,17 +191,17 @@ def dmetric_dx(r, theta, M, a, c=constant.c.value):
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     dmdx : ~numpy.array
@@ -259,17 +259,17 @@ def christoffels(r, theta, M, a, c=constant.c.value):
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
@@ -394,8 +394,8 @@ def event_horizon(M, a, theta=np.pi / 2, coord="BL"):
 
     Parameters
     ----------
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black hole spin factor
     theta : float
@@ -426,8 +426,8 @@ def radius_ergosphere(M, a, theta=np.pi / 2, coord="BL"):
 
     Parameters
     ----------
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black hole spin factor
     theta : float

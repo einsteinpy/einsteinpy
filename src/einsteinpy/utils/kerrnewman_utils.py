@@ -99,8 +99,8 @@ def delta(
     ----------
     r : float
         Component r in vector
-    Rs : float
-        Schwarzschild radius
+    M : float
+        Mass of the massive body
     a : float
         Any constant
     Q : float
@@ -137,23 +137,23 @@ def metric(
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
     Returns
     -------
     ~numpy.array
@@ -193,23 +193,23 @@ def metric_inv(
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
     Returns
     -------
     ~numpy.array
@@ -234,23 +234,24 @@ def dmetric_dx(
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
+    
     Returns
     -------
     dmdx : ~numpy.array
@@ -334,23 +335,23 @@ def christoffels(
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
     Returns
     -------
     ~numpy.array
@@ -391,12 +392,7 @@ def em_potential(
 
     Parameters
     ----------
-    c : float
-        Speed of light
-    G : float
-        Gravitational constant
-    Cc : float
-        Coulomb's constant
+    
     r : float
         Distance from the centre
     theta : float
@@ -407,7 +403,12 @@ def em_potential(
         Charge on the massive body
     M : float
         Mass of the massive body
-
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
     Returns
     -------
     ~numpy.array
@@ -436,12 +437,7 @@ def maxwell_tensor_covariant(
 
     Parameters
     ----------
-    c : float
-        Speed of light
-    G : float
-        Gravitational constant
-    Cc : float
-        Coulomb's constant
+    
     r : float
         Distance from the centre
     theta : float
@@ -452,7 +448,12 @@ def maxwell_tensor_covariant(
         Charge on the massive body
     M : float
         Mass of the massive body
-
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
     Returns
     -------
     ~numpy.array
@@ -492,12 +493,7 @@ def maxwell_tensor_contravariant(
 
     Parameters
     ----------
-    c : float
-        Speed of light
-    G : float
-        Gravitational constant
-    Cc : float
-        Coulomb's constant
+    
     r : float
         Distance from the centre
     theta : float
@@ -508,7 +504,12 @@ def maxwell_tensor_contravariant(
         Charge on the massive body
     M : float
         Mass of the massive body
-
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
     Returns
     -------
     ~numpy.array
