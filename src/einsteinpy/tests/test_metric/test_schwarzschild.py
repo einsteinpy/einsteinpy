@@ -57,11 +57,10 @@ def test_calculate_trajectory(
         end_lambda=end_lambda,
         OdeMethodKwargs=OdeMethodKwargs,
     )
-    _c, _scr = constant.c.value, schwarzschild_radius(M).value
     ans = ans[1]
     testarray = list()
     for i in ans:
-        g = schwarzschild_utils.metric(_c, i[1], i[2], _scr)
+        g = schwarzschild_utils.metric(i[1], i[2], M.value)
         testarray.append(
             g[0][0] * (i[4] ** 2)
             + g[1][1] * (i[5] ** 2)

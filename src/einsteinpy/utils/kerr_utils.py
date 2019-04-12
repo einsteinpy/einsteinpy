@@ -2,6 +2,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant, utils
+from einsteinpy.utils import schwarzschild_radius_dimensionless
 
 nonzero_christoffels_list = [
     (0, 0, 1),
@@ -65,7 +66,7 @@ def scaled_spin_factor(a, M, c=constant.c.value, G=constant.G.value):
         If a not between 0 & 1
 
     """
-    half_scr = G * M / (c ** 2)
+    half_scr = (schwarzschild_radius_dimensionless(M, c, G)) / 2
     if a < 0 or a > 1:
         raise ValueError("a to be supplied between 0 and 1")
     return a * half_scr
@@ -94,7 +95,7 @@ def sigma(r, theta, a):
     return (r ** 2) + ((a * np.cos(theta)) ** 2)
 
 
-def delta(r, Rs, a):
+def delta(r, M, a, c=constant.c.value, G=constant.G.value):
     """
     Returns the value r^2 - Rs * r + a^2
     Specific to Boyer-Lindquist coordinates
@@ -103,8 +104,8 @@ def delta(r, Rs, a):
     ----------
     r : float
         Component r in vector
-    Rs : float
-        Schwarzschild radius
+    M : float
+        Mass of massive body
     a : float
         Any constant
 
@@ -114,34 +115,36 @@ def delta(r, Rs, a):
         The value r^2 - Rs * r + a^2
     
     """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2)
 
 
-def metric(c, r, theta, Rs, a):
+def metric(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     Returns the Kerr Metric
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
         Numpy array of shape (4,4)
 
     """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
     m = np.zeros(shape=(4, 4), dtype=float)
-    sg, dl = sigma(r, theta, a), delta(r, Rs, a)
+    sg, dl = sigma(r, theta, a), delta(r, M, a, c, G)
     c2 = c ** 2
     # set the diagonal/off-diagonal terms of metric
     m[0, 0] = 1 - (Rs * r / sg)
@@ -156,50 +159,50 @@ def metric(c, r, theta, Rs, a):
     return m
 
 
-def metric_inv(c, r, theta, Rs, a):
+def metric_inv(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     Returns the inverse of Kerr Metric
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
         Numpy array of shape (4,4)
 
     """
-    m = metric(c, r, theta, Rs, a)
+    m = metric(r, theta, M, a, c, G)
     return np.linalg.inv(m)
 
 
-def dmetric_dx(c, r, theta, Rs, a):
+def dmetric_dx(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     Returns differentiation of each component of Kerr metric tensor w.r.t. t, r, theta, phi
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     dmdx : ~numpy.array
@@ -207,8 +210,9 @@ def dmetric_dx(c, r, theta, Rs, a):
         dmdx[0], dmdx[1], dmdx[2] & dmdx[3] is differentiation of metric w.r.t. t, r, theta & phi respectively
 
     """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
     dmdx = np.zeros(shape=(4, 4, 4), dtype=float)
-    sg, dl = sigma(r, theta, a), delta(r, Rs, a)
+    sg, dl = sigma(r, theta, a), delta(r, M, a, c, G)
     c2 = c ** 2
     # metric is invariant on t & phi
     # differentiation of metric wrt r
@@ -250,31 +254,31 @@ def dmetric_dx(c, r, theta, Rs, a):
     return dmdx
 
 
-def christoffels(c, r, theta, Rs, a):
+def christoffels(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Kerr Metric
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black Hole spin factor
-
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
         Numpy array of shape (4,4,4)
 
     """
-    invg = metric_inv(c, r, theta, Rs, a)
-    dmdx = dmetric_dx(c, r, theta, Rs, a)
+    invg = metric_inv(r, theta, M, a, c, G)
+    dmdx = dmetric_dx(r, theta, M, a, c, G)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     for _, k, l in nonzero_christoffels_list[0:4]:
         val1 = dmdx[l, 0, k] + dmdx[k, 0, l]
@@ -314,8 +318,7 @@ def kerr_time_velocity(pos_vec, vel_vec, mass, a):
         Velocity of time
 
     """
-    _scr = utils.schwarzschild_radius(mass).value
-    g = metric(constant.c.value, pos_vec[0], pos_vec[1], _scr, a)
+    g = metric(pos_vec[0], pos_vec[1], mass.value, a)
     A = g[0, 0]
     B = 2 * g[0, 3]
     C = (
@@ -386,14 +389,16 @@ def spin_factor(J, M, c):
     return J / (M * c)
 
 
-def event_horizon(Rs, a, theta=np.pi / 2, coord="BL"):
+def event_horizon(
+    M, a, theta=np.pi / 2, coord="BL", c=constant.c.value, G=constant.G.value
+):
     """
     Calculate the radius of event horizon of Kerr black hole
 
     Parameters
     ----------
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black hole spin factor
     theta : float
@@ -407,6 +412,7 @@ def event_horizon(Rs, a, theta=np.pi / 2, coord="BL"):
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
     
     """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
     Rh = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2)))
     if coord == "BL":
         ans = np.array([Rh, theta], dtype=float)
@@ -417,14 +423,16 @@ def event_horizon(Rs, a, theta=np.pi / 2, coord="BL"):
     return ans
 
 
-def radius_ergosphere(Rs, a, theta=np.pi / 2, coord="BL"):
+def radius_ergosphere(
+    M, a, theta=np.pi / 2, coord="BL", c=constant.c.value, G=constant.G.value
+):
     """
     Calculate the radius of ergospere of Kerr black hole at a specific azimuthal angle
 
     Parameters
     ----------
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of massive body
     a : float
         Black hole spin factor
     theta : float
@@ -438,6 +446,7 @@ def radius_ergosphere(Rs, a, theta=np.pi / 2, coord="BL"):
         [Radius of ergosphere(R), angle from z axis(theta)] in BL/Spherical coordinates
     
     """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
     Re = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2) * (np.cos(theta) ** 2)))
     if coord == "BL":
         ans = np.array([Re, theta], dtype=float)
