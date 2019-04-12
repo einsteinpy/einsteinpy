@@ -1,6 +1,7 @@
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.animation import FuncAnimation
 
 from einsteinpy.metric import Schwarzschild
 
@@ -55,9 +56,7 @@ class ScatterGeodesicPlotter:
         if not self._attractor_present:
             self._plot_attractor()
 
-    def animate(
-        self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, interval=50
-    ):
+    def animate(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, interval=50):
         """
         Function to generate animated plots of geodesics.
 
