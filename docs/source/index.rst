@@ -91,6 +91,7 @@ Contents
 
     getting_started
     user_guide
+    metric
     jupyter
     changelog
     api/index
