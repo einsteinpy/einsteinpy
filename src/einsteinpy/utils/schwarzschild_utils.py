@@ -20,7 +20,7 @@ def schwarzschild_radius(mass):
         Schwarzschild radius for a given mass
 
     """
-    if type(mass) != u.quantity.Quantity:
+    if isinstance(mass, u.quantity.Quantity) == False:
         mass = mass * u.kg
     M = mass.to(u.kg)
     num = 2 * constant.G * M
