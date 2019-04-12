@@ -6,64 +6,36 @@ from numpy.testing import assert_allclose
 from einsteinpy import utils
 
 
-@pytest.mark.parametrize(
-    "pos_vec, a, ans_vec",
-    [
-        (
-            np.array([20.0, 311.0, 210.0]),
-            0.0,
-            np.array([375.79382645275, 0.9778376650369, 1.5065760775947]),
-        )
-    ],
-)
-def test_CartesianToBL_pos(pos_vec, a, ans_vec):
+def test_CartesianToBL_pos():
+    pos_vec = np.array([20.0, 311.0, 210.0])
+    a = 0.0
+    ans_vec = np.array([375.79382645275, 0.9778376650369, 1.5065760775947])
     ans = utils.CartesianToBL_pos(pos_vec, a)
     assert_allclose(ans, ans_vec, rtol=0.0, atol=1e-5)
 
 
-@pytest.mark.parametrize(
-    "pos_vec, a, ans_vec",
-    [
-        (
-            np.array([12, 20 * np.pi / 180, 60 * np.pi / 180]),
-            0.0,
-            np.array([2.052121, 3.55437, 11.27631]),
-        )
-    ],
-)
-def test_BLtoCartesian_pos(pos_vec, a, ans_vec):
+def test_BLtoCartesian_pos():
+    pos_vec = np.array([12, 20 * np.pi / 180, 60 * np.pi / 180])
+    a = 0.0
+    ans_vec = np.array([2.052121, 3.55437, 11.27631])
     ans = utils.BLToCartesian_pos(pos_vec, a)
     assert_allclose(ans, ans_vec, rtol=0.0, atol=1e-5)
 
 
-@pytest.mark.parametrize(
-    "pos_vec, vel_vec, a, ans_vec",
-    [
-        (
-            np.array([10 / np.sqrt(2), 10 / np.sqrt(2), 0.0]),
-            np.array([-190 / np.sqrt(2), 210 / np.sqrt(2), 200.0]),
-            0.0,
-            np.array([10.0, -20.0, 20.0]),
-        )
-    ],
-)
-def test_CartesianToBL_vel(pos_vec, vel_vec, a, ans_vec):
+def test_CartesianToBL_vel():
+    pos_vec = np.array([10 / np.sqrt(2), 10 / np.sqrt(2), 0.0])
+    vel_vec = np.array([-190 / np.sqrt(2), 210 / np.sqrt(2), 200.0])
+    a = 0.0
+    ans_vec = np.array([10.0, -20.0, 20.0])
     ans = utils.CartesianToBL_vel(pos_vec, vel_vec, a)
     assert_allclose(ans, ans_vec, rtol=0.0, atol=1e-5)
 
 
-@pytest.mark.parametrize(
-    "pos_vec, vel_vec, a, ans_vec",
-    [
-        (
-            np.array([20, np.pi / 2, np.pi / 4]),
-            np.array([0.0, 0.0, 10]),
-            0.0,
-            np.array([-200 / np.sqrt(2), 200 / np.sqrt(2), 0]),
-        )
-    ],
-)
-def test_BLtoCartesian_vel(pos_vec, vel_vec, a, ans_vec):
+def test_BLtoCartesian_vel():
+    pos_vec = np.array([20, np.pi / 2, np.pi / 4])
+    vel_vec = np.array([0.0, 0.0, 10])
+    a = 0.0
+    ans_vec = np.array([-200 / np.sqrt(2), 200 / np.sqrt(2), 0])
     ans = utils.BLToCartesian_vel(pos_vec, vel_vec, a)
     assert_allclose(ans, ans_vec, rtol=0.0, atol=1e-5)
 
@@ -105,39 +77,25 @@ def test_cycle_vel(pos_vec, vel_vec, a):
     assert_allclose(vel_vec, vel_vec3, rtol=0.0, atol=1e-5)
 
 
-@pytest.mark.parametrize(
-    "pos_vec, vel_vec, a, ans_vel_vec",
-    [
-        (
-            [20 * u.m, 90 * u.deg, 45 * u.deg],
-            [0.0 * u.km / u.s, 0.0 * u.rad / u.s, 10 * u.rad / u.s],
-            0.0,
-            np.array([-200 / np.sqrt(2), 200 / np.sqrt(2), 0]),
-        )
-    ],
-)
-def test_BL2C_units(pos_vec, vel_vec, a, ans_vel_vec):
+def test_BL2C_units():
+    pos_vec = [20 * u.m, 90 * u.deg, 45 * u.deg]
+    vel_vec = [0.0 * u.km / u.s, 0.0 * u.rad / u.s, 10 * u.rad / u.s]
+    a = 0.0
+    ans_vel_vec = np.array([-200 / np.sqrt(2), 200 / np.sqrt(2), 0])
     a = utils.BL2C_units(pos_vec, vel_vec, a)
     tmp = np.array([t.value for t in a[1]])
     assert_allclose(ans_vel_vec, tmp, rtol=0.0, atol=1e-5)
 
 
-@pytest.mark.parametrize(
-    "vec, a",
-    [
-        (
-            np.array(
-                [
-                    [21.0, 300, 0.33, 4.0, 1.0, -10.0, -1, -2],
-                    [1.0, 3, 0.1, 5.0, 1.0, 100.0, -11, 2],
-                    [1.0, 3, 0.1, 0, 1.0, 0, -11, 2],
-                ]
-            ),
-            0.4,
-        )
-    ],
-)
-def test_BL2C_8dim(vec, a):
+def test_BL2C_8dim():
+    vec = np.array(
+        [
+            [21.0, 300, 0.33, 4.0, 1.0, -10.0, -1, -2],
+            [1.0, 3, 0.1, 5.0, 1.0, 100.0, -11, 2],
+            [1.0, 3, 0.1, 0, 1.0, 0, -11, 2],
+        ]
+    )
+    a = 0.4
     list1 = list()
     for v in vec:
         nv = np.hstack(

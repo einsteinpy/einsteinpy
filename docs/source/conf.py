@@ -70,7 +70,10 @@ html_theme_path = [alabaster.get_path()]
 
 html_title = "EinsteinPy"
 
+html_static_path =['_static']
+
 htmlhelp_basename = 'einsteinpydoc'
+
 html_sidebars = {
     "**": [
         "about.html",
