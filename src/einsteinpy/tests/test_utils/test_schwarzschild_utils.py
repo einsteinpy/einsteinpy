@@ -13,8 +13,8 @@ _G = constant.G.value
 def test_compare_kerr_and_schwarzschild_metric():
     r = 99.9
     theta = 5 * np.pi / 6
-    Rs = 9e-3
+    M = 6.73317655e26
     # Kerr metric would reduce to Schwarzschild metric under limits a=0
-    mk = kerr_utils.metric(_c, r, theta, Rs, 0.0)
-    ms = schwarzschild_utils.metric(_c, r, theta, Rs)
+    mk = kerr_utils.metric(r, theta, M, 0.0)
+    ms = schwarzschild_utils.metric(r, theta, M)
     assert_allclose(mk, ms, rtol=1e-8)

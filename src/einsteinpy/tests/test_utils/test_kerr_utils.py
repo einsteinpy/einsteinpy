@@ -24,8 +24,8 @@ def test_event_horizon_for_nonrotating_case():
     M = 5e27
     a = 0.0
     _scr = utils.schwarzschild_radius(M * u.kg).value
-    a1 = kerr_utils.event_horizon(_scr, a, np.pi / 4)
-    a2 = kerr_utils.event_horizon(_scr, a, np.pi / 4, "Spherical")
+    a1 = kerr_utils.event_horizon(M, a, np.pi / 4)
+    a2 = kerr_utils.event_horizon(M, a, np.pi / 4, "Spherical")
     assert_allclose(a1, a2, rtol=0.0, atol=1e-5)
     assert_allclose(a1[0], _scr, rtol=0.0, atol=1e-5)
 
@@ -34,8 +34,8 @@ def test_radius_ergosphere_for_nonrotating_case():
     M = 5e27
     a = 0.0
     _scr = utils.schwarzschild_radius(M * u.kg).value
-    a1 = kerr_utils.radius_ergosphere(_scr, a, np.pi / 5)
-    a2 = kerr_utils.radius_ergosphere(_scr, a, np.pi / 5, "Spherical")
+    a1 = kerr_utils.radius_ergosphere(M, a, np.pi / 5)
+    a2 = kerr_utils.radius_ergosphere(M, a, np.pi / 5, "Spherical")
     assert_allclose(a1, a2, rtol=0.0, atol=1e-5)
     assert_allclose(a1[0], _scr, rtol=0.0, atol=1e-5)
 
@@ -45,12 +45,12 @@ def test_christoffels():
     c = 3e8
     r = 100.0
     theta = np.pi / 5
-    Rs = 1.0
+    M = 6.73317655e26
     a = 0.2
-    chl1 = kerr_utils.christoffels(c, r, theta, Rs, a)
+    chl1 = kerr_utils.christoffels(r, theta, M, a, c)
     # calculate by formula
-    invg = kerr_utils.metric_inv(c, r, theta, Rs, a)
-    dmdx = kerr_utils.dmetric_dx(c, r, theta, Rs, a)
+    invg = kerr_utils.metric_inv(r, theta, M, a, c)
+    dmdx = kerr_utils.dmetric_dx(r, theta, M, a, c)
     chl2 = np.zeros(shape=(4, 4, 4), dtype=float)
     tmp = np.array([i for i in range(4 ** 3)])
     for t in tmp:

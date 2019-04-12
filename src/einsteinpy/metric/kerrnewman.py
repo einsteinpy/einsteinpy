@@ -136,13 +136,13 @@ class KerrNewman:
     def f_vec(self, ld, vec):
         _scr = self.schwarzschild_r.value
         chl = kerrnewman_utils.christoffels(
-            _c, _G, _Cc, vec[1], vec[2], _scr, self.a, self.Q.value
+            vec[1], vec[2], self.M, self.a, self.Q.value
         )
         maxwell = kerrnewman_utils.maxwell_tensor_contravariant(
-            _c, _G, _Cc, vec[1], vec[2], self.a, self.Q.value, self.M.value
+            vec[1], vec[2], self.a, self.Q.value, self.M.value
         )
         metric = kerrnewman_utils.metric(
-            _c, _G, _Cc, vec[1], vec[2], _scr, self.a, self.Q.value
+            vec[1], vec[2], self.M, self.a, self.Q.value
         )
         vals = np.zeros(shape=(8,), dtype=float)
         for i in range(4):

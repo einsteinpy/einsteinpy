@@ -26,20 +26,20 @@ def test_input():
 def test_compare_kerr_kerrnewman_metric_inv(test_input):
     c, G, Cc, r, theta, M, a = test_input
     # inverse of metric for kerr and kerr-newman metric should be equal when Q=0
-    scr = M * G / (c ** 2)
-    a_scaled = kerr_utils.scaled_spin_factor(a, M, c, G)
-    m1 = kerr_utils.metric_inv(c, r, theta, scr, a_scaled)
-    m2 = kerrnewman_utils.metric_inv(c, G, Cc, r, theta, scr, a_scaled, 0.0)
+    scr = 2*M * G / (c ** 2)
+    a_scaled = kerr_utils.scaled_spin_factor(a, M)
+    m1 = kerr_utils.metric_inv(r, theta, M*u.kg, a_scaled)
+    m2 = kerrnewman_utils.metric_inv(r, theta, M, a_scaled, 0.0)
     assert_allclose(m1, m2, rtol=1e-10)
 
 
 def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
     c, G, Cc, r, theta, M, a = test_input
     # differentiation of metric for kerr and kerr-newman metric should be equal when Q=0
-    scr = M * G / (c ** 2)
-    a_scaled = kerr_utils.scaled_spin_factor(a, M, c, G)
-    m1 = kerr_utils.dmetric_dx(c, r, theta, scr, a_scaled)
-    m2 = kerrnewman_utils.dmetric_dx(c, G, Cc, r, theta, scr, a_scaled, 0.0)
+    scr = 2*M * G / (c ** 2)
+    a_scaled = kerr_utils.scaled_spin_factor(a, M)
+    m1 = kerr_utils.dmetric_dx(r, theta, M*u.kg, a_scaled)
+    m2 = kerrnewman_utils.dmetric_dx(r, theta, M, a_scaled, 0.0)
     assert_allclose(m1, m2, rtol=1e-10)
 
 
@@ -47,12 +47,12 @@ def test_christoffels1(test_input):
     # compare christoffel symbols output by optimized function and by brute force
     c, G, Cc, r, theta, M, a = test_input
     Q = 1.0
-    scr = M * G / (c ** 2)
-    a_scaled = kerr_utils.scaled_spin_factor(a, M, c, G)
-    chl1 = kerrnewman_utils.christoffels(c, G, Cc, r, theta, scr, a_scaled, Q)
+    scr = 2*M * G / (c ** 2)
+    a_scaled = kerr_utils.scaled_spin_factor(a, M)
+    chl1 = kerrnewman_utils.christoffels(r, theta, M, a_scaled, Q)
     # calculate by formula
-    invg = kerrnewman_utils.metric_inv(c, G, Cc, r, theta, scr, a_scaled, Q)
-    dmdx = kerrnewman_utils.dmetric_dx(c, G, Cc, r, theta, scr, a_scaled, Q)
+    invg = kerrnewman_utils.metric_inv(r, theta, M, a_scaled, Q)
+    dmdx = kerrnewman_utils.dmetric_dx(r, theta, M, a_scaled, Q)
     chl2 = np.zeros(shape=(4, 4, 4), dtype=float)
     tmp = np.array([i for i in range(4 ** 3)])
     for t in tmp:
@@ -70,17 +70,17 @@ def test_christoffels1(test_input):
 def test_compare_kerr_kerrnewman_christoffels(test_input):
     # christoffel symbols for kerr and kerr-newman metric should be equal when Q=0
     c, G, Cc, r, theta, M, a = test_input
-    scr = M * G / (c ** 2)
-    a_scaled = kerr_utils.scaled_spin_factor(a, M, c, G)
-    c1 = kerr_utils.christoffels(c, r, theta, scr, a_scaled)
-    c2 = kerrnewman_utils.christoffels(c, G, Cc, r, theta, scr, a_scaled, 0.0)
+    scr = 2*M * G / (c ** 2)
+    a_scaled = kerr_utils.scaled_spin_factor(a, M)
+    c1 = kerr_utils.christoffels(r, theta, M*u.kg, a_scaled)
+    c2 = kerrnewman_utils.christoffels(r, theta, M, a_scaled, 0.0)
     assert_allclose(c1, c2, rtol=1e-8)
 
 
 def test_electric_magnetic_potential_from_em_potential_vector(test_input):
     c, G, Cc, r, theta, M, a = test_input
     Q = 15.5
-    vec = kerrnewman_utils.em_potential(c, G, Cc, r, theta, 0.0, Q, M)
+    vec = kerrnewman_utils.em_potential(r, theta, 0.0, Q, M)
     cmparr = np.zeros((4,), dtype=float)
     cmparr[0] = (Q / ((c ** 2) * r)) * np.sqrt(G * constant.coulombs_const.value)
     assert_allclose(cmparr, vec, rtol=1e-8)
@@ -93,7 +93,7 @@ def test_compare_kerr_kerrnewman_time_velocity():
     mass = 1e24 * u.kg
     a01 = 0.85
     a = kerr_utils.scaled_spin_factor(
-        a01, mass.to(u.kg).value, constant.c.value, constant.G.value
+        a01, mass.to(u.kg).value
     )
     t1 = kerr_utils.kerr_time_velocity(pos_vec, vel_vec, mass, a)
     t2 = kerrnewman_utils.kerrnewman_time_velocity(pos_vec, vel_vec, mass, a, 0.0 * u.C)
@@ -107,7 +107,7 @@ def test_maxwell_tensor_covariant_for_natural_units():
     theta = 3 * np.pi / 5
     Q = 10.0
     a = 0.5
-    m = kerrnewman_utils.maxwell_tensor_covariant(1.0, 1.0, 1.0, r, theta, a, Q, M)
+    m = kerrnewman_utils.maxwell_tensor_covariant(r, theta, a, Q, M, 1.0, 1.0, 1.0)
     for t in range(16):
         i = int(t / 4) % 4
         j = t % 4
@@ -136,7 +136,7 @@ def test_maxwell_tensor_contravariant_for_natural_units():
     theta = 2 * np.pi / 5
     Q = 45.0
     a = 0.7
-    m = kerrnewman_utils.maxwell_tensor_contravariant(1.0, 1.0, 1.0, r, theta, a, Q, M)
+    m = kerrnewman_utils.maxwell_tensor_contravariant(r, theta, a, Q, M, 1.0, 1.0, 1.0)
     for t in range(16):
         i = int(t / 4) % 4
         j = t % 4

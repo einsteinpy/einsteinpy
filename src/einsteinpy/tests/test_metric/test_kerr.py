@@ -64,7 +64,7 @@ def test_calculate_trajectory(
     ans = ans[1]
     testarray = list()
     for i in ans:
-        g = kerr_utils.metric(_c, i[1], i[2], _scr, a)
+        g = kerr_utils.metric(i[1], i[2], M, a)
         testarray.append(
             g[0][0] * (i[4] ** 2)
             + g[1][1] * (i[5] ** 2)

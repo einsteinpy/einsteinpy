@@ -1,10 +1,10 @@
 import astropy.units as u
 import numpy as np
 
-from einsteinpy import constant
+from einsteinpy import constant, utils
 
 
-@u.quantity_input(mass=u.kg)
+
 def schwarzschild_radius(mass):
     """
     Schwarzschild radius is the radius defining the event horizon of a
@@ -21,6 +21,8 @@ def schwarzschild_radius(mass):
         Schwarzschild radius for a given mass
 
     """
+    if type(mass) != u.quantity.Quantity:
+        mass = mass*u.kg
     M = mass.to(u.kg)
     num = 2 * constant.G * M
     deno = constant.c ** 2
@@ -62,7 +64,7 @@ def time_velocity(pos_vec, vel_vec, mass):
     return time_vel * u.one
 
 
-def metric(c, r, theta, Rs):
+def metric(r, theta, M, c = constant.c.value):
     """
     Returns the Schwarzschild Metric
 
@@ -83,6 +85,7 @@ def metric(c, r, theta, Rs):
         Numpy array of shape (4,4)
 
     """
+    Rs = utils.schwarzschild_radius(M).value
     m = np.zeros(shape=(4, 4), dtype=float)
     tmp, c2 = 1.0 - (Rs / r), c ** 2
     m[0, 0] = tmp
@@ -92,7 +95,7 @@ def metric(c, r, theta, Rs):
     return m
 
 
-def christoffels(c, r, theta, Rs):
+def christoffels(r, theta, M, c = constant.c.value):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Schwarzschild Metric
 
@@ -113,6 +116,7 @@ def christoffels(c, r, theta, Rs):
         Numpy array of shape (4,4,4)
 
     """
+    Rs = utils.schwarzschild_radius(M).value
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     c2 = c ** 2
     chl[1, 0, 0] = 0.5 * Rs * (r - Rs) * c2 / (r ** 3)

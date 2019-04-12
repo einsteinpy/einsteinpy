@@ -109,7 +109,7 @@ class Schwarzschild:
     def f_vec(self, ld, vec):
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
         chl = schwarzschild_utils.christoffels(
-            _c, vec[1], vec[2], self.schwarzschild_r.value
+            vec[1], vec[2], self.M
         )
         vals[:4] = vec[4:8]
         vals[4] = -2 * chl[0, 0, 1] * vec[4] * vec[5]
