@@ -55,16 +55,11 @@ class ScatterGeodesicPlotter:
         if not self._attractor_present:
             self._plot_attractor()
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     def plot_animated(
         self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, interval=50
     ):
-=======
-    def animate(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, interval=50):
->>>>>>> GeodesicsPlotter: Rename plot_animated to animated.
         """
+        Function to generate animated plots of geodesics.
 
         Parameters
         ----------
@@ -113,9 +108,8 @@ class ScatterGeodesicPlotter:
             pic.set_array(time[: frame + 1])
             return (pic,)
 
-        self.ani = FuncAnimation(fig, _update, frames=frames, interval=interval)
+        self.animated = FuncAnimation(fig, _update, frames=frames, interval=interval)
 
->>>>>>> GeodesicsPlotter: Add inline docs for plot and animated plot method.
     def show(self):
         plt.show()
 
