@@ -99,7 +99,7 @@ class ScatterGeodesicPlotter:
 
         plt.xlim(x_min - margin_x, x_max + margin_x)
         plt.ylim(y_min - margin_y, y_max + margin_y)
-        pic = plt.scatter([], [], s=1)
+        pic = plt.scatter([], [], s=1, c=[])
         plt.scatter(0, 0, color="black")
 
         def _update(frame):
