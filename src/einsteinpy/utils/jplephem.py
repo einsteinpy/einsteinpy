@@ -78,7 +78,9 @@ One can check which bodies are covered by a given ephemeris using::
     >>> solar_system_ephemeris.bodies
     ('earth', 'sun', 'moon', 'mercury', 'venus', 'earth-moon-barycenter', 'mars'
     , 'jupiter', 'saturn', 'uranus', 'neptune')
-"""[1:-1]
+"""[
+    1:-1
+]
 
 
 class solar_system_ephemeris(ScienceState):
