@@ -34,23 +34,39 @@ class KerrPlotter:
         return Xe, Ye
 
     def plot_event_horizon(self, start, end, steps, color, coord="BL", opacity=0.3):
-        Xh, Yh = self._calc_event_horizon(start, end, steps, coord)
+        pos = self._calc_event_horizon(start, end, steps, coord)
         fig, ax = plt.subplots()
-        ax.fill(Xh, Yh, color, alpha=opacity)
-        ax.fill(-1 * Xh, Yh, color, alpha=opacity)
+        ax.fill(pos[0], pos[1], color, alpha=opacity)
+        ax.fill(-1 * pos[0], pos[1], color, alpha=opacity)
 
     def plot_ergosphere(self, start, end, steps, color, coord="BL", opacity=0.3):
-        Xe, Ye = self._calc_ergosphere(start, end, steps, coord)
+        pos = self._calc_ergosphere(start, end, steps, coord)
         fig, ax = plt.subplots()
-        ax.fill(Xe, Ye, color, alpha=opacity)
-        ax.fill(-1 * Xe, Ye, color, alpha=opacity)
+        ax.fill(pos[0], pos[1], color, alpha=opacity)
+        ax.fill(-1 * pos[0], pos[1], color, alpha=opacity)
 
     def plot(self, start, end, steps, ergo_color, hori_color, coord="BL", opacity=0.3):
-        Xh, Yh = self._calc_event_horizon(start, end, steps, coord)
-        Xe, Ye = self._calc_ergosphere(start, end, steps, coord)
+        pos_eh = self._calc_event_horizon(start, end, steps, coord)
+        pos_e = self._calc_ergosphere(start, end, steps, coord)
         fig, ax = plt.subplots()
-        ax.fill(Xh, Yh, hori_color, Xe, Ye, ergo_color, alpha=opacity)
-        ax.fill(-1 * Xh, Yh, hori_color, -1 * Xe, Ye, ergo_color, alpha=opacity)
+        ax.fill(
+            pos_eh[0],
+            pos_eh[1],
+            hori_color,
+            pos_e[0],
+            pos_e[1],
+            ergo_color,
+            alpha=opacity,
+        )
+        ax.fill(
+            -1 * pos_eh[0],
+            pos_eh[1],
+            hori_color,
+            -1 * pos_e[0],
+            pos_e[1],
+            ergo_color,
+            alpha=opacity,
+        )
 
     def show(self):
         plt.show()
