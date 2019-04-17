@@ -7,8 +7,8 @@ from einsteinpy.utils import kerr_utils, schwarzschild_radius
 
 class KerrPlotter:
     """
-		Class for plotting event horizon and ergosphere of Kerr black hole
-	"""
+        Class for plotting event horizon and ergosphere of Kerr black hole
+    """
 
     def __init__(self, mass, maximally=False):
         self.mass = mass
