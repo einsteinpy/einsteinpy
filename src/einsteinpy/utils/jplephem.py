@@ -1,13 +1,9 @@
-from astropy.coordinates import (get_body_barycentric,
-                                 get_body_barycentric_posvel,
-                                 solar_system_ephemeris)
+from astropy.coordinates import (  # isort:skip
+    get_body_barycentric,
+    get_body_barycentric_posvel,
+    solar_system_ephemeris,
+)  # isort: skip added because isort and black conflict on the above import, to be fixed later
 from astropy.time import Time
-
-
-"""
-The velocity cannot be calculated for the Moon.
-To just get the position, use get_body_helio()
-"""
 
 
 def _get_body_helio_posvel(body, time, ephemeris=None, get_velocity=True):
@@ -26,11 +22,31 @@ def _get_body_helio_posvel(body, time, ephemeris=None, get_velocity=True):
     ephemeris : str, optional
     Ephemeris to use.
     By default, use the one set with astropy.coordinates.solar_system_ephemeris.set
+
+    Returns:
+    -------
+    position, velocity : tuple of CartesianRepresentation
+    Tuple of heliocentric position and velocity.
+
+    Notes:
+    ------
+    The velocity cannot be calculated for the Moon.
+    To just get the position, use get_body_helio()
     """
     if get_velocity:
-        body_pos_bary, body_vel_bary = get_body_barycentric_posvel(body, time, ephemeris)
+        body_pos_bary, body_vel_bary = get_body_barycentric_posvel(
+            # isort:skip
+            body,
+            time,
+            ephemeris,
+        )
 
-        sun_pos_bary, sun_vel_bary = get_body_barycentric_posvel("sun", time, ephemeris)
+        sun_pos_bary, sun_vel_bary = get_body_barycentric_posvel(
+            # isort:skip
+            "sun",
+            time,
+            ephemeris,
+        )
 
         body_pos_helio = body_pos_bary - sun_pos_bary
         body_vel_helio = body_vel_bary - sun_vel_bary
