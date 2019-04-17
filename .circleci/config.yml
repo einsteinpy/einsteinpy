@@ -40,6 +40,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
+            pip install --upgrade pip --quiet
             pip install numpy --quiet
             pip install . --quiet
             pip install .[dev] --quiet

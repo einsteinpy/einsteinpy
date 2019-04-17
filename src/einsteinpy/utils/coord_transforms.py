@@ -1,5 +1,11 @@
+import warnings
+
 import astropy.units as u
 import numpy as np
+
+warnings.warn(
+    "This module will be deprecated in EinsteinPy v0.3.0. Please switch to `einsteinpy.coordinates`."
+)
 
 
 def CartesianToSpherical_pos(pos_vec):
@@ -10,7 +16,7 @@ def CartesianToSpherical_pos(pos_vec):
     ----------
     pos_vec : ~numpy.array
         3-length numpy array having x,y,z coordinates in SI units(m)
-    
+
     Returns
     -------
     ~numpy.array
@@ -63,7 +69,7 @@ def SphericalToCartesian_pos(pos_vec):
     ----------
     pos_vec : ~numpy.array
         3-length numpy array having r, theta, phi coordinates in SI units(m, rad, rad)
-    
+
     Returns
     -------
     ~numpy.array
@@ -194,7 +200,7 @@ def S2C_8dim(vec):
     -------
     ~numpy.array
         Array of shape (n,8) in the form [t,x,y,z,vt,vx,vy,vz] in SI units
-        
+
     """
 
     newvec = np.copy(vec)

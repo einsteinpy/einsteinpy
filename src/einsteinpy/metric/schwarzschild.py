@@ -6,7 +6,7 @@ import numpy as np
 from einsteinpy import constant
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import *
-from einsteinpy.utils import schwarzschild_radius as scr
+from einsteinpy.utils import schwarzschild_radius, schwarzschild_utils
 
 _G = constant.G.value
 _c = constant.c.value
@@ -27,7 +27,7 @@ class Schwarzschild:
         self.initial_vec = np.hstack(
             (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
         )
-        self.schwarzschild_r = scr(M)
+        self.schwarzschild_r = schwarzschild_radius(M)
 
     @classmethod
     def _classmethod_handler(cls, pos_vec, vel_vec, time, M):
@@ -106,79 +106,22 @@ class Schwarzschild:
         sp_pos_vec, sp_vel_vec = C2S_units(pos_vec, vel_vec)
         return cls._classmethod_handler(sp_pos_vec, sp_vel_vec, time, M)
 
-    def christ_sym1_00(self, vec):
-        num1 = (-2 * _G * self.M.value) + ((_c ** 2) * vec[1])
-        num2 = _G * self.M.value
-        deno1 = _c ** 2
-        deno2 = vec[1] ** 3
-        return (num1 / deno1) * (num2 / deno2)
-
-    def christ_sym1_11(self, vec):
-        num = _G * self.M.value
-        deno1 = 2 * _G * self.M.value * vec[1]
-        deno2 = (_c ** 2) * (vec[1] ** 2)
-        deno = deno1 - deno2
-        return num / deno
-
-    def christ_sym1_22(self, vec):
-        return self.schwarzschild_r.value - vec[1]
-
-    def christ_sym1_33(self, vec):
-        return (
-            (-1 + (self.schwarzschild_r.value / vec[1])) * vec[1] * np.sin(vec[2]) ** 2
-        )
-
-    def christ_sym0_01(self, vec):
-        num = _G * self.M.value
-        deno1 = -2 * _G * self.M.value + (_c ** 2) * vec[1]
-        deno2 = vec[1]
-        return (num / deno1) * (1 / deno2)
-
-    def christ_sym2_21(self, vec):
-        return 1 / vec[1]
-
-    def christ_sym2_33(self, vec):
-        return -1 * np.cos(vec[2]) * np.sin(vec[2])
-
-    def christ_sym3_31(self, vec):
-        return 1 / vec[1]
-
-    def christ_sym3_32(self, vec):
-        return np.cos(vec[2]) / np.sin(vec[2])
-
-    def f(self, i, vec):
-        def f0_3():
-            return vec[i + 4]
-
-        def f4():
-            term1 = self.christ_sym0_01(vec) * vec[4] * vec[5]
-            return -2 * term1
-
-        def f5():
-            term1 = self.christ_sym1_00(vec) * vec[4] * vec[4]
-            term2 = self.christ_sym1_11(vec) * vec[5] * vec[5]
-            term3 = self.christ_sym1_22(vec) * vec[6] * vec[6]
-            term4 = self.christ_sym1_33(vec) * vec[7] * vec[7]
-            return -1 * (term1 + term2 + term3 + term4)
-
-        def f6():
-            term1 = self.christ_sym2_21(vec) * vec[6] * vec[5]
-            term2 = self.christ_sym2_33(vec) * vec[7] * vec[7]
-            return -1 * (2 * term1 + term2)
-
-        def f7():
-            term1 = self.christ_sym3_31(vec) * vec[7] * vec[5]
-            term2 = self.christ_sym3_32(vec) * vec[7] * vec[6]
-            return -1 * (2 * term1 + 2 * term2)
-
-        f_dict = {0: f0_3, 1: f0_3, 2: f0_3, 3: f0_3, 4: f4, 5: f5, 6: f6, 7: f7}
-        return f_dict[i]()
-
     def f_vec(self, ld, vec):
-        f_vec_vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
-        for i in range(len(vec)):
-            f_vec_vals[i] = self.f(i, vec)
-        return f_vec_vals
+        vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
+        chl = schwarzschild_utils.christoffels(
+            _c, vec[1], vec[2], self.schwarzschild_r.value
+        )
+        vals[:4] = vec[4:8]
+        vals[4] = -2 * chl[0, 0, 1] * vec[4] * vec[5]
+        vals[5] = -1 * (
+            chl[1, 0, 0] * (vec[4] ** 2)
+            + chl[1, 1, 1] * (vec[5] ** 2)
+            + chl[1, 2, 2] * (vec[6] ** 2)
+            + chl[1, 3, 3] * (vec[7] ** 2)
+        )
+        vals[6] = -2 * chl[2, 2, 1] * vec[6] * vec[5] - 1 * chl[2, 3, 3] * (vec[7] ** 2)
+        vals[7] = -2 * (chl[3, 3, 1] * vec[7] * vec[5] + chl[3, 3, 2] * vec[7] * vec[6])
+        return vals
 
     def calculate_trajectory(
         self,

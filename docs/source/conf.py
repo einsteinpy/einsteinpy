@@ -37,7 +37,7 @@ html_theme_options = {
     "show_powered_by": False,
     "page_width": "80%",
     "github_banner": True,
-    "extra_nav_links": {"Blog": "https://einsteinpy.github.io/"},
+    "extra_nav_links": {"Blog": "https://einsteinpy.org/"},
 }
 
 add_function_parentheses = True
@@ -70,7 +70,10 @@ html_theme_path = [alabaster.get_path()]
 
 html_title = "EinsteinPy"
 
+html_static_path =['_static']
+
 htmlhelp_basename = 'einsteinpydoc'
+
 html_sidebars = {
     "**": [
         "about.html",

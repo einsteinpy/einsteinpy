@@ -7,7 +7,7 @@ from numpy.testing import assert_allclose
 
 from einsteinpy import constant
 from einsteinpy.metric import Schwarzschild
-from einsteinpy.utils import schwarzschild_radius
+from einsteinpy.utils import schwarzschild_radius, schwarzschild_utils
 
 _c = constant.c.value
 
@@ -59,12 +59,16 @@ def test_calculate_trajectory(
     )
     _c, _scr = constant.c.value, schwarzschild_radius(M).value
     ans = ans[1]
-    testarray = (
-        (1 - (_scr / ans[:, 1])) * np.square(ans[:, 4])
-        - (np.square(ans[:, 5])) / ((1 - (_scr / ans[:, 1])) * (_c ** 2))
-        - np.square(ans[:, 1] / _c)
-        * (np.square(ans[:, 6]) + np.square(np.sin(ans[:, 2])) * np.square(ans[:, 7]))
-    )
+    testarray = list()
+    for i in ans:
+        g = schwarzschild_utils.metric(_c, i[1], i[2], _scr)
+        testarray.append(
+            g[0][0] * (i[4] ** 2)
+            + g[1][1] * (i[5] ** 2)
+            + g[2][2] * (i[6] ** 2)
+            + g[3][3] * (i[7] ** 2)
+        )
+    testarray = np.array(testarray, dtype=float)
     comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
     assert_allclose(testarray, comparearray, 1e-4)
 

@@ -10,7 +10,7 @@ EinsteinPy - Making Einstein possible in Python
 
 **EinsteinPy** is an open source pure Python package dedicated to problems arising
 in General Relativity and relativistic physics, such as goedesics plotting for
-schwartzschild space-time model, calculation of schwartzschild radius for any mass given.
+Schwarzschild space-time model, calculation of Schwarzschild radius for any mass given.
 Features like visualisation of geodesics of curved black holes and 3D visualisations
 are some of the features which are planned. It is released under the MIT license.
 
@@ -22,17 +22,26 @@ View `source code`_ of EinsteinPy!
 
 Key features of EinsteinPy are:
 
-* Schwarzschild Geometry Analysis and trajectory calculation
-* Kerr Geometry Analysis and trajectory calculation
-* Symbolic Calculation of various tensors in GR
+* Geometry analysis and trajectory calculation in vaccum solutions of Einstein's field equations
+ 
+ * Schwarzschild space-time
+ * Kerr space-time
+ * Kerr-Newman space-time
+
+* Various utilities related to above geometry models
+
+ * Schwarzschild Radius
+ * Event horizon and ergosphere for Kerr black hole
+ * Maxwell Tensor and electromagnetic potential in Kerr-Newman space-time
+ * And much more!
+
+* Symbolic Calculation of various quantities in GR
 
  * Christoffel Symbols
  * Riemann Curvature Tensor
  * Simplification of symbolic expressions
 
 * Static Geodesic Plotting
-* Velocity of Coordinate time w.r.t proper time
-* Easy Calculation of Schwarzschild Radius
 * Coordinate conversion with unit handling
 
  * Spherical/Cartesian Coordinates
@@ -82,6 +91,7 @@ Contents
 
     getting_started
     user_guide
+    metric
     jupyter
     changelog
     api/index

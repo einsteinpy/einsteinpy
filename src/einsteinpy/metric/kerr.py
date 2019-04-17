@@ -123,32 +123,32 @@ class Kerr:
         for i in range(4):
             vals[i] = vec[i + 4]
         vals[4] = -2.0 * (
-            chl[0][0][1] * vec[4] * vec[5]
-            + chl[0][0][2] * vec[4] * vec[6]
-            + chl[0][1][3] * vec[5] * vec[7]
-            + chl[0][2][3] * vec[6] * vec[7]
+            chl[0, 0, 1] * vec[4] * vec[5]
+            + chl[0, 0, 2] * vec[4] * vec[6]
+            + chl[0, 1, 3] * vec[5] * vec[7]
+            + chl[0, 2, 3] * vec[6] * vec[7]
         )
         vals[5] = -1.0 * (
-            chl[1][0][0] * vec[4] * vec[4]
-            + 2 * chl[1][0][3] * vec[4] * vec[7]
-            + chl[1][1][1] * vec[5] * vec[5]
-            + 2 * chl[1][1][2] * vec[5] * vec[6]
-            + chl[1][2][2] * vec[6] * vec[6]
-            + chl[1][3][3] * vec[7] * vec[7]
+            chl[1, 0, 0] * vec[4] * vec[4]
+            + 2 * chl[1, 0, 3] * vec[4] * vec[7]
+            + chl[1, 1, 1] * vec[5] * vec[5]
+            + 2 * chl[1, 1, 2] * vec[5] * vec[6]
+            + chl[1, 2, 2] * vec[6] * vec[6]
+            + chl[1, 3, 3] * vec[7] * vec[7]
         )
         vals[6] = -1.0 * (
-            chl[2][0][0] * vec[4] * vec[4]
-            + 2 * chl[2][0][3] * vec[4] * vec[7]
-            + chl[2][1][1] * vec[5] * vec[5]
-            + 2 * chl[2][1][2] * vec[5] * vec[6]
-            + chl[2][2][2] * vec[6] * vec[6]
-            + chl[2][3][3] * vec[7] * vec[7]
+            chl[2, 0, 0] * vec[4] * vec[4]
+            + 2 * chl[2, 0, 3] * vec[4] * vec[7]
+            + chl[2, 1, 1] * vec[5] * vec[5]
+            + 2 * chl[2, 1, 2] * vec[5] * vec[6]
+            + chl[2, 2, 2] * vec[6] * vec[6]
+            + chl[2, 3, 3] * vec[7] * vec[7]
         )
         vals[7] = -2.0 * (
-            chl[3][0][1] * vec[4] * vec[5]
-            + chl[3][0][2] * vec[4] * vec[6]
-            + chl[3][1][3] * vec[5] * vec[7]
-            + chl[3][2][3] * vec[6] * vec[7]
+            chl[3, 0, 1] * vec[4] * vec[5]
+            + chl[3, 0, 2] * vec[4] * vec[6]
+            + chl[3, 1, 3] * vec[5] * vec[7]
+            + chl[3, 2, 3] * vec[6] * vec[7]
         )
         return vals
 
@@ -194,13 +194,16 @@ class Kerr:
             **OdeMethodKwargs
         )
         _scr = self.schwarzschild_r.value * 1.001
+        _event_hor = (
+            kerr_utils.event_horizon(self.schwarzschild_r.value, self.a)[0] * 1.001
+        )
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _scr):
+            if (not singularity_reached) and (ODE.y[1] <= _event_hor):
                 warnings.warn(
-                    "r component of position vector reached Schwarzchild Radius. ",
+                    "r component of position vector reached event horizon. ",
                     RuntimeWarning,
                 )
                 if stop_on_singularity:
@@ -265,6 +268,9 @@ class Kerr:
             **OdeMethodKwargs
         )
         _scr = self.schwarzschild_r.value * 1.001
+        _event_hor = (
+            kerr_utils.event_horizon(self.schwarzschild_r.value, self.a)[0] * 1.001
+        )
 
         def yielder_func():
             nonlocal singularity_reached
@@ -277,9 +283,9 @@ class Kerr:
                     temp[5:8] = BLToCartesian_vel(ODE.y[1:4], ODE.y[5:8], self.a)
                     yield (ODE.t, temp)
                 ODE.step()
-                if (not singularity_reached) and (ODE.y[1] <= _scr):
+                if (not singularity_reached) and (ODE.y[1] <= _event_hor):
                     warnings.warn(
-                        "r component of position vector reached Schwarzchild Radius. ",
+                        "r component of position vector reached event horizon. ",
                         RuntimeWarning,
                     )
                     if stop_on_singularity:

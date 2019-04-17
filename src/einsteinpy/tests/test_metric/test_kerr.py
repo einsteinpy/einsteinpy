@@ -20,7 +20,7 @@ _c = constant.c.value
             [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s],
             0 * u.s,
             4e24 * u.kg,
-            0.85,
+            2e-3,
             0.0,
             0.001,
             {"stepsize": 0.5e-6},
@@ -34,7 +34,7 @@ _c = constant.c.value
             ],
             0 * u.s,
             5.972e24 * u.kg,
-            1.0,
+            2e-3,
             0.0,
             0.0001,
             {"stepsize": 0.5e-6},
@@ -63,16 +63,15 @@ def test_calculate_trajectory(
     )
     ans = ans[1]
     testarray = list()
-    for ansi in ans:
-        g = kerr_utils.metric(_c, ansi[1], ansi[2], _scr, a)
-        tmp = (
-            g[0][0] * (ansi[4] ** 2)
-            + g[1][1] * (ansi[5] ** 2)
-            + g[2][2] * (ansi[6] ** 2)
-            + g[3][3] * (ansi[7] ** 2)
-            + 2 * g[0][3] * ansi[4] * ansi[7]
+    for i in ans:
+        g = kerr_utils.metric(_c, i[1], i[2], _scr, a)
+        testarray.append(
+            g[0][0] * (i[4] ** 2)
+            + g[1][1] * (i[5] ** 2)
+            + g[2][2] * (i[6] ** 2)
+            + g[3][3] * (i[7] ** 2)
+            + 2 * g[0][3] * i[4] * i[7]
         )
-        testarray.append(tmp)
     testarray = np.array(testarray, dtype=float)
     comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
     assert_allclose(testarray, comparearray, 1e-4)
@@ -123,7 +122,7 @@ def test_calculate_trajectory3():
             [0 * u.m / u.s, 0.1 * u.rad / u.s, 951.0 * u.rad / u.s],
             0 * u.s,
             4e24 * u.kg,
-            0.33,
+            2e-3,
             0.0,
             0.0003,
             {"stepsize": 0.3e-6},

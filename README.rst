@@ -1,7 +1,7 @@
 .. einsteinpy
 
-.. image:: http://einsteinpy.github.io/img/logo.png
-   :target: http://einsteinpy.github.io/
+.. image:: https://einsteinpy.org/img/logo.png
+   :target: https://einsteinpy.org/
    :alt: EinsteinPy logo
    :width: 675px
    :align: center
@@ -15,23 +15,23 @@
 .. |doi| image:: https://zenodo.org/badge/168302584.svg?style=flat-square
    :target: https://zenodo.org/badge/latestdoi/168302584
 
-.. |gitter| image:: https://badges.gitter.im/EinsteinPy-Project/EinsteinPy.svg
+.. |gitter| image:: https://img.shields.io/gitter/room/EinsteinPy-Project/EinsteinPy.svg?logo=gitter&style=flat-square
    :alt: Join the chat at https://gitter.im/EinsteinPy-Project/EinsteinPy
    :target: https://gitter.im/EinsteinPy-Project/EinsteinPy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-.. |riotchat| image:: https://img.shields.io/matrix/einsteinpy:matrix.org.svg?style=flat-square
+.. |riotchat| image:: https://img.shields.io/matrix/einsteinpy:matrix.org.svg?logo=riot&style=flat-square
    :target: https://riot.im/app/#/room/#einsteinpy:matrix.org
 
 .. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
    :target: https://github.com/einsteinpy/einsteinpy/raw/master/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://einsteinpy-project.readthedocs.io/en/latest/?badge=latest
+   :target: https://docs.einsteinpy.org/en/latest/?badge=latest
 
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
-.. |codeclimate| image:: https://api.codeclimate.com/v1/badges/6efb3f754d20777d8b8d/maintainability
+.. |codeclimate| image:: https://img.shields.io/codeclimate/maintainability/einsteinpy/einsteinpy.svg?logo=code-climate&style=flat-square
    :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
    :alt: Maintainability
 
@@ -41,26 +41,27 @@
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
    :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/b95ml54ebspx6sm9?svg=true
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/shreyasbapat/einsteinpy.svg?logo=appveyor&style=flat-square
    :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy
 
 .. |orcid-shreyas| image:: https://img.shields.io/badge/id-0000--0002--0870--4665-a6ce39.svg
    :target: https://orcid.org/0000-0002-0870-4665
 
 :Name: EinsteinPy
-:Website: https://einsteinpy.github.io/
+:Website: https://einsteinpy.org/
 :Version: 0.2.dev0
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
 |circleci| |travisci| |appveyor| |codecov| |codeclimate|
 
-EinsteinPy is an open source pure Python package dedicated to problems arising in
-General Relativity and relativistic physics, such as goedesics plotting for schwarzschild
-space-time model, calculation of schwarzschild radius for any mass given, symbolic
-calculation of various functions related to GR such as christoffel symbols. Features
-like visualisation of geodesics of curved black holes and 3D visualisations are some
-of the features which are planned.
+EinsteinPy is an open source pure Python package dedicated to problems arising in 
+General Relativity and relativistic physics, such as goedesics calculation for vacuum 
+solutions for Einstein's field equations, calculation of various quantities in these 
+geometries like Schwarzschild Radius and event horizon. The library also has functions 
+for Symbolic calculations in GR like Christoffel Symbols and much more is planned. 
+The library aims to solve Einstein's field equations for arbitarily complicated 
+matter distribution as one of the main goals. 
 It is released under the MIT license.
 
 Documentation
@@ -71,9 +72,26 @@ Documentation
 Complete documentation, including a user guide and an API reference, can be read on
 the wonderful `Read the Docs`_.
 
-https://einsteinpy-project.readthedocs.io/
+https://docs.einsteinpy.org/
 
 .. _`Read the Docs`: https://readthedocs.org/
+
+Examples
+========
+
+.. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
+   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+
+|mybinder|
+
+In the examples directory you can find several Jupyter notebooks with specific
+applications of einsteinpy. You can consider theses Jupyter Notebooks as tutorials for einsteinpy.
+You can launch a cloud Jupyter server using `binder`_ to edit
+the notebooks without installing anything. Try it out!
+
+https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+
+.. _binder: https://beta.mybinder.org/
 
 Requirements
 ============
@@ -97,6 +115,35 @@ Linux           CircleCI      |circleci|
 OS X            Travis CI     |travisci|
 Windows x64     Appveyor      |appveyor|
 ==============  ============  ===================
+
+Installation
+============
+
+The easiest and fastest way to get the package up and running is to
+install EinsteinPy using `conda <http://conda.io>`_::
+
+  $ conda install einsteinpy --channel conda-forge
+
+Please check out the `guide for alternative installation methods`_.
+
+.. _`guide for alternative installation methods`: https://einsteinpy.github.io/installation/
+
+Testing
+=======
+
+|codecov|
+
+If installed correctly, the tests can be run using pytest::
+
+  $ python -c "import einsteinpy.testing; einsteinpy.testing.test()"
+  ============================= test session starts ==============================
+  platform linux -- Python 3.7.1, pytest-4.3.1, py-1.8.0, pluggy-0.9.0
+  rootdir: /home/shreyas/Local Forks/einsteinpy, inifile: setup.cfg
+  plugins: remotedata-0.3.1, openfiles-0.3.1, doctestplus-0.3.0, cov-2.5.1, arraydiff-0.3
+  collected 56 items                                                             
+  [...]
+  ==================== 56 passed, 1 warnings in 28.19 seconds ====================
+  $
 
 Problems
 ========
@@ -175,7 +222,7 @@ Can I do <insert awesome thing> with EinsteinPy?
 ------------------------------------------------
 
 EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it.
-We welcome every contribution and will be happy to include it in einteinpy.
+We welcome every contribution and will be happy to include it in EinsteinPy.
 
 What's the future of the project?
 ---------------------------------
