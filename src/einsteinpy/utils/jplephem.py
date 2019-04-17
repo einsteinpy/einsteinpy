@@ -1,6 +1,8 @@
+from astropy.coordinates import (get_body_barycentric,
+                                 get_body_barycentric_posvel,
+                                 solar_system_ephemeris)
 from astropy.time import Time
-from astropy.coordinates import solar_system_ephemeris
-from astropy.coordinates import get_body_barycentric_posvel, get_body_barycentric
+
 
 """
 The velocity cannot be calculated for the Moon.
@@ -26,12 +28,9 @@ def _get_body_helio_posvel(body, time, ephemeris=None, get_velocity=True):
     By default, use the one set with astropy.coordinates.solar_system_ephemeris.set
     """
     if get_velocity:
-        body_pos_bary, body_vel_bary = get_body_barycentric_posvel(
-            body, time, ephemeris
-        )
-        sun_pos_bary, sun_vel_bary = get_body_barycentric_posvel(
-            "sun", time, ephemeris
-        )
+        body_pos_bary, body_vel_bary = get_body_barycentric_posvel(body, time, ephemeris)
+
+        sun_pos_bary, sun_vel_bary = get_body_barycentric_posvel("sun", time, ephemeris)
 
         body_pos_helio = body_pos_bary - sun_pos_bary
         body_vel_helio = body_vel_bary - sun_vel_bary
