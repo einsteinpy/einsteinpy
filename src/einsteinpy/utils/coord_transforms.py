@@ -4,7 +4,8 @@ import astropy.units as u
 import numpy as np
 
 warnings.warn(
-    "This module will be deprecated in EinsteinPy v0.3.0. Please switch to `einsteinpy.coordinates`."
+    "This module will be deprecated in EinsteinPy v0.3.0. Please switch to `einsteinpy.coordinates`.",
+    PendingDeprecationWarning,
 )
 
 
