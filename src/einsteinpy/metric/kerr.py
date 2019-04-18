@@ -115,9 +115,7 @@ class Kerr:
         return cls._classmethod_handler(bl_pos_vec, bl_vel_vec, time, M, a)
 
     def f_vec(self, ld, vec):
-        chl = kerr_utils.christoffels(
-            _c, vec[1], vec[2], self.schwarzschild_r.value, self.a
-        )
+        chl = kerr_utils.christoffels(vec[1], vec[2], self.M.value, self.a)
         vals = np.zeros(shape=(8,), dtype=float)
         for i in range(4):
             vals[i] = vec[i + 4]
@@ -193,9 +191,7 @@ class Kerr:
             **OdeMethodKwargs
         )
         _scr = self.schwarzschild_r.value * 1.001
-        _event_hor = (
-            kerr_utils.event_horizon(self.schwarzschild_r.value, self.a)[0] * 1.001
-        )
+        _event_hor = kerr_utils.event_horizon(self.M.value, self.a)[0] * 1.001
         while ODE.t < end_lambda:
             vec_list.append(ODE.y)
             lambda_list.append(ODE.t)
@@ -267,9 +263,7 @@ class Kerr:
             **OdeMethodKwargs
         )
         _scr = self.schwarzschild_r.value * 1.001
-        _event_hor = (
-            kerr_utils.event_horizon(self.schwarzschild_r.value, self.a)[0] * 1.001
-        )
+        _event_hor = kerr_utils.event_horizon(self.M.value, self.a)[0] * 1.001
 
         def yielder_func():
             nonlocal singularity_reached

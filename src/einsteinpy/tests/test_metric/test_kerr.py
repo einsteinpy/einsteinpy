@@ -7,7 +7,7 @@ from numpy.testing import assert_allclose
 
 from einsteinpy import constant
 from einsteinpy.metric import Kerr
-from einsteinpy.utils import kerr_utils, schwarzschild_radius
+from einsteinpy.utils import kerr_utils, schwarzschild_radius_dimensionless
 
 _c = constant.c.value
 
@@ -54,7 +54,7 @@ _c = constant.c.value
 def test_calculate_trajectory(
     pos_vec, vel_vec, time, M, a, start_lambda, end_lambda, OdeMethodKwargs
 ):
-    _scr = schwarzschild_radius(M).value
+    _scr = schwarzschild_radius_dimensionless(M)
     obj = Kerr.from_BL(pos_vec, vel_vec, time, M, a)
     ans = obj.calculate_trajectory(
         start_lambda=start_lambda,
@@ -64,7 +64,7 @@ def test_calculate_trajectory(
     ans = ans[1]
     testarray = list()
     for i in ans:
-        g = kerr_utils.metric(_c, i[1], i[2], _scr, a)
+        g = kerr_utils.metric(i[1], i[2], M.value, a)
         testarray.append(
             g[0][0] * (i[4] ** 2)
             + g[1][1] * (i[5] ** 2)

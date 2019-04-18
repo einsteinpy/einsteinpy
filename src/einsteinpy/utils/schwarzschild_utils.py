@@ -4,8 +4,7 @@ import numpy as np
 from einsteinpy import constant
 
 
-@u.quantity_input(mass=u.kg)
-def schwarzschild_radius(mass):
+def schwarzschild_radius(mass, c=constant.c, G=constant.G):
     """
     Schwarzschild radius is the radius defining the event horizon of a
     Schwarzschild black hole. It is characteristic radius associated with every
@@ -21,10 +20,35 @@ def schwarzschild_radius(mass):
         Schwarzschild radius for a given mass
 
     """
+    if not isinstance(mass, u.quantity.Quantity):
+        mass = mass * u.kg
+    if not isinstance(c, u.quantity.Quantity):
+        c = c * u.m / u.s
+    if not isinstance(G, u.quantity.Quantity):
+        G = G * constant.G.unit
     M = mass.to(u.kg)
-    num = 2 * constant.G * M
-    deno = constant.c ** 2
+    num = 2 * G * M
+    deno = c ** 2
     return num / deno
+
+
+def schwarzschild_radius_dimensionless(M, c=constant.c.value, G=constant.G.value):
+    """
+    Parameters
+    ------------
+    M : float
+        Mass of massive body
+    c : float
+        Speed of light, defaults to value of speed of light in SI units.
+    G : float
+        Gravitational Constant, defaults to its value in SI units
+    Returns
+    -------
+    Rs : float
+        Schwarzschild radius for a given mass
+    """
+    Rs = 2 * M * G / c ** 2
+    return Rs
 
 
 @u.quantity_input(mass=u.kg)
@@ -62,27 +86,28 @@ def time_velocity(pos_vec, vel_vec, mass):
     return time_vel * u.one
 
 
-def metric(c, r, theta, Rs):
+def metric(r, theta, M, c=constant.c.value, G=constant.G.value):
     """
     Returns the Schwarzschild Metric
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-
+    M : float
+        Mass of the massive body
+    c : float
+        Speed of light
     Returns
     -------
     ~numpy.array
         Numpy array of shape (4,4)
 
     """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
     m = np.zeros(shape=(4, 4), dtype=float)
     tmp, c2 = 1.0 - (Rs / r), c ** 2
     m[0, 0] = tmp
@@ -92,20 +117,21 @@ def metric(c, r, theta, Rs):
     return m
 
 
-def christoffels(c, r, theta, Rs):
+def christoffels(r, theta, M, c=constant.c.value, G=constant.G.value):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Schwarzschild Metric
 
     Parameters
     ----------
-    c : float
-        Speed of light
+    
     r : float
         Distance from the centre
     theta : float
         Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
+    M : float
+        Mass of the massive body
+    c : float
+        Speed of light
 
     Returns
     -------
@@ -113,6 +139,7 @@ def christoffels(c, r, theta, Rs):
         Numpy array of shape (4,4,4)
 
     """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     c2 = c ** 2
     chl[1, 0, 0] = 0.5 * Rs * (r - Rs) * c2 / (r ** 3)

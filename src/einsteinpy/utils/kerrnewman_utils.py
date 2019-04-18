@@ -88,7 +88,9 @@ def rho(r, theta, a):
     return np.sqrt((r ** 2) + ((a * np.cos(theta)) ** 2))
 
 
-def delta(r, Rs, a, Q, c, G, Cc):
+def delta(
+    r, M, a, Q, c=constant.c.value, G=constant.G.value, Cc=constant.coulombs_const.value
+):
     """
     Returns the value r^2 - Rs * r + a^2
     Specific to Boyer-Lindquist coordinates
@@ -97,8 +99,8 @@ def delta(r, Rs, a, Q, c, G, Cc):
     ----------
     r : float
         Component r in vector
-    Rs : float
-        Schwarzschild radius
+    M : float
+        Mass of the massive body
     a : float
         Any constant
     Q : float
@@ -116,32 +118,42 @@ def delta(r, Rs, a, Q, c, G, Cc):
         The value r^2 - Rs * r + a^2 + Rq^2
     
     """
+    Rs = utils.schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
 
-def metric(c, G, Cc, r, theta, Rs, a, Q):
+def metric(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns the Kerr-Newman Metric
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
     Returns
     -------
     ~numpy.array
@@ -149,7 +161,7 @@ def metric(c, G, Cc, r, theta, Rs, a, Q):
 
     """
     m = np.zeros((4, 4), dtype=float)
-    rh2, dl = rho(r, theta, a) ** 2, delta(r, Rs, a, Q, c, G, Cc)
+    rh2, dl = rho(r, theta, a) ** 2, delta(r, M, a, Q, c, G, Cc)
     c2 = c ** 2
     # set the diagonal/off-diagonal terms of metric
     m[0, 0] = (dl - ((a * np.sin(theta)) ** 2)) / (rh2)
@@ -166,61 +178,80 @@ def metric(c, G, Cc, r, theta, Rs, a, Q):
     return m
 
 
-def metric_inv(c, G, Cc, r, theta, Rs, a, Q):
+def metric_inv(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns the inverse of Kerr-Newman Metric
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
     Returns
     -------
     ~numpy.array
         Numpy array of shape (4,4)
 
     """
-    return np.linalg.inv(metric(c, G, Cc, r, theta, Rs, a, Q))
+    return np.linalg.inv(metric(r, theta, M, a, Q, c, G, Cc))
 
 
-def dmetric_dx(c, G, Cc, r, theta, Rs, a, Q):
+def dmetric_dx(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns differentiation of each component of Kerr-Newman metric tensor w.r.t. t, r, theta, phi
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
+    
     Returns
     -------
     dmdx : ~numpy.array
@@ -228,8 +259,9 @@ def dmetric_dx(c, G, Cc, r, theta, Rs, a, Q):
         dmdx[0], dmdx[1], dmdx[2] & dmdx[3] is differentiation of metric w.r.t. t, r, theta & phi respectively
 
     """
+    Rs = utils.schwarzschild_radius_dimensionless(M, c, G)
     dmdx = np.zeros((4, 4, 4), dtype=float)
-    rh2, dl = rho(r, theta, a) ** 2, delta(r, Rs, a, Q, c, G, Cc)
+    rh2, dl = rho(r, theta, a) ** 2, delta(r, M, a, Q, c, G, Cc)
     c2 = c ** 2
     # metric is invariant on t & phi
     # differentiation of metric wrt r
@@ -288,37 +320,46 @@ def dmetric_dx(c, G, Cc, r, theta, Rs, a, Q):
     return dmdx
 
 
-def christoffels(c, G, Cc, r, theta, Rs, a, Q):
+def christoffels(
+    r,
+    theta,
+    M,
+    a,
+    Q,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns the 3rd rank Tensor containing Christoffel Symbols for Kerr-Newman Metric
 
     Parameters
     ----------
+    
+    r : float
+        Distance from the centre
+    theta : float
+        Angle from z-axis
+    M : float
+        Mass of the massive body
+    a : float
+        Black Hole spin factor
+    Q : float
+        Charge on the massive body
     c : float
         Speed of light
     G : float
         Gravitational constant
     Cc : float
         Coulomb's constant
-    r : float
-        Distance from the centre
-    theta : float
-        Angle from z-axis
-    Rs : float
-        Schwarzschild Radius
-    a : float
-        Black Hole spin factor
-    Q : float
-        Charge on the massive body
-
     Returns
     -------
     ~numpy.array
         Numpy array of shape (4,4,4)
 
     """
-    invg = metric_inv(c, G, Cc, r, theta, Rs, a, Q)
-    dmdx = dmetric_dx(c, G, Cc, r, theta, Rs, a, Q)
+    invg = metric_inv(r, theta, M, a, Q, c, G, Cc)
+    dmdx = dmetric_dx(r, theta, M, a, Q, c, G, Cc)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     for _, k, l in nonzero_christoffels_list[0:4]:
         val1 = dmdx[l, 0, k] + dmdx[k, 0, l]
@@ -336,18 +377,22 @@ def christoffels(c, G, Cc, r, theta, Rs, a, Q):
     return chl
 
 
-def em_potential(c, G, Cc, r, theta, a, Q, M):
+def em_potential(
+    r,
+    theta,
+    a,
+    Q,
+    M,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns a 4-d vector(for each component of 4-d space-time) containing the electromagnetic potential around a Kerr-Newman body
 
     Parameters
     ----------
-    c : float
-        Speed of light
-    G : float
-        Gravitational constant
-    Cc : float
-        Coulomb's constant
+    
     r : float
         Distance from the centre
     theta : float
@@ -358,7 +403,12 @@ def em_potential(c, G, Cc, r, theta, a, Q, M):
         Charge on the massive body
     M : float
         Mass of the massive body
-
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
     Returns
     -------
     ~numpy.array
@@ -372,18 +422,22 @@ def em_potential(c, G, Cc, r, theta, a, Q, M):
     return vec
 
 
-def maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M):
+def maxwell_tensor_covariant(
+    r,
+    theta,
+    a,
+    Q,
+    M,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns a 2nd rank Tensor containing Maxwell Tensor with lower indices for Kerr-Newman Metric
 
     Parameters
     ----------
-    c : float
-        Speed of light
-    G : float
-        Gravitational constant
-    Cc : float
-        Coulomb's constant
+    
     r : float
         Distance from the centre
     theta : float
@@ -394,7 +448,12 @@ def maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M):
         Charge on the massive body
     M : float
         Mass of the massive body
-
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
     Returns
     -------
     ~numpy.array
@@ -419,18 +478,22 @@ def maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M):
     return m
 
 
-def maxwell_tensor_contravariant(c, G, Cc, r, theta, a, Q, M):
+def maxwell_tensor_contravariant(
+    r,
+    theta,
+    a,
+    Q,
+    M,
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
     """
     Returns a 2nd rank Tensor containing Maxwell Tensor with upper indices for Kerr-Newman Metric
 
     Parameters
     ----------
-    c : float
-        Speed of light
-    G : float
-        Gravitational constant
-    Cc : float
-        Coulomb's constant
+    
     r : float
         Distance from the centre
     theta : float
@@ -441,16 +504,20 @@ def maxwell_tensor_contravariant(c, G, Cc, r, theta, a, Q, M):
         Charge on the massive body
     M : float
         Mass of the massive body
-
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
     Returns
     -------
     ~numpy.array
         Numpy array of shape (4,4)
 
     """
-    Rs = 2 * G * M / (c ** 2)
-    mcov = maxwell_tensor_covariant(c, G, Cc, r, theta, a, Q, M)
-    ginv = metric_inv(c, G, Cc, r, theta, Rs, a, Q)
+    mcov = maxwell_tensor_covariant(r, theta, a, Q, M, c, G, Cc)
+    ginv = metric_inv(r, theta, M, a, Q, c, G, Cc)
     # contravariant F = contravariant g X covariant F X transpose(contravariant g)
     # but g is symettric
     return np.matmul(np.matmul(ginv, mcov), ginv)
@@ -482,16 +549,7 @@ def kerrnewman_time_velocity(pos_vec, vel_vec, mass, a, Q):
     """
     _scr = utils.schwarzschild_radius(mass).value
     Qc = Q.to(u.C)
-    g = metric(
-        constant.c.value,
-        constant.G.value,
-        constant.coulombs_const.value,
-        pos_vec[0],
-        pos_vec[1],
-        _scr,
-        a,
-        Qc.value,
-    )
+    g = metric(pos_vec[0], pos_vec[1], mass.value, a, Qc.value)
     A = g[0, 0]
     B = 2 * g[0, 3]
     C = (
