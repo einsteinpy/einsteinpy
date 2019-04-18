@@ -25,7 +25,7 @@ by :
 
   * :math:`ds^2 = g_{ij}dx_{i}dx_{j}`
 
-The tensor is constructed when each :math:`a_{ij}` is put in it's 
+The tensor is constructed when each :math:`g_{ij}` is put in it's 
 position in a rank-2 tensor. For example, metric tensor in a spherical 
 coordinate system is given by:
 
@@ -48,8 +48,8 @@ experience the curvature, as after a long journey, he would come back
 at the position where he started. For him space is not infinite. 
 
 Mathematically, curvature of a space is given by Riemann Curvature Tensor, 
-whose contraction is Ricii Tensor, and further contraction yields a scalar 
-called Ricci Scalar of Curvature Scalar. 
+whose contraction is Ricii Tensor, and taking its trace yields a scalar 
+called Ricci Scalar or Curvature Scalar. 
 
 Straight lines in Curved Space
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -61,13 +61,13 @@ curved) space.
 Mathematically, geodesics are calculated by solving set of differential equation 
 for each space(time) component using the equation:
 
-  * :math:`\ddot{x}_i+0.5g_{im}(\partial_{l}g_{mk}+\partial_{k}g_{ml}-\partial_{m}g_{kl})\dot{x}_k\dot{x}_l = 0`
+  * :math:`\ddot{x}_i+0.5*g^{im}*(\partial_{l}g_{mk}+\partial_{k}g_{ml}-\partial_{m}g_{kl})\dot{x}_k\dot{x}_l = 0`
   
     which can be re-written as 
 
   * :math:`\ddot{x}_i+\Gamma_{kl}^i \dot{x}_k\dot{x}_l = 0`
 
-    where :math:`\Gamma` is Christoffel symbol of second kind.
+    where :math:`\Gamma` is Christoffel symbol of the second kind.
 
 Christoffel symbols can be encapsulated in a rank-3 tensor which is symmetric 
 over it's lower indices. Coming back to Riemann Curvature Tensor, which is derived 
@@ -77,8 +77,8 @@ from Christoffel symbols using the equation
 
 Of course, Einstein's indicial notation applies everywhere.
 
-Contraction of Riemann Tensor gives us Ricci Tensor, which on further 
-contraction gives Ricci or Curvature scalar. A space with no curvature 
+Contraction of Riemann Tensor gives us Ricci Tensor, on which taking trace 
+gives Ricci or Curvature scalar. A space with no curvature 
 has Riemann Tensor as zero.
 
 Exact Solutions of EFE
@@ -102,7 +102,7 @@ so is the case with the tidal forces. Putting :math:`r=\infty`, we see that the 
 transforms to a metric for a flat space defined by spherical coordinates. 
 
 :math:`\tau` is the proper time, the time experienced by the particle in motion in 
-the space-time while :math:`t` is the coordinate time obeserved by an observer 
+the space-time while :math:`t` is the coordinate time observed by an observer 
 at infinity.
 
 Using the metric in the above discussed geodesic equation gives the four-position 

@@ -1,12 +1,12 @@
 import astropy.units as u
 import numpy as np
 
-from einsteinpy.coordinates import BoyerLindquist, Cartesian, Spherical
+from .core import BoyerLindquist, Cartesian, Spherical
 
 
 class CartesianDifferential(Cartesian):
     """
-    Class for calculating and transforming the velocity
+    Class for calculating and transforming the velocity in Cartesian coordinates.
     """
 
     @u.quantity_input(
@@ -30,9 +30,39 @@ class CartesianDifferential(Cartesian):
         self.v_y = v_y
         self.v_z = v_z
 
+    def __repr__(self):
+        return "Cartesian x: {}, y: {}, z: {}\n" "vx: {}, vy: {}, vz: {}".format(
+            self.x, self.y, self.z, self.v_x, self.v_y, self.v_z
+        )
+
+    def __str__(self):
+        return self.__repr__()
+
+    def si_values(self):
+        """
+        Function for returning values in SI units.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing values in SI units (m, m, m, m/s, m/s, m/s)
+
+        """
+        element_list = [
+            self.v_x.to(u.m / u.s),
+            self.v_y.to(u.m / u.s),
+            self.v_z.to(u.m / u.s),
+        ]
+        return np.hstack(
+            (
+                super(CartesianDifferential, self).si_values(),
+                [e.value for e in element_list],
+            )
+        )
+
     def spherical_differential(self):
         """
-        Function to convert velocity to spherical coordinates
+        Function to convert velocity to spherical coordinates velocity
 
         Returns
         -------
@@ -40,7 +70,7 @@ class CartesianDifferential(Cartesian):
             Spherical representation of the velocity in Cartesian Coordinates.
 
         """
-        transformed_spherical = self.to_spherical()
+        sph_pos = self.to_spherical()
         n1 = self.x ** 2 + self.y ** 2
         n2 = n1 + self.z ** 2
         v_r = (self.x * self.v_x + self.y * self.v_y + self.z * self.v_z) / np.sqrt(n2)
@@ -53,12 +83,7 @@ class CartesianDifferential(Cartesian):
 
         v_p = (-1 * (self.v_x * self.y - self.x * self.v_y) / n1) * u.rad
         return SphericalDifferential(
-            transformed_spherical.r,
-            transformed_spherical.theta,
-            transformed_spherical.phi,
-            v_r,
-            v_t,
-            v_p,
+            sph_pos.r, sph_pos.theta, sph_pos.phi, v_r, v_t, v_p
         )
 
     @u.quantity_input(a=u.km)
@@ -66,16 +91,21 @@ class CartesianDifferential(Cartesian):
         """
         Function to convert velocity to Boyer-Lindquist coordinates
 
+        Parameters
+        ----------
+        a : astropy.units
+            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
+
         Returns
         -------
         BoyerLindquistDifferential : ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
             Boyer-Lindquist representation of the velocity in Cartesian Coordinates.
 
         """
-        transformed_bl = self.to_bl(a)
+        bl_pos = self.to_bl(a)
         w = (self.x ** 2 + self.y ** 2 + self.z ** 2) - (a ** 2)
         dw_dt = 2 * (self.x * self.v_x + self.y * self.v_y + self.z * self.v_z)
-        v_r = (1 / (2 * transformed_bl.r)) * (
+        v_r = (1 / (2 * bl_pos.r)) * (
             (dw_dt / 2)
             + (
                 (w * dw_dt + 4 * (a ** 2) * self.z * self.v_z)
@@ -83,8 +113,8 @@ class CartesianDifferential(Cartesian):
             )
         )
         v_t = (
-            (-1 / np.sqrt(1 - np.square(self.z / transformed_bl.r)))
-            * ((self.v_z * transformed_bl.r - v_r * self.z) / (transformed_bl.r ** 2))
+            (-1 / np.sqrt(1 - np.square(self.z / bl_pos.r)))
+            * ((self.v_z * bl_pos.r - v_r * self.z) / (bl_pos.r ** 2))
             * u.rad
         )
         v_p = (
@@ -93,13 +123,13 @@ class CartesianDifferential(Cartesian):
             * u.rad
         )
         return BoyerLindquistDifferential(
-            transformed_bl.r, transformed_bl.theta, transformed_bl.phi, v_r, v_t, v_p
+            bl_pos.r, bl_pos.theta, bl_pos.phi, v_r, v_t, v_p, a
         )
 
 
 class SphericalDifferential(Spherical):
     """
-    Class for calculating and transforming the velocity
+    Class for calculating and transforming the velocity in Spherical coordinates.
     """
 
     @u.quantity_input(
@@ -123,6 +153,36 @@ class SphericalDifferential(Spherical):
         self.v_t = v_t
         self.v_p = v_p
 
+    def __repr__(self):
+        return "Spherical r: {}, theta: {}, phi: {}\n" "vr: {}, vt: {}, vp: {}".format(
+            self.r, self.theta, self.phi, self.v_r, self.v_t, self.v_p
+        )
+
+    def __str__(self):
+        return self.__repr__()
+
+    def si_values(self):
+        """
+        Function for returning values in SI units.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing values in SI units (m, rad, rad, m/s, rad/s, rad/s)
+
+        """
+        element_list = [
+            self.v_r.to(u.m / u.s),
+            self.v_t.to(u.rad / u.s),
+            self.v_p.to(u.rad / u.s),
+        ]
+        return np.hstack(
+            (
+                super(SphericalDifferential, self).si_values(),
+                [e.value for e in element_list],
+            )
+        )
+
     def cartesian_differential(self):
         """
         Function to convert velocity to cartesian coordinates
@@ -133,7 +193,7 @@ class SphericalDifferential(Spherical):
             Cartesian representation of the velocity in Spherical Coordinates.
 
         """
-        transformed_cartesian = self.to_cartesian()
+        cart_pos = self.to_cartesian()
         v_x = (
             np.sin(self.theta) * np.cos(self.phi) * self.v_r
             - self.r * np.sin(self.theta) * np.sin(self.phi) * self.v_p / u.rad
@@ -148,19 +208,17 @@ class SphericalDifferential(Spherical):
             np.cos(self.theta) * self.v_r
             - self.r * np.sin(self.theta) * self.v_t / u.rad
         )
-        return CartesianDifferential(
-            transformed_cartesian.x,
-            transformed_cartesian.y,
-            transformed_cartesian.z,
-            v_x,
-            v_y,
-            v_z,
-        )
+        return CartesianDifferential(cart_pos.x, cart_pos.y, cart_pos.z, v_x, v_y, v_z)
 
     @u.quantity_input(a=u.km)
     def bl_differential(self, a):
         """
         Function to convert velocity to Boyer-Lindquist coordinates
+
+        Parameters
+        ----------
+        a : astropy.units
+            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
 
         Returns
         -------
@@ -174,13 +232,19 @@ class SphericalDifferential(Spherical):
 
 class BoyerLindquistDifferential(BoyerLindquist):
     """
-    Class for calculating and transforming the velocity
+    Class for calculating and transforming the velocity in Boyer-Lindquist coordinates
     """
 
     @u.quantity_input(
-        r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=u.rad / u.s, v_p=u.rad / u.s
+        r=u.km,
+        theta=u.rad,
+        phi=u.rad,
+        v_r=u.km / u.s,
+        v_t=u.rad / u.s,
+        v_p=u.rad / u.s,
+        a=u.km,
     )
-    def __init__(self, r, theta, phi, v_r, v_t, v_p):
+    def __init__(self, r, theta, phi, v_r, v_t, v_p, a):
         """
         Constructor.
 
@@ -192,21 +256,50 @@ class BoyerLindquistDifferential(BoyerLindquist):
         v_r : ~astropy.units
         v_t : ~astropy.units
         v_p : ~astropy.units
+        a : ~astropy.units
         """
-        super(BoyerLindquistDifferential, self).__init__(r, theta, phi)
+        super(BoyerLindquistDifferential, self).__init__(r, theta, phi, a)
         self.v_r = v_r
         self.v_t = v_t
         self.v_p = v_p
 
-    @u.quantity_input(a=u.km)
-    def cartesian_differential(self, a):
+    def __repr__(self):
+        return (
+            "Boyer-Lindquist r: {}, theta: {}, phi: {}\n"
+            "vr: {}, vt: {}, vp: {}\n"
+            "a: {}".format(
+                self.r, self.theta, self.phi, self.v_r, self.v_t, self.v_p, self.a
+            )
+        )
+
+    def __str__(self):
+        return self.__repr__()
+
+    def si_values(self):
+        """
+        Function for returning values in SI units.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing values in SI units (m, rad, rad, m/s, rad/s, rad/s)
+
+        """
+        element_list = [
+            self.v_r.to(u.m / u.s),
+            self.v_t.to(u.rad / u.s),
+            self.v_p.to(u.rad / u.s),
+        ]
+        return np.hstack(
+            (
+                super(BoyerLindquistDifferential, self).si_values(),
+                [e.value for e in element_list],
+            )
+        )
+
+    def cartesian_differential(self):
         """
         Function to convert velocity to cartesian coordinates
-
-        Parameters
-        ----------
-        a : float
-             a = J/M , the angular momentum per unit mass of the black hole.
 
         Returns
         -------
@@ -214,8 +307,8 @@ class BoyerLindquistDifferential(BoyerLindquist):
             Cartesian representation of the velocity in Boyer-Lindquist Coordinates.
 
         """
-        transformed_cartesian = self.to_cartesian(a)
-        xa = np.sqrt(self.r ** 2 + a ** 2)
+        cart_pos = self.to_cartesian()
+        xa = np.sqrt(self.r ** 2 + self.a ** 2)
         v_x = (
             (self.r * self.v_r * np.sin(self.theta) * np.cos(self.phi) / xa)
             + (xa * np.cos(self.theta) * np.cos(self.phi) * self.v_t / u.rad)
@@ -229,24 +322,11 @@ class BoyerLindquistDifferential(BoyerLindquist):
         v_z = (self.v_r * np.cos(self.theta)) - (
             self.r * np.sin(self.theta) * self.v_t / u.rad
         )
-        return CartesianDifferential(
-            transformed_cartesian.x,
-            transformed_cartesian.y,
-            transformed_cartesian.z,
-            v_x,
-            v_y,
-            v_z,
-        )
+        return CartesianDifferential(cart_pos.x, cart_pos.y, cart_pos.z, v_x, v_y, v_z)
 
-    @u.quantity_input(a=u.km)
-    def spherical_differential(self, a):
+    def spherical_differential(self):
         """
         Function to convert velocity to spherical coordinates
-
-        Parameters
-        ----------
-        a : float
-             a = J/M , the angular momentum per unit mass of the black hole.
 
         Returns
         -------
@@ -254,5 +334,5 @@ class BoyerLindquistDifferential(BoyerLindquist):
             Spherical representation of the velocity in Boyer-Lindquist Coordinates.
 
         """
-        transformed_cartesian = self.cartesian_differential(a)
+        transformed_cartesian = self.cartesian_differential()
         return transformed_cartesian.spherical_differential()
