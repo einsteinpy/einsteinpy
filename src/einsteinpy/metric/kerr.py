@@ -6,8 +6,7 @@ import numpy as np
 from einsteinpy import constant
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import *
-from einsteinpy.utils import kerr_utils
-from einsteinpy.utils import schwarzschild_radius as scr
+from einsteinpy.utils import kerr_utils, schwarzschild_radius as scr
 
 _G = constant.G.value
 _c = constant.c.value
