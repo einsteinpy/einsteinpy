@@ -18,12 +18,13 @@ class CartesianDifferential(Cartesian):
 
         Parameters
         ----------
-        x : ~astropy.units
-        y : ~astropy.units
-        z : ~astropy.units
-        v_x : ~astropy.units
-        v_y : ~astropy.units
-        v_z : ~astropy.units
+        x : ~astropy.units.quantity.Quantity
+        y : ~astropy.units.quantity.Quantity
+        z : ~astropy.units.quantity.Quantity
+        v_x : ~astropy.units.quantity.Quantity
+        v_y : ~astropy.units.quantity.Quantity
+        v_z : ~astropy.units.quantity.Quantity
+
         """
         super(CartesianDifferential, self).__init__(x, y, z)
         self.v_x = v_x
@@ -66,7 +67,7 @@ class CartesianDifferential(Cartesian):
 
         Returns
         -------
-        SphericalDifferential : ~einsteinpy.coordinates.velocity.SphericalDifferential
+        ~einsteinpy.coordinates.velocity.SphericalDifferential
             Spherical representation of the velocity in Cartesian Coordinates.
 
         """
@@ -93,12 +94,12 @@ class CartesianDifferential(Cartesian):
 
         Parameters
         ----------
-        a : astropy.units
+        a : ~astropy.units.quantity.Quantity
             a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
 
         Returns
         -------
-        BoyerLindquistDifferential : ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
+        ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
             Boyer-Lindquist representation of the velocity in Cartesian Coordinates.
 
         """
@@ -141,12 +142,13 @@ class SphericalDifferential(Spherical):
 
         Parameters
         ----------
-        r : ~astropy.units
-        theta : ~astropy.units
-        phi : ~astropy.units
-        v_r : ~astropy.units
-        v_t : ~astropy.units
-        v_p : ~astropy.units
+        r : ~astropy.units.quantity.Quantity
+        theta : ~astropy.units.quantity.Quantity
+        phi : ~astropy.units.quantity.Quantity
+        v_r : ~astropy.units.quantity.Quantity
+        v_t : ~astropy.units.quantity.Quantity
+        v_p : ~astropy.units.quantity.Quantity
+
         """
         super(SphericalDifferential, self).__init__(r, theta, phi)
         self.v_r = v_r
@@ -189,7 +191,7 @@ class SphericalDifferential(Spherical):
 
         Returns
         -------
-        CartesianDifferential : ~einsteinpy.coordinates.velocity.CartesianDifferential
+        ~einsteinpy.coordinates.velocity.CartesianDifferential
             Cartesian representation of the velocity in Spherical Coordinates.
 
         """
@@ -217,12 +219,12 @@ class SphericalDifferential(Spherical):
 
         Parameters
         ----------
-        a : astropy.units
+        a : ~astropy.units.quantity.Quantity
             a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
 
         Returns
         -------
-        BoyerLindquistDifferential : ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
+        ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
             Boyer-Lindquist representation of the velocity in Spherical Coordinates.
 
         """
@@ -250,13 +252,14 @@ class BoyerLindquistDifferential(BoyerLindquist):
 
         Parameters
         ----------
-        r : ~astropy.units
-        theta : ~astropy.units
-        phi : ~astropy.units
-        v_r : ~astropy.units
-        v_t : ~astropy.units
-        v_p : ~astropy.units
-        a : ~astropy.units
+        r : ~astropy.units.quantity.Quantity
+        theta : ~astropy.units.quantity.Quantity
+        phi : ~astropy.units.quantity.Quantity
+        v_r : ~astropy.units.quantity.Quantity
+        v_t : ~astropy.units.quantity.Quantity
+        v_p : ~astropy.units.quantity.Quantity
+        a : ~astropy.units.quantity.Quantity
+
         """
         super(BoyerLindquistDifferential, self).__init__(r, theta, phi, a)
         self.v_r = v_r
@@ -303,7 +306,7 @@ class BoyerLindquistDifferential(BoyerLindquist):
 
         Returns
         -------
-        CartesianDifferential : ~einsteinpy.coordinates.velocity.CartesianDifferential
+        ~einsteinpy.coordinates.velocity.CartesianDifferential
             Cartesian representation of the velocity in Boyer-Lindquist Coordinates.
 
         """
@@ -330,7 +333,7 @@ class BoyerLindquistDifferential(BoyerLindquist):
 
         Returns
         -------
-        SphericalDifferential : ~einsteinpy.coordinates.velocity.SphericalDifferential
+        ~einsteinpy.coordinates.velocity.SphericalDifferential
             Spherical representation of the velocity in Boyer-Lindquist Coordinates.
 
         """
