@@ -11,14 +11,28 @@ class ScatterGeodesicPlotter:
     Class for plotting static matplotlib plots.
     """
 
-    def __init__(self, mass, time=0 * u.s):
+    def __init__(
+        self, mass, time=0 * u.s, attractor_color="black", cmap_color="Oranges"
+    ):
+        """
+
+        Parameters
+        ----------
+        attractor_color : string, optional
+            Color which is used to denote the attractor. Defaults to black.
+        cmap_color : string, optional
+            Color used in function plot.
+
+        """
         self.mass = mass
         self.time = time
         self._attractor_present = False
+        self.attractor_color = attractor_color
+        self.cmap_color = cmap_color
 
     def _plot_attractor(self):
         self._attractor_present = True
-        plt.scatter(0, 0, color="black")
+        plt.scatter(0, 0, color=self.attractor_color)
 
     def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3):
         """
@@ -51,7 +65,7 @@ class ScatterGeodesicPlotter:
         pos_x = r * np.cos(phi)
         pos_y = r * np.sin(phi)
 
-        plt.scatter(pos_x, pos_y, s=1, c=time, cmap="Oranges")
+        plt.scatter(pos_x, pos_y, s=1, c=time, cmap=self.cmap_color)
 
         if not self._attractor_present:
             self._plot_attractor()

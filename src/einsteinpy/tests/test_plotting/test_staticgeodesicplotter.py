@@ -29,8 +29,8 @@ def test_staticgeodesicplotter_has_axes(dummy_data):
     assert cl._attractor_present is False
 
 
-@mock.patch("einsteinpy.plotting.geodesics_static.StaticGeodesicPlotter.plot_attractor")
-def test_plot_calls_plot_attractor(mock_plot_attractor):
+@mock.patch("einsteinpy.plotting.geodesics_static.plt.show")
+def test_plot_calls_plt_show(mock_show):
     r = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
     v = [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s]
     m = 4e24 * u.kg
@@ -38,7 +38,8 @@ def test_plot_calls_plot_attractor(mock_plot_attractor):
     ss = 0.5e-6
     cl = StaticGeodesicPlotter(m)
     cl.plot(r, v, el, ss)
-    mock_plot_attractor.assert_called_with()
+    cl.show()
+    mock_show.assert_called_with()
     assert cl._attractor_present
 
 
@@ -54,3 +55,20 @@ def test_plot_save_saves_plot(mock_save):
     name = "test_plot.png"
     cl.save(name)
     mock_save.assert_called_with(name)
+
+
+def test_plot_calls_draw_attractor_Manualscale(dummy_data):
+    r, v, _, m, _, el, ss = dummy_data
+    cl = StaticGeodesicPlotter(m, attractor_radius_scale=1500)
+    cl.plot(r, v, el, ss)
+    assert cl._attractor_present
+    assert cl.attractor_radius_scale == 1500
+    assert cl.get_curr_plot_radius != -1
+
+
+def test_plot_calls_draw_attractor_AutoScale(dummy_data):
+    r, v, _, m, _, el, ss = dummy_data
+    cl = StaticGeodesicPlotter(m)
+    cl.plot(r, v, el, ss)
+    assert cl._attractor_present
+    assert cl.get_curr_plot_radius != -1

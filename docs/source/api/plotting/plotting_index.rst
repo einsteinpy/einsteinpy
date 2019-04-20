@@ -8,3 +8,4 @@ This module contains the basic classes for static and interactive
     :maxdepth: 2
 
     geodesics_static
+    geodesics_scatter
