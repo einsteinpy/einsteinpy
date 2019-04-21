@@ -6,6 +6,7 @@ from astropy import units as u
 from numpy.testing import assert_allclose
 
 from einsteinpy import constant
+from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
 from einsteinpy.metric import Schwarzschild
 from einsteinpy.utils import schwarzschild_radius, schwarzschild_utils
 
@@ -13,11 +14,17 @@ _c = constant.c.value
 
 
 @pytest.mark.parametrize(
-    "pos_vec, vel_vec, time, M, start_lambda, end_lambda, OdeMethodKwargs",
+    "coords, time, M, start_lambda, end_lambda, OdeMethodKwargs",
     [
         (
-            [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad],
-            [0 * u.m / u.s, 0 * u.rad / u.s, 951.0 * u.rad / u.s],
+            SphericalDifferential(
+                306 * u.m,
+                np.pi / 2 * u.rad,
+                np.pi / 2 * u.rad,
+                0 * u.m / u.s,
+                0 * u.rad / u.s,
+                951.0 * u.rad / u.s,
+            ),
             0 * u.s,
             4e24 * u.kg,
             0.0,
@@ -25,12 +32,14 @@ _c = constant.c.value
             {"stepsize": 0.5e-6},
         ),
         (
-            [1 * u.km, 0.15 * u.rad, np.pi / 2 * u.rad],
-            [
+            SphericalDifferential(
+                1 * u.km,
+                0.15 * u.rad,
+                90 * u.deg,
                 0.1 * _c * u.m / u.s,
                 0.5e-5 * _c * u.rad / u.s,
                 0.5e-4 * _c * u.rad / u.s,
-            ],
+            ),
             0 * u.s,
             5.972e24 * u.kg,
             0.0,
@@ -38,8 +47,14 @@ _c = constant.c.value
             {"stepsize": 0.5e-6},
         ),
         (
-            [50 * u.km, np.pi / 2 * u.rad, np.pi / 2 * u.rad],
-            [0.1 * _c * u.m / u.s, 2e-7 * _c * u.rad / u.s, 1e-5 * u.rad / u.s],
+            SphericalDifferential(
+                50 * u.km,
+                np.pi / 2 * u.rad,
+                np.pi / 2 * u.rad,
+                0.1 * _c * u.m / u.s,
+                2e-7 * _c * u.rad / u.s,
+                1e-5 * u.rad / u.s,
+            ),
             0 * u.s,
             5.972e24 * u.g,
             0.0,
@@ -49,9 +64,9 @@ _c = constant.c.value
     ],
 )
 def test_calculate_trajectory(
-    pos_vec, vel_vec, time, M, start_lambda, end_lambda, OdeMethodKwargs
+    coords, time, M, start_lambda, end_lambda, OdeMethodKwargs
 ):
-    cl = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    cl = Schwarzschild.from_spherical(coords, M, time)
     ans = cl.calculate_trajectory(
         start_lambda=start_lambda,
         end_lambda=end_lambda,
@@ -79,10 +94,16 @@ def test_calculate_trajectory2():
     distance_at_perihelion = 147.10e6 * u.km
     speed_at_perihelion = 30.29 * u.km / u.s
     angular_vel = (speed_at_perihelion / distance_at_perihelion) * u.rad
-    pos_vec = [distance_at_perihelion, np.pi / 2 * u.rad, 0 * u.rad]
-    vel_vec = [0 * u.km / u.s, 0 * u.rad / u.s, angular_vel]
+    sph_obj = SphericalDifferential(
+        distance_at_perihelion,
+        np.pi / 2 * u.rad,
+        0 * u.rad,
+        0 * u.km / u.s,
+        0 * u.rad / u.s,
+        angular_vel,
+    )
     end_lambda = ((1 * u.year).to(u.s)).value
-    cl = Schwarzschild.from_spherical(pos_vec, vel_vec, 0 * u.s, M)
+    cl = Schwarzschild.from_spherical(sph_obj, M)
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
@@ -101,18 +122,16 @@ def test_calculate_trajectory3():
     M = 1.989e30 * u.kg
     distance_at_perihelion = 147.10e6 * u.km
     speed_at_perihelion = 30.29 * u.km / u.s
-    pos_vec = [
+    cart_obj = CartesianDifferential(
         distance_at_perihelion / np.sqrt(2),
         distance_at_perihelion / np.sqrt(2),
         0 * u.km,
-    ]
-    vel_vec = [
         -1 * speed_at_perihelion / np.sqrt(2),
         speed_at_perihelion / np.sqrt(2),
         0 * u.km / u.h,
-    ]
+    )
     end_lambda = ((1 * u.year).to(u.s)).value
-    cl = Schwarzschild.from_cartesian(pos_vec, vel_vec, 0 * u.min, M)
+    cl = Schwarzschild.from_cartesian(cart_obj, M)
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
@@ -131,68 +150,78 @@ def test_calculate_trajectory3():
 
 
 @pytest.mark.parametrize(
-    "pos_vec, vel_vec, time, M, start_lambda, end_lambda, OdeMethodKwargs, return_cartesian",
+    "coords, time, M, start_lambda, end_lambda, OdeMethodKwargs, return_cartesian",
     [
         (
-            [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad],
-            [0 * u.m / u.s, 0.1 * u.rad / u.s, 951.0 * u.rad / u.s],
+            SphericalDifferential(
+                306 * u.m,
+                np.pi / 2 * u.rad,
+                np.pi / 2 * u.rad,
+                0 * u.m / u.s,
+                0.1 * u.rad / u.s,
+                951.0 * u.rad / u.s,
+            ),
             0 * u.s,
             4e24 * u.kg,
             0.0,
-            0.0003,
+            0.0002,
             {"stepsize": 0.3e-6},
             True,
         ),
         (
-            [1 * u.km, 0.15 * u.rad, np.pi / 2 * u.rad],
-            [_c * u.m / u.s, 0.5e-5 * _c * u.rad / u.s, 1e-4 * _c * u.rad / u.s],
+            SphericalDifferential(
+                1 * u.km,
+                0.15 * u.rad,
+                np.pi / 2 * u.rad,
+                _c * u.m / u.s,
+                0.5e-5 * _c * u.rad / u.s,
+                1e-4 * _c * u.rad / u.s,
+            ),
             0 * u.s,
             5.972e24 * u.kg,
             0.0,
-            0.0004,
+            0.0002,
             {"stepsize": 0.5e-6},
             False,
         ),
     ],
 )
 def test_calculate_trajectory_iterator(
-    pos_vec,
-    vel_vec,
-    time,
-    M,
-    start_lambda,
-    end_lambda,
-    OdeMethodKwargs,
-    return_cartesian,
+    coords, time, M, start_lambda, end_lambda, OdeMethodKwargs, return_cartesian
 ):
-    cl1 = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    cl1 = Schwarzschild.from_spherical(coords, M, time)
     arr1 = cl1.calculate_trajectory(
         start_lambda=start_lambda,
         end_lambda=end_lambda,
         OdeMethodKwargs=OdeMethodKwargs,
         return_cartesian=return_cartesian,
     )[1]
-    cl2 = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    cl2 = Schwarzschild.from_spherical(coords, M, time)
     it = cl2.calculate_trajectory_iterator(
         start_lambda=start_lambda,
         OdeMethodKwargs=OdeMethodKwargs,
         return_cartesian=return_cartesian,
     )
     arr2_list = list()
-    for _, val in zip(range(100), it):
+    for _, val in zip(range(50), it):
         arr2_list.append(val[1])
     arr2 = np.array(arr2_list)
-    assert_allclose(arr1[:100, :], arr2, rtol=1e-10)
+    assert_allclose(arr1[:50, :], arr2, rtol=1e-10)
 
 
 def test_calculate_trajectory_iterator_RuntimeWarning():
-    pos_vec = [306 * u.m, np.pi / 2 * u.rad, np.pi / 2 * u.rad]
-    vel_vec = [0 * u.m / u.s, 0.01 * u.rad / u.s, 10 * u.rad / u.s]
-    time = 0 * u.s
+    sph_obj = SphericalDifferential(
+        306 * u.m,
+        np.pi / 2 * u.rad,
+        np.pi / 2 * u.rad,
+        0 * u.m / u.s,
+        0.01 * u.rad / u.s,
+        10 * u.rad / u.s,
+    )
     M = 1e25 * u.kg
     start_lambda = 0.0
     OdeMethodKwargs = {"stepsize": 0.4e-6}
-    cl = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    cl = Schwarzschild.from_spherical(sph_obj, M)
     with warnings.catch_warnings(record=True) as w:
         it = cl.calculate_trajectory_iterator(
             start_lambda=start_lambda,
@@ -205,13 +234,18 @@ def test_calculate_trajectory_iterator_RuntimeWarning():
 
 
 def test_calculate_trajectory_iterator_RuntimeWarning2():
-    pos_vec = [306 * u.m, np.pi / 2 * u.rad, np.pi / 3 * u.rad]
-    vel_vec = [0 * u.m / u.s, 0.01 * u.rad / u.s, 10 * u.rad / u.s]
-    time = 0 * u.s
+    sph_obj = SphericalDifferential(
+        306 * u.m,
+        np.pi / 2 * u.rad,
+        np.pi / 3 * u.rad,
+        0 * u.m / u.s,
+        0.01 * u.rad / u.s,
+        10 * u.rad / u.s,
+    )
     M = 1e25 * u.kg
     start_lambda = 0.0
     OdeMethodKwargs = {"stepsize": 0.4e-6}
-    cl = Schwarzschild.from_spherical(pos_vec, vel_vec, time, M)
+    cl = Schwarzschild.from_spherical(sph_obj, M)
     with warnings.catch_warnings(record=True) as w:
         it = cl.calculate_trajectory_iterator(
             start_lambda=start_lambda,

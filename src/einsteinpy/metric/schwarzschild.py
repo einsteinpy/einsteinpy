@@ -4,8 +4,8 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
+from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
 from einsteinpy.integrators import RK45
-from einsteinpy.utils import *
 from einsteinpy.utils import schwarzschild_radius, schwarzschild_utils
 
 _G = constant.G.value
@@ -18,93 +18,56 @@ class Schwarzschild:
     """
 
     @u.quantity_input(time=u.s, M=u.kg)
-    def __init__(self, pos_vec, vel_vec, time, M):
+    def __init__(self, sph_coords, M, time):
         self.M = M
-        self.pos_vec = pos_vec
-        self.vel_vec = vel_vec
+        self.input_coords = sph_coords
         self.time = time
-        self.time_vel = time_velocity(pos_vec, vel_vec, M)
+        pos_vec, vel_vec = (
+            self.input_coords.si_values()[:3],
+            self.input_coords.si_values()[3:],
+        )
+        time_vel = schwarzschild_utils.time_velocity(pos_vec, vel_vec, M)
         self.initial_vec = np.hstack(
-            (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
+            (self.time.value, pos_vec, time_vel.value, vel_vec)
         )
-        self.schwarzschild_r = schwarzschild_radius(M)
-
-    @classmethod
-    def _classmethod_handler(cls, pos_vec, vel_vec, time, M):
-        cls.units_list = [
-            u.s,
-            u.m,
-            u.rad,
-            u.rad,
-            u.one,
-            u.m / u.s,
-            u.rad / u.s,
-            u.rad / u.s,
-        ]
-        pos_vec_vals = [
-            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
-        ]
-        vel_vec_vals = [
-            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
-        ]
-        return cls(
-            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg)
-        )
+        self.scr = schwarzschild_radius(M)
 
     @classmethod
     @u.quantity_input(time=u.s, M=u.kg)
-    def from_spherical(cls, pos_vec, vel_vec, time, M):
+    def from_spherical(cls, coords, M, time=0 * u.s):
         """
         Constructor
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units
-        time : ~astropy.units.s
-            Time of start
-        M : ~astropy.units.kg
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Object having both initial positions and velocities of particle in Spherical Coordinates
+        M : ~astropy.units.quantity.Quantity
             Mass of the body
+        time : ~astropy.units.quantity.Quantity
+            Time of start, defaults to 0 seconds.
 
         """
-        cls.input_coord_system = "Spherical"
-        cls.input_units_list = (
-            [time.unit]
-            + [pos_vec[i].unit for i in range(len(pos_vec))]
-            + [u.one]
-            + [vel_vec[i].unit for i in range(len(vel_vec))]
-        )
-        return cls._classmethod_handler(pos_vec, vel_vec, time, M)
+        return cls(coords, M, time)
 
     @classmethod
     @u.quantity_input(time=u.s, M=u.kg)
-    def from_cartesian(cls, pos_vec, vel_vec, time, M):
+    def from_cartesian(cls, coords, M, time=0 * u.s):
         """
         Constructor
 
         Parameters
         ----------
-        pos_vec : list
-            list of x, y and z components along with ~astropy.units
-        vel_vec : list
-            list of velocities of x, y, and z components along with ~astropy.units
-        time : ~astropy.units.s
-            Time of start
-        M : ~astropy.units.kg
+        coords : ~einsteinpy.coordinates.velocity.CartesianDifferential
+            Object having both initial positions and velocities of particle in Cartesian Coordinates
+        M : ~astropy.units.quantity.Quantity
             Mass of the body
+        time : ~astropy.units.quantity.Quantity
+            Time of start, defaults to 0 seconds.
 
         """
-        cls.input_coord_system = "Cartesian"
-        cls.input_units_list = (
-            [time.unit]
-            + [pos_vec[i].unit for i in range(len(pos_vec))]
-            + [u.one]
-            + [vel_vec[i].unit for i in range(len(vel_vec))]
-        )
-        sp_pos_vec, sp_vel_vec = C2S_units(pos_vec, vel_vec)
-        return cls._classmethod_handler(sp_pos_vec, sp_vel_vec, time, M)
+        sph_coords = coords.spherical_differential()
+        return cls(sph_coords, M, time)
 
     def f_vec(self, ld, vec):
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
@@ -135,9 +98,9 @@ class Schwarzschild:
         Parameters
         ----------
         start_lambda : float
-            Starting lambda, defaults to 0.0, (lambda ~= t)
+            Starting lambda(proper time), defaults to 0, (lambda ~= t)
         end_lamdba : float
-            Lambda where iteartions will stop, defaults to 100000
+            Lambda(proper time) where iteartions will stop, defaults to 100000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
         OdeMethodKwargs : dict
@@ -148,13 +111,12 @@ class Schwarzschild:
 
         Returns
         -------
-        tuple
-            (~numpy.array of lambda, (n,8) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+        ~numpy.ndarray
+            N-element array containing proper time.
+        ~numpy.ndarray
+            (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
 
         """
-        vec_list = list()
-        lambda_list = list()
-        singularity_reached = False
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -162,39 +124,45 @@ class Schwarzschild:
             t_bound=end_lambda,
             **OdeMethodKwargs
         )
-        _scr = self.schwarzschild_r.value * 1.001
+
+        vecs = list()
+        lambdas = list()
+        singularity_reached = False
+        _scr = self.scr.value * 1.001
+
         while ODE.t < end_lambda:
-            vec_list.append(ODE.y)
-            lambda_list.append(ODE.t)
+            vecs.append(ODE.y)
+            lambdas.append(ODE.t)
             ODE.step()
             if (not singularity_reached) and (ODE.y[1] <= _scr):
-                warnings.warn(
-                    "r component of position vector reached Schwarzchild Radius. ",
-                    RuntimeWarning,
-                )
+                warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
                     singularity_reached = True
 
-        def _not_cartesian():
-            return (np.array(lambda_list), np.array(vec_list))
+        vecs, lambdas = np.array(vecs), np.array(lambdas)
 
-        def _cartesian():
-            self.units_list = [
-                u.s,
-                u.m,
-                u.m,
-                u.m,
-                u.one,
-                u.m / u.s,
-                u.m / u.s,
-                u.m / u.s,
-            ]
-            return (np.array(lambda_list), S2C_8dim(np.array(vec_list)))
-
-        choice_dict = {0: _not_cartesian, 1: _cartesian}
-        return choice_dict[int(return_cartesian)]()
+        if not return_cartesian:
+            returnval = (lambdas, vecs)
+        else:
+            cart_vecs = list()
+            for v in vecs:
+                si_vals = (
+                    SphericalDifferential(
+                        v[1] * u.m,
+                        v[2] * u.rad,
+                        v[3] * u.rad,
+                        v[5] * u.m / u.s,
+                        v[6] * u.rad / u.s,
+                        v[7] * u.rad / u.s,
+                    )
+                    .cartesian_differential()
+                    .si_values()
+                )
+                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
+            returnval = (lambdas, np.array(cart_vecs))
+        return returnval
 
     def calculate_trajectory_iterator(
         self,
@@ -221,11 +189,12 @@ class Schwarzschild:
 
         Yields
         ------
-        tuple
-            (lambda, (8,) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+        float
+            proper time
+        ~numpy.ndarray
+            array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
 
         """
-        singularity_reached = False
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -233,38 +202,32 @@ class Schwarzschild:
             t_bound=1e300,
             **OdeMethodKwargs
         )
-        _scr = self.schwarzschild_r.value * 1.001
 
-        def yielder_func():
-            nonlocal singularity_reached
-            while True:
-                if not return_cartesian:
-                    yield (ODE.t, ODE.y)
-                else:
-                    temp = np.copy(ODE.y)
-                    temp[1:4] = SphericalToCartesian_pos(ODE.y[1:4])
-                    temp[5:8] = SphericalToCartesian_vel(ODE.y[1:4], ODE.y[5:8])
-                    yield (ODE.t, temp)
-                ODE.step()
-                if (not singularity_reached) and (ODE.y[1] <= _scr):
-                    warnings.warn(
-                        "r component of position vector reached Schwarzchild Radius. ",
-                        RuntimeWarning,
+        singularity_reached = False
+        _scr = self.scr.value * 1.001
+
+        while True:
+            if not return_cartesian:
+                yield ODE.t, ODE.y
+            else:
+                v = ODE.y
+                si_vals = (
+                    SphericalDifferential(
+                        v[1] * u.m,
+                        v[2] * u.rad,
+                        v[3] * u.rad,
+                        v[5] * u.m / u.s,
+                        v[6] * u.rad / u.s,
+                        v[7] * u.rad / u.s,
                     )
-                    if stop_on_singularity:
-                        break
-                    else:
-                        singularity_reached = True
-
-        if return_cartesian:
-            self.units_list = [
-                u.s,
-                u.m,
-                u.m,
-                u.m,
-                u.one,
-                u.m / u.s,
-                u.m / u.s,
-                u.m / u.s,
-            ]
-        return yielder_func()
+                    .cartesian_differential()
+                    .si_values()
+                )
+                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
+            ODE.step()
+            if (not singularity_reached) and (ODE.y[1] <= _scr):
+                warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
+                if stop_on_singularity:
+                    break
+                else:
+                    singularity_reached = True

@@ -34,15 +34,13 @@ class ScatterGeodesicPlotter:
         self._attractor_present = True
         plt.scatter(0, 0, color=self.attractor_color)
 
-    def plot(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3):
+    def plot(self, coords, end_lambda=10, step_size=1e-3):
         """
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Position and velocity components of particle in Spherical Coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
@@ -50,7 +48,7 @@ class ScatterGeodesicPlotter:
 
         """
 
-        swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
+        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
 
         vals = swc.calculate_trajectory(
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
@@ -70,16 +68,14 @@ class ScatterGeodesicPlotter:
         if not self._attractor_present:
             self._plot_attractor()
 
-    def animate(self, pos_vec, vel_vec, end_lambda=10, step_size=1e-3, interval=50):
+    def animate(self, coords, end_lambda=10, step_size=1e-3, interval=50):
         """
         Function to generate animated plots of geodesics.
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Position and velocity components of particle in Spherical Coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
@@ -89,7 +85,7 @@ class ScatterGeodesicPlotter:
 
         """
 
-        swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
+        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
 
         vals = swc.calculate_trajectory(
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}

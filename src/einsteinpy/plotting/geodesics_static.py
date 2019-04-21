@@ -45,15 +45,13 @@ class StaticGeodesicPlotter:
         self.__yarr = np.array([])
         self.get_curr_plot_radius = 0
 
-    def plot_trajectory(self, pos_vec, vel_vec, end_lambda, step_size, color):
+    def plot_trajectory(self, coords, end_lambda, step_size, color):
         """
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
@@ -62,15 +60,15 @@ class StaticGeodesicPlotter:
             Color of the Geodesic
 
         """
-        swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
+        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
 
         vals = swc.calculate_trajectory(
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
         )[1]
 
-        time = np.array([coord[0] for coord in vals])
+        # time = np.array([coord[0] for coord in vals])
         r = np.array([coord[1] for coord in vals])
-        theta = np.array([coord[2] for coord in vals])
+        # theta = np.array([coord[2] for coord in vals])
         phi = np.array([coord[3] for coord in vals])
 
         x = r * np.cos(phi)
@@ -84,30 +82,28 @@ class StaticGeodesicPlotter:
         if not self._attractor_present:
             self._draw_attractor()
 
-    def __get_x_y(self, pos_vec, vel_vec, end_lambda, step_size):
+    def __get_x_y(self, coords, end_lambda, step_size):
         """
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
             Step size for the ODE.
 
         """
-        swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
+        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
 
         vals = swc.calculate_trajectory(
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
         )[1]
 
-        time = np.array([coord[0] for coord in vals])
+        # time = np.array([coord[0] for coord in vals])
         r = np.array([coord[1] for coord in vals])
-        theta = np.array([coord[2] for coord in vals])
+        # theta = np.array([coord[2] for coord in vals])
         phi = np.array([coord[3] for coord in vals])
 
         x = r * np.cos(phi)
@@ -150,8 +146,7 @@ class StaticGeodesicPlotter:
 
     def plot(
         self,
-        pos_vec,
-        vel_vec,
+        coords,
         end_lambda=10,
         step_size=1e-3,
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
@@ -160,10 +155,8 @@ class StaticGeodesicPlotter:
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
@@ -172,15 +165,11 @@ class StaticGeodesicPlotter:
             Color of the Geodesic
 
         """
-        self.__xarr, self.__yarr = self.__get_x_y(
-            pos_vec, vel_vec, end_lambda, step_size
-        )
+        self.__xarr, self.__yarr = self.__get_x_y(coords, end_lambda, step_size)
         self.plot_attractor()
         self._attractor_present = True
 
-        lines, x0, y0 = self.plot_trajectory(
-            pos_vec, vel_vec, end_lambda, step_size, color
-        )
+        lines, x0, y0 = self.plot_trajectory(coords, end_lambda, step_size, color)
 
         l, = self.ax.plot(x0, y0, "o", mew=0, color=lines[0].get_color())
         lines.append(l)
