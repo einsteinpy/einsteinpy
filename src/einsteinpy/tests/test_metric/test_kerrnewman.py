@@ -6,6 +6,7 @@ from astropy import units as u
 from numpy.testing import assert_allclose
 
 from einsteinpy import constant
+from einsteinpy.coordinates import BoyerLindquistDifferential, CartesianDifferential
 from einsteinpy.metric import KerrNewman
 from einsteinpy.utils import kerrnewman_utils, schwarzschild_radius
 
@@ -21,20 +22,20 @@ def test_calculate_trajectory0():
     # Function returning cartesian coordinates
     M = 1.989e30 * u.kg
     q = 0 * u.C / u.kg
+    Q = 0 * u.C
     distance_at_perihelion = 147.10e6 * u.km
     speed_at_perihelion = 30.29 * u.km / u.s
-    pos_vec = [
+    cart_obj = CartesianDifferential(
         distance_at_perihelion / np.sqrt(2),
         distance_at_perihelion / np.sqrt(2),
         0 * u.km,
-    ]
-    vel_vec = [
         -1 * speed_at_perihelion / np.sqrt(2),
         speed_at_perihelion / np.sqrt(2),
         0 * u.km / u.h,
-    ]
+    )
+    a = 0 * u.m
     end_lambda = ((1 * u.year).to(u.s)).value
-    cl = KerrNewman.from_cartesian(pos_vec, vel_vec, q, 0 * u.min, M, 0.0, 0 * u.C)
+    cl = KerrNewman.from_cartesian(cart_obj, q, M, a, Q)
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
@@ -60,11 +61,18 @@ def test_calculate_trajectory1():
     stepsize = 0.5
     tmp = _G * M.value / _cc
     q = tmp * u.C / u.kg
-    print(tmp, 5.900455 * tmp ** 3)
+    a = 0 * u.km
     Q = 11604461683.91822052001953125 * u.C
-    pos_vec = [r, 0.5 * np.pi * u.rad, 0 * u.rad]
-    vel_vec = [0 * u.m / u.s, 0 * u.rad / u.s, 0.0 * u.rad / u.s]
-    cl = KerrNewman.from_BL(pos_vec, vel_vec, q, 0 * u.s, M, 0.0, Q)
+    bl_obj = BoyerLindquistDifferential(
+        r,
+        0.5 * np.pi * u.rad,
+        0 * u.rad,
+        0 * u.m / u.s,
+        0 * u.rad / u.s,
+        0.0 * u.rad / u.s,
+        a,
+    )
+    cl = KerrNewman.from_BL(bl_obj, q, M, Q)
     ans = cl.calculate_trajectory(
         end_lambda=end_lambda, OdeMethodKwargs={"stepsize": stepsize}
     )
@@ -74,7 +82,7 @@ def test_calculate_trajectory1():
 @pytest.fixture()
 def test_input():
     q = 1 * u.C / u.g
-    a = 1e-6
+    a = 1e-6 * u.m
     Q = 100 * u.C
     el = 200.0
     ss = 1.0
@@ -82,12 +90,19 @@ def test_input():
 
 
 def test_compare_calculate_trajectory_iterator_bl(test_input):
-    pos_vec = [1000.0 * u.km, 0.6 * np.pi * u.rad, np.pi / 8 * u.rad]
-    vel_vec = [10000 * u.m / u.s, -0.01 * u.rad / u.s, 0.0 * u.rad / u.s]
-    M = 0.5 * 5.972e24 * u.kg
     q, a, Q, el, ss = test_input
-    cl1 = KerrNewman.from_BL(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
-    cl2 = KerrNewman.from_BL(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
+    bl_obj = BoyerLindquistDifferential(
+        1000.0 * u.km,
+        0.6 * np.pi * u.rad,
+        np.pi / 8 * u.rad,
+        10000 * u.m / u.s,
+        -0.01 * u.rad / u.s,
+        0.0 * u.rad / u.s,
+        a,
+    )
+    M = 0.5 * 5.972e24 * u.kg
+    cl1 = KerrNewman.from_BL(bl_obj, q, M, Q)
+    cl2 = KerrNewman.from_BL(bl_obj, q, M, Q)
     ans1 = cl1.calculate_trajectory(end_lambda=el, OdeMethodKwargs={"stepsize": ss})[1]
     it = cl2.calculate_trajectory_iterator(OdeMethodKwargs={"stepsize": ss})
     ans2 = list()
@@ -99,12 +114,18 @@ def test_compare_calculate_trajectory_iterator_bl(test_input):
 
 
 def test_compare_calculate_trajectory_iterator_cartesians(test_input):
-    pos_vec = [1000000 * u.m, 1000000 * u.m, 20.5 * u.m]
-    vel_vec = [10000 * u.m / u.s, 10000 * u.m / u.s, -30 * u.m / u.s]
+    cart_obj = CartesianDifferential(
+        1000000 * u.m,
+        1000000 * u.m,
+        20.5 * u.m,
+        10000 * u.m / u.s,
+        10000 * u.m / u.s,
+        -30 * u.m / u.s,
+    )
     M = 2e24 * u.kg
     q, a, Q, el, ss = test_input
-    cl1 = KerrNewman.from_cartesian(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
-    cl2 = KerrNewman.from_cartesian(pos_vec, vel_vec, q, 0 * u.s, M, a, Q)
+    cl1 = KerrNewman.from_cartesian(cart_obj, q, M, a, Q)
+    cl2 = KerrNewman.from_cartesian(cart_obj, q, M, a, Q)
     ans1 = cl1.calculate_trajectory(
         end_lambda=el, OdeMethodKwargs={"stepsize": ss}, return_cartesian=True
     )[1]
@@ -117,3 +138,29 @@ def test_compare_calculate_trajectory_iterator_cartesians(test_input):
     ans2 = np.array(ans2)
     print(ans1)
     assert_allclose(ans1[:20], ans2)
+
+
+def test_calculate_trajectory_iterator_RuntimeWarning():
+    bl_obj = BoyerLindquistDifferential(
+        306 * u.m,
+        np.pi / 2 * u.rad,
+        np.pi / 2 * u.rad,
+        0 * u.m / u.s,
+        0.01 * u.rad / u.s,
+        10 * u.rad / u.s,
+        0 * u.m,
+    )
+    M = 1e25 * u.kg
+    start_lambda = 0.0
+    q, Q = 0 * u.C / u.kg, 0 * u.C
+    OdeMethodKwargs = {"stepsize": 0.4e-6}
+    cl = KerrNewman.from_BL(bl_obj, q, M, Q)
+    with warnings.catch_warnings(record=True) as w:
+        it = cl.calculate_trajectory_iterator(
+            start_lambda=start_lambda,
+            OdeMethodKwargs=OdeMethodKwargs,
+            stop_on_singularity=True,
+        )
+        for _, _ in zip(range(1000), it):
+            pass
+        assert len(w) >= 1
