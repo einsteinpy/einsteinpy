@@ -144,7 +144,7 @@ class Schwarzschild:
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
         if not return_cartesian:
-            returnval = (lambdas, vecs)
+            return lambdas, vecs
         else:
             cart_vecs = list()
             for v in vecs:
@@ -161,8 +161,7 @@ class Schwarzschild:
                     .si_values()
                 )
                 cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
-            returnval = (lambdas, np.array(cart_vecs))
-        return returnval
+            return lambdas, np.array(cart_vecs)
 
     def calculate_trajectory_iterator(
         self,
