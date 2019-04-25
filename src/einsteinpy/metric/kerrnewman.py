@@ -4,8 +4,8 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
+from einsteinpy.coordinates import BoyerLindquistDifferential, CartesianDifferential
 from einsteinpy.integrators import RK45
-from einsteinpy.utils import *
 from einsteinpy.utils import kerrnewman_utils, schwarzschild_radius
 
 _G = constant.G.value
@@ -20,129 +20,86 @@ class KerrNewman:
     """
 
     @u.quantity_input(time=u.s, M=u.kg, Q=u.C)
-    def __init__(self, pos_vec, vel_vec, q, time, M, a, Q):
+    def __init__(self, bl_coords, q, M, Q, time):
+        self.input_coords = bl_coords
         self.M = M
-        self.a = a
+        self.a = self.input_coords.a.to(u.m)
         self.Q = Q
         self.q = q
-        self.pos_vec = pos_vec
-        self.vel_vec = vel_vec
+
+        pos_vec, vel_vec = (
+            self.input_coords.si_values()[:3],
+            self.input_coords.si_values()[3:],
+        )
         self.time = time
-        self.time_vel = kerrnewman_utils.kerrnewman_time_velocity(
-            self.pos_vec, self.vel_vec, self.M, self.a, Q
+        time_vel = kerrnewman_utils.kerrnewman_time_velocity(
+            pos_vec, vel_vec, self.M, self.a.value, Q
         )
         self.initial_vec = np.hstack(
-            (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
+            (self.time.value, pos_vec, time_vel.value, vel_vec)
         )
-        self.schwarzschild_r = schwarzschild_radius(M)
-
-    @classmethod
-    def _classmethod_handler(cls, pos_vec, vel_vec, q, time, M, a, Q):
-        cls.units_list = [
-            u.s,
-            u.m,
-            u.rad,
-            u.rad,
-            u.one,
-            u.m / u.s,
-            u.rad / u.s,
-            u.rad / u.s,
-        ]
-        pos_vec_vals = [
-            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
-        ]
-        vel_vec_vals = [
-            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
-        ]
-        return cls(
-            np.array(pos_vec_vals),
-            np.array(vel_vec_vals),
-            q.to(u.C / u.kg),
-            time.to(u.s),
-            M.to(u.kg),
-            a,
-            Q.to(u.C),
-        )
+        self.scr = schwarzschild_radius(M)
 
     @classmethod
     @u.quantity_input(q=u.C / u.kg, time=u.s, M=u.kg, Q=u.C)
-    def from_BL(cls, pos_vec, vel_vec, q, time, M, a, Q):
+    def from_BL(cls, coords, q, M, Q, time=0 * u.s):
         """
-        Constructor
-        Initialize from Boyer-Lindquist Coordinates
+        Constructor.
+        Initialize from Boyer-Lindquist Coordinates.
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units
-        q : ~astropy.units.C/astropy.units.kg
-            Charge per mass of test particle
-        time : ~astropy.units.s
-            Time of start
-        M : ~astropy.units.kg
-            Mass of the body
-        a : float
-            Spin factor of massive body
-        Q : ~astropy.units.C
+        coords : ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
+            Initial positions and velocities of particle in BL Coordinates, and spin factor of massive body.
+        q : ~astropy.units.quantity.Quantity
+            Charge per unit mass of test particle
+        M : ~astropy.units.quantity.Quantity
+            Mass of the massive body
+        Q : ~astropy.units.quantity.Quantity
             Charge on the massive body
+        time : ~astropy.units.quantity.Quantity
+            Time of start, defaults to 0 seconds.
 
         """
         cls.input_coord_system = "Boyer-Lindquist"
-        cls.input_units_list = (
-            [time.unit]
-            + [pos_vec[i].unit for i in range(len(pos_vec))]
-            + [u.one]
-            + [vel_vec[i].unit for i in range(len(vel_vec))]
-        )
-        return cls._classmethod_handler(pos_vec, vel_vec, q, time, M, a, Q)
+        return cls(coords, q, M, Q, time)
 
     @classmethod
-    @u.quantity_input(q=u.C / u.kg, time=u.s, M=u.kg, Q=u.C)
-    def from_cartesian(cls, pos_vec, vel_vec, q, time, M, a, Q):
+    @u.quantity_input(q=u.C / u.kg, time=u.s, M=u.kg, Q=u.C, a=u.m)
+    def from_cartesian(cls, coords, q, M, a, Q, time=0 * u.s):
         """
-        Constructor
-        Initialize from Cartesian Coordinates
+        Constructor.
+        Initialize from Cartesian Coordinates.
 
         Parameters
         ----------
-        pos_vec : list
-            list of x, y and z components along with ~astropy.units
-        vel_vec : list
-            list of velocities of x, y, and z components along with ~astropy.units
-        q : ~astropy.units.C/astropy.units.kg
-            Charge per mass of test particle
-        time : ~astropy.units.s
-            Time of start
-        M : ~astropy.units.kg
-            Mass of the body
-        a : float
-            Spin factor of massive body
-        Q : ~astropy.units.C
+        coords : ~einsteinpy.coordinates.velocity.CartesianDifferential
+            Initial positions and velocities of particle in Cartesian Coordinates.
+        q : ~astropy.units.quantity.Quantity
+            Charge per unit mass of test particle
+        M : ~astropy.units.quantity.Quantity
+            Mass of the massive body
+        a : ~astropy.units.quantity.Quantity
+            Spin factor of the massive body(Angular Momentum per unit mass per speed of light)
+        Q : ~astropy.units.quantity.Quantity
             Charge on the massive body
+        time : ~astropy.units.quantity.Quantity
+            Time of start, defaults to 0 seconds.
 
         """
         cls.input_coord_system = "Cartesian"
-        cls.input_units_list = (
-            [time.unit]
-            + [pos_vec[i].unit for i in range(len(pos_vec))]
-            + [u.one]
-            + [vel_vec[i].unit for i in range(len(vel_vec))]
-        )
-        bl_pos_vec, bl_vel_vec = C2BL_units(pos_vec, vel_vec, a)
-        return cls._classmethod_handler(bl_pos_vec, bl_vel_vec, q, time, M, a, Q)
+        bl_coords = coords.bl_differential(a)
+        return cls(bl_coords, q, M, Q, time)
 
     def f_vec(self, ld, vec):
-        _scr = self.schwarzschild_r.value
         chl = kerrnewman_utils.christoffels(
-            vec[1], vec[2], self.M.value, self.a, self.Q.value
+            vec[1], vec[2], self.M.value, self.a.value, self.Q.value
         )
         maxwell = kerrnewman_utils.maxwell_tensor_contravariant(
-            vec[1], vec[2], self.a, self.Q.value, self.M.value
+            vec[1], vec[2], self.a.value, self.Q.value, self.M.value
         )
         metric = kerrnewman_utils.metric(
-            vec[1], vec[2], self.M.value, self.a, self.Q.value
+            vec[1], vec[2], self.M.value, self.a.value, self.Q.value
         )
         vals = np.zeros(shape=(8,), dtype=float)
         for i in range(4):
@@ -194,9 +151,9 @@ class KerrNewman:
         Parameters
         ----------
         start_lambda : float
-            Starting lambda, defaults to 0.0, (lambda ~= t)
+            Starting lambda(proper time), defaults to 0.0, (lambda ~= t)
         end_lamdba : float
-            Lambda where iteartions will stop, defaults to 100000
+            Lambda(proper time) where iteartions will stop, defaults to 100000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
         OdeMethodKwargs : dict
@@ -207,12 +164,14 @@ class KerrNewman:
 
         Returns
         -------
-        tuple
-            (~numpy.array of lambda, (n,8) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+        ~numpy.ndarray
+            N-element array containing proper time.
+        ~numpy.ndarray
+            (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
 
         """
-        vec_list = list()
-        lambda_list = list()
+        vecs = list()
+        lambdas = list()
         singularity_reached = False
         ODE = RK45(
             fun=self.f_vec,
@@ -221,39 +180,42 @@ class KerrNewman:
             t_bound=end_lambda,
             **OdeMethodKwargs
         )
-        _scr = self.schwarzschild_r.value * 1.001
+
+        _scr = self.scr.value * 1.001
+
         while ODE.t < end_lambda:
-            vec_list.append(ODE.y)
-            lambda_list.append(ODE.t)
+            vecs.append(ODE.y)
+            lambdas.append(ODE.t)
             ODE.step()
             if (not singularity_reached) and (ODE.y[1] <= _scr):
-                warnings.warn(
-                    "r component of position vector reached Schwarzchild Radius. ",
-                    RuntimeWarning,
-                )
+                warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
                     singularity_reached = True
 
-        def _not_cartesian():
-            return (np.array(lambda_list), np.array(vec_list))
+        vecs, lambdas = np.array(vecs), np.array(lambdas)
 
-        def _cartesian():
-            self.units_list = [
-                u.s,
-                u.m,
-                u.m,
-                u.m,
-                u.one,
-                u.m / u.s,
-                u.m / u.s,
-                u.m / u.s,
-            ]
-            return (np.array(lambda_list), BL2C_8dim(np.array(vec_list), self.a))
-
-        choice_dict = {0: _not_cartesian, 1: _cartesian}
-        return choice_dict[int(return_cartesian)]()
+        if not return_cartesian:
+            return lambdas, vecs
+        else:
+            cart_vecs = list()
+            for v in vecs:
+                si_vals = (
+                    BoyerLindquistDifferential(
+                        v[1] * u.m,
+                        v[2] * u.rad,
+                        v[3] * u.rad,
+                        v[5] * u.m / u.s,
+                        v[6] * u.rad / u.s,
+                        v[7] * u.rad / u.s,
+                        self.a,
+                    )
+                    .cartesian_differential()
+                    .si_values()
+                )
+                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
+            return lambdas, np.array(cart_vecs)
 
     def calculate_trajectory_iterator(
         self,
@@ -263,8 +225,8 @@ class KerrNewman:
         return_cartesian=False,
     ):
         """
-        Calculate trajectory in manifold according to geodesic equation
-        Yields an iterator
+        Calculate trajectory in manifold according to geodesic equation.
+        Yields an iterator.
 
         Parameters
         ----------
@@ -280,11 +242,12 @@ class KerrNewman:
 
         Yields
         ------
-        tuple
-            (lambda, (8,) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+        float
+            proper time
+        ~numpy.ndarray
+            array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
 
         """
-        singularity_reached = False
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -292,38 +255,32 @@ class KerrNewman:
             t_bound=1e300,
             **OdeMethodKwargs
         )
-        _scr = self.schwarzschild_r.value * 1.001
+        singularity_reached = False
+        _scr = self.scr.value * 1.001
 
-        def yielder_func():
-            nonlocal singularity_reached
-            while True:
-                if not return_cartesian:
-                    yield (ODE.t, ODE.y)
-                else:
-                    temp = np.copy(ODE.y)
-                    temp[1:4] = BLToCartesian_pos(ODE.y[1:4], self.a)
-                    temp[5:8] = BLToCartesian_vel(ODE.y[1:4], ODE.y[5:8], self.a)
-                    yield (ODE.t, temp)
-                ODE.step()
-                if (not singularity_reached) and (ODE.y[1] <= _scr):
-                    warnings.warn(
-                        "r component of position vector reached Schwarzchild Radius. ",
-                        RuntimeWarning,
+        while True:
+            if not return_cartesian:
+                yield ODE.t, ODE.y
+            else:
+                v = ODE.y
+                si_vals = (
+                    BoyerLindquistDifferential(
+                        v[1] * u.m,
+                        v[2] * u.rad,
+                        v[3] * u.rad,
+                        v[5] * u.m / u.s,
+                        v[6] * u.rad / u.s,
+                        v[7] * u.rad / u.s,
+                        self.a,
                     )
-                    if stop_on_singularity:
-                        break
-                    else:
-                        singularity_reached = True
-
-        if return_cartesian:
-            self.units_list = [
-                u.s,
-                u.m,
-                u.m,
-                u.m,
-                u.one,
-                u.m / u.s,
-                u.m / u.s,
-                u.m / u.s,
-            ]
-        return yielder_func()
+                    .cartesian_differential()
+                    .si_values()
+                )
+                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
+            ODE.step()
+            if (not singularity_reached) and (ODE.y[1] <= _scr):
+                warnings.warn("particle reached Schwarzschild Radius. ", RuntimeWarning)
+                if stop_on_singularity:
+                    break
+                else:
+                    singularity_reached = True
