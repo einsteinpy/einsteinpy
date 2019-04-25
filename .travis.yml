@@ -24,8 +24,10 @@ install:
   - pip install numpy --quiet # Required
   - pip install . --quiet # Test installation correctness
   - pip install .[dev] --quiet # Test development dependencies
+  - pip install tox-travis
 
 script:
   - pytest -vv  # Test against installed code
+  - tox
 
 sudo: false
