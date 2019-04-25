@@ -148,7 +148,7 @@ class Kerr:
         """
         vecs = list()
         lambdas = list()
-        singularity_reached = False
+        crossed_event_horizon = False
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -163,12 +163,12 @@ class Kerr:
             vecs.append(ODE.y)
             lambdas.append(ODE.t)
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _event_hor):
+            if (not crossed_event_horizon) and (ODE.y[1] <= _event_hor):
                 warnings.warn("particle reached event horizon. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
-                    singularity_reached = True
+                    crossed_event_horizon = True
 
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
@@ -231,7 +231,7 @@ class Kerr:
             t_bound=1e300,
             **OdeMethodKwargs
         )
-        singularity_reached = False
+        crossed_event_horizon = False
         _event_hor = kerr_utils.event_horizon(self.M.value, self.a.value)[0] * 1.001
 
         while True:
@@ -254,9 +254,9 @@ class Kerr:
                 )
                 yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _event_hor):
+            if (not crossed_event_horizon) and (ODE.y[1] <= _event_hor):
                 warnings.warn("particle reached event horizon. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
-                    singularity_reached = True
+                    crossed_event_horizon = True

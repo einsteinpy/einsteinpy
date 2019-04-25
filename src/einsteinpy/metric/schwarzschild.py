@@ -127,19 +127,19 @@ class Schwarzschild:
 
         vecs = list()
         lambdas = list()
-        singularity_reached = False
+        crossed_event_horizon = False
         _scr = self.scr.value * 1.001
 
         while ODE.t < end_lambda:
             vecs.append(ODE.y)
             lambdas.append(ODE.t)
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _scr):
+            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
                 warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
-                    singularity_reached = True
+                    crossed_event_horizon = True
 
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
@@ -202,7 +202,7 @@ class Schwarzschild:
             **OdeMethodKwargs
         )
 
-        singularity_reached = False
+        crossed_event_horizon = False
         _scr = self.scr.value * 1.001
 
         while True:
@@ -224,9 +224,9 @@ class Schwarzschild:
                 )
                 yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _scr):
+            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
                 warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
-                    singularity_reached = True
+                    crossed_event_horizon = True

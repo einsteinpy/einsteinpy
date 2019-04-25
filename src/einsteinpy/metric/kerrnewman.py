@@ -172,7 +172,7 @@ class KerrNewman:
         """
         vecs = list()
         lambdas = list()
-        singularity_reached = False
+        crossed_event_horizon = False
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -187,12 +187,12 @@ class KerrNewman:
             vecs.append(ODE.y)
             lambdas.append(ODE.t)
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _scr):
+            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
                 warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
-                    singularity_reached = True
+                    crossed_event_horizon = True
 
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
@@ -255,7 +255,7 @@ class KerrNewman:
             t_bound=1e300,
             **OdeMethodKwargs
         )
-        singularity_reached = False
+        crossed_event_horizon = False
         _scr = self.scr.value * 1.001
 
         while True:
@@ -278,9 +278,9 @@ class KerrNewman:
                 )
                 yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
             ODE.step()
-            if (not singularity_reached) and (ODE.y[1] <= _scr):
+            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
                 warnings.warn("particle reached Schwarzschild Radius. ", RuntimeWarning)
                 if stop_on_singularity:
                     break
                 else:
-                    singularity_reached = True
+                    crossed_event_horizon = True
