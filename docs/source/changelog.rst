@@ -30,14 +30,19 @@ This is the complete list of the people that contributed to this release, with a
 * Shreyas Bapat
 * Ritwik Saha
 * Raphael Reyna+
-* Prithvi MK+
+* Prithvi Manoj Krishna+
 * Manvi Gupta+
 * Divya Gupta+
 * Yash Sharma+
-* Shilpi+
+* Shilpi Jain+
 * Rishi Sharma+
 * Varun Singh+
 * Alpesh Jamgade+
+* Saurabh Bansal+
+* Tanmay Rustagi+
+* Abhijeet Manhas+
+* Ankit Khandelwal+
+* Tushar Tyagi+
 
 einsteinpy 0.1.0 - 2019-03-08
 -----------------------------
