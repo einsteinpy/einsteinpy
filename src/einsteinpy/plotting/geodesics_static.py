@@ -164,7 +164,7 @@ class StaticGeodesicPlotter:
             Step size for the ODE.
         color : hex code RGB, optional
             Color of the dashed lines. Picks a random color by default.
-        
+
         Returns
         -------
         lines : list
