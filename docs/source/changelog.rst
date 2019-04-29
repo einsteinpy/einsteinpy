@@ -1,6 +1,49 @@
 What's new
 ==========
 
+einsteinpy 0.2.0 - 2019-07-28
+-----------------------------
+
+This release will bring a lots and lots of features with a more intuitive API, a better
+plotting support, more metrices intrduced and what not. This is a major release which will
+short term support version and will be supported only till June 2020. This major release
+comes before Python in Astronomy 2019 workshop.
+
+Part of this release is sponsored by European Space Agency, through Summer of Code in Space
+(SOCIS) 2019 program.
+
+Features
+........
+
+* Kerr Metric
+* Kerr-Newman Metric
+* Coordinates Module with Boyer Lindquist Coordinates and transformation
+* Bodies Module
+* Animated plots
+* Better plotting
+
+Contributors
+............
+
+This is the complete list of the people that contributed to this release, with a + sign indicating first contribution.
+
+* Shreyas Bapat
+* Ritwik Saha
+* Raphael Reyna+
+* Prithvi Manoj Krishna+
+* Manvi Gupta+
+* Divya Gupta+
+* Yash Sharma+
+* Shilpi Jain+
+* Rishi Sharma+
+* Varun Singh+
+* Alpesh Jamgade+
+* Saurabh Bansal+
+* Tanmay Rustagi+
+* Abhijeet Manhas+
+* Ankit Khandelwal+
+* Tushar Tyagi+
+
 einsteinpy 0.1.0 - 2019-03-08
 -----------------------------
 

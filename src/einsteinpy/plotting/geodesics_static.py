@@ -5,6 +5,7 @@ import astropy.units as u
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.animation import FuncAnimation
 
 from einsteinpy.metric import Schwarzschild
 from einsteinpy.utils import schwarzschild_radius
@@ -12,7 +13,7 @@ from einsteinpy.utils import schwarzschild_radius
 
 class StaticGeodesicPlotter:
     """
-    Class for plotting static matplotlib plots.
+    Class for plotting static matplotlib plots and animations.
     """
 
     def __init__(
@@ -35,7 +36,7 @@ class StaticGeodesicPlotter:
         """
         self.ax = ax
         if not self.ax:
-            _, self.ax = plt.subplots(figsize=(6, 6))
+            self.fig, self.ax = plt.subplots(figsize=(6, 6))
         self.time = time
         self.mass = mass
         self._attractor_present = False
@@ -45,15 +46,13 @@ class StaticGeodesicPlotter:
         self.__yarr = np.array([])
         self.get_curr_plot_radius = 0
 
-    def plot_trajectory(self, pos_vec, vel_vec, end_lambda, step_size, color):
+    def plot_trajectory(self, coords, end_lambda, step_size, color):
         """
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
@@ -62,15 +61,15 @@ class StaticGeodesicPlotter:
             Color of the Geodesic
 
         """
-        swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
+        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
 
         vals = swc.calculate_trajectory(
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
         )[1]
 
-        time = np.array([coord[0] for coord in vals])
+        # time = np.array([coord[0] for coord in vals])
         r = np.array([coord[1] for coord in vals])
-        theta = np.array([coord[2] for coord in vals])
+        # theta = np.array([coord[2] for coord in vals])
         phi = np.array([coord[3] for coord in vals])
 
         x = r * np.cos(phi)
@@ -84,30 +83,28 @@ class StaticGeodesicPlotter:
         if not self._attractor_present:
             self._draw_attractor()
 
-    def __get_x_y(self, pos_vec, vel_vec, end_lambda, step_size):
+    def __get_x_y(self, coords, end_lambda, step_size):
         """
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
             Step size for the ODE.
 
         """
-        swc = Schwarzschild.from_spherical(pos_vec, vel_vec, self.time, self.mass)
+        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
 
         vals = swc.calculate_trajectory(
             end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
         )[1]
 
-        time = np.array([coord[0] for coord in vals])
+        # time = np.array([coord[0] for coord in vals])
         r = np.array([coord[1] for coord in vals])
-        theta = np.array([coord[2] for coord in vals])
+        # theta = np.array([coord[2] for coord in vals])
         phi = np.array([coord[3] for coord in vals])
 
         x = r * np.cos(phi)
@@ -150,8 +147,7 @@ class StaticGeodesicPlotter:
 
     def plot(
         self,
-        pos_vec,
-        vel_vec,
+        coords,
         end_lambda=10,
         step_size=1e-3,
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
@@ -160,27 +156,27 @@ class StaticGeodesicPlotter:
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units.
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units.
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
         end_lambda : float, optional
             Lambda where iteartions will stop.
         step_size : float, optional
             Step size for the ODE.
-        color : string
-            Color of the Geodesic
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+
+        Returns
+        -------
+        lines : list
+            A list of Line2D objects representing the plotted data.
 
         """
-        self.__xarr, self.__yarr = self.__get_x_y(
-            pos_vec, vel_vec, end_lambda, step_size
-        )
+
+        self.__xarr, self.__yarr = self.__get_x_y(coords, end_lambda, step_size)
         self.plot_attractor()
         self._attractor_present = True
 
-        lines, x0, y0 = self.plot_trajectory(
-            pos_vec, vel_vec, end_lambda, step_size, color
-        )
+        lines, x0, y0 = self.plot_trajectory(coords, end_lambda, step_size, color)
 
         l, = self.ax.plot(x0, y0, "o", mew=0, color=lines[0].get_color())
         lines.append(l)
@@ -190,6 +186,59 @@ class StaticGeodesicPlotter:
         self.ax.set_aspect(1)
 
         return lines
+
+    def animate(
+        self,
+        coords,
+        end_lambda=10,
+        step_size=1e-3,
+        color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
+        interval=50,
+    ):
+        """
+
+        Parameters
+        ----------
+        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
+            Initial position and velocity of particle in Spherical coordinates.
+        end_lambda : float, optional
+            Lambda where iteartions will stop.
+        step_size : float, optional
+            Step size for the ODE.
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+        interval : int, optional
+            Control the time between frames. Add time in milliseconds.
+
+        """
+
+        pos_x, pos_y = self.__get_x_y(coords, end_lambda, step_size)
+        x_max, x_min = max(pos_x), min(pos_x)
+        y_max, y_min = max(pos_y), min(pos_y)
+        margin_x = (x_max - x_min) * 0.1
+        margin_y = (y_max - y_min) * 0.2
+        frames = pos_x.shape[0]
+
+        pic, = self.ax.plot([], [], "--", color=color)
+
+        plt.xlim(x_min - margin_x, x_max + margin_x)
+        plt.ylim(y_min - margin_y, y_max + margin_y)
+
+        self.plot_attractor()
+        self._attractor_present = True
+
+        self.ax.set_xlabel("$x$ (km)")
+        self.ax.set_ylabel("$y$ (km)")
+        self.ax.set_aspect(1)
+
+        def _update(frame):
+            pic.set_xdata(pos_x[: frame + 1])
+            pic.set_ydata(pos_y[: frame + 1])
+            return (pic,)
+
+        self.ani = FuncAnimation(
+            self.fig, _update, frames=frames, interval=interval, blit=True
+        )
 
     def save(self, name="static_geodesic.png"):
         plt.savefig(name)

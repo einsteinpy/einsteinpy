@@ -14,9 +14,10 @@ class Cartesian:
 
         Parameters
         ----------
-        x : ~astropy.units
-        y : ~astropy.units
-        z : ~astropy.units
+        x : ~astropy.units.quantity.Quantity
+        y : ~astropy.units.quantity.Quantity
+        z : ~astropy.units.quantity.Qauntity
+
         """
         self.x = x
         self.y = y
@@ -47,7 +48,7 @@ class Cartesian:
 
         Returns
         -------
-        ~astropy.units
+        ~astropy.units.quantity.Quantity
             Euclidean norm with units.
 
         """
@@ -63,7 +64,7 @@ class Cartesian:
 
         Returns
         -------
-        ~astropy.units
+        ~astropy.units.quantity.Quantity
             Dot product with units
 
         """
@@ -97,7 +98,7 @@ class Cartesian:
 
         Parameters
         ----------
-        a : astropy.units
+        a : ~astropy.units.quantity.Quantity
             a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
 
         Returns
@@ -126,9 +127,10 @@ class Spherical:
 
         Parameters
         ----------
-        r : ~astropy.units
-        theta : ~astropy.units
-        phi : ~astropy.units
+        r : ~astropy.units.quantity.Quantity
+        theta : ~astropy.units.quantity.Quantity
+        phi : ~astropy.units.quantity.Quantity
+
         """
         self.r = r
         self.theta = theta
@@ -178,7 +180,7 @@ class Spherical:
 
         Parameters
         ----------
-        a : astropy.units
+        a : ~astropy.units.quantity.Quantity
             a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
 
         Returns
@@ -203,10 +205,11 @@ class BoyerLindquist:
 
         Parameters
         ----------
-        r : ~astropy.units
-        theta : ~astropy.units
-        phi : ~astropy.units
-        a : ~astropy.units
+        r : ~astropy.units.quantity.Quantity
+        theta : ~astropy.units.quantity.Quantity
+        phi : ~astropy.units.quantity.Quantity
+        a : ~astropy.units.quantity.Quantity
+        
         """
         self.r = r
         self.theta = theta
