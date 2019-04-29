@@ -70,7 +70,7 @@ def test_plot_calls_draw_attractor_Manualscale(dummy_data):
     cl.plot(sph_obj, el, ss)
     assert cl._attractor_present
     assert cl.attractor_radius_scale == 1500
-    assert cl.get_curr_plot_radius != -1
+    assert cl.get_curr_plot_radius is not -1
 
 
 def test_plot_calls_draw_attractor_AutoScale(dummy_data):
@@ -78,4 +78,4 @@ def test_plot_calls_draw_attractor_AutoScale(dummy_data):
     cl = StaticGeodesicPlotter(m)
     cl.plot(sph_obj, el, ss)
     assert cl._attractor_present
-    assert cl.get_curr_plot_radius != -1
+    assert cl.get_curr_plot_radius is not -1
