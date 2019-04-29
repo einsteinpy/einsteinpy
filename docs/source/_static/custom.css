@@ -8,3 +8,7 @@ body {
 div.body{
     min-width: 100px;
 }
+
+div.sphinxsidebar ul{
+	list-style-type: square;
+}
