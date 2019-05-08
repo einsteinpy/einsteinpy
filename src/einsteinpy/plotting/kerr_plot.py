@@ -19,7 +19,7 @@ class KerrPlotter:
         hori = list()
         thetas = np.linspace(start, end, steps)
         for t in thetas:
-            hori.append(kerr_utils.event_horizon(self.scr, self.a, t, coord))
+            hori.append(kerr_utils.event_horizon(self.mass, self.a, t, coord))
         hori1 = np.array(hori)
         Xh, Yh = hori1[:, 0] * np.sin(hori1[:, 1]), hori1[:, 0] * np.cos(hori1[:, 1])
         return Xh, Yh
@@ -28,7 +28,7 @@ class KerrPlotter:
         ergo = list()
         thetas = np.linspace(start, end, steps)
         for t in thetas:
-            ergo.append(kerr_utils.radius_ergosphere(self.scr, self.a, t, coord))
+            ergo.append(kerr_utils.radius_ergosphere(self.mass, self.a, t, coord))
         ergo1 = np.array(ergo)
         Xe, Ye = ergo1[:, 0] * np.sin(ergo1[:, 1]), ergo1[:, 0] * np.cos(ergo1[:, 1])
         return Xe, Ye
