@@ -56,8 +56,12 @@
 |circleci| |travisci| |appveyor| |codecov| |codeclimate|
 
 EinsteinPy is an open source pure Python package dedicated to problems arising in 
-General Relativity and relativistic physics, such as geodesics calculation for vacuum solutions for Einstein's field equations, calculation of various quantities in these geometries like Schwarzschild Radius and the event horizon. The library also has functions for Symbolic calculations in GR like Christoffel Symbols and much more is planned. 
-The library aims to solve Einstein's field equations for arbitrarily complicated matter distribution as one of the main goals. 
+General Relativity and relativistic physics, such as geodesics calculation for vacuum
+solutions for Einstein's field equations, calculation of various quantities in these
+geometries like Schwarzschild Radius and the event horizon. The library also has functions
+for Symbolic calculations in GR like Christoffel Symbols and much more is planned. 
+The library aims to solve Einstein's field equations for arbitrarily complicated
+matter distribution as one of the main goals. 
 It is released under the MIT license.
 
 Documentation
