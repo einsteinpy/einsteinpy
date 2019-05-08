@@ -1,6 +1,7 @@
 import astropy.units as u
 import numpy as np
 from astropy import constants
+
 from einsteinpy import constant, utils
 
 c = constants.c

@@ -1,9 +1,10 @@
 import numpy as np
 import pytest
 from astropy import units as u
+from numpy.testing import assert_allclose
+
 from einsteinpy import constant, utils
 from einsteinpy.utils import kerr_utils, kerrnewman_utils
-from numpy.testing import assert_allclose
 
 _c = constant.c.value
 _G = constant.G.value
