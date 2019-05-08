@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 import sympy
-
 from einsteinpy.utils import christoffel
 
 

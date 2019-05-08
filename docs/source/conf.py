@@ -1,5 +1,6 @@
-import alabaster
 from datetime import datetime
+
+import alabaster
 import einsteinpy
 
 project = "EinsteinPy"

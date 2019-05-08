@@ -2,7 +2,6 @@ import warnings
 
 import astropy.units as u
 import numpy as np
-
 from einsteinpy import constant
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import *

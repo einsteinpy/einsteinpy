@@ -3,10 +3,9 @@ import collections
 import numpy as np
 import pytest
 from astropy import units as u
-from numpy.testing import assert_allclose
-
 from einsteinpy import constant, utils
 from einsteinpy.utils import kerr_utils
+from numpy.testing import assert_allclose
 
 
 def test_nonzero_christoffels():

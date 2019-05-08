@@ -1,9 +1,8 @@
 import numpy as np
 import pytest
 from astropy import units as u
-from numpy.testing import assert_allclose
-
 from einsteinpy import utils
+from numpy.testing import assert_allclose
 
 
 @pytest.mark.parametrize(
