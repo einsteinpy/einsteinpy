@@ -166,7 +166,7 @@ def event_horizon(
     Rh = 0.5 * (
         Rs
         + np.sqrt(
-            (Rs ** 2) - 4 * ((a ** 2) + ((charge_length_scale(Q, c, G, Cc)) ** 2))
+            (Rs ** 2) - 4 * (a ** 2 + (charge_length_scale(Q, c, G, Cc)) ** 2)
         )
     )
     if coord == "BL":

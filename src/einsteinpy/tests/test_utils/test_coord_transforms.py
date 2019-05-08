@@ -1,8 +1,7 @@
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose
-
 from einsteinpy import utils
+from numpy.testing import assert_allclose
 
 
 @pytest.mark.parametrize(

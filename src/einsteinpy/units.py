@@ -1,5 +1,4 @@
 import astropy.units as u
-
 from einsteinpy.constant import G, c
 
 

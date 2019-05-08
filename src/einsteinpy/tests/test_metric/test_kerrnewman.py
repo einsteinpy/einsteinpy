@@ -3,11 +3,10 @@ import warnings
 import numpy as np
 import pytest
 from astropy import units as u
-from numpy.testing import assert_allclose
-
 from einsteinpy import constant
 from einsteinpy.metric import KerrNewman
 from einsteinpy.utils import kerrnewman_utils, schwarzschild_radius
+from numpy.testing import assert_allclose
 
 _c = constant.c.value
 _G = constant.G.value

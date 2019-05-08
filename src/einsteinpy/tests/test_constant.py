@@ -2,9 +2,8 @@ import astropy.units as u
 import numpy as np
 import pytest
 from astropy import constants
-from numpy.testing import assert_allclose
-
 from einsteinpy.constant import Cosmo_Const, Cosmo_Const_base
+from numpy.testing import assert_allclose
 
 
 def test_Cosmo_Const_returns_correct_value_units():
