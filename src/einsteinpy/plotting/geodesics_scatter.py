@@ -18,6 +18,10 @@ class ScatterGeodesicPlotter:
 
         Parameters
         ----------
+        mass : ~astropy.units.quantity.Quantity
+            Mass of the body
+        time : ~astropy.units.quantity.Quantity
+            Time of start, defaults to 0 seconds.
         attractor_color : string, optional
             Color which is used to denote the attractor. Defaults to black.
         cmap_color : string, optional
