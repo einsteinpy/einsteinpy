@@ -15,6 +15,7 @@ class ScatterGeodesicPlotter:
         self, mass, time=0 * u.s, attractor_color="black", cmap_color="Oranges"
     ):
         """
+        Constructor.
 
         Parameters
         ----------
