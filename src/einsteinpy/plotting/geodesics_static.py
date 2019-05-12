@@ -25,9 +25,14 @@ class StaticGeodesicPlotter:
         attractor_color="#ffcc00",
     ):
         """
+        Constructor. 
 
         Parameters
         ----------
+        mass : ~astropy.units.quantity.Quantity
+            Mass of the body
+        time : ~astropy.units.quantity.Quantity
+            Time of start, defaults to 0 seconds.
         attractor_radius_scale : float, optional
             Scales the attractor radius by the value given. Default is 1. It is used to make plots look more clear if needed.
         attractor_color : string, optional
