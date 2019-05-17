@@ -156,10 +156,6 @@ please open an issue in the `issue tracker`_.
 Contributing
 ============
 
-.. image:: https://img.shields.io/waffle/label/einsteinpy/einsteinpy/1%20-%20Ready.svg?style=flat-square
-   :target: https://waffle.io/einsteinpy/einsteinpy
-   :alt: 'Stories in Ready'
-
 EinsteinPy is a community project, hence all contributions are more than
 welcome! For more information, head to `CONTRIBUTING.rst`_.
 
