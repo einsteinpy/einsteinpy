@@ -25,7 +25,7 @@ def test_input():
 
 def test_compare_kerr_kerrnewman_metric_inv(test_input):
     c, G, Cc, r, theta, M, a = test_input
-    # inverse of metric for kerr and kerr-newman metric should be equal when Q=0
+    # the inverse of metric for Kerr and Kerr-Newman metric should be equal when Q=0
     scr = 2 * M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M)
     m1 = kerr_utils.metric_inv(r, theta, M, a_scaled)
@@ -35,7 +35,7 @@ def test_compare_kerr_kerrnewman_metric_inv(test_input):
 
 def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
     c, G, Cc, r, theta, M, a = test_input
-    # differentiation of metric for kerr and kerr-newman metric should be equal when Q=0
+    # differentiation of metric for Kerr and Kerr-Newman metric should be equal when Q=0
     scr = 2 * M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M)
     m1 = kerr_utils.dmetric_dx(r, theta, M, a_scaled)
@@ -44,7 +44,7 @@ def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
 
 
 def test_christoffels1(test_input):
-    # compare christoffel symbols output by optimized function and by brute force
+    # compare Christoffel symbols output by optimized function and by brute force
     c, G, Cc, r, theta, M, a = test_input
     Q = 1.0
     scr = 2 * M * G / (c ** 2)
@@ -68,7 +68,7 @@ def test_christoffels1(test_input):
 
 
 def test_compare_kerr_kerrnewman_christoffels(test_input):
-    # christoffel symbols for kerr and kerr-newman metric should be equal when Q=0
+    # christoffel symbols for Kerr and Kerr-Newman metric should be equal when Q=0
     c, G, Cc, r, theta, M, a = test_input
     scr = 2 * M * G / (c ** 2)
     a_scaled = kerr_utils.scaled_spin_factor(a, M)
@@ -87,7 +87,7 @@ def test_electric_magnetic_potential_from_em_potential_vector(test_input):
 
 
 def test_compare_kerr_kerrnewman_time_velocity():
-    # time velocity for kerr & kerr-newman should be same when Q=0
+    # time velocity for Kerr & Kerr-Newman should be same when Q=0
     pos_vec = np.array([1.0, np.pi / 2, 0.1])
     vel_vec = np.array([-0.1, -0.01, 0.05])
     mass = 1e24 * u.kg
@@ -128,7 +128,7 @@ def test_maxwell_tensor_covariant_for_natural_units():
 
 
 def test_maxwell_tensor_contravariant_for_natural_units():
-    # Theoritical background required to write extensive test. Right now only skew-symettric property is being checked.
+    #  Theoretical background is required to write extensive tests. Right now only skew-symmetric property is being checked.
     M = 1e22
     r = 5.5
     theta = 2 * np.pi / 5
