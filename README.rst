@@ -124,6 +124,10 @@ install EinsteinPy using `conda <http://conda.io>`_::
 
   $ conda install einsteinpy --channel conda-forge
 
+Or for Debian/Ubuntu/Mint users, the package is installable from `apt <https://packages.debian.org/sid/python3-einsteinpy>`_::
+
+  $ sudo apt install python3-einsteinpy
+
 Please check out the `guide for alternative installation methods`_.
 
 .. _`guide for alternative installation methods`: https://einsteinpy.github.io/installation/
