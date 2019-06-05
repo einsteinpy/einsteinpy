@@ -55,13 +55,13 @@
 
 |circleci| |travisci| |appveyor| |codecov| |codeclimate|
 
-EinsteinPy is an open source pure Python package dedicated to problems arising in 
+EinsteinPy is an open source pure Python package dedicated to problems arising in
 General Relativity and relativistic physics, such as geodesics calculation for vacuum
 solutions for Einstein's field equations, calculation of various quantities in these
 geometries like Schwarzschild Radius and the event horizon. The library also has functions
-for Symbolic calculations in GR like Christoffel Symbols and much more is planned. 
+for Symbolic calculations in GR like Christoffel Symbols and much more is planned.
 The library aims to solve Einstein's field equations for arbitrarily complicated
-matter distribution as one of the main goals. 
+matter distribution as one of the main goals.
 It is released under the MIT license.
 
 Documentation
@@ -100,10 +100,10 @@ EinsteinPy requires the following Python packages:
 
 * NumPy, for basic numerical routines
 * Astropy, for physical units and time handling
-* Numba (optional), for accelerating the code
 * Matplotlib, for geodesics plotting and visualizations.
 * SciPy, for solving ordinary differential equations.
-* SymPy (optional), for symbolic calculations related to GR.
+* SymPy, for symbolic calculations related to GR.
+* Numba (optional), for accelerating the code
 
 EinstienPy is usually tested on Linux, Windows and OS X on Python
 3.5, 3.6 and 3.7 against latest NumPy.
@@ -128,6 +128,9 @@ Or for Debian/Ubuntu/Mint users, the package is installable from `apt <https://p
 
   $ sudo apt install python3-einsteinpy
 
+Please note that the package version in Debian Repositories might not be the latest.
+But it will be definitely the most stable version of EinsteinPy available till date.
+
 Please check out the `guide for alternative installation methods`_.
 
 .. _`guide for alternative installation methods`: https://einsteinpy.github.io/installation/
@@ -144,7 +147,7 @@ If installed correctly, the tests can be run using pytest::
   platform linux -- Python 3.7.1, pytest-4.3.1, py-1.8.0, pluggy-0.9.0
   rootdir: /home/shreyas/Local Forks/einsteinpy, inifile: setup.cfg
   plugins: remotedata-0.3.1, openfiles-0.3.1, doctestplus-0.3.0, cov-2.5.1, arraydiff-0.3
-  collected 56 items                                                             
+  collected 56 items
   [...]
   ==================== 56 passed, 1 warnings in 28.19 seconds ====================
   $
@@ -165,6 +168,8 @@ welcome! For more information, head to `CONTRIBUTING.rst`_.
 
 .. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/master/CONTRIBUTING.rst
 
+Developers Documentation can be found here.
+
 Support
 =======
 
@@ -183,11 +188,13 @@ Please join our `[matrix]`_ channel or `gitter`_ chat room for further queries.
 
 .. _`gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
 
+If you still have a doubt, write a mail directly to `developers@einsteinpy.org <mailto:developers@einsteinpy.org>`_.
+
 Citing
 ======
 
 If you use EinsteinPy on your project, please
-`drop us a line <mailto:einsteinpy.project@gmail.com>`_.
+`drop us a line <mailto:developers@einsteinpy.org>`_.
 
 You can also use the DOI to cite it in your publications. This is the latest
 one:
@@ -212,14 +219,15 @@ use of the library. Please refer to `COPYING`_.
 FAQ
 ===
 
-What's up with the name?
-------------------------
+Why Einstein-Py?
+----------------
 
 EinsteinPy comes from the name of the famous physicist, Nobel laureate, revolutionary person, Prof. Albert Einstein.
-This is a small tribute from our part for the amazing work he did for the science.
+This is a small tribute from our part for the amazing work he did for the humanity!
 
-Can I do <insert awesome thing> with EinsteinPy?
-------------------------------------------------
+
+Can I do <insert nerdy thing> with EinsteinPy?
+----------------------------------------------
 
 EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it.
 We welcome every contribution and will be happy to include it in EinsteinPy.
@@ -236,7 +244,7 @@ the project.
 Inspiration
 -----------
 
-The whole documentation and code structure is shamelessly inspired by `poliastro`_ . We really thank the developers to
-help us achieve this.
+The whole documentation and code structure is shamelessly inspired by `poliastro`_ . We really thank the poliastro
+developers to make this possible. EinsteinPy is nothing without it's supporters.
 
 .. _`poliastro`: https://docs.poliastro.space/
