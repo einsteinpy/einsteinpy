@@ -4,11 +4,8 @@ Static Geodesic Plotting (Scatter Plots)
 This module contains the basic classes for static plottings in
 2-dimensions for scatter and line:
 
-.. automodule:: einsteinpy.plotting.geodesics_scatter
-    :members:
-
 Color
-=====
+-----
 * Attractor :
     User can give the color to attractor of his/her choice.
     It can be passed while making the object of geodesics_static class.
