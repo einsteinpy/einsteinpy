@@ -1,8 +1,7 @@
-Static 2D Plotting module
-=========================
+Static Geodesic Plotting
+========================
 
-This module contains the basic classes for static plottings in
-2-dimensions for scatter and line:
+This module contains the methods for static geodesic plotting.
 
 .. automodule:: einsteinpy.plotting.geodesics_static
     :members:

@@ -18,3 +18,6 @@ Cosmo_Const_base = constants.Constant(
 )
 
 Cosmo_Const = Cosmo_Const_base.value * (u.s ** -2)
+
+Solar_Mass = 1.9891e30 * u.kg
+R_sun = 695510 * u.km
