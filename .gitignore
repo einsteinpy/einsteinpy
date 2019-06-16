@@ -30,7 +30,7 @@ docs/_build
 # Pycharm editor project files
 .idea
 
-#sofia
+
 venv/
 
 # Floobits project files
