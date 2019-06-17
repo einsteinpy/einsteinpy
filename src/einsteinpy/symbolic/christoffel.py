@@ -1,11 +1,8 @@
 import numpy as np
 
-try:
-    import sympy
-except ImportError:
-    import warnings
+import sympy
 
-    warnings.warn("SymPy is required but is not installed.")
+
 
 
 def riemann_curvature_tensor(list2d, syms):
