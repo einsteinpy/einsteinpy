@@ -14,7 +14,9 @@ class Tensor:
         """
         self.syms = syms
         self.dims = len(self.syms)
-        self.generic_list = (np.zeros(shape=(self.dims, self.dims, self.dims, self.dims), dtype=int)).tolist()
+        self.generic_list = (
+            np.zeros(shape=(self.dims, self.dims, self.dims, self.dims), dtype=int)
+        ).tolist()
 
     def _simplify_tensor_helper(self, v):
         """

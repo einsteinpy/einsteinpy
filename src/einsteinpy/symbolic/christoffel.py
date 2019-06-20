@@ -2,9 +2,7 @@ import sympy
 import tensor_symbolic as Tensor
 
 
-
 class ChristoffelSymbols(Tensor):
-
     def __init__(self, list2d, syms):
         """
         Constructor and Initializer
@@ -46,9 +44,9 @@ class ChristoffelSymbols(Tensor):
             temp = 0
             for n in range(dims):
                 temp += (self.mat_inv[i, n] / 2) * (
-                        sympy.diff(self.list2d[n][j], self.syms[k])
-                        + sympy.diff(self.list2d[n][k], self.syms[j])
-                        - sympy.diff(self.list2d[j][k], self.syms[n])
+                    sympy.diff(self.list2d[n][j], self.syms[k])
+                    + sympy.diff(self.list2d[n][k], self.syms[j])
+                    - sympy.diff(self.list2d[j][k], self.syms[n])
                 )
             generic_list[i][j][k] = temp
             return generic_list
@@ -78,7 +76,6 @@ class ChristoffelSymbols(Tensor):
         christoffels = ChristoffelSymbols(list2d, syms)
         return christoffels
 
-
     def kerr_christoffels(symbolstr="t r theta phi"):
         """
         Returns the 3d list of christoffel symbols of Kerr metric(BL coordinates) in Plank units : G=1, c=1.
@@ -104,11 +101,12 @@ class ChristoffelSymbols(Tensor):
         list2d[2][2] = sigma
         list2d[3][3] = (
             (sympy.sin(syms[2]) ** 2)
-            * ((a ** 2 + syms[1] ** 2) ** 2 - (a ** 2) * (A * (sympy.sin(syms[2]) ** 2)))
+            * (
+                (a ** 2 + syms[1] ** 2) ** 2
+                - (a ** 2) * (A * (sympy.sin(syms[2]) ** 2))
+            )
         ) / sigma
         list2d[3][0] = -1 * (R * a * (syms[1])) * (sympy.sin(syms[2]) ** 2) / sigma
         list2d[0][3] = list2d[3][0]
         christoffels = ChristoffelSymbols(list2d, syms)
         return christoffels
-
-

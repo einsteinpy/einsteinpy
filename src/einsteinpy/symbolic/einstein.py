@@ -1,4 +1,5 @@
 from einsteinpy.symbolic import Tensor
 
-class RicciTensor(Tensor):
+
+class EinsteinTensor(Tensor):
     pass
