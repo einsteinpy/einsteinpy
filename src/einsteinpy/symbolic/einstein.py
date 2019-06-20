@@ -1,4 +1,4 @@
-from einsteinpy.symbolic import Tensor
+from .tensor import Tensor
 
 
 class EinsteinTensor(Tensor):

@@ -1,7 +1,7 @@
 import sympy
 
-import christoffel_symbolic as ChristoffelSymbols
-import tensor_symbolic as Tensor
+from .christoffel import ChristoffelSymbols
+from .tensor import Tensor
 
 
 class RiemannCurvatureTensor(Tensor):

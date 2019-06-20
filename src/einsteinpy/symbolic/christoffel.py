@@ -1,5 +1,5 @@
 import sympy
-import tensor_symbolic as Tensor
+from .tensor import Tensor
 
 
 class ChristoffelSymbols(Tensor):
