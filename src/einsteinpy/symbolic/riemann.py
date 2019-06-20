@@ -28,8 +28,8 @@ class RiemannCurvatureTensor(Tensor):
             r = (int(i / dims)) % (dims)
             s = (int(i / (dims ** 2))) % (dims)
             t = (int(i / (dims ** 3))) % (dims)
-            temp = sympy.diff(christslist[t][s][n], syms[r]) - sympy.diff(
-                christslist[t][r][n], syms[s]
+            temp = sympy.diff(christslist[t][s][n], self.syms[r]) - sympy.diff(
+                christslist[t][r][n], self.syms[s]
             )
             for p in range(dims):
                 temp += (christslist[p][s][n] * christslist[t][p][r]) - christslist[p][
