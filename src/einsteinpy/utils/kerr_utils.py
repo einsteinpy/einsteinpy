@@ -2,6 +2,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant, utils
+from einsteinpy.coordinates import BoyerLindquist, Spherical
 from einsteinpy.utils import schwarzschild_radius_dimensionless
 
 nonzero_christoffels_list = [
@@ -417,9 +418,11 @@ def event_horizon(
     if coord == "BL":
         ans = np.array([Rh, theta], dtype=float)
     else:
-        ans = utils.CartesianToSpherical_pos(
-            utils.BLToCartesian_pos(np.array([Rh, theta, 0.0]), a)
-        )[:2]
+        ans = (
+            BoyerLindquist(Rh * u.m, theta * u.rad, 0.0 * u.rad, a * u.m)
+            .to_spherical()
+            .si_values()[:2]
+        )
     return ans
 
 
@@ -451,7 +454,9 @@ def radius_ergosphere(
     if coord == "BL":
         ans = np.array([Re, theta], dtype=float)
     else:
-        ans = utils.CartesianToSpherical_pos(
-            utils.BLToCartesian_pos(np.array([Re, theta, 0.0]), a)
-        )[:2]
+        ans = (
+            BoyerLindquist(Re * u.m, theta * u.rad, 0.0 * u.rad, a * u.m)
+            .to_spherical()
+            .si_values()[:2]
+        )
     return ans
