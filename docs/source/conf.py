@@ -1,5 +1,7 @@
-import alabaster
 from datetime import datetime
+
+import alabaster
+
 import einsteinpy
 
 project = "EinsteinPy"
@@ -19,9 +21,10 @@ intersphinx_mapping = {
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "matplotlib": ("http://matplotlib.org", None),
+    "sympy": ("https://docs.sympy.org", None),
 }
 
-autodoc_member_order = 'bysource'
+autodoc_member_order = "bysource"
 
 html_theme_options = {
     "logo": "logo_small.png",
@@ -46,16 +49,16 @@ add_module_names = True
 
 needs_sphinx = "1.3"
 extensions = [
-    'alabaster',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.todo',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.intersphinx',
-    'nbsphinx',
-    'IPython.sphinxext.ipython_console_highlighting',
-    'sphinx.ext.mathjax', #New module for matrix visualization
-    'sphinx.ext.graphviz', # For creating the diagrams
+    "alabaster",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.todo",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.intersphinx",
+    "nbsphinx",
+    "IPython.sphinxext.ipython_console_highlighting",
+    "sphinx.ext.mathjax",  # New module for matrix visualization
+    "sphinx.ext.graphviz",  # For creating the diagrams
 ]
 
 templates_path = ["_templates"]
@@ -70,9 +73,9 @@ html_theme_path = [alabaster.get_path()]
 
 html_title = "EinsteinPy"
 
-html_static_path =['_static']
+html_static_path = ["_static"]
 
-htmlhelp_basename = 'einsteinpydoc'
+htmlhelp_basename = "einsteinpydoc"
 
 html_sidebars = {
     "**": [
