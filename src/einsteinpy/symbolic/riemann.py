@@ -31,24 +31,24 @@ class RiemannCurvatureTensor(Tensor):
         
         """
         super(RiemannCurvatureTensor, self).__init__(arr)
-        if isinstance(syms, list) or isinstance(syms, tuple):
+        if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
         else:
             raise TypeError("syms should be a list or tuple")
 
     @classmethod
-    def from_christoffels(cls, ch):
+    def from_christoffels(cls, chris):
         """
         Get Riemann Tensor calculated from a Christoffel Symbols
 
         Parameters
         ----------
-        metric : ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
+        chris : ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
             Christoffel Symbols from which Riemann Curvature Tensor to be calculated
         
         """
-        arr, syms = ch.tensor(), ch.symbols()
+        arr, syms = chris.tensor(), chris.symbols()
         dims = len(syms)
         riemann_list = (np.zeros(shape=(dims, dims, dims, dims), dtype=int)).tolist()
         for i in range(dims ** 4):

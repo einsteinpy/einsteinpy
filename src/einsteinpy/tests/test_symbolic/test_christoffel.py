@@ -10,7 +10,7 @@ def schwarzschild_metric():
     G, M, c, a = sympy.symbols("G M c a")
     # using metric values of schwarschild space-time
     # a is schwarzschild radius
-    list2d = [[0 for j in range(4)] for i in range(4)]
+    list2d = np.zeros((4, 4), dtype=int).tolist()
     list2d[0][0] = 1 - (a / syms[1])
     list2d[1][1] = -1 / ((1 - (a / syms[1])) * (c ** 2))
     list2d[2][2] = -1 * (syms[1] ** 2) / (c ** 2)

@@ -20,13 +20,13 @@ class MetricTensor(Tensor):
         Raises
         ------
         TypeError
-            Raised when matrix is not a list or sympy Array
+            Raised when arr is not a list or sympy Array
         TypeError
             syms is not a list or tuple
         
         """
         super(MetricTensor, self).__init__(arr)
-        if isinstance(syms, list) or isinstance(syms, tuple):
+        if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
         else:

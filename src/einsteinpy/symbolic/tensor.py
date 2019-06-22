@@ -23,7 +23,7 @@ class Tensor:
         
 
         """
-        if isinstance(arr, list) or isinstance(arr, tuple):
+        if isinstance(arr, (list, tuple)):
             self.arr = sympy.Array(arr)
         elif isinstance(arr, sympy.Array):
             self.arr = arr
@@ -32,7 +32,7 @@ class Tensor:
 
     def tensor(self):
         """
-        Returns the sympy matrix
+        Returns the sympy Array
 
         Returns
         -------

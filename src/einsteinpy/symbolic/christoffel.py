@@ -30,7 +30,7 @@ class ChristoffelSymbols(Tensor):
         
         """
         super(ChristoffelSymbols, self).__init__(arr)
-        if isinstance(syms, list) or isinstance(syms, tuple):
+        if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
         else:
@@ -50,8 +50,7 @@ class ChristoffelSymbols(Tensor):
         dims = metric.dims
         tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
         mat, syms = metric.tensor(), metric.symbols()
-        intermat = sympy.Matrix(mat.tolist())
-        matinv = intermat.inv()
+        matinv = sympy.Matrix(mat.tolist()).inv()
         for t in range(dims ** 3):
             # i,j,k each goes from 0 to (dims-1)
             # hack for codeclimate. Could be done with 3 nested for loops
