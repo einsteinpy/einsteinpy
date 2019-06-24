@@ -7,9 +7,6 @@ of the schwartzschild radius, calculation of the rate of expansion of the univer
 .. toctree::
     :maxdepth: 2
 
-    christoffel
-    coord_transforms
-    bl_coord_transforms
     scalar_factor
     schwarzschild_utils
     kerr_utils

@@ -1,113 +1,80 @@
+import numpy as np
 import sympy
 
+from .metric import MetricTensor
 from .tensor import Tensor
 
 
 class ChristoffelSymbols(Tensor):
-    def __init__(self, list2d, syms):
+    """
+    Class for defining christoffel symbols
+    """
+
+    def __init__(self, arr, syms):
         """
         Constructor and Initializer
-        :param list2d:
-        :param syms:
+        
+        Parameters
+        ----------
+        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+            Sympy Array or multi-dimensional list containing Sympy Expressions
+        syms : tuple or list
+            Tuple of crucial symbols dentoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+
+        Raises
+        ------
+        TypeError
+            Raised when arr is not a list or sympy Array
+        TypeError
+            syms is not a list or tuple
+        
         """
-        super.__init__(syms)
-        self.list2d = list2d
-        dims = self.dims
-        self.mat = sympy.Matrix(self.list2d)
-        self.mat_inv = self.mat.inv()
-        self.christlist = self.create_christlist(dims, self.generic_list)
+        super(ChristoffelSymbols, self).__init__(arr)
+        if isinstance(syms, (list, tuple)):
+            self.syms = syms
+            self.dims = len(self.syms)
+        else:
+            raise TypeError("syms should be a list or tuple")
 
-    def create_christlist(self, dims, generic_list):
-
+    @classmethod
+    def from_metric(cls, metric):
         """
-         Method to calculate christoffel symbols of a given metric
+        Get Christoffel symbols calculated from a metric tensor
 
-         Parameters
-         ----------
-         list2d : list
-             2d list (Matrix) representing metric, containing ~sympy expressions
-         syms : list
-             1d list containing representaion of [x0,x1,x2...] in ~sympy expressions
-
-         Returns
-         -------
-         list
-             3d list of ~sympy expressions containing christoffel symbols
-         """
-
-        _counterlist = [i for i in range(dims ** 3)]
-        for t in _counterlist:
+        Parameters
+        ----------
+        metric : ~einsteinpy.symbolic.metric.MetricTensor
+            Space-time Metric from which Christoffel Symbols are to be calculated
+        
+        """
+        dims = metric.dims
+        tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
+        mat, syms = metric.tensor(), metric.symbols()
+        matinv = sympy.Matrix(mat.tolist()).inv()
+        for t in range(dims ** 3):
             # i,j,k each goes from 0 to (dims-1)
             # hack for codeclimate. Could be done with 3 nested for loops
             k = t % dims
             j = (int(t / dims)) % (dims)
             i = (int(t / (dims ** 2))) % (dims)
-            temp = 0
+            tmpvar = 0
             for n in range(dims):
-                temp += (self.mat_inv[i, n] / 2) * (
-                    sympy.diff(self.list2d[n][j], self.syms[k])
-                    + sympy.diff(self.list2d[n][k], self.syms[j])
-                    - sympy.diff(self.list2d[j][k], self.syms[n])
+                tmpvar += (matinv[i, n] / 2) * (
+                    sympy.diff(mat[n, j], syms[k])
+                    + sympy.diff(mat[n, k], syms[j])
+                    - sympy.diff(mat[j, k], syms[n])
                 )
-            generic_list[i][j][k] = temp
-            return generic_list
+            tmplist[i][j][k] = tmpvar
+        return cls(tmplist, syms)
 
-    def schwarzschild_christoffels(self, symbolstr="t r theta phi"):
+    def symbols(self):
         """
-        Returns the 3d list of christoffel symbols of Schwarzschild Metric.
-
-        Parameters
-        ----------
-        symbolstr : string
-            symbols to be used to define schwarzschild space, defaults to 't r theta phi'
+        Returns the symbols used for defining the time & spacial axis
 
         Returns
         -------
-        list
-            3d list of christoffel symbols for schwarzschild metric
-
+        tuple
+            tuple containing (t,x1,x2,x3)
+        
         """
-        list2d = [[0 for i in range(4)] for i in range(4)]
-        syms = sympy.symbols(symbolstr)
-        c, a = sympy.symbols("c a")
-        list2d[0][0] = 1 - (a / syms[1])
-        list2d[1][1] = -1 / ((1 - (a / syms[1])) * (c ** 2))
-        list2d[2][2] = -1 * (syms[1] ** 2) / (c ** 2)
-        list2d[3][3] = -1 * (syms[1] ** 2) * (sympy.sin(syms[2]) ** 2) / (c ** 2)
-        christoffels = ChristoffelSymbols(list2d, syms)
-        return christoffels
-
-    def kerr_christoffels(symbolstr="t r theta phi"):
-        """
-        Returns the 3d list of christoffel symbols of Kerr metric(BL coordinates) in Plank units : G=1, c=1.
-
-        Parameters
-        ----------
-        symbolstr : string
-            symbols to be used to define kerr space in BL coordinates, defaults to 't r theta phi'
-
-        Returns
-        -------
-        list
-            3d list of christoffel symbols for kerr metric
-
-        """
-        list2d = [[0 for i in range(4)] for i in range(4)]
-        syms = sympy.symbols(symbolstr)
-        a, R = sympy.symbols("a R")
-        A = syms[1] ** 2 - R * syms[1] + a ** 2
-        sigma = syms[1] ** 2 + (a ** 2) * (sympy.cos(syms[2]) ** 2)
-        list2d[0][0] = (R * syms[1] / sigma) - 1
-        list2d[1][1] = sigma / A
-        list2d[2][2] = sigma
-        list2d[3][3] = (
-            (sympy.sin(syms[2]) ** 2)
-            * (
-                (a ** 2 + syms[1] ** 2) ** 2
-                - (a ** 2) * (A * (sympy.sin(syms[2]) ** 2))
-            )
-        ) / sigma
-        list2d[3][0] = -1 * (R * a * (syms[1])) * (sympy.sin(syms[2]) ** 2) / sigma
-        list2d[0][3] = list2d[3][0]
-        christoffels = ChristoffelSymbols(list2d, syms)
-        return christoffels
+        return self.syms

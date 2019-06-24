@@ -7,46 +7,49 @@ class Tensor:
     Base Class
     """
 
-    def __init__(self, syms):
+    def __init__(self, arr):
         """
         Constructor and Initializer
-        :param syms:
-        """
-        self.syms = syms
-        self.dims = len(self.syms)
-        self.generic_list = (
-            np.zeros(shape=(self.dims, self.dims, self.dims, self.dims), dtype=int)
-        ).tolist()
-
-    def _simplify_tensor_helper(self, v):
-        """
-
-        :param v:
-        :return:
-        """
-        self.returnval = None
-        if isinstance(v, list):
-            newlist = list()
-            for t in v:
-                newlist.append(self._simplify_tensor_helper(t))
-            self.returnval = newlist
-        else:
-            self.returnval = sympy.simplify(v)
-        return self.returnval
-
-    def simplify_tensor(self, ndlist):
-        """
-        Returns a N-Dimensional list of simplified symbolic tensor
-
+        
         Parameters
         ----------
-        ndlist : list
-            N-Dimensional list of sympy expressions representing some tensor
+        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+            Sympy Array or multi-dimensional list containing Sympy Expressions
+
+        Raises
+        ------
+        TypeError
+            Raised when arr is not a list or sympy array
+        
+
+        """
+        if isinstance(arr, (list, tuple)):
+            self.arr = sympy.Array(arr)
+        elif isinstance(arr, sympy.Array):
+            self.arr = arr
+        else:
+            raise TypeError("Only multi-dimensional list or Sympy Array is expected")
+
+    def tensor(self):
+        """
+        Returns the sympy Array
 
         Returns
         -------
-        list
-            N-Dimensional list
+        ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
+            Sympy Array object
+        
+        """
+        return self.arr
+
+    def simplify(self):
+        """
+        Returns a simplified Tensor
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.Tensor
+            Simplified Tensor
 
         """
-        return self._simplify_tensor_helper(ndlist)
+        return sympy.simplify(self.tensor())
