@@ -33,7 +33,7 @@ class Body:
         mass=0 * u.kg,
         R=0 * u.km,
         differential=None,
-        a=0,
+        a=0 * u.m,
         q=0 * u.C,
         parent=None,
     ):
@@ -69,6 +69,7 @@ class Body:
         self.q = q
         self.mass = mass
         self.identifier = identifier
+        self.coordinates = differential
         self.parent = parent
 
 

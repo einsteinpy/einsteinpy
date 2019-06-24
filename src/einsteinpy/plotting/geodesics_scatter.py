@@ -4,7 +4,8 @@ import numpy as np
 from matplotlib.animation import FuncAnimation
 
 from einsteinpy.metric import Schwarzschild
-
+from einsteinpy.bodies import Body
+from einsteinpy.geodesic import Geodesic
 
 class ScatterGeodesicPlotter:
     """
@@ -39,7 +40,7 @@ class ScatterGeodesicPlotter:
         self._attractor_present = True
         plt.scatter(0, 0, color=self.attractor_color)
 
-    def plot(self, coords, end_lambda=10, step_size=1e-3):
+    def plot(self, geodesic):
         """
 
         Parameters
@@ -53,11 +54,7 @@ class ScatterGeodesicPlotter:
 
         """
 
-        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
-
-        vals = swc.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
-        )[1]
+        vals = geodesic.trajectory
 
         time = vals[:, 0]
         r = vals[:, 1]
