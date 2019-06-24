@@ -36,31 +36,10 @@ class Kerr:
         self.scr = schwarzschild_radius(M)
 
     @classmethod
-    @u.quantity_input(time=u.s, M=u.kg)
-    def from_BL(cls, coords, M, time=0 * u.s):
-        """
-        Constructor
-        Initialize from Boyer-Lindquist Coordinates
-
-        Parameters
-        ----------
-        coords : ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
-            Initial positions and velocities of particle in BL Coordinates, and spin factor of massive body.
-        M : ~astropy.units.quantity.Quantity
-            Mass of the body
-        time : ~astropy.units.quantity.Quantity
-            Time of start, defaults to 0 seconds.
-
-        """
-        cls.input_coord_system = "Boyer-Lindquist"
-        return cls(coords, M, time)
-
-    @classmethod
     @u.quantity_input(time=u.s, M=u.kg, a=u.m)
-    def from_cartesian(cls, coords, M, a, time=0 * u.s):
+    def from_coords(cls, coords, M, q=None, Q=None, time=0 * u.s, a=0 * u.m):
         """
         Constructor
-        Initialize from Cartesian Coordinates
 
         Parameters
         ----------
@@ -74,9 +53,14 @@ class Kerr:
             Time of start, defaults to 0 seconds.
 
         """
-        cls.input_coord_system = "Cartesian"
-        bl_coords = coords.bl_differential(a)
-        return cls(bl_coords, M, time)
+        if coord.system == "Cartesian":
+            bl_coords = coords.bl_differential(a)
+            return cls(bl_coords, M, time)
+        elif coord.system == "Spherical":
+            bl_coords = coords.bl_differential(a)
+            return cls(bl_coords, M, time)
+        else:
+            return cls(coords, M, time)
 
     def f_vec(self, ld, vec):
         chl = kerr_utils.christoffels(vec[1], vec[2], self.M.value, self.a.value)

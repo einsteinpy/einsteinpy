@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
-from einsteinpy.metric import Schwarzschild
 from einsteinpy.bodies import Body
 from einsteinpy.geodesic import Geodesic
+from einsteinpy.metric import Schwarzschild
+
 
 class ScatterGeodesicPlotter:
     """

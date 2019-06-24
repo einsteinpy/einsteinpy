@@ -41,11 +41,10 @@ class KerrNewman:
         self.scr = schwarzschild_radius(M)
 
     @classmethod
-    @u.quantity_input(q=u.C / u.kg, time=u.s, M=u.kg, Q=u.C)
-    def from_BL(cls, coords, q, M, Q, time=0 * u.s):
+    @u.quantity_input(q=u.C / u.kg, time=u.s, M=u.kg, Q=u.C, a=u.m)
+    def from_coords(cls, coords, M, q, Q, time=0 * u.s, a=0 * u.m):
         """
         Constructor.
-        Initialize from Boyer-Lindquist Coordinates.
 
         Parameters
         ----------
@@ -57,39 +56,20 @@ class KerrNewman:
             Mass of the massive body
         Q : ~astropy.units.quantity.Quantity
             Charge on the massive body
-        time : ~astropy.units.quantity.Quantity
-            Time of start, defaults to 0 seconds.
-
-        """
-        cls.input_coord_system = "Boyer-Lindquist"
-        return cls(coords, q, M, Q, time)
-
-    @classmethod
-    @u.quantity_input(q=u.C / u.kg, time=u.s, M=u.kg, Q=u.C, a=u.m)
-    def from_cartesian(cls, coords, q, M, a, Q, time=0 * u.s):
-        """
-        Constructor.
-        Initialize from Cartesian Coordinates.
-
-        Parameters
-        ----------
-        coords : ~einsteinpy.coordinates.velocity.CartesianDifferential
-            Initial positions and velocities of particle in Cartesian Coordinates.
-        q : ~astropy.units.quantity.Quantity
-            Charge per unit mass of test particle
-        M : ~astropy.units.quantity.Quantity
-            Mass of the massive body
         a : ~astropy.units.quantity.Quantity
             Spin factor of the massive body(Angular Momentum per unit mass per speed of light)
-        Q : ~astropy.units.quantity.Quantity
-            Charge on the massive body
         time : ~astropy.units.quantity.Quantity
             Time of start, defaults to 0 seconds.
 
         """
-        cls.input_coord_system = "Cartesian"
-        bl_coords = coords.bl_differential(a)
-        return cls(bl_coords, q, M, Q, time)
+        if coord.system == "Cartesian":
+            bl_coords = coords.bl_differential(a)
+            return cls(bl_coords, q, M, Q, time)
+        elif coord.system == "Spherical":
+            bl_coords = coords.bl_differential(a)
+            return cls(bl_coords, q, M, Q, time)
+        else:
+            return cls(coords, q, M, Q, time)
 
     def f_vec(self, ld, vec):
         chl = kerrnewman_utils.christoffels(
