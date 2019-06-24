@@ -31,9 +31,9 @@ There are several methods available to create :py:class:`~einsteinpy.metric.schw
     .. code-block:: python
 
         M = 5.972e24 * u.kg
-        pos_vec = [306.0 * u.m, np.pi/2 * u.rad, -30 * u.deg]
-        vel_vec = [0 * u.km/u.s, 0 * u.rad/u.s, 950.69 * u.rad/u.s]
-        obj = Schwarzschild.from_spherical(pos_vec, vel_vec, 0 * u.s, M)
+        sph_coord = SphericalDifferential(306.0 * u.m, np.pi/2 * u.rad, -np.pi/6*u.rad,
+                                  0*u.m/u.s, 0*u.rad/u.s, 1900*u.rad/u.s)
+        obj = Schwarzschild.from_spherical(sph_coord, M , 0* u.s)
 
 From position and velocity in Cartesian Coordinates
 ---------------------------------------------------
@@ -41,9 +41,9 @@ For initializing with Cartesian Coordinates, we can use :py:class:`~einsteinpy.m
 
     .. code-block:: python
 
-        pos_vec = [265.003774 * u.m, -153.000000e * u.m,  0 * u.m]
-        vel_vec = [145455.57 * u.m/u.s, 251936.43748389 * u.m/u.s, 0 * u.km/u.s]
-        obj = Schwarzschild.from_cartesian(pos_vec, vel_vec, 0*u.s, M)
+        cartsn_coord = CartesianDifferential(.265003774 * u.km, -153.000000e-03 * u.km,  0 * u.km,
+                          145.45557 * u.km/u.s, 251.93643748389 * u.km/u.s, 0 * u.km/u.s)
+        obj = Schwarzschild.from_cartesian(cartsn_coord, M , 0* u.s)
 
 Calculating Trajectory/Time-like Geodesics
 ------------------------------------------
@@ -78,7 +78,7 @@ Return value can be obtained in Cartesian Coordinates by :
     .. code-block:: python
 
         ans = obj.calculate_trajectory(end_lambda=end_tau, OdeMethodKwargs={"stepsize":stepsize}, return_cartesian=True)
-        
+
 
 Utilities: :py:class:`~einsteinpy.utils`
 ****************************************
@@ -86,11 +86,11 @@ Utilities: :py:class:`~einsteinpy.utils`
 EinsteinPy provides a great set of utility functions which are frequently used in general and numerical relativity.
 
 * Conversion of Coordinates (both position & velocity)
- 
+
  * Cartesian/Spherical
  * Cartesian/Boyer-Lindquist
 
-* Symbolic calculation of relevant terms in GR 
+* Symbolic calculation of relevant terms in GR
 
  * Christoffel Symbols
  * Riemann Curvature Tensor
@@ -148,7 +148,7 @@ EinsteinPy also supports smbolic calculations in :py:class:`~einsteinpy.utils.ch
 
         R*(-a**4*cos(theta)**2 - a**2*r**2*cos(theta)**2 + a**2*r**2 + r**4)/(2*(a**2*cos(theta)**2 + r**2)**2*(-R*r + a**2 + r**2))
 
-    
+
 Future Plans
 ============
 
