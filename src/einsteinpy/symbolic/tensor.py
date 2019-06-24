@@ -1,11 +1,17 @@
 import numpy as np
 import sympy
 
-
 class Tensor:
     """
     Base Class
     """
+
+    def __getitem__(self, index):
+        return self.arr[index]
+
+    def __setitem__(self, index, value):
+        self.arr[index] = value
+
 
     def __init__(self, arr):
         """
