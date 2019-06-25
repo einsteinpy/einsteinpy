@@ -153,3 +153,27 @@ def test_print_core_objects(
 
     # again switch to old stdout
     sys.stdout = old_stdout
+
+
+# Tests for object.velocities()
+
+
+def test_velocities(cartesian_differential, spherical_differential, bl_differential):
+    def with_numpy_array(differential_obj):
+        assert_allclose(
+            differential_obj.si_values()[3:],
+            differential_obj.velocities(return_np=True),
+            1e-10,
+            1e-15,
+        )
+
+    with_numpy_array(cartesian_differential)
+    with_numpy_array(spherical_differential)
+    with_numpy_array(bl_differential)
+
+
+def test_velocities2(cartesian_differential, spherical_differential, bl_differential):
+    cd, sd, bd = cartesian_differential, spherical_differential, bl_differential
+    assert cd.velocities() == [cd.v_x, cd.v_y, cd.v_z]
+    assert sd.velocities() == [sd.v_r, sd.v_t, sd.v_p]
+    assert bd.velocities() == [bd.v_r, bd.v_t, bd.v_p]
