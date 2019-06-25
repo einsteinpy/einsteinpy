@@ -1,7 +1,7 @@
 import astropy.units as u
 import numpy as np
 
-from core import BoyerLindquist, Cartesian, Spherical
+from .core import BoyerLindquist, Cartesian, Spherical
 
 
 class CartesianDifferential(Cartesian):
@@ -61,7 +61,8 @@ class CartesianDifferential(Cartesian):
             )
         )
 
-    def vel_coord(self):
+    def velocities(return_np = False):
+
         """
         Function for returning velocity.
 
@@ -71,7 +72,11 @@ class CartesianDifferential(Cartesian):
             Array containing velocity.
 
         """
-        return "Cartesian vx: {}, vy: {}, vz: {}".format(self.v_x, self.v_y, self.v_z)
+        if return_np:
+            return self.si_values()[3:]
+
+        else:
+            return np.array([self.v_x, self.v_y, self.v_z])
 
     def spherical_differential(self):
         """
@@ -197,7 +202,7 @@ class SphericalDifferential(Spherical):
             )
         )
 
-    def vel_coord(self):
+    def velocities(return_np = False):
         """
         Function for returning velocity.
 
@@ -207,7 +212,12 @@ class SphericalDifferential(Spherical):
             Array containing velocity.
 
         """
-        return "Spherical  vr: {}, vt: {}, vp: {}".format(self.v_r, self.v_t, self.v_p)
+
+        if return_np:
+            return self.si_values()[3:]
+
+        else:
+            return np.array([self.v_r, self.v_t, self.v_p])
 
     def cartesian_differential(self):
         """
@@ -324,7 +334,7 @@ class BoyerLindquistDifferential(BoyerLindquist):
             )
         )
 
-    def vel_coord(self):
+    def velocities(return_np = False):
         """
         Function for returning velocity.
 
@@ -334,9 +344,12 @@ class BoyerLindquistDifferential(BoyerLindquist):
             Array containing velocity.
 
         """
-        return "Boyer-Lindquist vr: {}, vt: {}, vp: {}".format(
-            elf.v_r, self.v_t, self.v_p, self.a
-        )
+        if return_np:
+            return self.si_values()[3:]
+
+        else:
+            return np.array([self.v_r, self.v_t, self.v_p])
+
 
     def cartesian_differential(self):
         """
