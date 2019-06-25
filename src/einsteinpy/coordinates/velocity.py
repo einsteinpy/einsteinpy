@@ -80,8 +80,7 @@ class CartesianDifferential(Cartesian):
         """
         if return_np:
             return self.si_values()[3:]
-        else:
-            return [self.v_x, self.v_y, self.v_z]
+        return [self.v_x, self.v_y, self.v_z]
 
     def spherical_differential(self):
         """
@@ -227,8 +226,7 @@ class SphericalDifferential(Spherical):
 
         if return_np:
             return self.si_values()[3:]
-        else:
-            return [self.v_r, self.v_t, self.v_p]
+        return [self.v_r, self.v_t, self.v_p]
 
     def cartesian_differential(self):
         """
@@ -364,8 +362,7 @@ class BoyerLindquistDifferential(BoyerLindquist):
         """
         if return_np:
             return self.si_values()[3:]
-        else:
-            return [self.v_r, self.v_t, self.v_p]
+        return [self.v_r, self.v_t, self.v_p]
 
     def cartesian_differential(self):
         """
