@@ -20,7 +20,7 @@ First of all, we import all the relevant modules and classes :
 
         import numpy as np
         from astropy import units as u
-
+        from einsteinpy.coordinates import SphericalDifferential, CartesianDifferential
         from einsteinpy.metric import Schwarzschild
 
 From position and velocity in Spherical Coordinates
@@ -114,17 +114,33 @@ Using the functions:
 
     .. code-block:: python
 
-        from einsteinpy import utils
+        import numpy as np
+        from astropy import units as u
+f       from einsteinpy.coordinates import BoyerLindquistDifferential, CartesianDifferential, Cartesian, BoyerLindquist
 
-        pos_vec = np.array([200, -100, 20.5])
-        vel_vec = np.array([-12, 14, 0.5])
-        a = 0.5
-        bl_pos_vec = utils.CartesianToBL_pos(pos_vec, a)
-        bl_vel_vec = utils.CartesianToBL_vel(pos_vec, vel_vec, a)
-        cs_pos_vec = utils.BLToCartesian_pos(bl_pos_vec, a)
-        cs_vel_vec = utils.BLToCartesian_vel(bl_pos_vec, bl_vel_vec, a)
-        print(pos_vec)
-        print(bl_pos_vec)
+        a = 0.5 * u.km
+
+        pos_vec = Cartesian(.265003774 * u.km, -153.000000e-03 * u.km,  0 * u.km)
+
+        bl_pos = pos_vec.to_bl(a)
+        print(bl_pos)
+
+        cartsn_pos = bl_pos.to_cartesian(a)
+        print(cartsn_pos)
+
+        pos_vel_coord = CartesianDifferential(.265003774 * u.km, -153.000000e-03 * u.km,  0 * u.km,
+                                  145.45557 * u.km/u.s, 251.93643748389 * u.km/u.s, 0 * u.km/u.s)
+
+        bl_coord = pos_vel_coord.bl_differential(a)
+        bl_coord = np.array(bl_coord)
+        bl_vel = bl_coord[3:]
+        print(bl_vel)
+
+        cartsn_coord = bl_coord.cartesian_differential(a)
+        cartsn_coord = np.array(cartsn_coord)
+        cartsn_vel = cartsn_coord[3:]
+        print(cartsn_vel)
+
 
     .. code-block:: python
 
@@ -151,7 +167,6 @@ EinsteinPy also supports smbolic calculations in :py:class:`~einsteinpy.utils.ch
 
 Future Plans
 ============
-
 * Support for null-geodesics in different geometries
 * Ultimate goal is providing numerical solutions for Einstein's equations for arbitarily complex matter distribution.
 * Relativistic hydrodynamics
