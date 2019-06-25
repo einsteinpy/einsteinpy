@@ -116,7 +116,7 @@ Using the functions:
 
         import numpy as np
         from astropy import units as u
-f       from einsteinpy.coordinates import BoyerLindquistDifferential, CartesianDifferential, Cartesian, BoyerLindquist
+        from einsteinpy.coordinates import BoyerLindquistDifferential, CartesianDifferential, Cartesian, BoyerLindquist
 
         a = 0.5 * u.km
 
@@ -132,12 +132,12 @@ f       from einsteinpy.coordinates import BoyerLindquistDifferential, Cartesian
                                   145.45557 * u.km/u.s, 251.93643748389 * u.km/u.s, 0 * u.km/u.s)
 
         bl_coord = pos_vel_coord.bl_differential(a)
-        bl_coord = np.array(bl_coord)
+        bl_coord = np.array.si_values()
         bl_vel = bl_coord[3:]
         print(bl_vel)
 
         cartsn_coord = bl_coord.cartesian_differential(a)
-        cartsn_coord = np.array(cartsn_coord)
+        cartsn_coord = ncartsn_coord.si_values()
         cartsn_vel = cartsn_coord[3:]
         print(cartsn_vel)
 
@@ -167,6 +167,7 @@ EinsteinPy also supports smbolic calculations in :py:class:`~einsteinpy.utils.ch
 
 Future Plans
 ============
+
 * Support for null-geodesics in different geometries
 * Ultimate goal is providing numerical solutions for Einstein's equations for arbitarily complex matter distribution.
 * Relativistic hydrodynamics
