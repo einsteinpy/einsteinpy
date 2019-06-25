@@ -1,7 +1,7 @@
 import astropy.units as u
 import numpy as np
 
-from .core import BoyerLindquist, Cartesian, Spherical
+from core import BoyerLindquist, Cartesian, Spherical
 
 
 class CartesianDifferential(Cartesian):
@@ -60,6 +60,18 @@ class CartesianDifferential(Cartesian):
                 [e.value for e in element_list],
             )
         )
+
+    def vel_coord(self):
+        """
+        Function for returning velocity.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing velocity.
+
+        """
+        return "Cartesian vx: {}, vy: {}, vz: {}".format(self.v_x, self.v_y, self.v_z)
 
     def spherical_differential(self):
         """
@@ -185,6 +197,18 @@ class SphericalDifferential(Spherical):
             )
         )
 
+    def vel_coord(self):
+        """
+        Function for returning velocity.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing velocity.
+
+        """
+        return "Spherical  vr: {}, vt: {}, vp: {}".format(self.v_r, self.v_t, self.v_p)
+
     def cartesian_differential(self):
         """
         Function to convert velocity to cartesian coordinates
@@ -298,6 +322,20 @@ class BoyerLindquistDifferential(BoyerLindquist):
                 super(BoyerLindquistDifferential, self).si_values(),
                 [e.value for e in element_list],
             )
+        )
+
+    def vel_coord(self):
+        """
+        Function for returning velocity.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Array containing velocity.
+
+        """
+        return "Boyer-Lindquist vr: {}, vt: {}, vp: {}".format(
+            elf.v_r, self.v_t, self.v_p, self.a
         )
 
     def cartesian_differential(self):
