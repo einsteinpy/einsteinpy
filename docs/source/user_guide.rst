@@ -152,7 +152,6 @@ EinsteinPy also supports smbolic calculations in :py:class:`~einsteinpy.utils.ch
 Future Plans
 ============
 
-* Support for more geometries, like Kerr, Kerr-Newman
 * Support for null-geodesics in different geometries
 * Ultimate goal is providing numerical solutions for Einstein's equations for arbitarily complex matter distribution.
 * Relativistic hydrodynamics
