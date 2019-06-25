@@ -132,12 +132,12 @@ Using the functions:
                                   145.45557 * u.km/u.s, 251.93643748389 * u.km/u.s, 0 * u.km/u.s)
 
         bl_coord = pos_vel_coord.bl_differential(a)
-        bl_coord = np.array.si_values()
+        bl_coord = bl_coord.si_values()
         bl_vel = bl_coord[3:]
         print(bl_vel)
 
         cartsn_coord = bl_coord.cartesian_differential(a)
-        cartsn_coord = ncartsn_coord.si_values()
+        cartsn_coord = cartsn_coord.si_values()
         cartsn_vel = cartsn_coord[3:]
         print(cartsn_vel)
 
