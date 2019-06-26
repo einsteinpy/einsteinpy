@@ -61,6 +61,27 @@ class CartesianDifferential(Cartesian):
             )
         )
 
+    def velocities(self, return_np=False):
+
+        """
+        Function for returning velocity.
+
+        Parameters
+        ----------
+        return_np : bool
+            True for numpy array with SI values, False for list with astropy units.
+            Defaults to False
+
+        Returns
+        -------
+        ~numpy.ndarray or list
+            Array or list containing velocity.
+
+        """
+        if return_np:
+            return self.si_values()[3:]
+        return [self.v_x, self.v_y, self.v_z]
+
     def spherical_differential(self):
         """
         Function to convert velocity to spherical coordinates velocity
@@ -185,6 +206,28 @@ class SphericalDifferential(Spherical):
             )
         )
 
+    def velocities(self, return_np=False):
+
+        """
+        Function for returning velocity.
+
+        Parameters
+        ----------
+        return_np : bool
+            True for numpy array with SI values, False for list with astropy units.
+            Defaults to False
+
+        Returns
+        -------
+        ~numpy.ndarray or list
+            Array or list containing velocity.
+
+        """
+
+        if return_np:
+            return self.si_values()[3:]
+        return [self.v_r, self.v_t, self.v_p]
+
     def cartesian_differential(self):
         """
         Function to convert velocity to cartesian coordinates
@@ -299,6 +342,27 @@ class BoyerLindquistDifferential(BoyerLindquist):
                 [e.value for e in element_list],
             )
         )
+
+    def velocities(self, return_np=False):
+
+        """
+        Function for returning velocity.
+
+        Parameters
+        ----------
+        return_np : bool
+            True for numpy array with SI values, False for list with astropy units.
+            Defaults to False
+
+        Returns
+        -------
+        ~numpy.ndarray or list
+            Array or list containing velocity.
+
+        """
+        if return_np:
+            return self.si_values()[3:]
+        return [self.v_r, self.v_t, self.v_p]
 
     def cartesian_differential(self):
         """
