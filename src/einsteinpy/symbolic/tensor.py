@@ -42,6 +42,24 @@ class Tensor:
         """
         return self.arr
 
+    def subs(self, *args):
+        """
+        Substitute the variables/expressions in a Tensor with other sympy variables/expressions.
+
+        Parameters
+        ----------
+        args : one argument or two argument
+            - two arguments, e.g foo.subs(old, new)
+            - one iterable argument, e.g foo.subs([(old1, new1), (old2, new2)]) for multiple substitutions at once.
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.Tensor:
+            Tensor with substituted values
+
+        """
+        return Tensor(self.tensor().subs(*args))
+
     def simplify(self):
         """
         Returns a simplified Tensor
