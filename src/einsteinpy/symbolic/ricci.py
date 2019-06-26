@@ -1,8 +1,8 @@
 import numpy as np
 import sympy
 
-from .tensor import Tensor
 from .metric import MetricTensor
+from .tensor import Tensor
 
 
 class RicciTensor(Tensor):
@@ -43,25 +43,23 @@ class RicciTensor(Tensor):
 
         Parameters
         ----------
-        chris : ~einsteinpy.symbolic.ricci.RicciTensor
+        chris : ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
             Christoffel Symbols from which Ricci Tensor to be calculated
 
         """
         arr, syms = chris.tensor(), chris.symbols()
         dims = len(syms)
-        ricci_list = (np.zeros(shape=(dims, dims, dims, dims), dtype=int)).tolist()
-        for i in range(dims ** 4):
-            # t,s,r,n each goes from 0 to (dims-1)
-            # hack for codeclimate. Could be done with 4 nested for loops
-            n = i % dims
+        ricci_list = (np.zeros(shape=(dims, dims), dtype=int)).tolist()
+        for i in range(dims ** 2):
+            # r,t each goes from 0 to (dims-1)
+            # hack for codeclimate. Could be done with 2 nested for loops
             r = (int(i / dims)) % (dims)
-            s = (int(i / (dims ** 2))) % (dims)
-            t = n
+            t = (int(i / (dims ** 1))) % (dims)
 
-            temp = sympy.diff(arr[t, s, n], syms[r]) - sympy.diff(arr[t, r, n], syms[s])
+            temp = sympy.diff(arr[t], syms[r])
             for p in range(dims):
-                temp += arr[p, s, n] * arr[t, p, r] - arr[p, r, n] * arr[t, p, s]
-            ricci_list[t][s][r][n] = sympy.simplify(temp)
+                temp += arr[p, r, p, t]
+            ricci_list[t][r] = sympy.simplify(temp)
         return cls(ricci_list, syms)
 
     @classmethod
@@ -71,12 +69,25 @@ class RicciTensor(Tensor):
 
         Parameters
         ----------
-        metric : ~einsteinpy.symbolic.ricci.RicciTensor
-            Ricci Tensor
+        metric : ~~einsteinpy.symbolic.metric.MetricTensor
+            Metric Tensor
 
         """
         rc = RicciTensor.from_metric(metric)
         return cls.from_christoffels(rc)
+
+    @classmethod
+    def from_riemann(cls, riemann):
+        """
+        Get Ricci Tensor calculated from a Metric Tensor
+
+        Parameters
+        ----------
+        metric : ~~einsteinpy.symbolic.metric.MetricTensor
+           Metric Tensor
+
+        """
+        return cls(sympy.tensorcontraction(riemann.tensor(), (0, 2)), riemann.syms)
 
     def symbols(self):
         """

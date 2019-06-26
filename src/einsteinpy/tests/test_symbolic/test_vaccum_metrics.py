@@ -1,7 +1,7 @@
 import numpy as np
 import sympy
 
-from einsteinpy.symbolic import vaccum_metrics, MetricTensor
+from einsteinpy.symbolic import MetricTensor, vaccum_metrics
 
 
 def schwarzschild_metric():
@@ -16,4 +16,3 @@ def kerr_metric():
     syms = sympy.symbols(symbolstr)
     sch = vaccum_metrics.KerrMetric(syms)
     return sch
-
