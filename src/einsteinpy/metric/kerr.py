@@ -53,14 +53,13 @@ class Kerr:
             Time of start, defaults to 0 seconds.
 
         """
-        if coord.system == "Cartesian":
+        if coords.system == "Cartesian":
             bl_coords = coords.bl_differential(a)
             return cls(bl_coords, M, time)
-        elif coord.system == "Spherical":
+        if coords.system == "Spherical":
             bl_coords = coords.bl_differential(a)
             return cls(bl_coords, M, time)
-        else:
-            return cls(coords, M, time)
+        return cls(coords, M, time)
 
     def f_vec(self, ld, vec):
         chl = kerr_utils.christoffels(vec[1], vec[2], self.M.value, self.a.value)

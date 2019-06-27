@@ -62,14 +62,13 @@ class KerrNewman:
             Time of start, defaults to 0 seconds.
 
         """
-        if coord.system == "Cartesian":
+        if coords.system == "Cartesian":
             bl_coords = coords.bl_differential(a)
             return cls(bl_coords, q, M, Q, time)
-        elif coord.system == "Spherical":
+        if coords.system == "Spherical":
             bl_coords = coords.bl_differential(a)
             return cls(bl_coords, q, M, Q, time)
-        else:
-            return cls(coords, q, M, Q, time)
+        return cls(coords, q, M, Q, time)
 
     def f_vec(self, ld, vec):
         chl = kerrnewman_utils.christoffels(

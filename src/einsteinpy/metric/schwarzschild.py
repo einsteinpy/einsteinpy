@@ -50,9 +50,8 @@ class Schwarzschild:
         """
         if coords.system == "Spherical":
             return cls(coords, M, time)
-        else:
-            sph_coords = coords.spherical_differential()
-            return cls(sph_coords, M, time)
+        sph_coords = coords.spherical_differential()
+        return cls(sph_coords, M, time)
 
     def f_vec(self, ld, vec):
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
