@@ -19,7 +19,7 @@ class MetricTensor(Tensor):
 
         Raises
         ------
-        TypeError
+        TypeErrors
             Raised when arr is not a list or sympy Array
         TypeError
             syms is not a list or tuple

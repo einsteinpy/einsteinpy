@@ -9,10 +9,3 @@ def schwarzschild_metric():
     syms = sympy.symbols(symbolstr)
     sch = vaccum_metrics.SchwarzschildMetric(syms)
     return sch
-
-
-def kerr_metric():
-    symbolstr = "t r theta phi"
-    syms = sympy.symbols(symbolstr)
-    sch = vaccum_metrics.KerrMetric(syms)
-    return sch

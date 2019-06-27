@@ -3,6 +3,8 @@ import sympy
 
 from .metric import MetricTensor
 from .tensor import Tensor
+from .riemann import RiemannCurvatureTensor
+from .christoffel import ChristoffelSymbols
 
 
 class RicciTensor(Tensor):
@@ -39,52 +41,40 @@ class RicciTensor(Tensor):
     @classmethod
     def from_christoffels(cls, chris):
         """
-        Get Ricci Tensor calculated from a Christoffel Symbols
+        Get Ricci Tensor calculated from Christoffel Tensor
 
         Parameters
         ----------
         chris : ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
-            Christoffel Symbols from which Ricci Tensor to be calculated
+            Christoffel Tensor
 
         """
-        arr, syms = chris.tensor(), chris.symbols()
-        dims = len(syms)
-        ricci_list = (np.zeros(shape=(dims, dims), dtype=int)).tolist()
-        for i in range(dims ** 2):
-            # r,t each goes from 0 to (dims-1)
-            # hack for codeclimate. Could be done with 2 nested for loops
-            r = (int(i / dims)) % (dims)
-            t = (int(i / (dims ** 1))) % (dims)
-
-            temp = sympy.diff(arr[t], syms[r])
-            for p in range(dims):
-                temp += arr[p, r, p, t]
-            ricci_list[t][r] = sympy.simplify(temp)
-        return cls(ricci_list, syms)
+        rt = RiemannCurvatureTensor(chris.arr, chris.syms)
+        return cls.from_riemann(rt.from_christoffels(chris))
 
     @classmethod
     def from_metric(cls, metric):
         """
-        Get Ricci Tensor calculated from a Metric Tensor
+        Get Ricci Tensor calculated from Metric Tensor
 
         Parameters
         ----------
-        metric : ~~einsteinpy.symbolic.metric.MetricTensor
+        metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor
 
         """
-        rc = RicciTensor.from_metric(metric)
+        rc = ChristoffelSymbols.from_metric(metric)
         return cls.from_christoffels(rc)
 
     @classmethod
     def from_riemann(cls, riemann):
         """
-        Get Ricci Tensor calculated from a Metric Tensor
+        Get Ricci Tensor calculated from Riemann Tensor
 
         Parameters
         ----------
-        metric : ~~einsteinpy.symbolic.metric.MetricTensor
-           Metric Tensor
+        riemann : ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
+           Riemann Tensor
 
         """
         return cls(sympy.tensorcontraction(riemann.tensor(), (0, 2)), riemann.syms)

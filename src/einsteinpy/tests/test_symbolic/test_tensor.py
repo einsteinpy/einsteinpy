@@ -25,10 +25,6 @@ def test_Tensor():
     test_arr = Array(test_list)
     obj1 = Tensor(test_arr)
     obj2 = Tensor(test_list)
-    for i in range(len(test_list)):
-        assert obj1[i]
-    for i in range(len(test_arr)):
-        assert obj2[i]
     assert obj1.tensor() == obj2.tensor()
     assert isinstance(obj1.tensor(), Array)
     assert obj1.simplify()[0, 1, 1] == 0

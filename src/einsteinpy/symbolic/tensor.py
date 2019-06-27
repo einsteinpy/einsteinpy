@@ -7,12 +7,6 @@ class Tensor:
     Base Class
     """
 
-    def __getitem__(self, index):
-        return self.arr[index]
-
-    def __setitem__(self, index, value):
-        self.arr[index] = value
-
     def __init__(self, arr):
         """
         Constructor and Initializer
@@ -35,6 +29,12 @@ class Tensor:
             self.arr = arr
         else:
             raise TypeError("Only multi-dimensional list or Sympy Array is expected")
+
+    def __getitem__(self, index):
+        return self.arr[index]
+
+    def __setitem__(self, index, value):
+        self.arr[index] = value
 
     def tensor(self):
         """
