@@ -66,5 +66,8 @@ pip-wheel-metadata
 # VS Code
 .vscode
 
+# Emacs - projectile
+TAGS
+
 # default pytest cache directory
 */.pytest_cache
