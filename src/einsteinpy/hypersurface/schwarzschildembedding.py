@@ -135,17 +135,17 @@ class SchwarzschildEmbedding:
         values for all points on the solid of revolution about Z axis (as the
         embedding is symmetric in angular coordinates).
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         alpha : float
             scaling factor to obtain the step size for incrementing r
-
+        
         Returns
         -------
         tuple
-            (~numpy.array of X, ~numpy.array of Y, ~numpy.array of Z) : values in cartesian coordinates
+            (~numpy.array of X, ~numpy.array of Y, ~numpy.array of Z) values in cartesian coordinates
             obtained after applying solid of revolution
-
+        
         """
         r_initial = self.r_init.value
         r_step = self.M.value / alpha
@@ -188,15 +188,20 @@ class SchwarzschildEmbedding:
             scaling factor to obtain the step size for incrementing r, defaults to 100
 
         """
+        fig = plt.figure()
         ax = plt.axes(projection="3d")
         X, Y, Z = self.get_values_surface(alpha)
         shape_tuple = X.shape
         Z = Z.reshape((shape_tuple[0], shape_tuple[1]))
-        ax.plot_wireframe(X, Y, Z, color="black")
         if plot_type == "wireframe":
             ax.plot_wireframe(X, Y, Z, color="black")
         elif plot_type == "surface":
             ax.plot_surface(
                 X, Y, Z, rstride=1, cstride=1, cmap="cubehelix", edgecolor="none"
             )
-        return plt
+
+    def show(self):
+        """
+        Show the plot made by plot_hypersurface()
+        """
+        plt.show()

@@ -1,3 +1,5 @@
+from unittest import mock
+
 from astropy import units as u
 from numpy.testing import assert_allclose
 
@@ -91,10 +93,3 @@ def test_get_values_surface():
     assert_allclose(X_test_value, X, 1e-4)
     assert_allclose(Y_test_value, Y, 1e-4)
     assert_allclose(Z_test_value, Z, 1e-4)
-
-
-def test_plot_hypersurface():
-    M = 4e24 * u.kg
-    obj = SchwarzschildEmbedding(M)
-    plt_obj = obj.plot_hypersurface()
-    assert type(plt_obj).__name__ == "module"
