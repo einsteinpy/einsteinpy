@@ -6,10 +6,12 @@ from .metric import MetricTensor
 def SchwarzschildMetric(symbolstr="t r theta phi"):
     """
     Returns  Metric Tensor  of symbols of Schwarzschild Metric.
+
     Parameters
     ----------
     symbolstr : string
          symbols to be used to define schwarzschild space, defaults to 't r theta phi'
+
     Returns
     -------
     ~einsteinpy.symbolic.metric.MetricTensor

@@ -1,10 +1,10 @@
 import numpy as np
 import sympy
 
-from .metric import MetricTensor
-from .tensor import Tensor
-from .riemann import RiemannCurvatureTensor
 from .christoffel import ChristoffelSymbols
+from .metric import MetricTensor
+from .riemann import RiemannCurvatureTensor
+from .tensor import Tensor
 
 
 class RicciTensor(Tensor):
@@ -39,6 +39,19 @@ class RicciTensor(Tensor):
             raise TypeError("syms should be a list or tuple")
 
     @classmethod
+    def from_riemann(cls, riemann):
+        """
+        Get Ricci Tensor calculated from Riemann Tensor
+
+        Parameters
+        ----------
+        riemann : ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
+           Riemann Tensor
+
+        """
+        return cls(sympy.tensorcontraction(riemann.tensor(), (0, 2)), riemann.syms)
+
+    @classmethod
     def from_christoffels(cls, chris):
         """
         Get Ricci Tensor calculated from Christoffel Tensor
@@ -50,7 +63,7 @@ class RicciTensor(Tensor):
 
         """
         rt = RiemannCurvatureTensor(chris.arr, chris.syms)
-        return cls.from_riemann(rt.from_christoffels(chris))
+        return cls.from_riemann(rt)
 
     @classmethod
     def from_metric(cls, metric):
@@ -65,19 +78,6 @@ class RicciTensor(Tensor):
         """
         rc = ChristoffelSymbols.from_metric(metric)
         return cls.from_christoffels(rc)
-
-    @classmethod
-    def from_riemann(cls, riemann):
-        """
-        Get Ricci Tensor calculated from Riemann Tensor
-
-        Parameters
-        ----------
-        riemann : ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
-           Riemann Tensor
-
-        """
-        return cls(sympy.tensorcontraction(riemann.tensor(), (0, 2)), riemann.syms)
 
     def symbols(self):
         """

@@ -20,16 +20,14 @@ def test_Ricci_is_zero_for_spherical_space():
     dims = metric.dims
     T = RicciTensor.from_metric(metric)
     arr = T.tensor()
-    for i in range(dims ** 4):
+    for i in range(dims ** 2):
         n = i % dims
         r = (int(i / dims)) % (dims)
-        s = (int(i / (dims ** 2))) % (dims)
-        t = n
-        assert arr[t, s, r, n] == 0
+        assert sympy.simplify(arr[n, r]) == 0
 
 
 def test_TypeError():
-    testarr = np.ones((4, 4, 4, 4), dtype=int).tolist()
+    testarr = np.ones((4, 4), dtype=int).tolist()
     syms = 0
     try:
         obj = RicciTensor(testarr, syms)
