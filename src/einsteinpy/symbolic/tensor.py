@@ -1,4 +1,3 @@
-import numpy as np
 from collections import namedtuple
 from sympy import Array, Symbol, eye, ones, diag, symbols, simplify
 from sympy.tensor.tensor import TensorIndexType, TensorIndex, TensorHead, \
@@ -11,7 +10,6 @@ class AbstractTensor(object):
     """
     Wrapper class for sympy Array with attributes used for identification.
     """
-
     is_Tensor = True
     is_Metric = False
     is_Spacetime = False
@@ -56,7 +54,6 @@ class IndexedTensor(AbstractTensor, SympyTensor):
     Generated when a Tensor is called as a function with indices as arguments.
 
     """
-
     def __new__(cls, tensor, indices, **kwargs):
         obj = SympyTensor.__new__(cls, tensor, indices, **kwargs)
         metrics = map(getattr, indices, len(indices)*['tensor_index_type'])
@@ -73,7 +70,6 @@ class Tensor(AbstractTensor, TensorHead):
     array of data elements/expressions to be substituted when requested.
 
     """
-
     def __new__(cls, symbol, matrix, metric, **kwargs):
         """
         Create a new Tensor object.
@@ -176,7 +172,6 @@ class Metric(AbstractTensor, TensorIndexType):
     """
     Class representing a tensor that raises and lowers indices.
     """
-
     _MetricId = namedtuple('MetricId', ['name', 'antisym'])
     is_Metric = True
 
@@ -203,7 +198,6 @@ class Metric(AbstractTensor, TensorIndexType):
         4
 
         """
-
         array = Array(matrix)
         if array.rank() != 2 or array.shape[0] != array.shape[1]:
             raise ValueError(f'matrix must be square, received matrix of shape {array.shape}')
@@ -226,7 +220,6 @@ class SpacetimeMetric(Metric):
     """
     Class representing psuedo-Riemannian metrics.
     """
-
     is_Spacetime = True
 
     def __new__(cls, symbol, matrix, timelike=True, **kwargs):
@@ -255,14 +248,13 @@ class Index(TensorIndex):
     """
     Class for a symbolic representation of a tensor index with respect to a metric.
     """
-
     def __new__(cls, symbol, metric, is_up=True, **kwargs):
         return super().__new__(cls, symbol, metric, is_up=is_up, **kwargs)
 
     def __neg__(self):
         return Index(self.name, self.tensor_index_type, (not self.is_up))
 
-def indices(s, metric=Euclidean(), is_up=True):
+def indices(s, metric, is_up=True):
     if isinstance(s, string_types):
         a = [x.name for x in symbols(s, seq=True)]
     else:
@@ -283,7 +275,6 @@ def expand_tensor(expr, idxs=None):
     """
     Evaluate a tensor expression and return the resultant array.
     """
-
     repl = get_replacement_dict(expr)
     for m in filter(lambda m: m.is_Metric, repl.keys()):
         expr = expr.contract_metric(m.metric)
