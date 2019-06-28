@@ -20,6 +20,7 @@ know the API of the classes and methods. If you find anything missing, please op
     integrators/integrators_index
     metric/metric_index
     symbolic/symbolic_index
+    hypersurface/hypersurface_index
     utils/utils_index
     plotting/plotting_index
     coordinates/coordinates_index
