@@ -62,7 +62,7 @@ class RicciTensor(Tensor):
             Christoffel Tensor
 
         """
-        rt = RiemannCurvatureTensor(chris.arr, chris.syms)
+        rt = RiemannCurvatureTensor.from_christoffels(chris)
         return cls.from_riemann(rt)
 
     @classmethod

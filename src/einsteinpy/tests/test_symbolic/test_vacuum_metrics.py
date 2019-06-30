@@ -4,9 +4,9 @@ import sympy
 from einsteinpy.symbolic import ChristoffelSymbols, MetricTensor, vacuum_metrics
 
 
-def test_ChristoffelSymbols():
+def test_SchwarzschildMetric():
     symbolstr = "t r theta phi"
-    sch = vacuum_metrics.SchwarzschildMetric()
+    sch = vacuum_metrics.SchwarzschildMetric(symbolstr)
     chl = ChristoffelSymbols.from_metric(sch)
     mat = chl.tensor()
     syms = sympy.symbols(symbolstr)
