@@ -30,6 +30,16 @@ def test_Tensor():
     assert obj1.simplify()[0, 1, 1] == 0
 
 
+def test_Tensor_getitem():
+    x, y, z = symbols("x y z")
+    test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]
+    obj = Tensor(test_list)
+    n = 2
+    for i in range(n ** 3):
+        p, q, r = i % n, int(i / n) % n, int(i / n ** 2) % n
+        assert obj[p, q, r] - test_list[p][q][r] == 0
+
+
 def test_TypeError():
     arr = 0
     try:

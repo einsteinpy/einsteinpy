@@ -10,12 +10,12 @@ def SchwarzschildMetric(symbolstr="t r theta phi"):
     Parameters
     ----------
     symbolstr : string
-         symbols to be used to define schwarzschild space, defaults to 't r theta phi'
+        symbols to be used to define schwarzschild space, defaults to 't r theta phi'
 
     Returns
     -------
     ~einsteinpy.symbolic.metric.MetricTensor
-    Metric Tensor for Schwarzschild space-time
+        Metric Tensor for Schwarzschild space-time
     """
     list2d = [[0 for i in range(4)] for i in range(4)]
     syms = sympy.symbols(symbolstr)

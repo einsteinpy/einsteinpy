@@ -33,9 +33,6 @@ class Tensor:
     def __getitem__(self, index):
         return self.arr[index]
 
-    def __setitem__(self, index, value):
-        self.arr[index] = value
-
     def tensor(self):
         """
         Returns the sympy Array
