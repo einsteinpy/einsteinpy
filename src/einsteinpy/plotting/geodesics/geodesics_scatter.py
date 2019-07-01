@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
+from einsteinpy.bodies import Body
+from einsteinpy.geodesic import Geodesic
 from einsteinpy.metric import Schwarzschild
 
 
@@ -11,16 +13,12 @@ class ScatterGeodesicPlotter:
     Class for plotting static matplotlib plots.
     """
 
-    def __init__(
-        self, mass, time=0 * u.s, attractor_color="black", cmap_color="Oranges"
-    ):
+    def __init__(self, time=0 * u.s, attractor_color="black", cmap_color="Oranges"):
         """
         Constructor.
 
         Parameters
         ----------
-        mass : ~astropy.units.quantity.Quantity
-            Mass of the body
         time : ~astropy.units.quantity.Quantity
             Time of start, defaults to 0 seconds.
         attractor_color : string, optional
@@ -29,7 +27,6 @@ class ScatterGeodesicPlotter:
             Color used in function plot.
 
         """
-        self.mass = mass
         self.time = time
         self._attractor_present = False
         self.attractor_color = attractor_color
@@ -39,7 +36,7 @@ class ScatterGeodesicPlotter:
         self._attractor_present = True
         plt.scatter(0, 0, color=self.attractor_color)
 
-    def plot(self, coords, end_lambda=10, step_size=1e-3):
+    def plot(self, geodesic):
         """
 
         Parameters
@@ -52,12 +49,9 @@ class ScatterGeodesicPlotter:
             Step size for the ODE.
 
         """
+        self.mass = geodesic.attractor.mass
 
-        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
-
-        vals = swc.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
-        )[1]
+        vals = geodesic.trajectory
 
         time = vals[:, 0]
         r = vals[:, 1]
@@ -73,28 +67,20 @@ class ScatterGeodesicPlotter:
         if not self._attractor_present:
             self._plot_attractor()
 
-    def animate(self, coords, end_lambda=10, step_size=1e-3, interval=50):
+    def animate(self, geodesic, interval=50):
         """
         Function to generate animated plots of geodesics.
 
         Parameters
         ----------
-        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Position and velocity components of particle in Spherical Coordinates.
-        end_lambda : float, optional
-            Lambda where iteartions will stop.
-        step_size : float, optional
-            Step size for the ODE.
+        geodesic : ~einsteinpy.geodesic.Geodesic
+            Geodesic of the body
         interval : int, optional
             Control the time between frames. Add time in milliseconds.
 
         """
 
-        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
-
-        vals = swc.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
-        )[1]
+        vals = geodesic.trajectory
 
         time = vals[:, 0]
         r = vals[:, 1]

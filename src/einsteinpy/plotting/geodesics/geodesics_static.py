@@ -1,5 +1,4 @@
 import random
-import sys
 
 import astropy.units as u
 import matplotlib as mpl
@@ -7,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
-from einsteinpy.metric import Schwarzschild
 from einsteinpy.utils import schwarzschild_radius
 
 
@@ -18,19 +16,16 @@ class StaticGeodesicPlotter:
 
     def __init__(
         self,
-        mass,
         time=0 * u.s,
         ax=None,
         attractor_radius_scale=-1.0,
         attractor_color="#ffcc00",
     ):
         """
-        Constructor. 
+        Constructor.
 
         Parameters
         ----------
-        mass : ~astropy.units.quantity.Quantity
-            Mass of the body
         time : ~astropy.units.quantity.Quantity
             Time of start, defaults to 0 seconds.
         attractor_radius_scale : float, optional
@@ -43,7 +38,6 @@ class StaticGeodesicPlotter:
         if not self.ax:
             self.fig, self.ax = plt.subplots(figsize=(6, 6))
         self.time = time
-        self.mass = mass
         self._attractor_present = False
         self.attractor_color = attractor_color
         self.attractor_radius_scale = attractor_radius_scale
@@ -51,26 +45,18 @@ class StaticGeodesicPlotter:
         self.__yarr = np.array([])
         self.get_curr_plot_radius = 0
 
-    def plot_trajectory(self, coords, end_lambda, step_size, color):
+    def plot_trajectory(self, geodesic, color, only_points=False):
         """
 
         Parameters
         ----------
-        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Initial position and velocity of particle in Spherical coordinates.
-        end_lambda : float, optional
-            Lambda where iteartions will stop.
-        step_size : float, optional
-            Step size for the ODE.
+        geodesic : ~einsteinpy.geodesic.Geodesic
+            Geodesic of the body.
         color : string
             Color of the Geodesic
 
         """
-        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
-
-        vals = swc.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
-        )[1]
+        vals = geodesic.trajectory
 
         # time = np.array([coord[0] for coord in vals])
         r = np.array([coord[1] for coord in vals])
@@ -79,6 +65,12 @@ class StaticGeodesicPlotter:
 
         x = r * np.cos(phi)
         y = r * np.sin(phi)
+
+        self.__xarr = x
+        self.__yarr = y
+
+        if only_points:
+            return x, y
 
         lines = self.ax.plot(x, y, "--", color=color)
 
@@ -87,36 +79,6 @@ class StaticGeodesicPlotter:
     def plot_attractor(self):
         if not self._attractor_present:
             self._draw_attractor()
-
-    def __get_x_y(self, coords, end_lambda, step_size):
-        """
-
-        Parameters
-        ----------
-        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Initial position and velocity of particle in Spherical coordinates.
-        end_lambda : float, optional
-            Lambda where iteartions will stop.
-        step_size : float, optional
-            Step size for the ODE.
-
-        """
-        swc = Schwarzschild.from_spherical(coords, self.mass, self.time)
-
-        vals = swc.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
-        )[1]
-
-        # time = np.array([coord[0] for coord in vals])
-        r = np.array([coord[1] for coord in vals])
-        # theta = np.array([coord[2] for coord in vals])
-        phi = np.array([coord[3] for coord in vals])
-
-        x = r * np.cos(phi)
-        y = r * np.sin(phi)
-        self.__xarr = x
-        self.__yarr = y
-        return x, y
 
     def mindist(self, x, y):
         return np.sqrt(x * x + y * y)
@@ -150,23 +112,13 @@ class StaticGeodesicPlotter:
                 )
             )
 
-    def plot(
-        self,
-        coords,
-        end_lambda=10,
-        step_size=1e-3,
-        color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
-    ):
+    def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
         """
 
         Parameters
         ----------
-        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Initial position and velocity of particle in Spherical coordinates.
-        end_lambda : float, optional
-            Lambda where iteartions will stop.
-        step_size : float, optional
-            Step size for the ODE.
+        geodesic : ~einsteinpy.geodesic.Geodesic
+            Geodesic of the body
         color : hex code RGB, optional
             Color of the dashed lines. Picks a random color by default.
 
@@ -176,12 +128,12 @@ class StaticGeodesicPlotter:
             A list of Line2D objects representing the plotted data.
 
         """
-
-        self.__xarr, self.__yarr = self.__get_x_y(coords, end_lambda, step_size)
+        _, _ = self.plot_trajectory(geodesic, only_points=True, color=color)
+        self.mass = geodesic.attractor.mass
         self.plot_attractor()
         self._attractor_present = True
 
-        lines, x0, y0 = self.plot_trajectory(coords, end_lambda, step_size, color)
+        lines, x0, y0 = self.plot_trajectory(geodesic, color)
 
         l, = self.ax.plot(x0, y0, "o", mew=0, color=lines[0].get_color())
         lines.append(l)
@@ -193,23 +145,14 @@ class StaticGeodesicPlotter:
         return lines
 
     def animate(
-        self,
-        coords,
-        end_lambda=10,
-        step_size=1e-3,
-        color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
-        interval=50,
+        self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF)), interval=50
     ):
         """
 
         Parameters
         ----------
-        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Initial position and velocity of particle in Spherical coordinates.
-        end_lambda : float, optional
-            Lambda where iteartions will stop.
-        step_size : float, optional
-            Step size for the ODE.
+        geodesic : ~einsteinpy.geodesic.Geodesic
+            Geodesic of the body.
         color : hex code RGB, optional
             Color of the dashed lines. Picks a random color by default.
         interval : int, optional
@@ -217,7 +160,8 @@ class StaticGeodesicPlotter:
 
         """
 
-        pos_x, pos_y = self.__get_x_y(coords, end_lambda, step_size)
+        pos_x, pos_y = self.plot_trajectory(geodesic, only_points=True, color=color)
+        self.mass = geodesic.attractor.mass
         x_max, x_min = max(pos_x), min(pos_x)
         y_max, y_min = max(pos_y), min(pos_y)
         margin_x = (x_max - x_min) * 0.1

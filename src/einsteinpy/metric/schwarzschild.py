@@ -33,26 +33,8 @@ class Schwarzschild:
         self.scr = schwarzschild_radius(M)
 
     @classmethod
-    @u.quantity_input(time=u.s, M=u.kg)
-    def from_spherical(cls, coords, M, time=0 * u.s):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Object having both initial positions and velocities of particle in Spherical Coordinates
-        M : ~astropy.units.quantity.Quantity
-            Mass of the body
-        time : ~astropy.units.quantity.Quantity
-            Time of start, defaults to 0 seconds.
-
-        """
-        return cls(coords, M, time)
-
-    @classmethod
-    @u.quantity_input(time=u.s, M=u.kg)
-    def from_cartesian(cls, coords, M, time=0 * u.s):
+    @u.quantity_input(time=u.s, M=u.kg, a=u.m)
+    def from_coords(cls, coords, M, q=None, Q=None, time=0 * u.s, a=0 * u.m):
         """
         Constructor
 
@@ -66,6 +48,8 @@ class Schwarzschild:
             Time of start, defaults to 0 seconds.
 
         """
+        if coords.system == "Spherical":
+            return cls(coords, M, time)
         sph_coords = coords.spherical_differential()
         return cls(sph_coords, M, time)
 

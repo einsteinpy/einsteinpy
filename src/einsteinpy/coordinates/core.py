@@ -211,12 +211,13 @@ class BoyerLindquist:
         theta : ~astropy.units.quantity.Quantity
         phi : ~astropy.units.quantity.Quantity
         a : ~astropy.units.quantity.Quantity
-        
+
         """
         self.r = r
         self.theta = theta
         self.phi = phi
         self.a = a
+        self.system = "BoyerLindquist"
 
     def __repr__(self):
         return "Boyer-Lindquist r: {}, theta: {}, phi: {} | a: {}".format(

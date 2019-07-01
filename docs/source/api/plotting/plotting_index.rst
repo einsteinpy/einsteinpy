@@ -7,5 +7,5 @@ This module contains the basic classes for static and interactive
 .. toctree::
     :maxdepth: 2
 
-    geodesics_static
-    geodesics_scatter
+    geodesics/geodesics_static
+    geodesics/geodesics_scatter
