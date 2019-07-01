@@ -4,7 +4,9 @@ import astropy.units as u
 import numpy as np
 import pytest
 
+from einsteinpy.bodies import Body
 from einsteinpy.coordinates import SphericalDifferential
+from einsteinpy.geodesic import Geodesic
 from einsteinpy.plotting import ScatterGeodesicPlotter
 
 
