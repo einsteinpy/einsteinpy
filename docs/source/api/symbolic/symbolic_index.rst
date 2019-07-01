@@ -11,5 +11,4 @@ calculations related to General Relativity.
     metric
     ricci
     riemann
-    tensor
     vacuum_metrics

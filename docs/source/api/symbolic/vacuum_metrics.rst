@@ -1,8 +1,8 @@
-Vacuum Metrics Tensor Module
-=============================
+Vacuum Solutions Module
+=======================
 
-This module contains the definition Schwarzschild Metric
-related to a Metric belonging to any arbitrary space-time symbolically:
+This module contains various exact vacuum solutions to
+Einstein's Field Equation in form of metric tensor:
 
 .. automodule:: einsteinpy.symbolic.vacuum_metrics
     :members:
