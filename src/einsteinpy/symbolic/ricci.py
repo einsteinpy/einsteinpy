@@ -1,10 +1,8 @@
-import numpy as np
 import sympy
 
-from .christoffel import ChristoffelSymbols
-from .metric import MetricTensor
-from .riemann import RiemannCurvatureTensor
-from .tensor import Tensor
+from einsteinpy.symbolic.christoffel import ChristoffelSymbols
+from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
+from einsteinpy.symbolic.tensor import Tensor
 
 
 class RicciTensor(Tensor):

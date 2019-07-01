@@ -1,9 +1,8 @@
 import numpy as np
 import sympy
 
-from .christoffel import ChristoffelSymbols
-from .metric import MetricTensor
-from .tensor import Tensor
+from einsteinpy.symbolic.christoffel import ChristoffelSymbols
+from einsteinpy.symbolic.tensor import Tensor
 
 
 class RiemannCurvatureTensor(Tensor):

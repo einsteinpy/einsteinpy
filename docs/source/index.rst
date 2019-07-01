@@ -1,8 +1,8 @@
 EinsteinPy - Making Einstein possible in Python
 ===============================================
 
-.. image:: http://einsteinpy.github.io/img/logo.png
-   :target: http://einsteinpy.github.io/
+.. image:: https://einsteinpy.org/img/wordmark.png
+   :target: https://einsteinpy.org/
    :alt: EinsteinPy logo
    :width: 675px
    :align: center

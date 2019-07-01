@@ -1,4 +1,4 @@
-from .tensor import Tensor
+from einsteinpy.symbolic.tensor import Tensor
 
 
 class MetricTensor(Tensor):
