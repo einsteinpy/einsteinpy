@@ -68,3 +68,7 @@ pip-wheel-metadata
 
 # default pytest cache directory
 */.pytest_cache
+.pytest_cache/
+
+#Tox
+.tox

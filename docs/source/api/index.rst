@@ -26,3 +26,5 @@ know the API of the classes and methods. If you find anything missing, please op
     coordinates/coordinates_index
     constant
     units
+    bodies
+    geodesic
