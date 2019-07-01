@@ -35,7 +35,7 @@ def test_calculate_trajectory0():
     )
     a = 0 * u.m
     end_lambda = ((1 * u.year).to(u.s)).value
-    cl = KerrNewman.from_cartesian(cart_obj, q, M, a, Q)
+    cl = KerrNewman.from_coords(coords=cart_obj, M=M, q=q, a=a, Q=Q)
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
@@ -72,7 +72,7 @@ def test_calculate_trajectory1():
         0.0 * u.rad / u.s,
         a,
     )
-    cl = KerrNewman.from_BL(bl_obj, q, M, Q)
+    cl = KerrNewman.from_coords(coords=bl_obj, q=q, M=M, Q=Q)
     ans = cl.calculate_trajectory(
         end_lambda=end_lambda, OdeMethodKwargs={"stepsize": stepsize}
     )
@@ -101,15 +101,14 @@ def test_compare_calculate_trajectory_iterator_bl(test_input):
         a,
     )
     M = 0.5 * 5.972e24 * u.kg
-    cl1 = KerrNewman.from_BL(bl_obj, q, M, Q)
-    cl2 = KerrNewman.from_BL(bl_obj, q, M, Q)
+    cl1 = KerrNewman.from_coords(coords=bl_obj, q=q, M=M, Q=Q)
+    cl2 = KerrNewman.from_coords(coords=bl_obj, q=q, M=M, Q=Q)
     ans1 = cl1.calculate_trajectory(end_lambda=el, OdeMethodKwargs={"stepsize": ss})[1]
     it = cl2.calculate_trajectory_iterator(OdeMethodKwargs={"stepsize": ss})
     ans2 = list()
     for _, val in zip(range(20), it):
         ans2.append(val[1])
     ans2 = np.array(ans2)
-    print(ans1)
     assert_allclose(ans1[:20], ans2)
 
 
@@ -124,8 +123,8 @@ def test_compare_calculate_trajectory_iterator_cartesians(test_input):
     )
     M = 2e24 * u.kg
     q, a, Q, el, ss = test_input
-    cl1 = KerrNewman.from_cartesian(cart_obj, q, M, a, Q)
-    cl2 = KerrNewman.from_cartesian(cart_obj, q, M, a, Q)
+    cl1 = KerrNewman.from_coords(coords=cart_obj, q=q, M=M, a=a, Q=Q)
+    cl2 = KerrNewman.from_coords(coords=cart_obj, q=q, M=M, a=a, Q=Q)
     ans1 = cl1.calculate_trajectory(
         end_lambda=el, OdeMethodKwargs={"stepsize": ss}, return_cartesian=True
     )[1]
@@ -136,7 +135,6 @@ def test_compare_calculate_trajectory_iterator_cartesians(test_input):
     for _, val in zip(range(20), it):
         ans2.append(val[1])
     ans2 = np.array(ans2)
-    print(ans1)
     assert_allclose(ans1[:20], ans2)
 
 
@@ -154,7 +152,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning():
     start_lambda = 0.0
     q, Q = 0 * u.C / u.kg, 0 * u.C
     OdeMethodKwargs = {"stepsize": 0.4e-6}
-    cl = KerrNewman.from_BL(bl_obj, q, M, Q)
+    cl = KerrNewman.from_coords(coords=bl_obj, q=q, M=M, Q=Q)
     with warnings.catch_warnings(record=True) as w:
         it = cl.calculate_trajectory_iterator(
             start_lambda=start_lambda,

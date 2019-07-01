@@ -6,16 +6,14 @@ class Geodesic:
     Class for defining geodesics of different geometries.
     """
 
-    def __init__(
-        self, body, attractor, time, end_lambda, step_size=1e-3, metric=Schwarzschild
-    ):
+    def __init__(self, body, time, end_lambda, step_size=1e-3, metric=Schwarzschild):
         """
         Parameters
         ----------
 
         """
         self.body = body
-        self.attractor = attractor
+        self.attractor = body.parent
         self.metric = metric.from_coords(
             coords=self.body.coordinates,
             M=self.attractor.mass,

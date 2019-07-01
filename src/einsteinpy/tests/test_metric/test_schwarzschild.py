@@ -66,7 +66,7 @@ _c = constant.c.value
 def test_calculate_trajectory(
     coords, time, M, start_lambda, end_lambda, OdeMethodKwargs
 ):
-    cl = Schwarzschild.from_spherical(coords, M, time)
+    cl = Schwarzschild.from_coords(coords, M, time)
     ans = cl.calculate_trajectory(
         start_lambda=start_lambda,
         end_lambda=end_lambda,
@@ -103,7 +103,7 @@ def test_calculate_trajectory2():
         angular_vel,
     )
     end_lambda = ((1 * u.year).to(u.s)).value
-    cl = Schwarzschild.from_spherical(sph_obj, M)
+    cl = Schwarzschild.from_coords(sph_obj, M)
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
@@ -131,7 +131,7 @@ def test_calculate_trajectory3():
         0 * u.km / u.h,
     )
     end_lambda = ((1 * u.year).to(u.s)).value
-    cl = Schwarzschild.from_cartesian(cart_obj, M)
+    cl = Schwarzschild.from_coords(cart_obj, M)
     ans = cl.calculate_trajectory(
         start_lambda=0.0,
         end_lambda=end_lambda,
@@ -189,14 +189,14 @@ def test_calculate_trajectory3():
 def test_calculate_trajectory_iterator(
     coords, time, M, start_lambda, end_lambda, OdeMethodKwargs, return_cartesian
 ):
-    cl1 = Schwarzschild.from_spherical(coords, M, time)
+    cl1 = Schwarzschild.from_coords(coords, M, time)
     arr1 = cl1.calculate_trajectory(
         start_lambda=start_lambda,
         end_lambda=end_lambda,
         OdeMethodKwargs=OdeMethodKwargs,
         return_cartesian=return_cartesian,
     )[1]
-    cl2 = Schwarzschild.from_spherical(coords, M, time)
+    cl2 = Schwarzschild.from_coords(coords, M, time)
     it = cl2.calculate_trajectory_iterator(
         start_lambda=start_lambda,
         OdeMethodKwargs=OdeMethodKwargs,
@@ -221,7 +221,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning():
     M = 1e25 * u.kg
     start_lambda = 0.0
     OdeMethodKwargs = {"stepsize": 0.4e-6}
-    cl = Schwarzschild.from_spherical(sph_obj, M)
+    cl = Schwarzschild.from_coords(sph_obj, M)
     with warnings.catch_warnings(record=True) as w:
         it = cl.calculate_trajectory_iterator(
             start_lambda=start_lambda,
@@ -245,7 +245,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning2():
     M = 1e25 * u.kg
     start_lambda = 0.0
     OdeMethodKwargs = {"stepsize": 0.4e-6}
-    cl = Schwarzschild.from_spherical(sph_obj, M)
+    cl = Schwarzschild.from_coords(sph_obj, M)
     with warnings.catch_warnings(record=True) as w:
         it = cl.calculate_trajectory_iterator(
             start_lambda=start_lambda,

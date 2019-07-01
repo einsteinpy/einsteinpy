@@ -29,7 +29,7 @@ class Body:
     @u.quantity_input(mass=u.kg, R=u.km)
     def __init__(
         self,
-        identifier,
+        name="Generic Body",
         mass=0 * u.kg,
         R=0 * u.km,
         differential=None,
@@ -40,7 +40,7 @@ class Body:
         """
         Parameters
         ----------
-        id : str
+        name : str
             Name/ID of the body
         mass : ~astropy.units.kg
             Mass of the body
@@ -68,7 +68,7 @@ class Body:
         self.R = R
         self.q = q
         self.mass = mass
-        self.identifier = identifier
+        self.name = name
         self.coordinates = differential
         self.parent = parent
 
@@ -76,10 +76,10 @@ class Body:
 class _Sun(Body):
     def __init__(self):
         parent = None
-        identifier = "Sun"
+        name = "Sun"
         R = constant.R_sun
         mass = constant.Solar_Mass
-        super(_Sun, self).__init__(identifier=identifier, mass=mass, R=R, parent=parent)
+        super(_Sun, self).__init__(name=name, mass=mass, R=R, parent=parent)
 
 
 Sun = _Sun()
@@ -88,12 +88,10 @@ Sun = _Sun()
 class _Earth(Body):
     def __init__(self):
         parent = Sun
-        identifier = "Earth"
+        name = "Earth"
         R = 6731 * u.km
         mass = 5.97219e24 * u.kg
-        super(_Earth, self).__init__(
-            identifier=identifier, mass=mass, R=R, parent=parent
-        )
+        super(_Earth, self).__init__(name=name, mass=mass, R=R, parent=parent)
 
 
 Earth = _Earth()
