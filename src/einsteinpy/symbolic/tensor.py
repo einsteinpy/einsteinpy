@@ -30,6 +30,9 @@ class Tensor:
         else:
             raise TypeError("Only multi-dimensional list or Sympy Array is expected")
 
+    def __getitem__(self, index):
+        return self.arr[index]
+
     def tensor(self):
         """
         Returns the sympy Array
