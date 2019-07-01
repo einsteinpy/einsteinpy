@@ -12,20 +12,22 @@ from einsteinpy.plotting import ScatterGeodesicPlotter
 
 @pytest.fixture()
 def dummy_data():
-    sph_obj = SphericalDifferential(
-        306 * u.m,
+    obj = SphericalDifferential(
+        130 * u.m,
         np.pi / 2 * u.rad,
-        np.pi / 2 * u.rad,
+        -np.pi / 8 * u.rad,
         0 * u.m / u.s,
         0 * u.rad / u.s,
-        951.0 * u.rad / u.s,
+        1900 * u.rad / u.s,
     )
+    att = Body(name="attractor", mass=6e24 * u.kg, parent=None)
+    b1 = Body(name="obj", differential=obj, parent=att)
     t = 0 * u.s
-    m = 4e24 * u.kg
     start_lambda = 0.0
     end_lambda = 0.002
-    step_size = 0.5e-6
-    return sph_obj, t, m, start_lambda, end_lambda, step_size
+    step_size = 5e-8
+    geo = Geodesic(b1, t, end_lambda=end_lambda, step_size=stepsize)
+    return geo
 
 
 def test_plot_attractor_is_called_only_once(dummy_data):
