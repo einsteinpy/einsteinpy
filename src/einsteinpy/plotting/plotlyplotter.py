@@ -1,8 +1,8 @@
 import os
 import random
 
-import plotly.graph_objs as go
 import numpy as np
+import plotly.graph_objs as go
 from plotly.offline import plot as saveplot
 
 
@@ -49,9 +49,4 @@ class PlotlyPlotter:
 
     def save(self, name="geodesic.png"):
         basename, ext = os.path.splitext(name)
-        saveplot(
-            self.fig,
-            image=ext[1:],
-            image_filename=basename,
-            show_link=False,
-        )
+        saveplot(self.fig, image=ext[1:], image_filename=basename, show_link=False)
