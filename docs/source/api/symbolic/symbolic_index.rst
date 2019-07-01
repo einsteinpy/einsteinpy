@@ -8,10 +8,8 @@ calculations related to General Relativity.
     :maxdepth: 2
 
     christoffel
-    einstein
     metric
     ricci
     riemann
-    stress_energy_momentum
     tensor
     vacuum_metrics
