@@ -1,6 +1,6 @@
 import sympy
 
-from .metric import MetricTensor
+from einsteinpy.symbolic.metric import MetricTensor
 
 
 def SchwarzschildMetric(symbolstr="t r theta phi"):
