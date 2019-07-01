@@ -28,7 +28,7 @@ def dummy_data():
     start_lambda = 0.0
     end_lambda = 0.002
     step_size = 5e-8
-    geo = Geodesic(b1, t, end_lambda=end_lambda, step_size=stepsize)
+    geo = Geodesic(b1, t, end_lambda=end_lambda, step_size=step_size)
     return geo
 
 
@@ -40,7 +40,7 @@ def test_staticgeodesicplotter_has_axes(dummy_data):
     assert cl._attractor_present is False
 
 
-@mock.patch("einsteinpy.plotting.geodesics_static.plt.show")
+@mock.patch("einsteinpy.plotting.geodesics.geodesics_static.plt.show")
 def test_plot_calls_plt_show(mock_show, dummy_data):
     geodesic = dummy_data
     cl = StaticGeodesicPlotter()
@@ -58,7 +58,7 @@ def test_animate_creates_ani(dummy_data):
     assert cl.ani
 
 
-@mock.patch("einsteinpy.plotting.geodesics_static.plt.savefig")
+@mock.patch("einsteinpy.plotting.geodesics.geodesics_static.plt.savefig")
 def test_plot_save_saves_plot(mock_save, dummy_data):
     geodesic = dummy_data
     cl = StaticGeodesicPlotter()

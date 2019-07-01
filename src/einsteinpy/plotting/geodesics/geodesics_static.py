@@ -1,5 +1,4 @@
 import random
-import sys
 
 import astropy.units as u
 import matplotlib as mpl
@@ -7,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 
-from einsteinpy.metric import Schwarzschild
 from einsteinpy.utils import schwarzschild_radius
 
 
@@ -58,7 +56,6 @@ class StaticGeodesicPlotter:
             Color of the Geodesic
 
         """
-        self.mass = geodesic.attractor.mass
         vals = geodesic.trajectory
 
         # time = np.array([coord[0] for coord in vals])
@@ -131,7 +128,8 @@ class StaticGeodesicPlotter:
             A list of Line2D objects representing the plotted data.
 
         """
-
+        _, _ = self.plot_trajectory(geodesic, only_points=True, color=color)
+        self.mass = geodesic.attractor.mass
         self.plot_attractor()
         self._attractor_present = True
 
@@ -162,7 +160,8 @@ class StaticGeodesicPlotter:
 
         """
 
-        pos_x, pos_y = self.plot_trajectory(geodesic, only_points=True)
+        pos_x, pos_y = self.plot_trajectory(geodesic, only_points=True, color=color)
+        self.mass = geodesic.attractor.mass
         x_max, x_min = max(pos_x), min(pos_x)
         y_max, y_min = max(pos_y), min(pos_y)
         margin_x = (x_max - x_min) * 0.1
