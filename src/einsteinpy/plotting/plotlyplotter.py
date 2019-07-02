@@ -33,7 +33,7 @@ class PlotlyPlotter:
         y = r * np.sin(phi)
 
         if not self.attractor_present:
-            self._draw_attractor()
+            PlotlyPlotter._draw_attractor(self)
         self.fig.add_trace(
             go.Scatter(
                 x=x,

@@ -31,7 +31,6 @@ class Plotter(MatplotlibPlotter, PlotlyPlotter):
 
     def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
         if self._notebook:
-            PlotlyPlotter._draw_attractor(self)
             PlotlyPlotter.plot(self, geodesic, color=color)
         else:
             MatplotlibPlotter.plot(self, geodesic, color=color)
