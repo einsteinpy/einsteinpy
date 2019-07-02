@@ -1,10 +1,30 @@
-from collections import namedtuple
-from sympy import Array, Symbol, eye, ones, diag, symbols, simplify
-from sympy.tensor.tensor import TensorIndexType, TensorIndex, TensorHead, \
-    TensorType, TensExpr, tensorsymmetry
+import itertools as it
+from collections import defaultdict
+from sympy import S, Array, symbols, diff, simplify
+from sympy.tensor.tensor import TensorIndex, TensorHead, TensorType, \
+    TensExpr, TensMul, TensAdd, TensorManager, tensorsymmetry
 from sympy.tensor.tensor import Tensor as SympyTensor
 from sympy.tensor.array import tensorcontraction, tensorproduct, permutedims
 from sympy.core.compatibility import string_types
+
+class _ReplacementManager(dict):
+    def has(self, tensor):
+        for key in self.keys():
+            if key.args[0] == tensor.args[0]:
+                return True
+        return False
+
+    def remove(self, tensor):
+        for key in self.keys():
+            if key.args[0] == tensor.args[0]:
+                self.pop(key)
+                break
+
+    def __setitem__(self, tensor, array):
+        if not self.has(tensor):
+            self.update({tensor: array})
+
+ReplacementManager = _ReplacementManager()
 
 class AbstractTensor(object):
     """
@@ -13,6 +33,7 @@ class AbstractTensor(object):
     is_Tensor = True
     is_Metric = False
     is_Spacetime = False
+    is_TensorDerivative = False
     _array = None
     _inverse = None
 
@@ -56,13 +77,12 @@ class IndexedTensor(AbstractTensor, SympyTensor):
     """
     def __new__(cls, tensor, indices, **kwargs):
         obj = SympyTensor.__new__(cls, tensor, indices, **kwargs)
-        metrics = map(getattr, indices, len(indices)*['tensor_index_type'])
-        repl = {}
-        repl[obj] = tensor.covariance_transform(*indices)
+        array = tensor.covariance_transform(*indices)
+        ReplacementManager[obj] = array
+        metrics = [idx.tensor_index_type for idx in indices]
         for metric in metrics:
-            repl[metric] = metric.as_array()
-        obj.replacement_dict = repl
-        return AbstractTensor.__new__(cls, obj, tensor._array)
+            ReplacementManager[metric] = metric.as_array()
+        return AbstractTensor.__new__(cls, obj, array)
 
 class Tensor(AbstractTensor, TensorHead):
     """
@@ -105,7 +125,8 @@ class Tensor(AbstractTensor, TensorHead):
                   [E1, 0, -B3, B2],
                   [E2, B3, 0, -B1],
                   [E3, -B2, B1, 0]]
-        >>> eta = SpacetimeMetric('eta', diag(1, -1, -1, -1))
+        >>> t, x, y, z = symbols('t x y z')
+        >>> eta = Metric('eta', [t, x, y, z], diag(1, -1, -1, -1))
         >>> F = Tensor('F', em, eta, symmetry=[[2]])
         >>> mu, nu = indices('mu nu', eta)
         >>> expr = F(mu, nu) + F(nu, mu)
@@ -120,10 +141,15 @@ class Tensor(AbstractTensor, TensorHead):
         sym = kwargs.pop('symmetry', [[1]*array.rank()])
         sym = tensorsymmetry(*sym)
         symtype = TensorType(array.rank()*[metric], sym)
-        obj = TensorHead.__new__(cls, symbol, symtype, **kwargs)
+        comm = kwargs.pop('comm', 'general')
+        covar = tuple(kwargs.pop('covar', array.rank()*[1]))
+        if len(covar) != array.rank():
+            raise ValueError(f'covariance signature {covar} does not match tensor rank {array.rank()}')
+        obj = TensorHead.__new__(cls, symbol, symtype, comm=comm, **kwargs)
         # resolves a bug with pretty printing.
         # TODO: Consider renaming this class to avoid conflicts.
         obj.__class__.__name__ = 'TensorHead'
+        obj.covar = covar
         return AbstractTensor.__new__(cls, obj, array)
 
     def __repr__(self):
@@ -150,99 +176,32 @@ class Tensor(AbstractTensor, TensorHead):
         --------
         >>> from sympy import diag, symbols, sin
         >>> from einsteinpy.symbolic.tensor import *
-        >>> r, th = symbols('r theta', real=True)
+        >>> t, r, th, ph = symbols('t r theta phi')
         >>> schwarzschild = diag(1-1/r, -1/(1-1/r), -r**2, -r**2*sin(th)**2)
-        >>> g = SpacetimeMetric('g', schwarzschild)
+        >>> g = Metric('g', [t, r, th, ph], schwarzschild)
         >>> mu, nu = indices('mu nu', g)
-        >>> g.covariance_transform(-mu, -nu)
+        >>> g.covariance_transform(mu, nu)
         [[1/(1 - 1/r), 0, 0, 0], [0, 1 - 1/r, 0, 0], [0, 0, -1/r**2, 0], [0, 0, 0, -1/(r**2*sin(theta)**2)]]
 
         """
         array = self.as_array()
         for pos, idx in enumerate(indices):
-            if not idx.is_up:
-                metric = idx.tensor_index_type.metric.as_inverse()
-                new = tensorcontraction(tensorproduct(metric, array), (1, 2+pos))
+            if idx.is_up ^ (self.covar[pos] > 0):
+                if idx.is_up:
+                    metric = idx.tensor_index_type.metric.as_inverse()
+                else:
+                    metric = idx.tensor_index_type.metric.as_array()
+                new = tensorcontraction(tensorproduct(metric, array), (1, 2 + pos))
                 permu = list(range(len(indices)))
                 permu[0], permu[pos] = permu[pos], permu[0]
                 array = permutedims(new, permu)
         return array
 
-class Metric(AbstractTensor, TensorIndexType):
-    """
-    Class representing a tensor that raises and lowers indices.
-    """
-    _MetricId = namedtuple('MetricId', ['name', 'antisym'])
-    is_Metric = True
-
-    def __new__(cls, symbol, matrix, **kwargs):
-        """
-        Create a new Metric object.
-
-        Parameters
-        ----------
-        symbol : str
-            Name of the tensor and the symbol to denote it by when printed.
-        matrix : (list, tuple, ~sympy.Matrix, ~sympy.Array)
-            Matrix representation of the tensor to be used in substitution.
-            Can be of any type that is acceptable by ~sympy.Array.
-
-        Examples
-        --------
-        >>> from sympy import diag
-        >>> from einsteinpy.symbolic.tensor import *
-        >>> eta = SpacetimeMetric('eta', diag(1, -1, -1, -1))
-        >>> mu, nu = indices('mu nu', eta)
-        >>> expr = eta(mu, nu) * eta(-mu, -nu)
-        >>> expand_tensor(expr)
-        4
-
-        """
-        array = Array(matrix)
-        if array.rank() != 2 or array.shape[0] != array.shape[1]:
-            raise ValueError(f'matrix must be square, received matrix of shape {array.shape}')
-        obj = TensorIndexType.__new__(cls, symbol,
-                                      metric=cls._MetricId(symbol, False),
-                                      dim=array.shape[0], dummy_fmt=symbol,
-                                      **kwargs)
-        obj.metric = Tensor(obj.name, array, obj)
-        return AbstractTensor.__new__(cls, obj, array)
-
-    def __getattr__(self, attr):
-        if hasattr(self.metric, attr):
-            return getattr(self.metric, attr)
-        return TensorIndexType.__getattribute__(self, attr)
-
-    def __call__(self, *args):
-        return self.metric(*args)
-
-class SpacetimeMetric(Metric):
-    """
-    Class representing psuedo-Riemannian metrics.
-    """
-    is_Spacetime = True
-
-    def __new__(cls, symbol, matrix, timelike=True, **kwargs):
-        obj = super().__new__(cls, symbol, matrix, **kwargs)
-        if obj.dim > 4:
-            raise ValueError('metrics on spacetime must be at most 4-dimensional')
-        obj.is_timelike = timelike
-        obj.is_spacelike = not timelike
-        return obj
-
-    def reverse_signature(self):
-        self._array *= -1
-        self._replacement_dict = {self : self._array}
-        self.is_timelike = not self.is_timelike
-        self.is_spacelike = not self.is_spacelike
-        return self.signature
-
-    @property
-    def signature(self):
-        sign = -1 if self.is_timelike else 1
-        sig = sign * ones(1, self.dim)
-        sig[0] *= -1
-        return tuple(sig)
+    def simplify(self):
+        array = simplify(self.as_array())
+        self._array = array
+        ReplacementManager.remove(self)
+        return array
 
 class Index(TensorIndex):
     """
@@ -254,6 +213,14 @@ class Index(TensorIndex):
     def __neg__(self):
         return Index(self.name, self.tensor_index_type, (not self.is_up))
 
+def expand_tensor(expr, idxs=None):
+    """
+    Evaluate a tensor expression and return the resulting array.
+    """
+    if idxs is None:
+        idxs = TensMul(expr).get_free_indices()
+    return expr.replace_with_arrays(ReplacementManager, idxs)
+
 def indices(s, metric, is_up=True):
     if isinstance(s, string_types):
         a = [x.name for x in symbols(s, seq=True)]
@@ -264,22 +231,7 @@ def indices(s, metric, is_up=True):
         return idxs[0]
     return idxs
 
-def get_replacement_dict(expr):
-    repl = {}
-    terms = expr.args if not isinstance(expr, IndexedTensor) else [expr]
-    for term in terms:
-        repl.update(term.replacement_dict)
-    return repl
-
-def expand_tensor(expr, idxs=None):
-    """
-    Evaluate a tensor expression and return the resultant array.
-    """
-    repl = get_replacement_dict(expr)
-    for m in filter(lambda m: m.is_Metric, repl.keys()):
-        expr = expr.contract_metric(m.metric)
-        if not isinstance(expr, TensExpr):
-            return expr
-    if idxs is None:
-        idxs = expr.get_free_indices()
-    return expr.replace_with_arrays(repl, idxs)
+TensorManager.set_comm('general', 'metric', 0)
+TensorManager.set_comm('metric', 'metric', 0)
+TensorManager.set_comm('general', 'general', 0)
+TensorManager.set_comm('partial', 'partial', 0)
