@@ -1,5 +1,2 @@
-# from .christoffel import ChristoffelSymbols
-# from .einstein import EinsteinTensor
-# from .ricci import RicciTensor
-# from .riemann import RiemannCurvatureTensor
-# from .stress_energy_momentum import StressEnergyMomentumTensor
+from .tensor import Tensor, indices, expand_tensor
+from .metric import Metric, SpacetimeMetric

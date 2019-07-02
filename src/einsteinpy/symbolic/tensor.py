@@ -1,35 +1,71 @@
-import itertools as it
 from collections import defaultdict
-from sympy import S, Array, symbols, diff, simplify
-from sympy.tensor.tensor import TensorIndex, TensorHead, TensorType, \
-    TensExpr, TensMul, TensAdd, TensorManager, tensorsymmetry
+from sympy import Array, symbols, simplify
+from sympy.tensor.tensor import (
+    TensorIndex,
+    TensorHead,
+    TensorType,
+    TensMul,
+    TensorManager,
+    tensorsymmetry,
+)
 from sympy.tensor.tensor import Tensor as SympyTensor
 from sympy.tensor.array import tensorcontraction, tensorproduct, permutedims
 from sympy.core.compatibility import string_types
 
+
 class _ReplacementManager(dict):
-    def has(self, tensor):
+    """
+    Dictionary for keeping track of the arrays for the symbolically defined
+    tensors.
+
+    Array calculations for tensors is done in Sympy with the
+    ~TensExpr.replace_with_arrays method which takes a dictionary as an argument.
+    Thus, this class provides a convenient interface for bridging between
+    EinsteinPy's interface and Sympy's.
+
+    """
+
+    def get_key(self, tensor):
+        item = tensor if isinstance(tensor, Tensor) else tensor.args[0]
         for key in self.keys():
-            if key.args[0] == tensor.args[0]:
-                return True
-        return False
+            if key.args[0] == item:
+                return key
+        return None
+
+    def get_value(self, tensor):
+        key = self.get_key(tensor)
+        if key is None:
+            raise KeyError(f"{tensor}")
+        return self[key]
 
     def remove(self, tensor):
-        for key in self.keys():
-            if key.args[0] == tensor.args[0]:
-                self.pop(key)
-                break
+        key = self.get_key(tensor)
+        if key is not None:
+            self.pop(key)
+
+    def replace(self, tensor, array):
+        key = self.get_key(tensor)
+        if key is None:
+            raise KeyError(f"{tensor}")
+        self.update({key: array})
+
+    def has(self, tensor):
+        key = self.get_key(tensor)
+        return True if key is not None else False
 
     def __setitem__(self, tensor, array):
         if not self.has(tensor):
             self.update({tensor: array})
 
+
 ReplacementManager = _ReplacementManager()
+
 
 class AbstractTensor(object):
     """
     Wrapper class for sympy Array with attributes used for identification.
     """
+
     is_Tensor = True
     is_Metric = False
     is_Spacetime = False
@@ -64,6 +100,7 @@ class AbstractTensor(object):
             self._inverse = Array(self.as_matrix().inv())
         return self._inverse
 
+
 class IndexedTensor(AbstractTensor, SympyTensor):
     """
     Class representing a Tensor that has been evaluated with indices.
@@ -75,14 +112,15 @@ class IndexedTensor(AbstractTensor, SympyTensor):
     Generated when a Tensor is called as a function with indices as arguments.
 
     """
+
     def __new__(cls, tensor, indices, **kwargs):
         obj = SympyTensor.__new__(cls, tensor, indices, **kwargs)
-        array = tensor.covariance_transform(*indices)
-        ReplacementManager[obj] = array
         metrics = [idx.tensor_index_type for idx in indices]
         for metric in metrics:
             ReplacementManager[metric] = metric.as_array()
+        array = tensor.covariance_transform(*indices)
         return AbstractTensor.__new__(cls, obj, array)
+
 
 class Tensor(AbstractTensor, TensorHead):
     """
@@ -90,6 +128,7 @@ class Tensor(AbstractTensor, TensorHead):
     array of data elements/expressions to be substituted when requested.
 
     """
+
     def __new__(cls, symbol, matrix, metric, **kwargs):
         """
         Create a new Tensor object.
@@ -116,10 +155,20 @@ class Tensor(AbstractTensor, TensorHead):
         ``[[1],[1]]``     vector*vector
         ``[[2],[1],[1]]`` (antisymmetric tensor)*vector*vector
 
+        Additionally, the parameter ``covar`` indicates that the passed array
+        corresponds to the covariance of the tensor it is intended to describe.
+
+        Lastly, the parameter ``comm`` is used to indicate what commutation
+        group the tensor belongs to. In other words, it describes what other
+        types of tensors the one being created is allowed to commute with.
+        There are three commutation groups: ``general`` for ordinary tensors,
+        ``metric`` for metric tensors, and ``partial`` for partial derivatives.
+
         Examples
         --------
         >>> from sympy import diag, symbols
-        >>> from einsteinpy.symbolic.tensor import *
+        >>> from einsteinpy.symbolic.tensor import Tensor, indices, expand_tensor
+        >>> from einsteinpy.symbolic.metric import Metric
         >>> E1, E2, E3, B1, B2, B3 = symbols('E1:4 B1:4')
         >>> em = [[0, -E1, -E2, -E3],
                   [E1, 0, -B3, B2],
@@ -138,19 +187,36 @@ class Tensor(AbstractTensor, TensorHead):
 
         """
         array = Array(matrix)
-        sym = kwargs.pop('symmetry', [[1]*array.rank()])
+        sym = kwargs.pop("symmetry", [[1] * array.rank()])
         sym = tensorsymmetry(*sym)
-        symtype = TensorType(array.rank()*[metric], sym)
-        comm = kwargs.pop('comm', 'general')
-        covar = tuple(kwargs.pop('covar', array.rank()*[1]))
+        symtype = TensorType(array.rank() * [metric], sym)
+        comm = kwargs.pop("comm", "general")
+        covar = tuple(kwargs.pop("covar", array.rank() * [1]))
         if len(covar) != array.rank():
-            raise ValueError(f'covariance signature {covar} does not match tensor rank {array.rank()}')
+            raise ValueError(
+                f"covariance signature {covar} does not match tensor rank {array.rank()}"
+            )
+
+        count = defaultdict(int)
+
+        def dummy_fmt_gen(idxtype):
+            # generate a generic index for the entry in ReplacementManager.
+            fmt = idxtype.dummy_fmt
+            n = count[idxtype]
+            count[idxtype] += 1
+            return fmt % n
+
         obj = TensorHead.__new__(cls, symbol, symtype, comm=comm, **kwargs)
+        obj = AbstractTensor.__new__(cls, obj, array)
         # resolves a bug with pretty printing.
         # TODO: Consider renaming this class to avoid conflicts.
-        obj.__class__.__name__ = 'TensorHead'
+        obj.__class__.__name__ = "TensorHead"
         obj.covar = covar
-        return AbstractTensor.__new__(cls, obj, array)
+        idx_names = map(dummy_fmt_gen, obj.index_types)
+        idxs = map(Index, idx_names, obj.index_types)
+        idxs = [idx if covar[pos] > 0 else -idx for pos, idx in enumerate(idxs)]
+        ReplacementManager[obj(*idxs)] = array
+        return obj
 
     def __repr__(self):
         return self._print()
@@ -175,7 +241,8 @@ class Tensor(AbstractTensor, TensorHead):
         Examples
         --------
         >>> from sympy import diag, symbols, sin
-        >>> from einsteinpy.symbolic.tensor import *
+        >>> from einsteinpy.symbolic.tensor import indices
+        >>> from einsteinpy.symbolic.metric import Metric
         >>> t, r, th, ph = symbols('t r theta phi')
         >>> schwarzschild = diag(1-1/r, -1/(1-1/r), -r**2, -r**2*sin(th)**2)
         >>> g = Metric('g', [t, r, th, ph], schwarzschild)
@@ -198,40 +265,63 @@ class Tensor(AbstractTensor, TensorHead):
         return array
 
     def simplify(self):
+        """
+        Replace the stored array associated with this tensor with a simplified
+        version. This method also replaces the entry in ReplacementManager.
+
+        """
         array = simplify(self.as_array())
         self._array = array
-        ReplacementManager.remove(self)
+        ReplacementManager.replace(self, array)
         return array
+
 
 class Index(TensorIndex):
     """
     Class for a symbolic representation of a tensor index with respect to a metric.
     """
+
     def __new__(cls, symbol, metric, is_up=True, **kwargs):
         return super().__new__(cls, symbol, metric, is_up=is_up, **kwargs)
 
     def __neg__(self):
         return Index(self.name, self.tensor_index_type, (not self.is_up))
 
+
 def expand_tensor(expr, idxs=None):
     """
     Evaluate a tensor expression and return the resulting array.
+
+    Parameters
+    ----------
+    expr : TensExpr
+        Symbolic expression of tensors.
+    idxs : TensorIndex
+        Indices that encode the covariance and contravariance of the result.
+
     """
     if idxs is None:
         idxs = TensMul(expr).get_free_indices()
     return expr.replace_with_arrays(ReplacementManager, idxs)
 
+
 def indices(s, metric, is_up=True):
+    """
+    Create indices using a method similar to ~sympy.symbols.
+    """
     if isinstance(s, string_types):
         a = [x.name for x in symbols(s, seq=True)]
     else:
-        raise ValueError(f'expected a string, received object of type {type(s)}')
+        raise ValueError(f"expected a string, received object of type {type(s)}")
     idxs = [Index(idx, metric, is_up) for idx in a]
     if len(idxs) == 1:
         return idxs[0]
     return idxs
 
-TensorManager.set_comm('general', 'metric', 0)
-TensorManager.set_comm('metric', 'metric', 0)
-TensorManager.set_comm('general', 'general', 0)
-TensorManager.set_comm('partial', 'partial', 0)
+
+# metric tensors and general tensors commute with each other and themselves.
+TensorManager.set_comm("general", "metric", 0)
+TensorManager.set_comm("metric", "metric", 0)
+TensorManager.set_comm("general", "general", 0)
+# partial derivatives only commute with themselves.
+TensorManager.set_comm("partial", "partial", 0)
