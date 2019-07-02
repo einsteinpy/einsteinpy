@@ -1,3 +1,5 @@
+import astropy.units as u
+
 from einsteinpy.metric import Schwarzschild
 
 
@@ -6,7 +8,9 @@ class Geodesic:
     Class for defining geodesics of different geometries.
     """
 
-    def __init__(self, body, time, end_lambda, step_size=1e-3, metric=Schwarzschild):
+    def __init__(
+        self, body, end_lambda, step_size=1e-3, time=0 * u.s, metric=Schwarzschild
+    ):
         """
         Parameters
         ----------

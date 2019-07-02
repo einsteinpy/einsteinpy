@@ -28,7 +28,7 @@ def dummy_data():
     start_lambda = 0.0
     end_lambda = 0.002
     step_size = 5e-8
-    geo = Geodesic(b1, t, end_lambda=end_lambda, step_size=step_size)
+    geo = Geodesic(b1, time=t, end_lambda=end_lambda, step_size=step_size)
     return geo
 
 
