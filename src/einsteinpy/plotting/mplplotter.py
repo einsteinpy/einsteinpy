@@ -62,4 +62,4 @@ class MatplotlibPlotter:
         plt.show()
 
     def save(self, name="geodesic.png"):
-        self.fig.savefig(name)
+        plt.savefig(name)
