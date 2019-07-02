@@ -35,7 +35,7 @@ def test_Tensor():
     mu, nu = indices("mu nu", g)
     assert p.rank == 1
     assert isinstance(p(mu), IndexedTensor)
-    assert Matrix(p.covariance_transform(-mu)) == _schw.inv() @ Matrix(p.as_array())
+    assert Matrix(p.covariance_transform(-mu)) == _schw @ Matrix(p.as_array())
 
 
 def test_Index():
@@ -66,9 +66,9 @@ def test_expand_tensor():
         - _p3 ** 2 * _r ** 2 * sin(_th) ** 2
     )
     expr5 = g(-mu, -nu) * g(mu, nu)
-    assert expand_tensor(expr5) == 4
+    assert simplify(expand_tensor(expr5)) == 4
     expr6 = g(mu, nu) * g(-mu, -nu)
-    assert expand_tensor(expr6) == 4
+    assert simplify(expand_tensor(expr6)) == 4
 
 
 def test_TypeError():

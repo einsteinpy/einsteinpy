@@ -1,5 +1,5 @@
 from collections import namedtuple
-from sympy import Array, zeros
+from sympy import Array, zeros, ones
 from sympy.tensor.tensor import TensorIndexType
 from .tensor import AbstractTensor, Tensor, indices, expand_tensor
 from .partial import PartialDerivative
