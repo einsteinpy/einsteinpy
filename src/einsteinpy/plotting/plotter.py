@@ -1,5 +1,7 @@
 import random
 
+from plotly.offline import init_notebook_mode
+
 from .mplplotter import MatplotlibPlotter
 from .plotlyplotter import PlotlyPlotter
 
@@ -22,6 +24,7 @@ class Plotter(MatplotlibPlotter, PlotlyPlotter):
         if in_ipynb():
             PlotlyPlotter.__init__(self)
             self._notebook = True
+            init_notebook_mode(connected=True)
         else:
             MatplotlibPlotter.__init__(self)
             self._notebook = False
@@ -29,13 +32,9 @@ class Plotter(MatplotlibPlotter, PlotlyPlotter):
     def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
         if self._notebook:
             PlotlyPlotter._draw_attractor(self)
-            PlotlyPlotter.plot(
-                self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))
-            )
+            PlotlyPlotter.plot(self, geodesic, color=color)
         else:
-            MatplotlibPlotter.plot(
-                self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))
-            )
+            MatplotlibPlotter.plot(self, geodesic, color=color)
 
     def show(self):
         if self._notebook:

@@ -12,6 +12,7 @@ class MatplotlibPlotter:
             self.fig, self.ax = plt.subplots(figsize=(6, 6))
             self.ax.set_xlabel("$x$ (km)")
             self.ax.set_ylabel("$y$ (km)")
+            self.ax.set_aspect(1)
         self.attractor_radius_scale = attractor_radius_scale
         self.attractor_color = attractor_color
         self.attractor_present = False
