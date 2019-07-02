@@ -88,6 +88,7 @@ class Tensor:
         
 
         """
+
         if isinstance(arr, (list, tuple)):
             self.arr = sympy.Array(arr)
         elif isinstance(arr, sympy.Array):
@@ -120,6 +121,24 @@ class Tensor:
 
     def __getitem__(self, index):
         return self.arr[index]
+
+    def __str__(self):
+        """
+        Returns a String with a readable representation of the object of class Tensor
+
+        """
+        representation = "Tensor" + "\n"
+        representation += self.arr.__str__()
+        return representation
+
+    def __repr__(self):
+        """
+        Returns a String with a representation of the state of the object of class Tensor
+
+       """
+        interpretable_representation = self.__class__.__name__
+        interpretable_representation += self.arr.__repr__()
+        return interpretable_representation
 
     def tensor(self):
         """
