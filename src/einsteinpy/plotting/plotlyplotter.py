@@ -8,11 +8,20 @@ from plotly.offline import plot as saveplot
 
 class PlotlyPlotter:
     def __init__(self, attractor_color="#ffcc00"):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        attractor_color : string, optional
+            Color which is used to denote the attractor. Defaults to #ffcc00.
+
+        """
         self.fig = go.FigureWidget()
         self.attractor_color = attractor_color
         self.attractor_present = False
 
-    def _draw_attractor(self):
+    def _draw_attractor(self, radius, xarr, yarr):
         self.attractor_present = True
         self.fig.add_trace(
             go.Scatter(
@@ -25,6 +34,16 @@ class PlotlyPlotter:
         )
 
     def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
+        """
+
+        Parameters
+        ----------
+        geodesic : ~einsteinpy.geodesic.Geodesic
+            Geodesic of the body
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+
+        """
         vals = geodesic.trajectory
         r = np.array([coord[1] for coord in vals])
         phi = np.array([coord[3] for coord in vals])
@@ -33,7 +52,7 @@ class PlotlyPlotter:
         y = r * np.sin(phi)
 
         if not self.attractor_present:
-            PlotlyPlotter._draw_attractor(self)
+            PlotlyPlotter._draw_attractor(self, geodesic.metric.scr, x, y)
         self.fig.add_trace(
             go.Scatter(
                 x=x,

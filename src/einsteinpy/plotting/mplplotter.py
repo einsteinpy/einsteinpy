@@ -7,6 +7,19 @@ from matplotlib.patches import Circle
 
 class MatplotlibPlotter:
     def __init__(self, ax=None, attractor_radius_scale=-1.0, attractor_color="#ffcc00"):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        ax: ~matplotlib.axes.Axes
+            Matplotlib Axes object.
+        attractor_radius_scale : float, optional
+            Scales the attractor radius by the value given. Default is 1. It is used to make plots look more clear if needed.
+        attractor_color : string, optional
+            Color which is used to denote the attractor. Defaults to #ffcc00.
+
+        """
         self.ax = ax
         if not self.ax:
             self.fig, self.ax = plt.subplots(figsize=(6, 6))
@@ -24,7 +37,7 @@ class MatplotlibPlotter:
         self.attractor_present = True
         if self.attractor_radius_scale == -1.0:
             minrad_nooverlap = self._mindist(xarr[0], yarr[0])
-            for i in range(0, len(xarr)):
+            for i, _ in enumerate(xarr):
                 minrad_nooverlap = min(
                     minrad_nooverlap, self._mindist(xarr[i], yarr[i])
                 )
@@ -46,6 +59,16 @@ class MatplotlibPlotter:
             )
 
     def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
+        """
+
+        Parameters
+        ----------
+        geodesic : ~einsteinpy.geodesic.Geodesic
+            Geodesic of the body
+        color : hex code RGB, optional
+            Color of the dashed lines. Picks a random color by default.
+
+        """
         vals = geodesic.trajectory
         r = np.array([coord[1] for coord in vals])
         phi = np.array([coord[3] for coord in vals])
