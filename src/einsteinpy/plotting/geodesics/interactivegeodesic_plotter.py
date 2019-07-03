@@ -3,10 +3,10 @@ import random
 
 import numpy as np
 import plotly.graph_objs as go
-from plotly.offline import plot as saveplot
+from plotly.offline import init_notebook_mode, plot as saveplot
 
 
-class PlotlyPlotter:
+class InteractiveGeodesicPlotter:
     def __init__(self, attractor_color="#ffcc00"):
         """
         Constructor.
@@ -20,6 +20,7 @@ class PlotlyPlotter:
         self.fig = go.FigureWidget()
         self.attractor_color = attractor_color
         self.attractor_present = False
+        init_notebook_mode(connected=True)
 
     def _draw_attractor(self, radius, xarr, yarr):
         self.attractor_present = True
@@ -52,7 +53,7 @@ class PlotlyPlotter:
         y = r * np.sin(phi)
 
         if not self.attractor_present:
-            PlotlyPlotter._draw_attractor(self, geodesic.metric.scr, x, y)
+            self._draw_attractor(geodesic.metric.scr, x, y)
         self.fig.add_trace(
             go.Scatter(
                 x=x,

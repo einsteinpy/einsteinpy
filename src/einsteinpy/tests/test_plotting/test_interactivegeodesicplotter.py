@@ -9,7 +9,7 @@ from plotly.graph_objs import FigureWidget
 from einsteinpy.bodies import Body
 from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.geodesic import Geodesic
-from einsteinpy.plotting import PlotlyPlotter
+from einsteinpy.plotting import InteractiveGeodesicPlotter
 
 
 @pytest.fixture()
@@ -34,24 +34,24 @@ def dummy_data():
 
 def test_plotlyplotter_has_figurewidget(dummy_data):
     geodesic = dummy_data
-    cl = PlotlyPlotter()
+    cl = InteractiveGeodesicPlotter()
     assert isinstance(cl.fig, FigureWidget)
     assert cl.attractor_present is False
 
 
 def test_plot_draws_fig(dummy_data):
     geodesic = dummy_data
-    cl = PlotlyPlotter()
+    cl = InteractiveGeodesicPlotter()
     cl.plot(geodesic)
     fig = cl.show()
     assert cl.attractor_present
     assert fig
 
 
-@mock.patch("einsteinpy.plotting.plotlyplotter.saveplot")
+@mock.patch("einsteinpy.plotting.geodesics.interactivegeodesic_plotter.saveplot")
 def test_save_saves_plot(mock_save, dummy_data):
     geodesic = dummy_data
-    cl = PlotlyPlotter()
+    cl = InteractiveGeodesicPlotter()
     cl.plot(geodesic)
     name = "test_plot.png"
     cl.save(name)

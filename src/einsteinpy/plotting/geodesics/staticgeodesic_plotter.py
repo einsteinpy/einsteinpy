@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib.patches import Circle
 
 
-class MatplotlibPlotter:
+class StaticGeodesicPlotter:
     def __init__(self, ax=None, attractor_radius_scale=-1.0, attractor_color="#ffcc00"):
         """
         Constructor.

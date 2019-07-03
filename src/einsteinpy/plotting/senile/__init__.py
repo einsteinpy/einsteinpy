@@ -1,0 +1,1 @@
+from einsteinpy.plotting.senile.geodesics_scatter import ScatterGeodesicPlotter

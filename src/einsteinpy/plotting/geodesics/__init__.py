@@ -1,2 +1,5 @@
-from einsteinpy.plotting.geodesics.geodesics_scatter import ScatterGeodesicPlotter
-from einsteinpy.plotting.geodesics.geodesics_static import StaticGeodesicPlotter
+from einsteinpy.plotting.geodesics.geodesic_plotter import GeodesicPlotter
+from einsteinpy.plotting.geodesics.interactivegeodesic_plotter import (
+    InteractiveGeodesicPlotter,
+)
+from einsteinpy.plotting.geodesics.staticgeodesic_plotter import StaticGeodesicPlotter
