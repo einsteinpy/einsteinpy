@@ -54,7 +54,7 @@ class Metric(AbstractTensor, TensorIndexType):
         array = Array(matrix)
         if array.rank() != 2 or array.shape[0] != array.shape[1]:
             raise ValueError(
-                f"matrix must be square, received matrix of shape {array.shape}"
+                "matrix must be square, received matrix of shape {}".format(array.shape)
             )
         obj = TensorIndexType.__new__(
             cls,
@@ -169,7 +169,9 @@ class Metric(AbstractTensor, TensorIndexType):
             n = self.dim
             if n < 3:
                 raise ValueError(
-                    f"the Weyl tensor is only defined in dimensions of 3 or more. {self} is of dimension {n}"
+                    "the Weyl tensor is only defined in dimensions of 3 or more. {} is of dimension {}".format(
+                        self, n
+                    )
                 )
             elif n == 3:
                 res = tensorproduct(zeros(3, 3), zeros(3, 3))

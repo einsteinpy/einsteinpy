@@ -36,7 +36,7 @@ class _ReplacementManager(dict):
     def get_value(self, tensor):
         key = self.get_key(tensor)
         if key is None:
-            raise KeyError(f"{tensor}")
+            raise KeyError(str(tensor))
         return self[key]
 
     def remove(self, tensor):
@@ -47,7 +47,7 @@ class _ReplacementManager(dict):
     def replace(self, tensor, array):
         key = self.get_key(tensor)
         if key is None:
-            raise KeyError(f"{tensor}")
+            raise KeyError(str(tensor))
         self.update({key: array})
 
     def has(self, tensor):
@@ -195,7 +195,9 @@ class Tensor(AbstractTensor, TensorHead):
         covar = tuple(kwargs.pop("covar", array.rank() * [1]))
         if len(covar) != array.rank():
             raise ValueError(
-                f"covariance signature {covar} does not match tensor rank {array.rank()}"
+                "covariance signature {} does not match tensor rank {}".format(
+                    covar, array.rank()
+                )
             )
 
         count = defaultdict(int)  # type: dict
@@ -314,7 +316,9 @@ def indices(s, metric, is_up=True):
     if isinstance(s, string_types):
         a = [x.name for x in symbols(s, seq=True)]
     else:
-        raise ValueError(f"expected a string, received object of type {type(s)}")
+        raise ValueError(
+            "expected a string, received object of type {}".format(type(s))
+        )
     idxs = [Index(idx, metric, is_up) for idx in a]
     if len(idxs) == 1:
         return idxs[0]
