@@ -15,7 +15,8 @@ class MatplotlibPlotter:
         ax: ~matplotlib.axes.Axes
             Matplotlib Axes object.
         attractor_radius_scale : float, optional
-            Scales the attractor radius by the value given. Default is 1. It is used to make plots look more clear if needed.
+            Scales the attractor radius by the value given. Default is 1.
+            It is used to make plots look more clear if needed.
         attractor_color : string, optional
             Color which is used to denote the attractor. Defaults to #ffcc00.
 

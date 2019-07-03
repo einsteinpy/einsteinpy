@@ -8,7 +8,7 @@ from .plotlyplotter import PlotlyPlotter
 
 def in_ipynb():
     try:
-        shell = get_ipython().__class__.__name__
+        shell = get_ipython().__class__.__name__  # type: ignore
         if shell == "ZMQInteractiveShell":
             return True
         if shell == "TerminalInteractiveShell":
