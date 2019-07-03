@@ -27,7 +27,7 @@ class Geodesic:
             a=self.attractor.a,
         )
         self._trajectory = self.metric.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
+            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}, return_cartesian=True
         )[1]
 
     @property

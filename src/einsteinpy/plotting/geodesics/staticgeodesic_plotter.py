@@ -71,11 +71,8 @@ class StaticGeodesicPlotter:
 
         """
         vals = geodesic.trajectory
-        r = np.array([coord[1] for coord in vals])
-        phi = np.array([coord[3] for coord in vals])
-
-        x = r * np.cos(phi)
-        y = r * np.sin(phi)
+        x = np.array([coord[1] for coord in vals])
+        y = np.array([coord[2] for coord in vals])
 
         if not self.attractor_present:
             self._draw_attractor(geodesic.metric.scr, x, y)
