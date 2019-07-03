@@ -1,6 +1,7 @@
-from sympy import Basic, Expr, Array, Mul, S, Symbol, diff
-from sympy.tensor.tensor import Tensor as SympyTensor
+from sympy import Array, Basic, Expr, Mul, S, Symbol, diff
 from sympy.core.decorators import call_highest_priority
+from sympy.tensor.tensor import Tensor as SympyTensor
+
 from .tensor import Tensor
 
 

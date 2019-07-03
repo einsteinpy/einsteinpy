@@ -1,6 +1,7 @@
-from sympy import Matrix, diag, symbols, sin, simplify
-from einsteinpy.symbolic.tensor import *
+from sympy import Matrix, diag, simplify, sin, symbols
+
 from einsteinpy.symbolic.metric import *
+from einsteinpy.symbolic.tensor import *
 
 _t, _r, _th, _ph = symbols("t r theta phi", real=True)
 _coords = [_t, _r, _th, _ph]

@@ -1,8 +1,10 @@
 from collections import namedtuple
-from sympy import Array, zeros, ones
+
+from sympy import Array, ones, zeros
 from sympy.tensor.tensor import TensorIndexType
-from .tensor import AbstractTensor, Tensor, indices, expand_tensor
+
 from .partial import PartialDerivative
+from .tensor import AbstractTensor, Tensor, expand_tensor, indices
 
 
 class Metric(AbstractTensor, TensorIndexType):
