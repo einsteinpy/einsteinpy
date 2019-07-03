@@ -86,7 +86,7 @@ class Metric(AbstractTensor, TensorIndexType):
         r"""
         Returns the Christoffel symbols using the formula:
         \Gamma^\rho_{\mu\nu} =
-            \frac{1}{2} g^{\sigma\rho} (\partial_\mu g_{\nu\rho} + \partial_\nu g_{\rho\mu} - \partial_\rho g_{\mu\nu})
+        \frac{1}{2} g^{\sigma\rho} (\partial_\mu g_{\nu\rho} + \partial_\nu g_{\rho\mu} - \partial_\rho g_{\mu\nu})
 
         """
         if self._christoffel is None:
@@ -107,8 +107,8 @@ class Metric(AbstractTensor, TensorIndexType):
         r"""
         Returns the Riemann curvature tensor using the formula:
         R^\rho_{\sigma\mu\nu} =
-            \partial_\mu \Gamma^\rho_{\nu\sigma} - \partial_\nu \Gamma^\rho_{\mu\sigma}
-          + \Gamma^\rho_{\mu\lambda} \Gamma^\lambda_{\nu\sigma} - \Gamma^\rho_{\nu\lambda} \Gamma^\lambda_{\mu\sigma}
+        \partial_\mu \Gamma^\rho_{\nu\sigma} - \partial_\nu \Gamma^\rho_{\mu\sigma}
+        + \Gamma^\rho_{\mu\lambda} \Gamma^\lambda_{\nu\sigma} - \Gamma^\rho_{\nu\lambda} \Gamma^\lambda_{\mu\sigma}
 
         """
         if self._riemann is None:
@@ -161,8 +161,8 @@ class Metric(AbstractTensor, TensorIndexType):
         r"""
         Returns the Weyl conformal tensor using the formula:
         C_{\rho\sigma\mu\nu} =
-            R_{\rho\sigma\mu\nu} - \frac{2}{(n - 2)} (g_{\rho[\mu} R_{\nu]\sigma} - g_{\sigma[\mu} R_{\nu]\rho})
-          + \frac{2}{(n - 1)(n - 2)} g_{\rho[\mu} g_{\nu]\sigma} R
+        R_{\rho\sigma\mu\nu} - \frac{2}{(n - 2)} (g_{\rho[\mu} R_{\nu]\sigma} - g_{\sigma[\mu} R_{\nu]\rho})
+        + \frac{2}{(n - 1)(n - 2)} g_{\rho[\mu} g_{\nu]\sigma} R
 
         """
         if self._weyl is None:
