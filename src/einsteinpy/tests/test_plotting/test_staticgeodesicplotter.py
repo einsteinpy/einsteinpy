@@ -58,6 +58,14 @@ def test_plot_save_saves_plot(mock_save, dummy_data):
     mock_save.assert_called_with(name)
 
 
+def test_animate_creates_ani(dummy_data):
+    geodesic = dummy_data
+    cl = StaticGeodesicPlotter()
+    cl.animate(geodesic, interval=10)
+    assert cl.attractor_present
+    assert cl.ani
+
+
 def test_plot_calls_draw_attractor_Manualscale(dummy_data):
     geodesic = dummy_data
     cl = StaticGeodesicPlotter(attractor_radius_scale=1500)
