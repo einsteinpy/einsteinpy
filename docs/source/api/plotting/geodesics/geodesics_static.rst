@@ -3,7 +3,7 @@ Static Geodesic Plotting
 
 This module contains the methods for static geodesic plotting.
 
-.. automodule:: einsteinpy.plotting.geodesics.geodesics_static
+.. automodule:: einsteinpy.plotting.geodesics.staticgeodesic_plotter
     :members:
 
 Auto and Manual scaling
