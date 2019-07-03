@@ -55,7 +55,7 @@ class _ReplacementManager(dict):
         return True if key is not None else False
 
     def __setitem__(self, tensor, array):
-        if not self.has(tensor):
+        if tensor.is_Metric or not self.has(tensor):
             self.update({tensor: array})
 
 
