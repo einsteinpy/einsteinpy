@@ -41,7 +41,9 @@ class PartialDerivative(Tensor):
 
     def __new__(cls, metric, **kwargs):
         basis = list(map(DiffOperator, metric.coords))
-        return super().__new__(cls, "\u2202", basis, metric, covar=(-1,))
+        return super().__new__(
+            cls, "\u2202", basis, metric, comm="partial", covar=(-1,)
+        )
 
     def __repr__(self):
         return self._print()

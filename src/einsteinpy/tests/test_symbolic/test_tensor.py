@@ -1,76 +1,155 @@
-from sympy import Matrix, diag, simplify, sin, symbols
-from sympy.tensor.tensor import TensMul
+from sympy import Array, diag, eye, simplify, sin, symbols
+from sympy.tensor.tensor import TensExpr, TensMul
 
 from einsteinpy.symbolic.metric import *
 from einsteinpy.symbolic.tensor import *
 
-_t, _r, _th, _ph = symbols("t r theta phi", real=True)
-_coords = [_t, _r, _th, _ph]
-_schw = diag(1 - 1 / _r, -1 / (1 - 1 / _r), -_r ** 2, -_r ** 2 * sin(_th) ** 2)
-_E, _p1, _p2, _p3 = symbols("E p_1:4", positive=True)
-_momentum = [_E, _p1, _p2, _p3]
+
+def _generate_variables_simple():
+    coords = symbols("x y z", real=True)
+    # do not use any tensor related attributes of metric.
+    # there is a dependency cycle between Tensor and Metric.
+    metric = Metric("metric", coords, eye(3))
+    return (coords, metric)
 
 
-def test_AbstractTensor():
-    g = SpacetimeMetric("g", _coords, _schw)
-    p = Tensor("p", _momentum, g)
-    assert all([t.is_Tensor for t in (g, p)])
-    assert g.is_Metric
-    assert g.is_Spacetime
-
-
-def test_IndexedTensor():
-    g = SpacetimeMetric("g", _coords, _schw)
-    p = Tensor("p", _momentum, g)
+def _generate_schwarzschild():
+    coords = symbols("t r theta phi", real=True)
+    t, r, th, ph = coords
+    schw = diag(1 - 1 / r, -1 / (1 - 1 / r), -r ** 2, -r ** 2 * sin(th) ** 2)
+    g = Metric("g", coords, schw)
     mu, nu = indices("mu nu", g)
-    expr1 = p(mu) * p(nu)
-    assert isinstance(expr1, TensMul)
-    assert expr1.rank == 2
-    expr2 = p(mu) * p(-mu)
-    assert expr2.rank == 0
+    return (coords, t, r, th, ph, schw, g, mu, nu)
 
 
-def test_Tensor():
-    g = SpacetimeMetric("g", _coords, _schw)
-    p = Tensor("p", _momentum, g)
-    mu, nu = indices("mu nu", g)
-    assert p.rank == 1
-    assert isinstance(p(mu), IndexedTensor)
-    assert Matrix(p.covariance_transform(-mu)) == _schw @ Matrix(p.as_array())
+def _generate_minkowski():
+    coords = symbols("t x y z", real=True)
+    t, x, y, z = coords
+    mink = diag(1, -1, -1, -1)
+    eta = Metric("eta", coords, mink)
+    mu, nu = indices("mu nu", eta)
+    return (coords, t, x, y, z, mink, eta, mu, nu)
 
 
 def test_Index():
-    g = SpacetimeMetric("g", _coords, _schw)
-    mu, nu = indices("mu nu", g)
+    (coords, metric) = _generate_variables_simple()
+    mu = Index("mu", metric)
+    assert isinstance(mu, TensorIndex)
     assert mu.is_up
-    assert mu != -mu
     assert not (-mu).is_up
 
 
-def test_expand_tensor():
-    g = SpacetimeMetric("g", _coords, _schw)
-    p = Tensor("p", _momentum, g)
-    mu, nu = indices("mu nu", g)
-    expr1 = g(-mu, -nu) * p(nu)
-    expr2 = p(-mu)
-    res1, res2 = map(expand_tensor, (expr1, expr2))
-    assert res1 == res2
-    expr3 = g(-mu, -nu) * p(mu) * p(nu)
-    expr4 = p(mu) * p(-mu)
-    res3, res4 = map(expand_tensor, (expr3, expr4))
-    assert res3 == res4
-    assert (
-        res3
-        == _E ** 2 * (1 - 1 / _r)
-        - _p1 ** 2 / (1 - 1 / _r)
-        - _p2 ** 2 * _r ** 2
-        - _p3 ** 2 * _r ** 2 * sin(_th) ** 2
+def test_indices():
+    (coords, metric) = _generate_variables_simple()
+    idxs = indices("i0:4", metric)
+    assert len(idxs) == 4
+    assert all([isinstance(i, Index) for i in idxs])
+
+
+def test_Tensor():
+    from sympy.tensor.tensor import tensorsymmetry
+
+    (coords, metric) = _generate_variables_simple()
+    T = Tensor("T", coords, metric)
+    assert isinstance(T, TensorHead)
+    assert T.as_array() == Array(coords)
+    assert T.covar == (1,)
+    assert T.symmetry == tensorsymmetry([1])
+
+
+def test_Tensor_comm():
+    (coords, metric) = _generate_variables_simple()
+    T = Tensor("T", coords, metric)
+    assert T.commutes_with(T) == 0
+    assert T.commutes_with(metric) == 0
+    assert T.commutes_with(metric.partial) is None
+
+
+def test_Tensor_simplify():
+    (coords, metric) = _generate_variables_simple()
+    x, y, z = coords
+    expr = -(1 - x) ** 2 / (x - 1)
+    expr_simplified = 1 - x
+    T = Tensor("T", 3 * [expr], metric)
+    assert str(T.simplify()[0]) == str(expr_simplified)
+
+
+def test_Tensor_covariance_transform():
+    (coords, t, r, th, ph, schw, g, mu, nu) = _generate_schwarzschild()
+    E, p1, p2, p3 = symbols("E p_1:4", positive=True)
+    p = Tensor("p", [E, p1, p2, p3], g)
+    res = p.covariance_transform(-mu)
+    expect = Array(
+        [E * (1 - 1 / r), -p1 / (1 - 1 / r), -p2 * r ** 2, -p3 * r ** 2 * sin(th) ** 2]
     )
-    expr5 = g(-mu, -nu) * g(mu, nu)
-    assert simplify(expand_tensor(expr5)) == 4
-    expr6 = g(mu, nu) * g(-mu, -nu)
-    assert simplify(expand_tensor(expr6)) == 4
+    assert res[0].equals(expect[0])
+    assert res[1].equals(expect[1])
+    assert res[2].equals(expect[2])
+    assert res[3].equals(expect[3])
 
 
-def test_TypeError():
-    pass
+def test_AbstractTensor():
+    (coords, metric) = _generate_variables_simple()
+    T = Tensor("T", coords, metric)
+    assert isinstance(T, AbstractTensor)
+    assert isinstance(T.as_array(), Array)
+    assert T.is_Tensor
+    assert not T.is_Metric
+    assert not T.is_Spacetime
+
+
+def test_IndexedTensor():
+    (coords, metric) = _generate_variables_simple()
+    T = Tensor("T", coords, metric)
+    mu = Index("mu", metric)
+    assert isinstance(T(mu), IndexedTensor)
+
+
+def test_ReplacementManager():
+    (coords, metric) = _generate_variables_simple()
+    T = Tensor("T", coords, metric)
+    mu = Index("mu", metric)
+    assert ReplacementManager.has(T)
+    assert ReplacementManager.get_value(T(mu)) == T.as_array()
+
+
+def test_expand_tensor():
+    (coords, t, r, th, ph, mink, eta, mu, nu) = _generate_minkowski()
+    E1, E2, E3, B1, B2, B3 = symbols("E_1:4 B_1:4", real=True)
+    matrix = [[0, -E1, -E2, -E3], [E1, 0, -B3, B2], [E2, B3, 0, -B1], [E3, -B2, B1, 0]]
+    F = Tensor("F", matrix, eta, symmetry=[[2]])
+    assert expand_tensor(eta(mu, nu) * eta(-mu, -nu)) == 4
+    assert expand_tensor(F(mu, -mu)) == 0
+    assert (
+        expand_tensor(F(mu, nu) * F(-mu, -nu))
+        == 2 * B1 ** 2
+        + 2 * B2 ** 2
+        + 2 * B3 ** 2
+        - 2 * E1 ** 2
+        - 2 * E2 ** 2
+        - 2 * E3 ** 2
+    )
+    (coords, t, r, th, ph, schw, g, mu, nu) = _generate_schwarzschild()
+    x = Tensor("x", [t, r, th, ph], g)
+    res = expand_tensor(g(mu, nu))
+    assert schw.inv().equals(res)
+    res1 = expand_tensor(g(mu, nu) * g(-mu, -nu))
+    res2 = expand_tensor(g(-mu, -nu) * g(mu, nu))
+    assert res1 == res2
+    assert simplify(res1) == 4
+    res1 = expand_tensor(g(-mu, -nu) * x(nu))
+    res2 = expand_tensor(x(-mu))
+    res3 = x.covariance_transform(-mu)
+    assert res1 == res2
+    assert res2 == res3
+    res1 = expand_tensor(g(mu, nu) * x(-nu))
+    res2 = expand_tensor(x(mu))
+    assert simplify(res1) == res2
+    res = expand_tensor(x(mu) * x(-mu))
+    assert (
+        res
+        == t ** 2 * (1 - 1 / r)
+        - r ** 2 / (1 - 1 / r)
+        - th ** 2 * r ** 2
+        - ph ** 2 * r ** 2 * sin(th) ** 2
+    )

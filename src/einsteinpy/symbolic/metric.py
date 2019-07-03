@@ -85,7 +85,7 @@ class Metric(AbstractTensor, TensorIndexType):
     def christoffel(self):
         r"""
         Returns the Christoffel symbols using the formula:
-        \Gamma^\rho_{\mu\nu} =
+        \Gamma^\sigma_{\mu\nu} =
         \frac{1}{2} g^{\sigma\rho} (\partial_\mu g_{\nu\rho} + \partial_\nu g_{\rho\mu} - \partial_\rho g_{\mu\nu})
 
         """
@@ -98,7 +98,7 @@ class Metric(AbstractTensor, TensorIndexType):
                 * g(si, rh)
                 * (d(-mu) * g(-nu, -rh) + d(-nu) * g(-rh, -mu) - d(-rh) * g(-mu, -nu))
             )
-            syms = expand_tensor(gamma)
+            syms = expand_tensor(gamma, [si, -mu, -nu])
             self._christoffel = Tensor("Gamma", syms, self, covar=(1, -1, -1))
         return self._christoffel
 
@@ -122,7 +122,7 @@ class Metric(AbstractTensor, TensorIndexType):
                 + gamma(rh, -mu, -la) * gamma(la, -nu, -si)
                 - gamma(rh, -nu, -la) * gamma(la, -mu, -si)
             )
-            res = expand_tensor(R)
+            res = expand_tensor(R, [rh, -si, -mu, -nu])
             self._riemann = Tensor(
                 "R", res, self, symmetry=[[2, 2]], covar=(1, -1, -1, -1)
             )
@@ -138,7 +138,7 @@ class Metric(AbstractTensor, TensorIndexType):
         if self._ricci_tensor is None:
             mu, nu, si = indices("mu nu sigma", self)
             R = self.riemann
-            res = expand_tensor(R(si, -mu, -si, -nu))
+            res = expand_tensor(R(si, -mu, -si, -nu), [-mu, -nu])
             self._ricci_tensor = Tensor("R", res, self, covar=(-1, -1))
         return self._ricci_tensor
 
@@ -197,7 +197,7 @@ class Metric(AbstractTensor, TensorIndexType):
                 )
                 + c2 * (g(rh, -mu) * g(-nu, -si) - g(rh, -nu) * g(-mu, -si)) * RRR
             )
-            res = expand_tensor(C)
+            res = expand_tensor(C, [rh, -si, -mu, -nu])
             self._weyl = Tensor(
                 "C", res, self, symmetry=[[2, 2]], covar=(1, -1, -1, -1)
             )

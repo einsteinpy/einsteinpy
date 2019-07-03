@@ -1,18 +1,34 @@
-from sympy import Matrix, diag, simplify, sin, symbols
+from sympy import diag, sin, symbols
 
 from einsteinpy.symbolic.metric import *
+from einsteinpy.symbolic.partial import *
 from einsteinpy.symbolic.tensor import *
 
-_t, _r, _th, _ph = symbols("t r theta phi", real=True)
-_coords = [_t, _r, _th, _ph]
-_schw = diag(1 - 1 / _r, -1 / (1 - 1 / _r), -_r ** 2, -_r ** 2 * sin(_th) ** 2)
-_E, _p1, _p2, _p3 = symbols("E p_1:4", positive=True)
-_momentum = [_E, _p1, _p2, _p3]
+
+def _generate_schwarzschild():
+    coords = symbols("t r theta phi", real=True)
+    t, r, th, ph = coords
+    schw = diag(1 - 1 / r, -1 / (1 - 1 / r), -r ** 2, -r ** 2 * sin(th) ** 2)
+    g = SpacetimeMetric("g", coords, schw, timelike=True)
+    mu, nu = indices("mu nu", g)
+    return (coords, t, r, th, ph, schw, g, mu, nu)
 
 
 def test_DiffOperator():
-    pass
+    r = Symbol("r")
+    dr = DiffOperator(r)
+    expr = dr * (1 - 1 / r)
+    assert expr == 1 / r ** 2
+    expr = (1 - 1 / r) * dr
+    assert isinstance(expr, DiffOperator)
+    assert (expr * (r ** 3 / 3)).equals(r * (r - 1))
 
 
 def test_PartialDerivative():
-    pass
+    (coords, t, r, th, ph, schw, g, mu, nu) = _generate_schwarzschild()
+    d = g.partial
+    assert isinstance(d, PartialDerivative)
+    assert isinstance(d, Tensor)
+    assert d.commutes_with(d) == 0
+    assert d.covar == (-1,)
+    assert all([isinstance(dx, DiffOperator) for dx in d.as_array()])
