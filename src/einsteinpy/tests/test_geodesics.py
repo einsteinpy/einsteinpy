@@ -29,11 +29,11 @@ def dummy_data():
 
 def test_Geodesics_conserves_the_attractor(dummy_data):
     body, t, _, end_lambda, stepsize = dummy_data
-    geo = Geodesic(body, t, end_lambda=end_lambda, step_size=stepsize)
+    geo = Geodesic(body, time=t, end_lambda=end_lambda, step_size=stepsize)
     assert geo.attractor == body.parent
 
 
 def test_Geodesics_has_trajectory(dummy_data):
     body, t, _, end_lambda, stepsize = dummy_data
-    geo = Geodesic(body, t, end_lambda=end_lambda, step_size=stepsize)
+    geo = Geodesic(body, time=t, end_lambda=end_lambda, step_size=stepsize)
     assert isinstance(geo.trajectory, np.ndarray)
