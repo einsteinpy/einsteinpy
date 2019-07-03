@@ -1,12 +1,12 @@
 Symbolic Relativity Module
 ==========================
 
-This module contains the classes for performing symbloic 
-calculations related to General Relativity.
+Module for providing an abstract tensor algebra engine for performing
+calculations on arbitrary manifolds.
 
 .. toctree::
     :maxdepth: 2
 
+    tensor
     metric
-    christoffel
-    riemann
+    partial
