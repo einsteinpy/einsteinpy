@@ -5,7 +5,7 @@ from einsteinpy.symbolic.metric import *
 from einsteinpy.symbolic.tensor import *
 
 
-def _generate_variables_simple():
+def _generate_simple():
     coords = symbols("x y z", real=True)
     # do not use any tensor related attributes of metric.
     # there is a dependency cycle between Tensor and Metric.
@@ -32,7 +32,7 @@ def _generate_minkowski():
 
 
 def test_Index():
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     mu = Index("mu", metric)
     assert isinstance(mu, TensorIndex)
     assert mu.is_up
@@ -40,7 +40,7 @@ def test_Index():
 
 
 def test_indices():
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     idxs = indices("i0:4", metric)
     assert len(idxs) == 4
     assert all([isinstance(i, Index) for i in idxs])
@@ -49,7 +49,7 @@ def test_indices():
 def test_Tensor():
     from sympy.tensor.tensor import tensorsymmetry
 
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     T = Tensor("T", coords, metric)
     assert isinstance(T, TensorHead)
     assert T.as_array() == Array(coords)
@@ -58,7 +58,7 @@ def test_Tensor():
 
 
 def test_Tensor_comm():
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     T = Tensor("T", coords, metric)
     assert T.commutes_with(T) == 0
     assert T.commutes_with(metric) == 0
@@ -66,7 +66,7 @@ def test_Tensor_comm():
 
 
 def test_Tensor_simplify():
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     x, y, z = coords
     expr = -(1 - x) ** 2 / (x - 1)
     expr_simplified = 1 - x
@@ -89,7 +89,7 @@ def test_Tensor_covariance_transform():
 
 
 def test_AbstractTensor():
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     T = Tensor("T", coords, metric)
     assert isinstance(T, AbstractTensor)
     assert isinstance(T.as_array(), Array)
@@ -99,14 +99,14 @@ def test_AbstractTensor():
 
 
 def test_IndexedTensor():
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     T = Tensor("T", coords, metric)
     mu = Index("mu", metric)
     assert isinstance(T(mu), IndexedTensor)
 
 
 def test_ReplacementManager():
-    (coords, metric) = _generate_variables_simple()
+    (coords, metric) = _generate_simple()
     T = Tensor("T", coords, metric)
     mu = Index("mu", metric)
     assert ReplacementManager.has(T)

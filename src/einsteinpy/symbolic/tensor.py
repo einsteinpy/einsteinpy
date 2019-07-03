@@ -27,9 +27,9 @@ class _ReplacementManager(dict):
     """
 
     def get_key(self, tensor):
-        item = tensor if isinstance(tensor, Tensor) else tensor.args[0]
+        item = tensor if (tensor.is_TensorHead or tensor.is_Metric) else tensor.args[0]
         for key in self.keys():
-            if key.args[0] == item:
+            if (key == item) or (key.args[0] == item):
                 return key
         return None
 
@@ -55,7 +55,7 @@ class _ReplacementManager(dict):
         return True if key is not None else False
 
     def __setitem__(self, tensor, array):
-        if tensor.is_Metric or not self.has(tensor):
+        if not self.has(tensor):
             self.update({tensor: array})
 
 
@@ -68,6 +68,7 @@ class AbstractTensor(object):
     """
 
     is_Tensor = True
+    is_TensorHead = False
     is_Metric = False
     is_Spacetime = False
     is_TensorDerivative = False
@@ -116,9 +117,6 @@ class IndexedTensor(AbstractTensor, SympyTensor):
 
     def __new__(cls, tensor, indices, **kwargs):
         obj = SympyTensor.__new__(cls, tensor, indices, **kwargs)
-        metrics = [idx.tensor_index_type for idx in indices]
-        for metric in metrics:
-            ReplacementManager[metric] = metric.as_array()
         array = tensor.covariance_transform(*indices)
         return AbstractTensor.__new__(cls, obj, array)
 
@@ -129,6 +127,7 @@ class Tensor(AbstractTensor, TensorHead):
     array of data elements/expressions to be substituted when requested.
 
     """
+    is_TensorHead = True
 
     def __new__(cls, symbol, matrix, metric, **kwargs):
         """
