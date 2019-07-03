@@ -7,7 +7,7 @@ import pytest
 from einsteinpy.bodies import Body
 from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.geodesic import Geodesic
-from einsteinpy.plotting import ScatterGeodesicPlotter
+from einsteinpy.plotting.senile import ScatterGeodesicPlotter
 
 
 @pytest.fixture()

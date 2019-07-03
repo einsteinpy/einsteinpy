@@ -1,7 +1,7 @@
 import random
 
-from .interactivegeodesic_plotter import InteractiveGeodesicPlotter
-from .staticgeodesic_plotter import StaticGeodesicPlotter
+from .interactive import InteractiveGeodesicPlotter
+from .static import StaticGeodesicPlotter
 
 
 def in_ipynb():

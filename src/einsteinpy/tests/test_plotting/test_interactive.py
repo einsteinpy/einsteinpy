@@ -48,7 +48,7 @@ def test_plot_draws_fig(dummy_data):
     assert fig
 
 
-@mock.patch("einsteinpy.plotting.geodesics.interactivegeodesic_plotter.saveplot")
+@mock.patch("einsteinpy.plotting.geodesics.interactive.saveplot")
 def test_save_saves_plot(mock_save, dummy_data):
     geodesic = dummy_data
     cl = InteractiveGeodesicPlotter()
