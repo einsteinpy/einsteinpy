@@ -198,7 +198,7 @@ class Tensor(AbstractTensor, TensorHead):
                 f"covariance signature {covar} does not match tensor rank {array.rank()}"
             )
 
-        count = defaultdict(int)
+        count = defaultdict(int) # type: dict
 
         def dummy_fmt_gen(idxtype):
             # generate a generic index for the entry in ReplacementManager.
