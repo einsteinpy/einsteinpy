@@ -97,7 +97,7 @@ class AbstractTensor(object):
         return self._array.copy()
 
     def as_inverse(self):
-        if self._inverse == None:
+        if self._inverse is None:
             self._inverse = Array(self.as_matrix().inv())
         return self._inverse
 
