@@ -214,7 +214,9 @@ class Tensor(AbstractTensor, TensorHead):
         obj.covar = covar
         idx_names = map(dummy_fmt_gen, obj.index_types)
         idx_generator = map(Index, idx_names, obj.index_types)
-        idxs = [idx if covar[pos] > 0 else -idx for pos, idx in enumerate(idx_generator)]
+        idxs = [
+            idx if covar[pos] > 0 else -idx for pos, idx in enumerate(idx_generator)
+        ]
         ReplacementManager[obj(*idxs)] = array
         return obj
 

@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from sympy import Array, ones, zeros, tensorproduct
+from sympy import Array, ones, tensorproduct, zeros
 from sympy.tensor.tensor import TensorIndexType
 
 from .partial import PartialDerivative
