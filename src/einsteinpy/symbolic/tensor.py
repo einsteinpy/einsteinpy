@@ -210,12 +210,11 @@ class Tensor(AbstractTensor, TensorHead):
         obj = TensorHead.__new__(cls, symbol, symtype, comm=comm, **kwargs)
         obj = AbstractTensor.__new__(cls, obj, array)
         # resolves a bug with pretty printing.
-        # TODO: Consider renaming this class to avoid conflicts.
         obj.__class__.__name__ = "TensorHead"
         obj.covar = covar
         idx_names = map(dummy_fmt_gen, obj.index_types)
-        idxs = map(Index, idx_names, obj.index_types)
-        idxs = [idx if covar[pos] > 0 else -idx for pos, idx in enumerate(idxs)]
+        idx_generator = map(Index, idx_names, obj.index_types)
+        idxs = [idx if covar[pos] > 0 else -idx for pos, idx in enumerate(idx_generator)]
         ReplacementManager[obj(*idxs)] = array
         return obj
 
@@ -223,7 +222,7 @@ class Tensor(AbstractTensor, TensorHead):
         return self._print()
 
     def __str__(self):
-        return str(self.__repr__())
+        return self.__repr__()
 
     def __call__(self, *args, **kwargs):
         new = IndexedTensor(self, args, **kwargs)

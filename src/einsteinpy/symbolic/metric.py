@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from sympy import Array, ones, zeros
+from sympy import Array, ones, zeros, tensorproduct
 from sympy.tensor.tensor import TensorIndexType
 
 from .partial import PartialDerivative
@@ -83,7 +83,7 @@ class Metric(AbstractTensor, TensorIndexType):
 
     @property
     def christoffel(self):
-        """
+        r"""
         Returns the Christoffel symbols using the formula:
         \Gamma^\rho_{\mu\nu} =
             \frac{1}{2} g^{\sigma\rho} (\partial_\mu g_{\nu\rho} + \partial_\nu g_{\rho\mu} - \partial_\rho g_{\mu\nu})
@@ -104,7 +104,7 @@ class Metric(AbstractTensor, TensorIndexType):
 
     @property
     def riemann(self):
-        """
+        r"""
         Returns the Riemann curvature tensor using the formula:
         R^\rho_{\sigma\mu\nu} =
             \partial_\mu \Gamma^\rho_{\nu\sigma} - \partial_\nu \Gamma^\rho_{\mu\sigma}
@@ -130,7 +130,7 @@ class Metric(AbstractTensor, TensorIndexType):
 
     @property
     def ricci_tensor(self):
-        """
+        r"""
         Returns the Ricci tensor using the formula:
         R_{\mu\nu} = R^\sigma_{\mu\sigma\nu}
 
@@ -144,7 +144,7 @@ class Metric(AbstractTensor, TensorIndexType):
 
     @property
     def ricci_scalar(self):
-        """
+        r"""
         Returns the Ricci scalar using the formula:
         R = R^\mu_\mu
 
@@ -158,7 +158,7 @@ class Metric(AbstractTensor, TensorIndexType):
 
     @property
     def weyl(self):
-        """
+        r"""
         Returns the Weyl conformal tensor using the formula:
         C_{\rho\sigma\mu\nu} =
             R_{\rho\sigma\mu\nu} - \frac{2}{(n - 2)} (g_{\rho[\mu} R_{\nu]\sigma} - g_{\sigma[\mu} R_{\nu]\rho})
@@ -203,6 +203,11 @@ class Metric(AbstractTensor, TensorIndexType):
 
     @property
     def einstein(self):
+        r"""
+        Returns the Einstein tensor using the formula:
+        G_{\mu\nu} = R_{\mu\nu} - \frac{1}{2} R g_{\mu\nu}
+
+        """
         if self._einstein is None:
             mu, nu = indices("mu nu", self)
             g = self.metric

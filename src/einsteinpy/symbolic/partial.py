@@ -33,7 +33,7 @@ class DiffOperator(Expr):
 
     @call_highest_priority("__mul__")
     def __rmul__(self, other):
-        return DiffOperator(*self.args, left=other)
+        return DiffOperator(*self.args, left=Mul(other, self.left))
 
 
 class PartialDerivative(Tensor):
