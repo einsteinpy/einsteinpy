@@ -94,4 +94,5 @@ Contents
     metric
     jupyter
     changelog
+    dev_guide
     api/index
