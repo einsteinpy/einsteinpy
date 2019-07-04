@@ -8,6 +8,7 @@ branches:
   only:
     - master
     - 0.1.x
+    - 0.2.x
 
 matrix:
   fast_finish: true
