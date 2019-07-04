@@ -28,18 +28,18 @@
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
    :target: https://docs.einsteinpy.org/en/latest/?badge=latest
 
-.. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=travis
+.. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/0.2.x.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
 
 .. |codeclimate| image:: https://img.shields.io/codeclimate/maintainability/einsteinpy/einsteinpy.svg?logo=code-climate&style=flat-square
    :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
    :alt: Maintainability
 
-.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=circleci
+.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/0.2.x.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
-   :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
+   :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=0.2.x
 
 .. |appveyor| image:: https://img.shields.io/appveyor/ci/shreyasbapat/einsteinpy.svg?logo=appveyor&style=flat-square
    :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy
@@ -49,7 +49,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.2.dev0
+:Version: 0.2b1
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
@@ -203,7 +203,7 @@ one:
 
 And this is an example citation format::
 
- Shreyas Bapat et al.. (2019). EinsteinPy: einsteinpy 0.1.0. Zenodo. 10.5281/zenodo.2582388
+ Shreyas Bapat et al.. (2019). EinsteinPy: einsteinpy 0.2.0. Zenodo. 10.5281/zenodo.2582388
 
 
 License
