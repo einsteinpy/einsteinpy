@@ -50,3 +50,51 @@ def test_TypeError():
         assert False
     except TypeError:
         assert True
+
+
+def test_change_config():
+    x, y, z = sympy.symbols("x y z")
+
+    list3d = np.zeros((3, 3, 3), dtype=int).tolist()
+    for i in range(3):
+        list3d[i][i][i] = (x ** i) * (y * (2 - i)) + i * z
+    list3d[1][2][0] = list3d[1][0][2] = x * y * z
+    list3d[2][1][0] = list3d[2][0][1] = 4 * y
+
+    metriclist = np.identity(3).tolist()
+    metric = MetricTensor(metriclist, (x, y, z), "uu")
+    ch = ChristoffelSymbols(list3d, (x, y, z), "ull", parent_metric=metric)
+    chr_new = ch.change_config("llu")
+
+    for t in range(3):
+        i, j, k = t % 3, (int(t / 3)) % 3, (int(t / (3 ** 2))) % 3
+        assert sympy.simplify(ch[i, j, k] - chr_new[i, j, k]) == 0
+
+
+def test_wrong_number_of_indices_ValueError():
+    x, y, z = sympy.symbols("x y z")
+
+    list3d = np.zeros((3, 3, 3), dtype=int).tolist()
+    for i in range(3):
+        list3d[i][i][i] = (x ** i) * (y * (2 - i)) + i * z
+    list3d[1][2][0] = list3d[1][0][2] = x * y * z
+    list3d[2][1][0] = list3d[2][0][1] = 4 * y
+
+    try:
+        ch = ChristoffelSymbols(list3d, (x, y, z), "ulll")
+        assert False
+    except ValueError:
+        assert True
+
+
+def test_properties():
+    sch_inv = schwarzschild_metric()
+    ch = ChristoffelSymbols.from_metric(sch_inv)
+    assert ch.parent_metric == ch._parent_metric
+    # test change_config, should raise ValueError
+    ch._parent_metric = None
+    try:
+        ch_new = ch.change_config("lll")
+        assert False
+    except Exception:
+        return True

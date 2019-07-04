@@ -10,7 +10,7 @@ class RicciTensor(Tensor):
     Class for defining Ricci Tensor
     """
 
-    def __init__(self, arr, syms):
+    def __init__(self, arr, syms, config="ll", parent_metric=None):
         """
         Constructor and Initializer
 
@@ -20,6 +20,8 @@ class RicciTensor(Tensor):
             Sympy Array or multi-dimensional list containing Sympy Expressions
         syms : tuple or list
             Tuple of crucial symbols dentoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+        config : str
+            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
 
         Raises
         ------
@@ -27,14 +29,20 @@ class RicciTensor(Tensor):
             Raised when arr is not a list or sympy Array
         TypeError
             syms is not a list or tuple
-
+        ValueError
+            config has more or less than 2 indices
+        
         """
-        super(RicciTensor, self).__init__(arr)
+        super(RicciTensor, self).__init__(arr, config=config)
+        self._order = 2
+        self._parent_metric = parent_metric
         if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
         else:
             raise TypeError("syms should be a list or tuple")
+        if not len(config) == self._order:
+            raise ValueError("config should be of length {}".format(self._order))
 
     @classmethod
     def from_riemann(cls, riemann):
