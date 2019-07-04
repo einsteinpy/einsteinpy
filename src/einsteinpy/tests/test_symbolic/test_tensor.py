@@ -40,10 +40,30 @@ def test_Tensor_getitem():
         assert obj[p, q, r] - test_list[p][q][r] == 0
 
 
-def test_TypeError():
+def test_TypeError1():
     arr = 0
     try:
         obj = Tensor(arr)
+        assert False
+    except TypeError:
+        assert True
+
+
+def test_TypeError2():
+    scht = schwarzschild_tensor().tensor()
+    # pass non str object
+    try:
+        obj = Tensor(scht, config=0)
+        assert False
+    except TypeError:
+        assert True
+
+
+def test_TypeError3():
+    scht = schwarzschild_tensor().tensor()
+    # pass string containing elements other than 'l' or 'u'
+    try:
+        obj = Tensor(scht, config="al")
         assert False
     except TypeError:
         assert True
@@ -66,3 +86,9 @@ def test_subs_multiple():
     test_arr = T.subs([(a, 0), (c, 1)])
     assert simplify(test_arr.arr[0, 0] - 1) == 0
     assert simplify(test_arr.arr[1, 1] - (-1)) == 0
+
+
+def test_check_properties():
+    T = schwarzschild_tensor()
+    assert T.order == T._order
+    assert T.config == T._config

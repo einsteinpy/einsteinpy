@@ -35,3 +35,43 @@ def test_TypeError():
         assert False
     except TypeError:
         assert True
+
+
+def test_properties():
+    sch = schwarzschild_metric()
+    assert sch.config == "ll"
+    assert sch.order == 2
+
+
+def test_inv():
+    sch = schwarzschild_metric()
+    sch_inv = sch.inv()
+    assert sch == sch_inv.inv()
+    assert sch_inv == sch.inv()
+    for i in range(4):
+        # this is because schwarzschild metric is diagonal
+        assert sympy.simplify(sch[i, i] * sch_inv[i, i]) == 1
+
+
+def test_change_config_ValueError():
+    sch = schwarzschild_metric()
+    try:
+        sch_new = sch.change_config("ul")
+        assert False
+    except ValueError:
+        assert True
+
+
+def test_check_ValueError_on_incorrect_config_length():
+    sch = schwarzschild_metric()
+    try:
+        sch_new = MetricTensor(sch.tensor(), sch.syms, config="lll")
+        assert False
+    except ValueError:
+        assert True
+
+
+def test_use_original_config_in_change_config():
+    sch = schwarzschild_metric()
+    sch_new = sch.change_config("ll")
+    assert sch == sch_new
