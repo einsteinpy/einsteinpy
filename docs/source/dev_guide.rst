@@ -28,13 +28,17 @@ Besides, the `wiki`_ is open for everybody to edit, so feel free to add
 new content.
 
 To build the docs, you must first create a development environment (see
-below) and then in the ``docs/`` directory run::
+below) and then in the ``docs/`` directory run:
+
+ .. code:: bash
 
     $ cd docs
     $ make html
 
 After this, the new docs will be inside ``build/html``. You can open
-them by running an HTTP server::
+them by running an HTTP server:
+
+ .. code:: bash
 
     $ cd build/html
     $ python -m http.server
@@ -123,7 +127,9 @@ To get the quality checks passed, the code should follow some standards listed b
 3. `mypy <http://mypy-lang.org/>`_ for static type checking.
 
 But to avoid confusion, we have setup `tox <https://tox.readthedocs.io/en/latest/>`_ for
-doing this in one command and doing it properly! Run ::
+doing this in one command and doing it properly! Run:
+
+ .. code:: bash
 
     $ cd einsteinpy/
     $ tox -e reformat
