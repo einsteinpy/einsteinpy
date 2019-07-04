@@ -7,8 +7,6 @@ from einsteinpy.symbolic.tensor import *
 
 def _generate_simple():
     coords = symbols("x y z", real=True)
-    # do not use any tensor related attributes of metric.
-    # there is a dependency cycle between Tensor and Metric.
     metric = Metric("metric", coords, eye(3))
     return (coords, metric)
 
@@ -106,11 +104,7 @@ def test_IndexedTensor():
 
 
 def test_ReplacementManager():
-    (coords, metric) = _generate_simple()
-    T = Tensor("T", coords, metric)
-    mu = Index("mu", metric)
-    assert ReplacementManager.has(T)
-    assert ReplacementManager.get_value(T(mu)) == T.as_array()
+    pass
 
 
 def test_expand_tensor():
