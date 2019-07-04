@@ -1,7 +1,7 @@
 What's new
 ==========
 
-einsteinpy 0.2.0 - 2019-07-28
+einsteinpy 0.2.0 - 2019-07-15
 -----------------------------
 
 This release will bring a lots and lots of features with a more intuitive API, a better
