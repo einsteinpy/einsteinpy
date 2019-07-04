@@ -9,7 +9,7 @@ import pytest
 from einsteinpy.bodies import Body
 from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.geodesic import Geodesic
-from einsteinpy.plotting import StaticGeodesicPlotter
+from einsteinpy.plotting.senile import StaticGeodesicPlotter
 
 
 @pytest.fixture()
@@ -40,7 +40,7 @@ def test_staticgeodesicplotter_has_axes(dummy_data):
     assert cl._attractor_present is False
 
 
-@mock.patch("einsteinpy.plotting.geodesics.geodesics_static.plt.show")
+@mock.patch("einsteinpy.plotting.senile.geodesics_static.plt.show")
 def test_plot_calls_plt_show(mock_show, dummy_data):
     geodesic = dummy_data
     cl = StaticGeodesicPlotter()
@@ -58,7 +58,7 @@ def test_animate_creates_ani(dummy_data):
     assert cl.ani
 
 
-@mock.patch("einsteinpy.plotting.geodesics.geodesics_static.plt.savefig")
+@mock.patch("einsteinpy.plotting.senile.geodesics_static.plt.savefig")
 def test_plot_save_saves_plot(mock_save, dummy_data):
     geodesic = dummy_data
     cl = StaticGeodesicPlotter()

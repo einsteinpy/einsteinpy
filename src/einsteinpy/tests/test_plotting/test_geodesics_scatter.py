@@ -7,7 +7,7 @@ import pytest
 from einsteinpy.bodies import Body
 from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.geodesic import Geodesic
-from einsteinpy.plotting import ScatterGeodesicPlotter
+from einsteinpy.plotting.senile import ScatterGeodesicPlotter
 
 
 @pytest.fixture()
@@ -39,7 +39,7 @@ def test_plot_attractor_is_called_only_once(dummy_data):
 
 
 @mock.patch(
-    "einsteinpy.plotting.geodesics.geodesics_scatter.ScatterGeodesicPlotter._plot_attractor"
+    "einsteinpy.plotting.senile.geodesics_scatter.ScatterGeodesicPlotter._plot_attractor"
 )
 def test_plot_calls_plot_attractor(mock_plot_attractor, dummy_data):
     geodesics = dummy_data
@@ -48,7 +48,7 @@ def test_plot_calls_plot_attractor(mock_plot_attractor, dummy_data):
     mock_plot_attractor.assert_called_with()
 
 
-@mock.patch("einsteinpy.plotting.geodesics.geodesics_scatter.plt.figure")
+@mock.patch("einsteinpy.plotting.senile.geodesics_scatter.plt.figure")
 def test_animate_calls_figure(mock_figure, dummy_data):
     geodesics = dummy_data
     cl = ScatterGeodesicPlotter()
@@ -56,7 +56,7 @@ def test_animate_calls_figure(mock_figure, dummy_data):
     mock_figure.assert_called_with()
 
 
-@mock.patch("einsteinpy.plotting.geodesics.geodesics_scatter.plt.show")
+@mock.patch("einsteinpy.plotting.senile.geodesics_scatter.plt.show")
 def test_plot_show_shows_plot(mock_show, dummy_data):
     geodesics = dummy_data
     cl = ScatterGeodesicPlotter()
@@ -65,7 +65,7 @@ def test_plot_show_shows_plot(mock_show, dummy_data):
     mock_show.assert_called_with()
 
 
-@mock.patch("einsteinpy.plotting.geodesics.geodesics_scatter.plt.savefig")
+@mock.patch("einsteinpy.plotting.senile.geodesics_scatter.plt.savefig")
 def test_plot_save_saves_plot(mock_save, dummy_data):
     geodesics = dummy_data
     cl = ScatterGeodesicPlotter()

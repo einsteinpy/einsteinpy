@@ -28,5 +28,5 @@ Color
 
 This module contains the methods for static geodesic plotting using scatter plots.
 
-.. automodule:: einsteinpy.plotting.geodesics.geodesics_scatter
+.. automodule:: einsteinpy.plotting.senile.geodesics_scatter
     :members:
