@@ -4,7 +4,7 @@ from sympy import Array, ones, tensorproduct, zeros
 from sympy.tensor.tensor import TensorIndexType
 
 from .partial import PartialDerivative
-from .tensor import ReplacementManager, AbstractTensor, Tensor, expand_tensor, indices
+from .tensor import AbstractTensor, ReplacementManager, Tensor, expand_tensor, indices
 
 
 class Metric(AbstractTensor, TensorIndexType):

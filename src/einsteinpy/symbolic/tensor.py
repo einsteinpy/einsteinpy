@@ -127,6 +127,7 @@ class Tensor(AbstractTensor, TensorHead):
     array of data elements/expressions to be substituted when requested.
 
     """
+
     is_TensorHead = True
 
     def __new__(cls, symbol, matrix, metric, **kwargs):
