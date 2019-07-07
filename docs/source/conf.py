@@ -61,6 +61,25 @@ extensions = [
     "sphinx.ext.graphviz",  # For creating the diagrams
 ]
 
+#Nbsphinx configuration
+# See https://github.com/jupyter/nbconvert/issues/878#issuecomment-419655951
+# Should not be needed after nbconvert 5.5 is out
+nbsphinx_kernel_name = "python3"
+
+def setup(app):
+    # https://docs.readthedocs.io/en/latest/guides/adding-custom-css.html
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx.application.Sphinx.add_js_file
+    app.add_js_file('https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js')
+    app.add_js_file("https://unpkg.com/@jupyter-widgets/html-manager@^0.14.0/dist/embed-amd.js")
+
+if os.environ.get('READTHEDOCS') == 'True':
+    nbsphinx_execute = 'never'
+else:
+    nbsphinx_execute = 'always'
+
+    # Controls when a cell will time out (defaults to 30; use -1 for no timeout):
+    nbsphinx_timeout = 60
+
 templates_path = ["_templates"]
 
 source_suffix = ".rst"
