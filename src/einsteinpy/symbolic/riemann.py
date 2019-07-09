@@ -22,6 +22,8 @@ class RiemannCurvatureTensor(Tensor):
             Tuple of crucial symbols dentoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
+            Metric Tensor related to this Riemann Curvature Tensor.
 
         Raises
         ------
@@ -115,8 +117,8 @@ class RiemannCurvatureTensor(Tensor):
 
         Returns
         -------
-        ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
-            New tensor with new configuration. Defaults to 'llll'
+        ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
+            New tensor with new configuration. Configuration defaults to 'llll'
 
         Raises
         ------
