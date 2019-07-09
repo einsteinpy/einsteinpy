@@ -7,8 +7,9 @@ calculations related to General Relativity.
 .. toctree::
     :maxdepth: 2
 
-    christoffel
+    tensor
     metric
-    ricci
-    riemann
     vacuum_metrics
+    christoffel
+    riemann
+    ricci
