@@ -9,9 +9,8 @@ project = "EinsteinPy"
 year = datetime.now().year
 copyright = "%d EinsteinPy Development Team" % year
 
-version = einsteinpy.__version__
-
-release = version
+version = "0.3"
+release = "0.3.dev0"
 highlight_language = "python"
 pygments_style = "sphinx"
 autoclass_content = "both"
@@ -60,7 +59,6 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx.ext.mathjax",  # New module for matrix visualization
     "sphinx.ext.graphviz",  # For creating the diagrams
-    "notfound.extension",
     "jupyter_sphinx.embed_widgets",
 ]
 

@@ -17,7 +17,7 @@ class InteractiveGeodesicPlotter:
             Color which is used to denote the attractor. Defaults to #ffcc00.
 
         """
-        self.fig = go.FigureWidget()
+        self._fig = go.FigureWidget()
         self.attractor_color = attractor_color
         self.attractor_present = False
 
