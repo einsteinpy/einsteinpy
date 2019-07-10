@@ -2,7 +2,7 @@
 # Windows
 # File shamelessly inspired by Astropy
 
-version: 0.2b1-{build}
+version: 0.2.rc1-{build}
 
 branches:
   only:
