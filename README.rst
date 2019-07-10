@@ -100,7 +100,8 @@ EinsteinPy requires the following Python packages:
 
 * NumPy, for basic numerical routines
 * Astropy, for physical units and time handling
-* Matplotlib, for geodesics plotting and visualizations.
+* Matplotlib, for static geodesics plotting and visualizations.
+* Plotly, for interactive geodesics plotting and visualizations.
 * SciPy, for solving ordinary differential equations.
 * SymPy, for symbolic calculations related to GR.
 * Numba (optional), for accelerating the code
