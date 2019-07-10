@@ -85,7 +85,6 @@ class Tensor:
             Raised when arr is not a list or sympy array
         TypeError
             Raised when config is not of type str or contains characters other than 'l' or 'u'
-        
 
         """
 
