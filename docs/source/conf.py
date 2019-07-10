@@ -59,7 +59,6 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx.ext.mathjax",  # New module for matrix visualization
     "sphinx.ext.graphviz",  # For creating the diagrams
-    "jupyter_sphinx.embed_widgets",
 ]
 
 #Nbsphinx configuration
