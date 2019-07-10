@@ -26,7 +26,7 @@
    :target: https://github.com/einsteinpy/einsteinpy/raw/0.2.x/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://docs.einsteinpy.org/en/v0.2b1/?badge=latest
+   :target: https://docs.einsteinpy.org/en/v0.2.rc1/?badge=latest
 
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/0.2.x.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
@@ -49,7 +49,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.2b1
+:Version: 0.2.rc1
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
@@ -100,7 +100,8 @@ EinsteinPy requires the following Python packages:
 
 * NumPy, for basic numerical routines
 * Astropy, for physical units and time handling
-* Matplotlib, for geodesics plotting and visualizations.
+* Matplotlib, for static geodesics plotting and visualizations.
+* Plotly, for interactive geodesics plotting and visualizations.
 * SciPy, for solving ordinary differential equations.
 * SymPy, for symbolic calculations related to GR.
 * Numba (optional), for accelerating the code

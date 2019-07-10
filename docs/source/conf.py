@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import alabaster
@@ -8,9 +9,8 @@ project = "EinsteinPy"
 year = datetime.now().year
 copyright = "%d EinsteinPy Development Team" % year
 
-version = einsteinpy.__version__
-
-release = version
+version = "0.2"
+release = "0.2.rc1"
 highlight_language = "python"
 pygments_style = "sphinx"
 autoclass_content = "both"
@@ -60,7 +60,6 @@ extensions = [
     "sphinx.ext.mathjax",  # New module for matrix visualization
     "sphinx.ext.graphviz",  # For creating the diagrams
 ]
-
 templates_path = ["_templates"]
 
 source_suffix = ".rst"

@@ -38,17 +38,26 @@ Key features of EinsteinPy are:
  * Maxwell Tensor and electromagnetic potential in Kerr-Newman space-time
  * And much more!
 
-* Symbolic Calculation of various quantities in GR
+* Symbolic Calculation of various quantities
 
  * Christoffel Symbols
  * Riemann Curvature Tensor
+ * Ricci Tensor
+ * Index uppering and lowering!
  * Simplification of symbolic expressions
 
-* Static Geodesic Plotting
+* Geodesic Plotting
+
+ * Static Plotting using Matplotlib
+ * Interactive 2D plotting
+ * Environment aware plotting!
+
 * Coordinate conversion with unit handling
 
  * Spherical/Cartesian Coordinates
  * Boyer-Lindquist/Cartesian Coordinates
+
+* Hypersurface Embedding of Schwarzschild Space-Time
 
 
 And more to come!

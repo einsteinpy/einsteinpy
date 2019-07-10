@@ -3,7 +3,7 @@ import random
 
 import numpy as np
 import plotly.graph_objs as go
-from plotly.offline import init_notebook_mode, plot as saveplot
+from plotly.offline import plot as saveplot
 
 
 class InteractiveGeodesicPlotter:
@@ -20,7 +20,11 @@ class InteractiveGeodesicPlotter:
         self.fig = go.FigureWidget()
         self.attractor_color = attractor_color
         self.attractor_present = False
-        init_notebook_mode(connected=True)
+        self._layout = go.Layout(
+            autosize=True,
+            xaxis=dict(title="x (m)", constrain="domain"),
+            yaxis=dict(title="y (m)", scaleanchor="x"),
+        )
 
     def _draw_attractor(self, radius, xarr, yarr):
         self.attractor_present = True
@@ -62,8 +66,24 @@ class InteractiveGeodesicPlotter:
         )
 
     def show(self):
+        """
+        Method to show plots during runtime.
+
+        Returns
+        -------
+        ~plotly.graph_objs.FigureWidget
+        """
+        self.fig.layout.update(self._layout)
         return self.fig
 
     def save(self, name="geodesic.png"):
+        """
+        Method to save plots locally.
+
+        Parameters
+        ----------
+        name : str, optional
+            Name of the file with extension.
+        """
         basename, ext = os.path.splitext(name)
         saveplot(self.fig, image=ext[1:], image_filename=basename, show_link=False)
