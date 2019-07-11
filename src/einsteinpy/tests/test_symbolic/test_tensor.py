@@ -40,6 +40,23 @@ def test_Tensor_getitem():
         assert obj[p, q, r] - test_list[p][q][r] == 0
 
 
+def test_Tensor_str():
+    x, y, z = symbols("x y z")
+    test_list = [[[x, y], [y, x]], [[z, x], [y, z]]]
+    obj1 = Tensor(test_list)
+
+    assert "object at 0x" not in str(obj1)
+
+
+def test_Tensor_repr():
+    x, y, z = symbols("x y z")
+    test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]
+    obj1 = Tensor(test_list)
+
+    machine_representation = repr(obj1)
+    assert not "object at 0x" in machine_representation
+
+
 def test_TypeError1():
     arr = 0
     try:
