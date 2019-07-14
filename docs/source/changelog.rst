@@ -1,16 +1,19 @@
 What's new
 ==========
 
-einsteinpy 0.2.0 - 2019-07-15
+einsteinpy 0.2.0 - 2019-07-14
 -----------------------------
 
-This release will bring a lots and lots of features with a more intuitive API, a better
-plotting support, more metrics introduced and what not. This is a major release which will
-short term support version and will be supported only till June 2020. This major release
-comes before Python in Astronomy 2019 workshop.
+This release brings a lot of new features for the EinsteinPy Users. 
 
-Part of this release is sponsored by European Space Agency, through Summer of Code in Space
-(SOCIS) 2019 program.
+A better API, intuitive structure and easy coordinates handling! This major release
+comes before Python in Astronomy 2019 workshop and brings a lots of cool stuff. 
+
+Part of this release is sponsored by ESA/ESTEC – Adv. Concepts & Studies Office
+(European Space Agency), through Summer of Code in Space (SOCIS) 2019 program.
+
+This is a short-term supported version and will be supported only until December 2019. 
+For any feature request, write a mail to developers@einsteinpy.org describing what you need.
 
 Features
 ........

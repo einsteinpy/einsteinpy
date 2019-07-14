@@ -26,7 +26,7 @@
    :target: https://github.com/einsteinpy/einsteinpy/raw/0.2.x/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://docs.einsteinpy.org/en/v0.2.rc1/?badge=latest
+   :target: https://docs.einsteinpy.org/en/v0.2.0/?badge=latest
 
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/0.2.x.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
@@ -49,7 +49,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.2.rc1
+:Version: 0.2.0
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
