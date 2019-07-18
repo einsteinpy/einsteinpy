@@ -117,7 +117,6 @@ class WeylTensor(Tensor):
                 config="llll",
                 parent_metric=metric,
             )
-        # dimension less than 3
         raise ValueError("Dimension of the space/space-time should be 3 or more")
 
     def change_config(self, newconfig="llll", metric=None):
