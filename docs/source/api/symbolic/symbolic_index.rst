@@ -13,3 +13,5 @@ calculations related to General Relativity.
     christoffel
     riemann
     ricci
+    weyl
+    einstein
