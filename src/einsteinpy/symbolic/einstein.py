@@ -57,7 +57,7 @@ class EinsteinTensor(Tensor):
     def from_metric(cls, metric):
         t_ricci = RicciTensor.from_metric(metric)
         r_scalar = RicciScalar.from_riccitensor(t_ricci, t_ricci.parent_metric)
-        einstein_tensor = t_ricci.tensor() - 0.5 * metric.tensor() * r_scalar.tensor()
+        einstein_tensor = t_ricci.tensor() - (1 / 2) * metric.tensor() * r_scalar.expr
         return cls(
             einstein_tensor,
             metric.syms,
@@ -94,7 +94,7 @@ class EinsteinTensor(Tensor):
         if metric is None:
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
-        new_obj = RicciTensor(
+        new_obj = EinsteinTensor(
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
