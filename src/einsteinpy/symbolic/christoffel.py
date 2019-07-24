@@ -77,14 +77,15 @@ class ChristoffelSymbols(Tensor):
             k = t % dims
             j = (int(t / dims)) % (dims)
             i = (int(t / (dims ** 2))) % (dims)
-            tmpvar = 0
-            for n in range(dims):
-                tmpvar += (matinv[i, n] / 2) * (
-                    sympy.diff(mat[n, j], syms[k])
-                    + sympy.diff(mat[n, k], syms[j])
-                    - sympy.diff(mat[j, k], syms[n])
-                )
-            tmplist[i][j][k] = tmpvar
+            if k <= j:
+                tmpvar = 0
+                for n in range(dims):
+                    tmpvar += (matinv[i, n] / 2) * (
+                        sympy.diff(mat[n, j], syms[k])
+                        + sympy.diff(mat[n, k], syms[j])
+                        - sympy.diff(mat[j, k], syms[n])
+                    )
+                tmplist[i][j][k] = tmplist[i][k][j] = tmpvar
         return cls(tmplist, syms, config="ull", parent_metric=metric)
 
     def change_config(self, newconfig="lll", metric=None):

@@ -109,3 +109,16 @@ def test_check_properties():
     T = schwarzschild_tensor()
     assert T.order == T._order
     assert T.config == T._config
+
+
+def test_tensor1D():
+    symbolstr = "t r theta phi"
+    syms = symbols(symbolstr)
+    G, M, c, a = symbols("G M c a")
+    list1d = np.zeros(4, dtype=int).tolist()
+    list1d[0] = 1 - (a / syms[1])
+    list1d[1] = -1 / ((1 - (a / syms[1])) * (c ** 2))
+    list1d[2] = -1 * (syms[1] ** 2) / (c ** 2)
+    list1d[3] = -1 * (syms[1] ** 2) * (sin(syms[2]) ** 2) / (c ** 2)
+    vector = Tensor(list1d)
+    assert vector.arr.rank() == 1
