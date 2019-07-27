@@ -15,3 +15,4 @@ calculations related to General Relativity.
     ricci
     weyl
     einstein
+    vector
