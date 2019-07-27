@@ -19,7 +19,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
             Sympy Array or multi-dimensional list containing Sympy Expressions
         syms : tuple or list
-            Tuple of crucial symbols dentoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ull'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
