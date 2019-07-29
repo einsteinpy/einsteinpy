@@ -19,6 +19,21 @@ def schwarzschild_tensor():
     return sch
 
 
+def arbitrary_tensor1():
+    symbolstr = "x0 x1 x2 x3"
+    syms = symbols(symbolstr)
+    a, c = symbols("a c")
+    f1, f2, f3 = Function("f1")(a, syms[2]), Function("f2")(c), Function("f3")
+    list2d = np.zeros((4, 4), dtype=int).tolist()
+    list2d[0][0] = 1 - (a * f1 / syms[1])
+    list2d[1][1] = -1 / ((1 - (a / syms[1])) * (c ** 2))
+    list2d[2][2] = -1 * (syms[1] ** 2) / (c ** 2)
+    list2d[3][3] = -1 * (syms[1] ** 2) * (sin(syms[2]) ** 2) / (c ** 2)
+    list2d[0][3] = list2d[3][0] = 5 * f2
+    list2d[2][1] = list2d[1][2] = f3
+    return BaseRelativityTensor(list2d, syms, config="ll"), [a, c], [f1, f2, f3]
+
+
 def test_Tensor():
     x, y, z = symbols("x y z")
     test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]

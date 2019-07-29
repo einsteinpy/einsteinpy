@@ -1,6 +1,7 @@
 import numpy as np
 import sympy
 from sympy import simplify, tensorcontraction, tensorproduct
+from sympy.core.function import AppliedUndef, UndefinedFunction
 
 
 def _config_checker(config):
@@ -180,3 +181,128 @@ class Tensor:
 
         """
         return sympy.simplify(self.tensor())
+
+
+class BaseRelativityTensor(Tensor):
+    """
+    Inherits from ~einsteinpy.symbolic.tensor.Tensor . 
+    Generic class for defining tensors in General Relativity. 
+    This would act as a base class for other Tensorial quantities in GR.
+
+    Attributes
+    ----------
+    arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
+        Raw Tensor in sympy array
+    syms : list or tuple
+        List of symbols denoting space and time axis
+    dims : int
+        dimension of the space-time.
+    variables : list
+        free variables in the tensor expression other than the variables describing space-time axis.
+    functions : list
+        Undefined functions in the tensor expression.
+    name : string or None
+        Name of the tensor.
+    
+    
+    """
+
+    def __init__(
+        self,
+        arr,
+        syms,
+        config="ll",
+        parent_metric=None,
+        variables=list(),
+        functions=list(),
+        name=None,
+    ):
+        """
+        Constructor and Initializer
+        
+        Parameters
+        ----------
+        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+            Sympy Array or multi-dimensional list containing Sympy Expressions
+        syms : tuple or list
+            List of crucial symbols dentoting time-axis and/or spacial axis. 
+            For example, in case of 4D space-time, the arrangement would look like [t, x1, x2, x3].
+        config : str
+            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Metric Tensor for some particular space-time which is associated with this Tensor.
+        variables : tuple or list or set
+            List of symbols used in expressing the tensor other than symbols associated with denoting the space-time axis. 
+            Calculates in real-time if left blank.
+        functions : tuple or list or set
+            List of symbolic functions used in epressing the tensor. 
+            Calculates in real-time if left blank.
+        name : string
+            Name of the Tensor. Defaults to None.
+
+        Raises
+        ------
+        TypeError
+            Raised when arr is not a list, sympy array or numpy array.
+        TypeError
+            Raised when config is not of type str or contains characters other than 'l' or 'u'
+        TypeError
+            Raised when arguments syms, variables, functions have data type other than list, tuple or set.
+        TypeError
+            Raised when argument parent_metric does not belong to MetricTensor class and isn't None.
+
+        """
+        super(BaseRelativityTensor, self).__init__(arr=arr, config=config)
+        # Cannot implement the check that parent metric belongs to the class MetricTensor
+        # Due to the issue of cyclic imports, would find a workaround
+        self._parent_metric = parent_metric
+        self.name = name
+        if isinstance(syms, (list, tuple)):
+            self.syms = syms
+            self.dims = len(self.syms)
+        else:
+            raise TypeError("syms should be a list or tuple")
+
+        if isinstance(variables, (list, tuple, set)) and isinstance(
+            functions, (list, tuple, set)
+        ):
+            # compute free variables and functions if list if empty
+            if not variables:
+                self.variables = [
+                    v for v in self.arr.free_symbols if v not in self.syms
+                ]
+            else:
+                self.variables = list(variables)
+            if not functions:
+                self.functions = [
+                    f
+                    for f in self.arr.atoms(AppliedUndef).union(
+                        self.arr.atoms(UndefinedFunction)
+                    )
+                ]
+            else:
+                self.functions = list(functions)
+
+        else:
+            raise TypeError(
+                "arguments variables and functions should be a list, tuple or set"
+            )
+
+    @property
+    def parent_metric(self):
+        """
+        Returns the Metric from which Tensor was derived/associated, if available.
+        """
+        return self._parent_metric
+
+    def symbols(self):
+        """
+        Returns the symbols used for defining the time & spacial axis
+
+        Returns
+        -------
+        tuple
+            tuple containing (t,x1,x2,x3) in case of 4D space-time
+        
+        """
+        return self.syms
