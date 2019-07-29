@@ -1,7 +1,7 @@
 import numpy as np
 import sympy
 from sympy import simplify, tensorcontraction, tensorproduct
-from sympy.core.function import AppliedUndef
+from sympy.core.function import AppliedUndef, UndefinedFunction
 
 
 def _config_checker(config):
@@ -274,7 +274,12 @@ class BaseRelativityTensor(Tensor):
             else:
                 self.variables = list(variables)
             if not functions:
-                self.functions = [f for f in self.arr.atoms(AppliedUndef)]
+                self.functions = [
+                    f
+                    for f in self.arr.atoms(AppliedUndef).union(
+                        self.arr.atoms(UndefinedFunction)
+                    )
+                ]
             else:
                 self.functions = list(functions)
 
