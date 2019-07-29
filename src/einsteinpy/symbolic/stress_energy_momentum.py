@@ -1,5 +1,5 @@
-from einsteinpy.symbolic.tensor import Tensor
+from einsteinpy.symbolic.tensor import BaseRelativityTensor
 
 
-class StressEnergyMomentumTensor(Tensor):
+class StressEnergyMomentumTensor(BaseRelativityTensor):
     pass
