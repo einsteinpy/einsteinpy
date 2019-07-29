@@ -1,12 +1,13 @@
 import numpy as np
 import sympy
 
-from einsteinpy.symbolic.tensor import Tensor, _change_config
+from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
-class ChristoffelSymbols(Tensor):
+class ChristoffelSymbols(BaseRelativityTensor):
     """
-    Class for defining christoffel symbols
+    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
+    Class for defining christoffel symbols.
     """
 
     def __init__(self, arr, syms, config="ull", parent_metric=None):
@@ -34,23 +35,12 @@ class ChristoffelSymbols(Tensor):
             config has more or less than 3 indices
         
         """
-        super(ChristoffelSymbols, self).__init__(arr, config=config)
+        super(ChristoffelSymbols, self).__init__(
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+        )
         self._order = 3
-        self._parent_metric = parent_metric
-        if isinstance(syms, (list, tuple)):
-            self.syms = syms
-            self.dims = len(self.syms)
-        else:
-            raise TypeError("syms should be a list or tuple")
-        if not len(config) == self._order:
+        if not len(self.config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
-
-    @property
-    def parent_metric(self):
-        """
-        Returns the Metric from which Christoffel Symbol was derived, if available.
-        """
-        return self._parent_metric
 
     @classmethod
     def from_metric(cls, metric):
@@ -120,15 +110,3 @@ class ChristoffelSymbols(Tensor):
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
-
-    def symbols(self):
-        """
-        Returns the symbols used for defining the time & spacial axis
-
-        Returns
-        -------
-        tuple
-            tuple containing (t,x1,x2,x3)
-        
-        """
-        return self.syms

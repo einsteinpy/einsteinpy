@@ -1,10 +1,11 @@
 import sympy
 
-from einsteinpy.symbolic.tensor import Tensor
+from einsteinpy.symbolic.tensor import BaseRelativityTensor
 
 
-class MetricTensor(Tensor):
+class MetricTensor(BaseRelativityTensor):
     """
+    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
     Class to define a metric tensor for a space-time
     """
 
@@ -31,14 +32,11 @@ class MetricTensor(Tensor):
             config has more or less than 2 indices
         
         """
-        super(MetricTensor, self).__init__(arr, config=config)
+        super(MetricTensor, self).__init__(
+            arr=arr, syms=syms, config=config, parent_metric=self
+        )
         self._order = 2
         self._invmetric = None
-        if isinstance(syms, (list, tuple)):
-            self.syms = syms
-            self.dims = len(self.syms)
-        else:
-            raise TypeError("syms should be a list or tuple")
         if not len(config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
 
@@ -95,15 +93,3 @@ class MetricTensor(Tensor):
             else:
                 self._invmetric = self.change_config("ll")
         return self._invmetric
-
-    def symbols(self):
-        """
-        Returns the symbols used for defining the time & spacial axis
-
-        Returns
-        -------
-        tuple
-            tuple containing (t,x1,x2,x3)
-        
-        """
-        return self.syms
