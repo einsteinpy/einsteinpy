@@ -13,3 +13,5 @@ Jupyter notebooks
    /examples/Visualizing_frame_dragging_in_Kerr_spacetime.ipynb
    /examples/Visualizing_event_horizon_and_ergosphere_of_Kerr_black_hole.ipynb
    /examples/Plotting_spacial_hypersurface_embedding_for_schwarzschild_spacetime.ipynb
+   /examples/Weyl_Tensor_symbolic_calculation.ipynb
+   /examples/Einstein_Tensor_symbolic_calculation.ipynb
