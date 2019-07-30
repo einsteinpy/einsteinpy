@@ -1,7 +1,7 @@
 import numpy as np
-from sympy import Array, cos, simplify, sin, symbols
+from sympy import Array, Function, cos, simplify, sin, symbols
 
-from einsteinpy.symbolic.tensor import Tensor
+from einsteinpy.symbolic.tensor import BaseRelativityTensor, Tensor
 
 
 def schwarzschild_tensor():
@@ -17,6 +17,20 @@ def schwarzschild_tensor():
     list2d[3][3] = -1 * (syms[1] ** 2) * (sin(syms[2]) ** 2) / (c ** 2)
     sch = Tensor(list2d)
     return sch
+
+
+def arbitrary_tensor1():
+    symbolstr = "x0 x1 x2 x3"
+    syms = symbols(symbolstr)
+    a, c = symbols("a c")
+    f1, f2 = Function("f1")(a, syms[2]), Function("f2")(c)
+    list2d = np.zeros((4, 4), dtype=int).tolist()
+    list2d[0][0] = 1 - (a * f1 / syms[1])
+    list2d[1][1] = -1 / ((1 - (a / syms[1])) * (c ** 2))
+    list2d[2][2] = -1 * (syms[1] ** 2) / (c ** 2)
+    list2d[3][3] = -1 * (syms[1] ** 2) * (sin(syms[2]) ** 2) / (c ** 2)
+    list2d[0][3] = list2d[3][0] = 5 * f2
+    return BaseRelativityTensor(list2d, syms, config="ll"), [a, c], [f1, f2]
 
 
 def test_Tensor():
@@ -109,3 +123,26 @@ def test_check_properties():
     T = schwarzschild_tensor()
     assert T.order == T._order
     assert T.config == T._config
+
+
+# tests for BaseRelativityTensor
+
+
+def test_BaseRelativityTensor_automatic_calculation_of_free_variables():
+    t1, variables, functions = arbitrary_tensor1()
+    t2 = BaseRelativityTensor(
+        t1.arr, t1.symbols(), config=t1.config, variables=variables, functions=functions
+    )
+    assert len(t1.variables) == len(t2.variables) and len(t1.variables) == len(
+        variables
+    )
+    assert len(t1.functions) == len(t2.functions) and len(t1.functions) == len(
+        functions
+    )
+    for v, f in zip(t1.variables, t1.functions):
+        assert (
+            (v in t2.variables)
+            and (v in variables)
+            and (f in t2.functions)
+            and (f in functions)
+        )

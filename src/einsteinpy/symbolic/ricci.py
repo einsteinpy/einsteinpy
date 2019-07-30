@@ -4,11 +4,12 @@ from sympy import tensorcontraction, tensorproduct
 from einsteinpy.symbolic.christoffel import ChristoffelSymbols
 from einsteinpy.symbolic.metric import MetricTensor
 from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
-from einsteinpy.symbolic.tensor import Tensor, _change_config
+from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
-class RicciTensor(Tensor):
+class RicciTensor(BaseRelativityTensor):
     """
+    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
     Class for defining Ricci Tensor
     """
 
@@ -38,23 +39,12 @@ class RicciTensor(Tensor):
             config has more or less than 2 indices
 
         """
-        super(RicciTensor, self).__init__(arr, config=config)
+        super(RicciTensor, self).__init__(
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+        )
         self._order = 2
-        self._parent_metric = parent_metric
-        if isinstance(syms, (list, tuple)):
-            self.syms = syms
-            self.dims = len(self.syms)
-        else:
-            raise TypeError("syms should be a list or tuple")
         if not len(config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
-
-    @property
-    def parent_metric(self):
-        """
-        Returns the Parent Metric, if available.
-        """
-        return self._parent_metric
 
     @classmethod
     def from_riemann(cls, riemann, parent_metric=None):
@@ -149,18 +139,6 @@ class RicciTensor(Tensor):
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
-
-    def symbols(self):
-        """
-        Returns the symbols used for defining the time & spacial axis
-
-        Returns
-        -------
-        tuple
-            tuple containing (x1,x2)
-
-        """
-        return self.syms
 
 
 class RicciScalar:
