@@ -67,21 +67,8 @@ class ChristoffelSymbols(BaseRelativityTensor):
             k = t % dims
             j = (int(t / dims)) % (dims)
             i = (int(t / (dims ** 2))) % (dims)
-<<<<<<< HEAD
-<<<<<<< HEAD
-            tmpvar = 0
-            if k <= j:
-=======
             if k <= j:
                 tmpvar = 0
-=======
-            if k <= j:
-                tmpvar = 0
-=======
-            tmpvar = 0
-            if k <= j:
->>>>>>> Leverage symmetry in Christoffel Symbols in order to decrease computing time
->>>>>>> Leverage symmetry in Christoffel Symbols in order to decrease computing time
                 for n in range(dims):
                     tmpvar += (matinv[i, n] / 2) * (
                         sympy.diff(mat[n, j], syms[k])
@@ -89,17 +76,6 @@ class ChristoffelSymbols(BaseRelativityTensor):
                         - sympy.diff(mat[j, k], syms[n])
                     )
                 tmplist[i][j][k] = tmplist[i][k][j] = tmpvar
-<<<<<<< HEAD
-<<<<<<< HEAD
-            else:
-                continue
-=======
-=======
-=======
-            else:
-                continue
->>>>>>> Leverage symmetry in Christoffel Symbols in order to decrease computing time
->>>>>>> Leverage symmetry in Christoffel Symbols in order to decrease computing time
         return cls(tmplist, syms, config="ull", parent_metric=metric)
 
     def change_config(self, newconfig="lll", metric=None):
