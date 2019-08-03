@@ -272,6 +272,7 @@ class BaseRelativityTensor(Tensor):
                 self.variables = [
                     v for v in self.arr.free_symbols if v not in self.syms
                 ]
+                self.variables.sort(key=(lambda var: var.name))
             else:
                 self.variables = list(variables)
             if not functions:
@@ -307,3 +308,33 @@ class BaseRelativityTensor(Tensor):
         
         """
         return self.syms
+
+    def tensor_lambdify(self, *args):
+        """
+        Returns lambdified function of symbolic tensors.
+        This means that the returned functions can accept numerical values and return numerical quantities.
+
+        Parameters
+        ----------
+            *args
+                The variable number of arguments accept sympy symbols.
+                The returned function accepts arguments in same order as initially defined in ``*args``.
+                Uses sympy symbols from class attributes ``syms`` and ``variables``(in the same order) if no ``*args`` is passed
+                Leaving ``*args`` empty is recommended.
+
+        Returns
+        -------
+            tuple
+                arguments to be passed in the returned function in exact order.
+            function
+                Lambdified function which accepts and returns numerical quantities.
+
+        """
+
+        if len(args) == 0:
+            numeric_arr = sympy.lambdify([*self.syms, *self.variables], self.arr, np)
+            arg_list = (*self.syms, *self.variables)
+        else:
+            numeric_arr = sympy.lambdify(args, self.arr, np)
+            arg_list = tuple(args)
+        return arg_list, numeric_arr
