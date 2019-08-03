@@ -17,3 +17,4 @@ calculations related to General Relativity.
     weyl
     einstein
     vector
+    stress_energy_momentum
