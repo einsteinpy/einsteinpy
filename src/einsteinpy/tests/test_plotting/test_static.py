@@ -66,6 +66,31 @@ def test_animate_creates_ani(dummy_data):
     assert cl.ani
 
 
+@mock.patch("einsteinpy.plotting.geodesics.static.plt.show")
+def test_plot_in_3d(mock_show, dummy_data):
+    geodesic = dummy_data
+    cl = StaticGeodesicPlotter(use_3d=True)
+    cl.plot(geodesic)
+    cl.show()
+    mock_show.assert_called_with()
+    assert cl.attractor_present
+    assert cl.ax.name == "3d"
+
+
+def test_set_scaling(dummy_data):
+    geodesic = dummy_data
+    cl = StaticGeodesicPlotter(use_3d=True)
+    cl.plot(geodesic)
+    cl._set_scaling(10, 1e-6, 10, 1e-5)
+    cl._set_scaling(1e-6, 1e-6, 1e-6, 1e-5)
+    zmin, zmax = cl.ax.get_zlim()
+    ymin, ymax = cl.ax.get_ylim()
+    xmin, xmax = cl.ax.get_xlim()
+    assert xmin != -1e-5 and xmax != 1e-5
+    assert ymin == -1e-5 and ymax == 1e-5
+    assert zmin == -1e-5 and zmax == 1e-5
+
+
 def test_plot_calls_draw_attractor_Manualscale(dummy_data):
     geodesic = dummy_data
     cl = StaticGeodesicPlotter(attractor_radius_scale=1500)

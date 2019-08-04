@@ -4,10 +4,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 from matplotlib.patches import Circle
+from mpl_toolkits import mplot3d
 
 
 class StaticGeodesicPlotter:
-    def __init__(self, ax=None, attractor_radius_scale=-1.0, attractor_color="#ffcc00"):
+    def __init__(
+        self,
+        ax=None,
+        attractor_radius_scale=-1.0,
+        attractor_color="#ffcc00",
+        use_3d=False,
+    ):
         """
         Constructor.
 
@@ -23,21 +30,27 @@ class StaticGeodesicPlotter:
 
         """
         self.ax = ax
+        self.use_3d = use_3d
         if not self.ax:
             self.fig, self.ax = plt.subplots(figsize=(6, 6))
-            self.ax.set_xlabel("$x$ (km)")
-            self.ax.set_ylabel("$y$ (km)")
             self.ax.set_aspect(1)
+            if self.use_3d:
+                self.ax = plt.axes(projection="3d")
+                self.ax.set_zlabel("$z$ (m)")
+            self.ax.set_xlabel("$x$ (m)")
+            self.ax.set_ylabel("$y$ (m)")
         self.attractor_radius_scale = attractor_radius_scale
         self.attractor_color = attractor_color
         self.attractor_present = False
 
-    def _mindist(self, x, y):
-        return np.sqrt(x * x + y * y)
+    def _mindist(self, x, y, z=0):
+        return np.sqrt(x * x + y * y + z * z)
 
     def _draw_attractor(self, radius, xarr, yarr):
         self.attractor_present = True
-        if self.attractor_radius_scale == -1.0:
+        if self.use_3d:
+            self.ax.plot([0], [0], [0], "o", mew=0, color=self.attractor_color)
+        elif self.attractor_radius_scale == -1.0:
             minrad_nooverlap = self._mindist(xarr[0], yarr[0])
             for i, _ in enumerate(xarr):
                 minrad_nooverlap = min(
@@ -60,6 +73,16 @@ class StaticGeodesicPlotter:
                 Circle((0, 0), radius.value, lw=0, color=self.attractor_color)
             )
 
+    def _set_scaling(self, x_range, y_range, z_range, lim):
+        if x_range < lim and y_range < lim and z_range < lim:
+            return
+        if x_range < lim:
+            self.ax.set_xlim([-lim, lim])
+        if y_range < lim:
+            self.ax.set_ylim([-lim, lim])
+        if z_range < lim:
+            self.ax.set_zlim([-lim, lim])
+
     def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
         """
 
@@ -72,13 +95,23 @@ class StaticGeodesicPlotter:
 
         """
         vals = geodesic.trajectory
-        x = np.array([coord[1] for coord in vals])
-        y = np.array([coord[2] for coord in vals])
+        x = np.array(vals[:, 1])
+        y = np.array(vals[:, 2])
+        z = np.array(vals[:, 3])
+
+        if not self.use_3d:
+            self.ax.plot(x, y, "--", color=color)
+            self.ax.plot(x[-1], y[-1], "o", mew=0, color=color)
+        else:
+            x_range = max(x) - min(x)
+            y_range = max(y) - min(y)
+            z_range = max(z) - min(z)
+            self._set_scaling(x_range, y_range, z_range, 1e-5)
+            self.ax.plot(x, y, z, "--", color=color)
+            self.ax.plot(x[-1:], y[-1:], z[-1:], "o", mew=0, color=color)
 
         if not self.attractor_present:
             self._draw_attractor(geodesic.metric.scr, x, y)
-        self.ax.plot(x, y, "--", color=color)
-        self.ax.plot(x[-1], y[-1], "o", mew=0, color=color)
 
     def animate(
         self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF)), interval=50
