@@ -24,6 +24,10 @@ intersphinx_mapping = {
     "sympy": ("https://docs.sympy.org/latest", None),
 }
 
+
+def setup(app):
+    app.add_js_file('https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js')
+
 autodoc_member_order = "bysource"
 
 html_theme_options = {
