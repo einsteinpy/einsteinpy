@@ -4,7 +4,7 @@ from unittest import mock
 import astropy.units as u
 import numpy as np
 import pytest
-from plotly.graph_objs import FigureWidget
+from plotly.graph_objects import Figure
 
 from einsteinpy.bodies import Body
 from einsteinpy.coordinates import SphericalDifferential
@@ -32,10 +32,10 @@ def dummy_data():
     return geo
 
 
-def test_plotlyplotter_has_figurewidget(dummy_data):
+def test_interactive_plotter_has_figure(dummy_data):
     geodesic = dummy_data
     cl = InteractiveGeodesicPlotter()
-    assert isinstance(cl.fig, FigureWidget)
+    assert isinstance(cl.fig, Figure)
     assert cl.attractor_present is False
 
 
