@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy as np
-import plotly.graph_objs as go
+import plotly.graph_objects as go
 from plotly.offline import plot as saveplot
 
 
@@ -17,7 +17,7 @@ class InteractiveGeodesicPlotter:
             Color which is used to denote the attractor. Defaults to #ffcc00.
 
         """
-        self.fig = go.FigureWidget()
+        self.fig = go.Figure()
         self.attractor_color = attractor_color
         self.attractor_present = False
         self._layout = go.Layout(
@@ -71,7 +71,7 @@ class InteractiveGeodesicPlotter:
 
         Returns
         -------
-        ~plotly.graph_objs.FigureWidget
+        ~plotly.graph_objects.Figure
         """
         self.fig.layout.update(self._layout)
         return self.fig
