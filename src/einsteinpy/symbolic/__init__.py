@@ -1,4 +1,5 @@
 from .christoffel import ChristoffelSymbols
+from .constants import get_constant
 from .einstein import EinsteinTensor
 from .metric import MetricTensor
 from .ricci import RicciScalar, RicciTensor
