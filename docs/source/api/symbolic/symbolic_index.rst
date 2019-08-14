@@ -18,3 +18,4 @@ calculations related to General Relativity.
     einstein
     vector
     stress_energy_momentum
+    schouten
