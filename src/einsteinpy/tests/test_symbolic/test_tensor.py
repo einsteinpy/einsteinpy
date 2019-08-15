@@ -1,5 +1,7 @@
 import numpy as np
+import pytest
 from sympy import Array, Function, cos, simplify, sin, symbols
+from sympy.abc import y, z
 
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, Tensor
 
@@ -72,15 +74,6 @@ def test_Tensor_repr():
     assert not "object at 0x" in machine_representation
 
 
-def test_TypeError1():
-    arr = 0
-    try:
-        obj = Tensor(arr)
-        assert False
-    except TypeError:
-        assert True
-
-
 def test_TypeError2():
     scht = schwarzschild_tensor().tensor()
     # pass non str object
@@ -147,3 +140,12 @@ def test_BaseRelativityTensor_automatic_calculation_of_free_variables():
             and (f in t2.functions)
             and (f in functions)
         )
+
+
+# tests fot Tensor Class to support scalars and sympy expression type scalars
+
+
+@pytest.mark.parametrize("scalar", [11.89, y * z + 5])
+def test_tensor_scalar(scalar):
+    scalar_tensor = Tensor(scalar)
+    assert scalar_tensor.tensor().rank() == 0
