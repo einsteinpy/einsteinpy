@@ -56,7 +56,7 @@ class Cartesian:
             Euclidean norm with units.
 
         """
-        return (np.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2) * u.m)
+        return np.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2) * self.x_u
 
     def dot(self, target):
         """
@@ -77,7 +77,7 @@ class Cartesian:
         y = self.y * target.y
         z = self.z * target.z
 
-        return (x + y + z) * u.m
+        return (x + y + z) * self.x_u
 
     def to_spherical(self):
         """
