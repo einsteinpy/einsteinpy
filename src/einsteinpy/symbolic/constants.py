@@ -5,19 +5,24 @@ class SymbolicConstant(Symbol):
     """
     This class inherits from ~sympy.core.symbol.Symbol 
 
-    Parameters
-    ----------
-    name : str
-        Short, commonly accepted name of the constant. 
-        For example, 'c' for Speed of light.
-    descriptive_name : str
-        The extended name of the constant. 
-        For example, 'Speed of Light' for 'c'. 
-        Defaults to None.
-
     """
 
     def __new__(cls, name, descriptive_name=None, **assumptions):
+        """
+        Constructor and Initializer
+
+        Parameters
+        ----------
+        name : str
+            Short, commonly accepted name of the constant. 
+            For example, 'c' for Speed of light.
+        descriptive_name : str
+            The extended name of the constant. 
+            For example, 'Speed of Light' for 'c'. 
+            Defaults to None.
+
+        """
+
         instance = super(SymbolicConstant, cls).__new__(cls, name, **assumptions)
         instance._descriptive_name = descriptive_name
         return instance
