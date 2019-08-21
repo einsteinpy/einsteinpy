@@ -141,19 +141,20 @@ class RicciTensor(BaseRelativityTensor):
         return new_obj
 
 
-class RicciScalar:
+class RicciScalar(BaseRelativityTensor):
     """
+    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor
     Class for defining Ricci Scalar
     """
 
-    def __init__(self, expression, syms, parent_metric=None):
+    def __init__(self, arr, syms, parent_metric=None):
         """
         Constructor and Initializer
 
         Parameters
         ----------
-        expression : ~sympy.core.expr.Expr
-            Any sympy expression
+        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+            Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
@@ -166,14 +167,11 @@ class RicciScalar:
             Raised when syms is not a list or tuple
 
         """
+        super(RicciScalar, self).__init__(
+            arr=arr, syms=syms, config="", parent_metric=parent_metric
+        )
         self._order = 0
-        self._parent_metric = parent_metric
-        self._expr = expression
-        if isinstance(syms, (list, tuple)):
-            self.syms = syms
-            self.dims = len(self.syms)
-        else:
-            raise TypeError("syms should be a list or tuple")
+        self._expr = self.arr[0]
 
     @property
     def expr(self):
@@ -181,13 +179,6 @@ class RicciScalar:
         Retuns the symbolic expression of the Ricci Scalar
         """
         return self._expr
-
-    @property
-    def parent_metric(self):
-        """
-        Returns the Parent Metric, if available.
-        """
-        return self._parent_metric
 
     @classmethod
     def from_riccitensor(cls, riccitensor, parent_metric=None):

@@ -1,6 +1,7 @@
 import numpy as np
 import sympy
 from sympy import simplify, tensorcontraction, tensorproduct
+from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
 
@@ -76,7 +77,7 @@ class Tensor:
         Parameters
         ----------
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-            Sympy Array or multi-dimensional list containing Sympy Expressions
+            Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
 
@@ -89,7 +90,7 @@ class Tensor:
 
         """
 
-        if isinstance(arr, (list, tuple, np.ndarray)):
+        if isinstance(arr, (list, tuple, np.ndarray, int, float, Expr)):
             self.arr = sympy.Array(arr)
         elif isinstance(arr, sympy.Array):
             self.arr = arr
