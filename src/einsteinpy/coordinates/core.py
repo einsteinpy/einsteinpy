@@ -19,13 +19,16 @@ class Cartesian:
         z : ~astropy.units.quantity.Qauntity
 
         """
-        self.x = x
-        self.y = y
-        self.z = z
+        self.x_u = u.m.to(x.unit, 1)
+        self.y_u = u.m.to(y.unit, 1)
+        self.z_u = u.m.to(z.unit, 1)
+        self.x = x.si.value
+        self.y = y.si.value
+        self.z = z.si.value
         self.system = "Cartesian"
 
     def __repr__(self):
-        return "Cartesian x: {}, y: {}, z: {}".format(self.x, self.y, self.z)
+        return "Cartesian x: {}, y: {}, z: {}".format(self.x * self.x_u, self.y * self.y_u, self.z * self.z_u)
 
     def __str__(self):
         return self.__repr__()
@@ -40,8 +43,8 @@ class Cartesian:
             Array containing values in SI units (m, m, m)
 
         """
-        element_list = [self.x.to(u.m), self.y.to(u.m), self.z.to(u.m)]
-        return np.array([e.value for e in element_list], dtype=float)
+        element_list = [self.x, self.y, self.z]
+        return np.array([e for e in element_list], dtype=float)
 
     def norm(self):
         """
@@ -53,7 +56,7 @@ class Cartesian:
             Euclidean norm with units.
 
         """
-        return np.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+        return (np.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2) * u.m)
 
     def dot(self, target):
         """
@@ -74,7 +77,7 @@ class Cartesian:
         y = self.y * target.y
         z = self.z * target.z
 
-        return x + y + z
+        return (x + y + z) * u.m
 
     def to_spherical(self):
         """
@@ -86,11 +89,11 @@ class Cartesian:
             Spherical representation of the Cartesian Coordinates.
 
         """
-        r = self.norm()
+        r = self.norm().value
         theta = np.arccos(self.z / r)
         phi = np.arctan2(self.y, self.x)
 
-        return Spherical(r, theta, phi)
+        return Spherical(r * u.m, theta * u.rad, phi * u.rad)
 
     @u.quantity_input(a=u.km)
     def to_bl(self, a):
@@ -108,12 +111,13 @@ class Cartesian:
             BL representation of the Cartesian Coordinates.
 
         """
-        w = self.norm() ** 2 - a ** 2
+        a = a.to(u.m).value
+        w = self.norm().value ** 2 - a ** 2
         r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (self.z ** 2)))))
         theta = np.arccos(self.z / r)
         phi = np.arctan2(self.y, self.x)
 
-        return BoyerLindquist(r, theta, phi, a)
+        return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
 
 
 class Spherical:
@@ -133,14 +137,17 @@ class Spherical:
         phi : ~astropy.units.quantity.Quantity
 
         """
-        self.r = r
-        self.theta = theta
-        self.phi = phi
+        self.r_u = u.m.to(r.unit, 1)
+        self.theta_u = u.rad.to(theta.unit, 1)
+        self.phi_u = u.rad.to(phi.unit, 1)
+        self.r = r.si.value
+        self.theta = theta.si.value
+        self.phi = phi.si.value
         self.system = "Spherical"
 
     def __repr__(self):
         return "Spherical r: {}, theta: {}, phi: {}".format(
-            self.r, self.theta, self.phi
+            self.r * self.r_u, self.theta * self.theta_u, self.phi * self.phi_u
         )
 
     def __str__(self):
@@ -156,8 +163,8 @@ class Spherical:
             Array containing values in SI units (m, rad, rad)
 
         """
-        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
-        return np.array([e.value for e in element_list], dtype=float)
+        element_list = [self.r, self.theta, self.phi]
+        return np.array([e for e in element_list], dtype=float)
 
     def to_cartesian(self):
         """
@@ -173,7 +180,7 @@ class Spherical:
         y = self.r * np.sin(self.phi) * np.sin(self.theta)
         z = self.r * np.cos(self.theta)
 
-        return Cartesian(x, y, z)
+        return Cartesian(x * u.m, y * u.m, z * u.m)
 
     @u.quantity_input(a=u.km)
     def to_bl(self, a):
@@ -213,15 +220,19 @@ class BoyerLindquist:
         a : ~astropy.units.quantity.Quantity
 
         """
-        self.r = r
-        self.theta = theta
-        self.phi = phi
-        self.a = a
+        self.r_u = u.m.to(r.unit, 1)
+        self.theta_u = u.rad.to(theta.unit, 1)
+        self.phi_u = u.rad.to(phi.unit, 1)
+        self.a_u = u.m.to(a.unit, 1)
+        self.r = r.si.value
+        self.theta = theta.si.value
+        self.phi = phi.si.value
+        self.a = a.si.value
         self.system = "BoyerLindquist"
 
     def __repr__(self):
         return "Boyer-Lindquist r: {}, theta: {}, phi: {} | a: {}".format(
-            self.r, self.theta, self.phi, self.a
+            self.r * self.r_u, self.theta * self.theta_u, self.phi * self.phi_u, self.a * self.a_u
         )
 
     def __str__(self):
@@ -237,8 +248,8 @@ class BoyerLindquist:
             Array containing values in SI units (m, rad, rad)
 
         """
-        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
-        return np.array([e.value for e in element_list], dtype=float)
+        element_list = [self.r, self.theta, self.phi]
+        return np.array([e for e in element_list], dtype=float)
 
     def to_cartesian(self):
         """
@@ -255,7 +266,7 @@ class BoyerLindquist:
         y = sin_norm * np.sin(self.phi)
         z = self.r * np.cos(self.theta)
 
-        return Cartesian(x, y, z)
+        return Cartesian(x * u.m, y * u.m, z * u.m)
 
     def to_spherical(self):
         """
