@@ -1,8 +1,14 @@
 import astropy.units as u
 import numpy as np
 
+from einsteinpy.coordinates import (
+    BoyerLindquistConversion,
+    CartesianConversion,
+    SphericalConversion,
+)
 
-class Cartesian:
+
+class Cartesian(CartesianConversion):
     """
     Class for Cartesian Coordinates and related transformations.
     """
@@ -22,6 +28,7 @@ class Cartesian:
         self.x = x
         self.y = y
         self.z = z
+        super().__init__(x.si.value, y.si.value, z.si.value)
         self.system = "Cartesian"
 
     def __repr__(self):
@@ -86,11 +93,8 @@ class Cartesian:
             Spherical representation of the Cartesian Coordinates.
 
         """
-        r = self.norm()
-        theta = np.arccos(self.z / r)
-        phi = np.arctan2(self.y, self.x)
-
-        return Spherical(r, theta, phi)
+        r, theta, phi = self.convert_spherical()
+        return Spherical(r * u.m, theta * u.rad, phi * u.rad)
 
     @u.quantity_input(a=u.km)
     def to_bl(self, a):
@@ -108,15 +112,11 @@ class Cartesian:
             BL representation of the Cartesian Coordinates.
 
         """
-        w = self.norm() ** 2 - a ** 2
-        r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (self.z ** 2)))))
-        theta = np.arccos(self.z / r)
-        phi = np.arctan2(self.y, self.x)
-
-        return BoyerLindquist(r, theta, phi, a)
+        r, theta, phi, a = self.convert_bl(a.si.value)
+        return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
 
 
-class Spherical:
+class Spherical(SphericalConversion):
     """
     Class for Spherical Coordinates and related transformations.
     """
@@ -136,6 +136,7 @@ class Spherical:
         self.r = r
         self.theta = theta
         self.phi = phi
+        super().__init__(r.si.value, theta.si.value, phi.si.value)
         self.system = "Spherical"
 
     def __repr__(self):
@@ -169,11 +170,8 @@ class Spherical:
             Cartesian representation of the Spherical Coordinates.
 
         """
-        x = self.r * np.cos(self.phi) * np.sin(self.theta)
-        y = self.r * np.sin(self.phi) * np.sin(self.theta)
-        z = self.r * np.cos(self.theta)
-
-        return Cartesian(x, y, z)
+        x, y, z = self.convert_cartesian()
+        return Cartesian(x * u.m, y * u.m, z * u.m)
 
     @u.quantity_input(a=u.km)
     def to_bl(self, a):
@@ -191,11 +189,11 @@ class Spherical:
             BL representation of the Spherical Coordinates.
 
         """
-        cart = self.to_cartesian()
-        return cart.to_bl(a)
+        r, theta, phi, a = self.convert_bl(a.si.value)
+        return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
 
 
-class BoyerLindquist:
+class BoyerLindquist(BoyerLindquistConversion):
     """
     Class for Spherical Coordinates and related transformations.
     """
@@ -217,6 +215,7 @@ class BoyerLindquist:
         self.theta = theta
         self.phi = phi
         self.a = a
+        super().__init__(r.si.value, theta.si.value, phi.si.value, a=a.si.value)
         self.system = "BoyerLindquist"
 
     def __repr__(self):
@@ -250,12 +249,8 @@ class BoyerLindquist:
             Cartesian representation of the BL Coordinates.
 
         """
-        sin_norm = np.sqrt(self.r ** 2 + self.a ** 2) * np.sin(self.theta)
-        x = sin_norm * np.cos(self.phi)
-        y = sin_norm * np.sin(self.phi)
-        z = self.r * np.cos(self.theta)
-
-        return Cartesian(x, y, z)
+        x, y, z = self.convert_cartesian()
+        return Cartesian(x * u.m, y * u.m, z * u.m)
 
     def to_spherical(self):
         """
@@ -267,5 +262,5 @@ class BoyerLindquist:
             Spherical representation of the BL Coordinates.
 
         """
-        cart = self.to_cartesian()
-        return cart.to_spherical()
+        r, theta, phi = self.convert_spherical()
+        return Spherical(r * u.m, theta * u.rad, phi * u.rad)
