@@ -41,12 +41,8 @@ class ScatterGeodesicPlotter:
 
         Parameters
         ----------
-        coords : ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Position and velocity components of particle in Spherical Coordinates.
-        end_lambda : float, optional
-            Lambda where iteartions will stop.
-        step_size : float, optional
-            Step size for the ODE.
+        geodesic : ~einsteinpy.geodesic.Geodesic
+            Geodesic of the body
 
         """
         self.mass = geodesic.attractor.mass
