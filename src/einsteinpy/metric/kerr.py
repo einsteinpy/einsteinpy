@@ -4,7 +4,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.coordinates import BoyerLindquistDifferential, CartesianDifferential
+from einsteinpy.coordinates import BoyerLindquistConversion
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import kerr_utils, schwarzschild_radius
 
@@ -160,19 +160,9 @@ class Kerr:
         else:
             cart_vecs = list()
             for v in vecs:
-                si_vals = (
-                    BoyerLindquistDifferential(
-                        v[1] * u.m,
-                        v[2] * u.rad,
-                        v[3] * u.rad,
-                        v[5] * u.m / u.s,
-                        v[6] * u.rad / u.s,
-                        v[7] * u.rad / u.s,
-                        self.a,
-                    )
-                    .cartesian_differential()
-                    .si_values()
-                )
+                si_vals = BoyerLindquistConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7], self.a.value
+                ).convert_cartesian()
                 cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
             return lambdas, np.array(cart_vecs)
 
@@ -222,19 +212,9 @@ class Kerr:
                 yield ODE.t, ODE.y
             else:
                 v = ODE.y
-                si_vals = (
-                    BoyerLindquistDifferential(
-                        v[1] * u.m,
-                        v[2] * u.rad,
-                        v[3] * u.rad,
-                        v[5] * u.m / u.s,
-                        v[6] * u.rad / u.s,
-                        v[7] * u.rad / u.s,
-                        self.a,
-                    )
-                    .cartesian_differential()
-                    .si_values()
-                )
+                si_vals = BoyerLindquistConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7], self.a.value
+                ).convert_cartesian()
                 yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
             ODE.step()
             if (not crossed_event_horizon) and (ODE.y[1] <= _event_hor):
