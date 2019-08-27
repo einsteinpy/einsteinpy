@@ -43,7 +43,7 @@ def cartesian_to_spherical_novel(x, y, z):
 
 
 def cartesian_to_bl_fast(
-    x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
+    x, y, z, a, v_x=None, v_y=None, v_z=None, velocities_provided=False
 ):
     if velocities_provided:
         return cartesian_to_bl(x, y, z, a, v_x, v_y, v_z)
