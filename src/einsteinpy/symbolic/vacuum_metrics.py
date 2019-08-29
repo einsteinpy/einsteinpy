@@ -27,6 +27,7 @@ def SchwarzschildMetric(symbolstr="t r theta phi"):
 
     return MetricTensor(list2d, syms)
 
+
 def KerrMetric(symbolstr="t r theta phi"):
     """
     Returns  Kerr Tensor  of symbols of Schwarzschild Metric.
