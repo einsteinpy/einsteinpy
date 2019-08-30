@@ -9,13 +9,13 @@ calculations related to General Relativity.
 
     constants
     tensor
+    vector
     metric
     vacuum_metrics
     christoffel
     riemann
     ricci
-    weyl
     einstein
-    vector
     stress_energy_momentum
+    weyl
     schouten
