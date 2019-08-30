@@ -15,3 +15,4 @@ Jupyter notebooks
    /examples/Plotting_spacial_hypersurface_embedding_for_schwarzschild_spacetime.ipynb
    /examples/Weyl_Tensor_symbolic_calculation.ipynb
    /examples/Einstein_Tensor_symbolic_calculation.ipynb
+   /examples/Lambdify_symbolic_calculation.ipynb

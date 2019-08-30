@@ -319,7 +319,7 @@ class BaseRelativityTensor(Tensor):
             *args
                 The variable number of arguments accept sympy symbols.
                 The returned function accepts arguments in same order as initially defined in ``*args``.
-                Uses sympy symbols from class attributes ``syms`` and ``variables``(in the same order) if no ``*args`` is passed
+                Uses sympy symbols from class attributes ``syms`` and ``variables`` (in the same order) if no ``*args`` is passed
                 Leaving ``*args`` empty is recommended.
 
         Returns
