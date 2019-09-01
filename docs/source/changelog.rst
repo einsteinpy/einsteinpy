@@ -31,6 +31,33 @@ Features
 einsteinpy 0.2.0 - 2019-07-15
 -----------------------------
 
+This minor release would bring improvements and new feature additions to the already existing symbolic calculations module.
+
+Part of this release is sponsored by European Space Agency, through Summer of Code in Space
+(SOCIS) 2019 program.
+
+Features
+........
+
+* New tensors in symbolic module
+
+  * Ricci Scalar
+  * Weyl Tensor
+  * Stress-Energy-Momentum Tensor
+  * Einstein Tensor
+  * Schouten Tensor
+
+* Improvement in performance of current tensors
+* Lambdify option for tensors
+* Support for vectors at arbitrary space-time symbolically as 1\ :sup:`st` order tensor.
+* Support for scalars at arbitrary space-time symbolically as 0\ :sup:`th` order tensor.
+* Addition of constants sub-module to symbolic module
+
+
+
+einsteinpy 0.2.0 - 2019-07-15
+-----------------------------
+
 This release brings a lot of new features for the EinsteinPy Users. 
 
 A better API, intuitive structure and easy coordinates handling! This major release
