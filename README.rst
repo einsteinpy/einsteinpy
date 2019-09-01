@@ -56,12 +56,13 @@
 |circleci| |travisci| |appveyor| |codecov| |codeclimate|
 
 **EinsteinPy** is an open source pure Python package dedicated to problems arising
-in General Relativity and gravitational physics, such as goedesics plotting for
+in General Relativity and gravitational physics, such as geodesics plotting for
 Schwarzschild, Kerr and Kerr Newman space-time model, calculation of Schwarzschild
-radius, calculation of Event Horizon and Ergosphere for Kerr space-ime. Symbolic
-Manipulations of various tensors like Metric, Riemann, Ricci and Christoffel Symbols
-is also possible using the library. EinsteinPy also features Hypersurface Embedding of
-Schwarzschild space-time, which will soon lead to modelling of Gravitational Lensing!
+radius, calculation of Event Horizon and Ergosphere for Kerr space-time. Symbolic
+Manipulations of various tensors like Metric, Riemann, Ricci, Ricci Scalar, Weyl,
+Schouten, Stress-Energy-Momentum, Einstein and Christoffel Symbols is also possible
+using the library. EinsteinPy also features Hypersurface Embedding of Schwarzschild
+space-time, which will soon lead to modelling of Gravitational Lensing!
 It is released under the MIT license.
 
 Documentation
