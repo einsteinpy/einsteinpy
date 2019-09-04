@@ -93,3 +93,18 @@ class MetricTensor(BaseRelativityTensor):
             else:
                 self._invmetric = self.change_config("ll")
         return self._invmetric
+
+    def lower_config(self):
+        """
+        Returns a covariant instance of the given metric tensor.
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.metric.MetricTensor
+            same instance if the configuration is already lower or 
+            inverse of given metric if configuration is upper
+
+        """
+        if self.config == "ll":
+            return self
+        return self.inv()
