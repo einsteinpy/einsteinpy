@@ -34,10 +34,10 @@ def _change_config(tensor, metric, newconfig):
         raise ValueError
 
     # seperate the contravariant & covariant metric tensors
-    if metric.config == "ll":
-        met_dict = {-1: metric.tensor(), 1: metric.inv().tensor()}
-    else:
-        met_dict = {-1: metric.inv().tensor(), 1: metric.tensor()}
+    met_dict = {
+        -1: metric.lower_config().tensor(),
+        1: metric.lower_config().inv().tensor(),
+    }
 
     # main code
     def chain_config_change():

@@ -63,7 +63,8 @@ class SchoutenTensor(BaseRelativityTensor):
             r_scalar = RicciScalar.from_riccitensor(t_ricci, parent_metric=None)
             dims = metric.dims
             t_schouten = (
-                t_ricci.tensor() - (r_scalar.expr * metric.tensor() / (2 * (dims - 1)))
+                t_ricci.tensor()
+                - (r_scalar.expr * metric.lower_config().tensor() / (2 * (dims - 1)))
             ) / (dims - 2)
             return cls(t_schouten, metric.syms, config="ll", parent_metric=metric)
         raise ValueError("Dimension of the space/space-time should be 3 or more")
