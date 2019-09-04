@@ -53,13 +53,9 @@ class ChristoffelSymbols(BaseRelativityTensor):
             Space-time Metric from which Christoffel Symbols are to be calculated
         
         """
-        if metric.config == "uu":
-            metric_cov = metric.inv()
-        else:
-            metric_cov = metric
         dims = metric.dims
         tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
-        mat, syms = metric_cov.tensor(), metric_cov.symbols()
+        mat, syms = metric.lower_config().tensor(), metric.symbols()
         matinv = sympy.Matrix(mat.tolist()).inv()
         for t in range(dims ** 3):
             # i,j,k each goes from 0 to (dims-1)
