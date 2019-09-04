@@ -47,7 +47,9 @@ class EinsteinTensor(BaseRelativityTensor):
     def from_metric(cls, metric):
         t_ricci = RicciTensor.from_metric(metric)
         r_scalar = RicciScalar.from_riccitensor(t_ricci, t_ricci.parent_metric)
-        einstein_tensor = t_ricci.tensor() - (1 / 2) * metric.tensor() * r_scalar.expr
+        einstein_tensor = (
+            t_ricci.tensor() - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
+        )
         return cls(
             einstein_tensor,
             metric.syms,

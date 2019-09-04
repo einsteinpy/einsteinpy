@@ -61,11 +61,7 @@ class WeylTensor(BaseRelativityTensor):
 
         """
         if metric.dims > 3:
-            if metric.config == "uu":
-                # Metric tensor with covariant indices required
-                metric_cov = metric.inv()
-            else:
-                metric_cov = metric
+            metric_cov = metric.lower_config()
             t_riemann = RiemannCurvatureTensor.from_metric(metric)
             # Riemann Tensor with covariant indices is needed
             t_riemann_cov = t_riemann.change_config("llll", metric=None)

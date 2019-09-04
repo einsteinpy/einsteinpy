@@ -46,13 +46,11 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
 
     @classmethod
     def from_metric(cls, metric):
-        if metric.config != "ll":
-            metric = metric.inv()
         t_einstein = EinsteinTensor.from_metric(metric)
         stress_tensor = (
             c ** 4
             / (8 * np.pi * G)
-            * (t_einstein.tensor() - Cosmo_Const * metric.tensor())
+            * (t_einstein.tensor() - Cosmo_Const * metric.lower_config().tensor())
         )
         return cls(stress_tensor, metric.syms, config="ll", parent_metric=metric)
 
