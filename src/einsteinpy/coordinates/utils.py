@@ -47,7 +47,7 @@ def cartesian_to_bl_fast(
 ):
     if velocities_provided:
         return cartesian_to_bl(x, y, z, a, v_x, v_y, v_z)
-    return cartesian_to_spherical_novel(x, y, z, a)
+    return cartesian_to_bl_novel(x, y, z, a)
 
 
 @jit
@@ -89,15 +89,15 @@ def cartesian_to_bl_novel(x, y, z, a):
 
 
 def spherical_to_cartesian_fast(
-    r, p, t, v_r=None, v_p=None, v_t=None, velocities_provided=False
+    r, t, p, v_r=None, v_t=None, v_p=None, velocities_provided=False
 ):
     if velocities_provided:
-        return spherical_to_cartesian(r, p, t, v_r, v_p, v_t)
-    return spherical_to_cartesian_novel(r, p, t)
+        return spherical_to_cartesian(r, t, p, v_r, v_t, v_p)
+    return spherical_to_cartesian_novel(r, t, p)
 
 
 @jit
-def spherical_to_cartesian(r, p, t, v_r, v_p, v_t):
+def spherical_to_cartesian(r, t, p, v_r, v_t, v_p):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -120,7 +120,7 @@ def spherical_to_cartesian(r, p, t, v_r, v_p, v_t):
 
 
 @jit
-def spherical_to_cartesian_novel(r, p, t):
+def spherical_to_cartesian_novel(r, t, p):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -132,15 +132,15 @@ def spherical_to_cartesian_novel(r, p, t):
 
 
 def bl_to_cartesian_fast(
-    r, p, t, a, v_r=None, v_p=None, v_t=None, velocities_provided=False
+    r, t, p, a, v_r=None, v_t=None, v_p=None, velocities_provided=False
 ):
     if velocities_provided:
-        return bl_to_cartesian(r, p, t, a, v_r, v_p, v_t)
-    return bl_to_cartesian_novel(r, p, t, a)
+        return bl_to_cartesian(r, t, p, a, v_r, v_t, v_p)
+    return bl_to_cartesian_novel(r, t, p, a)
 
 
 @jit
-def bl_to_cartesian(r, p, t, a, v_r, v_p, v_t):
+def bl_to_cartesian(r, t, p, a, v_r, v_t, v_p):
     """
     Utility function (jitted) to convert bl to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -165,7 +165,7 @@ def bl_to_cartesian(r, p, t, a, v_r, v_p, v_t):
 
 
 @jit
-def bl_to_cartesian_novel(r, p, t, a):
+def bl_to_cartesian_novel(r, t, p, a):
     """
     Utility function (jitted) to convert bl to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
