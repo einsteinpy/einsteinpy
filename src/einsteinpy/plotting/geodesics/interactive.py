@@ -42,8 +42,7 @@ class InteractiveGeodesicPlotter:
             xlen = max(xarr) - min(xarr)
             ylen = max(yarr) - min(yarr)
             minlen_plot = min(xlen, ylen)
-            multiplier = minlen_plot / (12 * radius)
-            min_radius = radius * multiplier
+            min_radius = minlen_plot / 12
             radius = min(min_radius, minrad_nooverlap)
         else:
             radius = radius.value * self.attractor_radius_scale
