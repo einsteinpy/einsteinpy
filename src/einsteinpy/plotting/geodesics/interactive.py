@@ -7,7 +7,7 @@ from plotly.offline import plot as saveplot
 
 
 class InteractiveGeodesicPlotter:
-    def __init__(self, attractor_color="#ffcc00"):
+    def __init__(self, attractor_radius_scale=-1.0, attractor_color="#ffcc00"):
         """
         Constructor.
 
@@ -18,6 +18,7 @@ class InteractiveGeodesicPlotter:
 
         """
         self.fig = go.Figure()
+        self.attractor_radius_scale = attractor_radius_scale
         self.attractor_color = attractor_color
         self.attractor_present = False
         self._layout = go.Layout(
@@ -26,17 +27,49 @@ class InteractiveGeodesicPlotter:
             yaxis=dict(title="y (m)", scaleanchor="x"),
         )
 
+    def _mindist(self, x, y, z=0):
+        return np.sqrt(x * x + y * y + z * z)
+
     def _draw_attractor(self, radius, xarr, yarr):
         self.attractor_present = True
+        if self.attractor_radius_scale == -1.0:
+            minrad_nooverlap = self._mindist(xarr[0], yarr[0])
+            for i, _ in enumerate(xarr):
+                minrad_nooverlap = min(
+                    minrad_nooverlap, self._mindist(xarr[i], yarr[i])
+                )
+
+            xlen = max(xarr) - min(xarr)
+            ylen = max(yarr) - min(yarr)
+            minlen_plot = min(xlen, ylen)
+            multiplier = minlen_plot / (12 * radius)
+            min_radius = radius * multiplier
+            radius = min(min_radius, minrad_nooverlap)
+        else:
+            radius = radius.value * self.attractor_radius_scale
+
         self.fig.add_trace(
             go.Scatter(
                 x=[0],
                 y=[0],
                 mode="markers",
                 name="attractor",
-                marker=dict(size=10, color=self.attractor_color, line=dict(width=2)),
+                marker=dict(size=0, color=self.attractor_color),
             )
         )
+        self._layout.shapes = [
+            go.layout.Shape(
+                type="circle",
+                xref="x",
+                yref="y",
+                fillcolor=self.attractor_color,
+                x0=-radius,
+                y0=-radius,
+                x1=radius,
+                y1=radius,
+                line_width=0,
+            )
+        ]
 
     def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
         """
