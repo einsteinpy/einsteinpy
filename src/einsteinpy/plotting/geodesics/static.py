@@ -60,8 +60,7 @@ class StaticGeodesicPlotter:
             xlen = max(xarr) - min(xarr)
             ylen = max(yarr) - min(yarr)
             minlen_plot = min(xlen, ylen)
-            mulitplier = minlen_plot / (12 * radius)
-            min_radius = radius * mulitplier
+            min_radius = minlen_plot / 12
 
             radius = min(min_radius, minrad_nooverlap)
             self.get_curr_plot_radius = radius
