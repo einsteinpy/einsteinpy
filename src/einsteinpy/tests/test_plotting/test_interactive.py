@@ -59,3 +59,18 @@ def test_save_saves_plot(mock_save, dummy_data):
     mock_save.assert_called_with(
         cl.fig, image=ext[1:], image_filename=basename, show_link=False
     )
+
+
+def test_plot_calls_draw_attractor_Manualscale(dummy_data):
+    geodesic = dummy_data
+    cl = InteractiveGeodesicPlotter(attractor_radius_scale=1500)
+    cl.plot(geodesic)
+    assert cl.attractor_present
+    assert cl.attractor_radius_scale == 1500
+
+
+def test_plot_calls_draw_attractor_AutoScale(dummy_data):
+    geodesic = dummy_data
+    cl = InteractiveGeodesicPlotter()
+    cl.plot(geodesic)
+    assert cl.attractor_present
