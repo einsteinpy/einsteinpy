@@ -48,6 +48,28 @@ def test_plot_draws_fig(dummy_data):
     assert fig
 
 
+def test_plot_in_3d(dummy_data):
+    geodesic = dummy_data
+    cl = InteractiveGeodesicPlotter(use_3d=True)
+    cl.plot(geodesic)
+    fig = cl.show()
+    assert cl.attractor_present
+    assert cl._layout.scene
+    assert fig
+
+
+def test_set_scaling(dummy_data):
+    geodesic = dummy_data
+    cl = InteractiveGeodesicPlotter(use_3d=True)
+    cl.plot(geodesic)
+    cl._set_scaling(10, 1e-6, 10, 1e-5)
+    cl._set_scaling(1e-6, 1e-6, 1e-6, 1e-5)
+    ymin, ymax = cl._layout.scene.yaxis.range
+    zmin, zmax = cl._layout.scene.zaxis.range
+    assert ymin == -1e-5 and ymax == 1e-5
+    assert zmin == -1e-5 and zmax == 1e-5
+
+
 @mock.patch("einsteinpy.plotting.geodesics.interactive.saveplot")
 def test_save_saves_plot(mock_save, dummy_data):
     geodesic = dummy_data

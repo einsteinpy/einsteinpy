@@ -7,7 +7,9 @@ from plotly.offline import plot as saveplot
 
 
 class InteractiveGeodesicPlotter:
-    def __init__(self, attractor_radius_scale=-1.0, attractor_color="#ffcc00"):
+    def __init__(
+        self, attractor_radius_scale=-1.0, attractor_color="#ffcc00", use_3d=False
+    ):
         """
         Constructor.
 
@@ -19,13 +21,24 @@ class InteractiveGeodesicPlotter:
         """
         self.fig = go.Figure()
         self.attractor_radius_scale = attractor_radius_scale
+        self.use_3d = use_3d
         self.attractor_color = attractor_color
         self.attractor_present = False
-        self._layout = go.Layout(
-            autosize=True,
-            xaxis=dict(title="x (m)", constrain="domain"),
-            yaxis=dict(title="y (m)", scaleanchor="x"),
-        )
+        if use_3d:
+            self._layout = go.Layout(
+                autosize=True,
+                scene=dict(
+                    xaxis=dict(title="x (m)"),
+                    yaxis=dict(title="y (m)"),
+                    zaxis=dict(title="z (m)"),
+                ),
+            )
+        else:
+            self._layout = go.Layout(
+                autosize=True,
+                xaxis=dict(title="x (m)", constrain="domain"),
+                yaxis=dict(title="y (m)", scaleanchor="x"),
+            )
 
     def _mindist(self, x, y, z=0):
         return np.sqrt(x * x + y * y + z * z)
@@ -47,28 +60,50 @@ class InteractiveGeodesicPlotter:
         else:
             radius = radius.value * self.attractor_radius_scale
 
-        self.fig.add_trace(
-            go.Scatter(
-                x=[0],
-                y=[0],
-                mode="markers",
-                name="attractor",
-                marker=dict(size=0, color=self.attractor_color),
+        if self.use_3d:
+            self.fig.add_trace(
+                go.Scatter3d(
+                    x=[0],
+                    y=[0],
+                    z=[0],
+                    mode="markers",
+                    name="attractor",
+                    marker=dict(size=0, color=self.attractor_color, line=dict(width=0)),
+                )
             )
-        )
-        self._layout.shapes = [
-            go.layout.Shape(
-                type="circle",
-                xref="x",
-                yref="y",
-                fillcolor=self.attractor_color,
-                x0=-radius,
-                y0=-radius,
-                x1=radius,
-                y1=radius,
-                line_width=0,
+        else:
+            self.fig.add_trace(
+                go.Scatter(
+                    x=[0],
+                    y=[0],
+                    mode="markers",
+                    name="attractor",
+                    marker=dict(size=0, color=self.attractor_color),
+                )
             )
-        ]
+            self._layout.shapes = [
+                go.layout.Shape(
+                    type="circle",
+                    xref="x",
+                    yref="y",
+                    fillcolor=self.attractor_color,
+                    x0=-radius,
+                    y0=-radius,
+                    x1=radius,
+                    y1=radius,
+                    line_width=0,
+                )
+            ]
+
+    def _set_scaling(self, x_range, y_range, z_range, lim):
+        if x_range < lim and y_range < lim and z_range < lim:
+            return
+        if x_range < lim:
+            self._layout.scene.xaxis.range = [-lim, lim]
+        if y_range < lim:
+            self._layout.scene.yaxis.range = [-lim, lim]
+        if z_range < lim:
+            self._layout.scene.zaxis.range = [-lim, lim]
 
     def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
         """
@@ -82,20 +117,37 @@ class InteractiveGeodesicPlotter:
 
         """
         vals = geodesic.trajectory
-        x = np.array([coord[1] for coord in vals])
-        y = np.array([coord[2] for coord in vals])
+        x = np.array(vals[:, 1])
+        y = np.array(vals[:, 2])
 
         if not self.attractor_present:
             self._draw_attractor(geodesic.metric.scr, x, y)
-        self.fig.add_trace(
-            go.Scatter(
-                x=x,
-                y=y,
-                mode="lines",
-                name="geodesic",
-                marker=dict(size=5, color=color, line=dict(width=2)),
+        if self.use_3d:
+            z = np.array(vals[:, 3])
+            x_range = max(x) - min(x)
+            y_range = max(y) - min(y)
+            z_range = max(z) - min(z)
+            self._set_scaling(x_range, y_range, z_range, 1e-5)
+            self.fig.add_trace(
+                go.Scatter3d(
+                    x=x,
+                    y=y,
+                    z=z,
+                    mode="lines",
+                    name="geodesic",
+                    marker=dict(size=5, color=color, line=dict(width=2)),
+                )
             )
-        )
+        else:
+            self.fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    name="geodesic",
+                    marker=dict(size=5, color=color, line=dict(width=2)),
+                )
+            )
 
     def show(self):
         """
