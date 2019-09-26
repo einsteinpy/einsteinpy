@@ -7,6 +7,7 @@ calculations related to General Relativity.
 .. toctree::
     :maxdepth: 2
 
+    predef/predef_index
     constants
     tensor
     vector
