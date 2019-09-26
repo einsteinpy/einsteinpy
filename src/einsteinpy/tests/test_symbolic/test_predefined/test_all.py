@@ -1,7 +1,7 @@
 import pytest
 
 from einsteinpy.symbolic import MetricTensor
-from einsteinpy.symbolic.predef import AntiDeSitter, AntiDeSitterStatic, DeSitter
+from einsteinpy.symbolic.predefined import AntiDeSitter, AntiDeSitterStatic, DeSitter
 
 
 @pytest.mark.parametrize(
