@@ -1,12 +1,13 @@
 import numpy as np
 import sympy
 
-from einsteinpy.symbolic.tensor import Tensor, _change_config
+from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
-class ChristoffelSymbols(Tensor):
+class ChristoffelSymbols(BaseRelativityTensor):
     """
-    Class for defining christoffel symbols
+    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
+    Class for defining christoffel symbols.
     """
 
     def __init__(self, arr, syms, config="ull", parent_metric=None):
@@ -18,7 +19,7 @@ class ChristoffelSymbols(Tensor):
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
             Sympy Array or multi-dimensional list containing Sympy Expressions
         syms : tuple or list
-            Tuple of crucial symbols dentoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ull'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
@@ -34,23 +35,12 @@ class ChristoffelSymbols(Tensor):
             config has more or less than 3 indices
         
         """
-        super(ChristoffelSymbols, self).__init__(arr, config=config)
+        super(ChristoffelSymbols, self).__init__(
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+        )
         self._order = 3
-        self._parent_metric = parent_metric
-        if isinstance(syms, (list, tuple)):
-            self.syms = syms
-            self.dims = len(self.syms)
-        else:
-            raise TypeError("syms should be a list or tuple")
-        if not len(config) == self._order:
+        if not len(self.config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
-
-    @property
-    def parent_metric(self):
-        """
-        Returns the Metric from which Christoffel Symbol was derived, if available.
-        """
-        return self._parent_metric
 
     @classmethod
     def from_metric(cls, metric):
@@ -63,13 +53,9 @@ class ChristoffelSymbols(Tensor):
             Space-time Metric from which Christoffel Symbols are to be calculated
         
         """
-        if metric.config == "uu":
-            metric_cov = metric.inv()
-        else:
-            metric_cov = metric
         dims = metric.dims
         tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
-        mat, syms = metric_cov.tensor(), metric_cov.symbols()
+        mat, syms = metric.lower_config().tensor(), metric.symbols()
         matinv = sympy.Matrix(mat.tolist()).inv()
         for t in range(dims ** 3):
             # i,j,k each goes from 0 to (dims-1)
@@ -77,14 +63,15 @@ class ChristoffelSymbols(Tensor):
             k = t % dims
             j = (int(t / dims)) % (dims)
             i = (int(t / (dims ** 2))) % (dims)
-            tmpvar = 0
-            for n in range(dims):
-                tmpvar += (matinv[i, n] / 2) * (
-                    sympy.diff(mat[n, j], syms[k])
-                    + sympy.diff(mat[n, k], syms[j])
-                    - sympy.diff(mat[j, k], syms[n])
-                )
-            tmplist[i][j][k] = tmpvar
+            if k <= j:
+                tmpvar = 0
+                for n in range(dims):
+                    tmpvar += (matinv[i, n] / 2) * (
+                        sympy.diff(mat[n, j], syms[k])
+                        + sympy.diff(mat[n, k], syms[j])
+                        - sympy.diff(mat[j, k], syms[n])
+                    )
+                tmplist[i][j][k] = tmplist[i][k][j] = tmpvar
         return cls(tmplist, syms, config="ull", parent_metric=metric)
 
     def change_config(self, newconfig="lll", metric=None):
@@ -120,15 +107,3 @@ class ChristoffelSymbols(Tensor):
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
-
-    def symbols(self):
-        """
-        Returns the symbols used for defining the time & spacial axis
-
-        Returns
-        -------
-        tuple
-            tuple containing (t,x1,x2,x3)
-        
-        """
-        return self.syms

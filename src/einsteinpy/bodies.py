@@ -48,8 +48,8 @@ class Body:
             Radius of the body
         differential : ~einsteinpy.coordinates, optional
             Complete coordinates of the body
-        a : float, optional
-            Spin factor of massive body
+        a : ~astropy.units.m, optional
+            Spin factor of massive body. Should be less than half of schwarzschild radius.
         q : ~astropy.units.C, optional
             Charge on the massive body
         is_attractor : Bool, optional

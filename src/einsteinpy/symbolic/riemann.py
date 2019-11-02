@@ -2,11 +2,12 @@ import numpy as np
 import sympy
 
 from einsteinpy.symbolic.christoffel import ChristoffelSymbols
-from einsteinpy.symbolic.tensor import Tensor, _change_config
+from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
-class RiemannCurvatureTensor(Tensor):
+class RiemannCurvatureTensor(BaseRelativityTensor):
     """
+    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
     Class for defining Riemann Curvature Tensor
     """
 
@@ -19,7 +20,7 @@ class RiemannCurvatureTensor(Tensor):
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
             Sympy Array or multi-dimensional list containing Sympy Expressions
         syms : tuple or list
-            Tuple of crucial symbols dentoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
@@ -35,23 +36,12 @@ class RiemannCurvatureTensor(Tensor):
             config has more or less than 4 indices
         
         """
-        super(RiemannCurvatureTensor, self).__init__(arr, config=config)
+        super(RiemannCurvatureTensor, self).__init__(
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+        )
         self._order = 4
-        self._parent_metric = parent_metric
-        if isinstance(syms, (list, tuple)):
-            self.syms = syms
-            self.dims = len(self.syms)
-        else:
-            raise TypeError("syms should be a list or tuple")
         if not len(config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
-
-    @property
-    def parent_metric(self):
-        """
-        Returns the Parent Metric, if available.
-        """
-        return self._parent_metric
 
     @classmethod
     def from_christoffels(cls, chris, parent_metric=None):
@@ -63,7 +53,7 @@ class RiemannCurvatureTensor(Tensor):
         chris : ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
             Christoffel Symbols from which Riemann Curvature Tensor to be calculated
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corrosponding Metric for the Riemann Tensor. 
+            Corresponding Metric for the Riemann Tensor.
             None if it should inherit the Parent Metric of Christoffel Symbols.
             Defaults to None.
         
@@ -135,15 +125,3 @@ class RiemannCurvatureTensor(Tensor):
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
-
-    def symbols(self):
-        """
-        Returns the symbols used for defining the time & spacial axis
-
-        Returns
-        -------
-        tuple
-            tuple containing (t,x1,x2,x3)
-        
-        """
-        return self.syms

@@ -4,7 +4,7 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
+from einsteinpy.coordinates import SphericalConversion
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import schwarzschild_radius, schwarzschild_utils
 
@@ -132,18 +132,9 @@ class Schwarzschild:
         else:
             cart_vecs = list()
             for v in vecs:
-                si_vals = (
-                    SphericalDifferential(
-                        v[1] * u.m,
-                        v[2] * u.rad,
-                        v[3] * u.rad,
-                        v[5] * u.m / u.s,
-                        v[6] * u.rad / u.s,
-                        v[7] * u.rad / u.s,
-                    )
-                    .cartesian_differential()
-                    .si_values()
-                )
+                si_vals = SphericalConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian()
                 cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
             return lambdas, np.array(cart_vecs)
 
@@ -194,18 +185,9 @@ class Schwarzschild:
                 yield ODE.t, ODE.y
             else:
                 v = ODE.y
-                si_vals = (
-                    SphericalDifferential(
-                        v[1] * u.m,
-                        v[2] * u.rad,
-                        v[3] * u.rad,
-                        v[5] * u.m / u.s,
-                        v[6] * u.rad / u.s,
-                        v[7] * u.rad / u.s,
-                    )
-                    .cartesian_differential()
-                    .si_values()
-                )
+                si_vals = SphericalConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian()
                 yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
             ODE.step()
             if (not crossed_event_horizon) and (ODE.y[1] <= _scr):

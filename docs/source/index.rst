@@ -11,7 +11,7 @@ EinsteinPy - Making Einstein possible in Python
 **EinsteinPy** is an open source pure Python package dedicated to problems arising
 in General Relativity and gravitational physics, such as goedesics plotting for
 Schwarzschild, Kerr and Kerr Newman space-time model, calculation of Schwarzschild
-radius, calculation of Event Horizon and Ergosphere for Kerr space-ime. Symbolic
+radius, calculation of Event Horizon and Ergosphere for Kerr space-time. Symbolic
 Manipulations of various tensors like Metric, Riemann, Ricci and Christoffel Symbols
 is also possible using the library. EinsteinPy also features Hypersurface Embedding of
 Schwarzschild space-time, which will soon lead to modelling of Gravitational Lensing!
@@ -25,7 +25,7 @@ View `source code`_ of EinsteinPy!
 
 Key features of EinsteinPy are:
 
-* Geometry analysis and trajectory calculation in vaccum solutions of Einstein's field equations
+* Geometry analysis and trajectory calculation in vacuum solutions of Einstein's field equations
  
  * Schwarzschild space-time
  * Kerr space-time

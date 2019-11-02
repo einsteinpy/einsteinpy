@@ -1,7 +1,61 @@
 What's new
 ==========
 
-einsteinpy 0.2.0 - 2019-07-14
+einsteinpy 0.2.1 - 2019-09-15
+-----------------------------
+
+This minor release would bring improvements and new feature additions to the already existing symbolic calculations module.
+
+Part of this release is sponsored by European Space Agency, through Summer of Code in Space
+(SOCIS) 2019 program.
+
+Features
+........
+
+* New tensors in symbolic module
+
+  * Ricci Scalar
+  * Weyl Tensor
+  * Stress-Energy-Momentum Tensor
+  * Einstein Tensor
+  * Schouten Tensor
+
+* Improvement in performance of current tensors
+* Lambdify option for tensors
+* Support for vectors at arbitrary space-time symbolically as 1\ :sup:`st` order tensor.
+* Support for scalars at arbitrary space-time symbolically as 0\ :sup:`th` order tensor.
+* Addition of constants sub-module to symbolic module
+
+
+
+einsteinpy 0.2.0 - 2019-07-15
+-----------------------------
+
+This minor release would bring improvements and new feature additions to the already existing symbolic calculations module.
+
+Part of this release is sponsored by European Space Agency, through Summer of Code in Space
+(SOCIS) 2019 program.
+
+Features
+........
+
+* New tensors in symbolic module
+
+  * Ricci Scalar
+  * Weyl Tensor
+  * Stress-Energy-Momentum Tensor
+  * Einstein Tensor
+  * Schouten Tensor
+
+* Improvement in performance of current tensors
+* Lambdify option for tensors
+* Support for vectors at arbitrary space-time symbolically as 1\ :sup:`st` order tensor.
+* Support for scalars at arbitrary space-time symbolically as 0\ :sup:`th` order tensor.
+* Addition of constants sub-module to symbolic module
+
+
+
+einsteinpy 0.2.0 - 2019-07-15
 -----------------------------
 
 This release brings a lot of new features for the EinsteinPy Users. 
@@ -31,7 +85,7 @@ Features
 * Support for Tensor Algebra in General Relativity
 * Symbolic Manipulation of Metric Tensor, Riemann Tensor and Ricci Tensor
 * Support for Index Raising and Lowering in Tensors
-* Numerical Calculation and Symbolic Manupulation of Christoffel Symbols
+* Numerical Calculation and Symbolic Manipulation of Christoffel Symbols
 * Calculations of Event Horizon and Ergosphere of Kerr Black holes!
 
 
@@ -68,7 +122,7 @@ Bugs Fixed
 ----------
 
 * `Issue #115`_: Coordinate Conversion had naming issues that made them confusing!
-* `Issue #185`_: isort had conflicts with Black
+* `Issue #185`_: Isort had conflicts with Black
 * `Issue #210`_: Same notebook had two different listings in Example Gallery
 * `Issue #264`_: Removing all relative imports
 * `Issue #265`_: New modules were lacking API Docs

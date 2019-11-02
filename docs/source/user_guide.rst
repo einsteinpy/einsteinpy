@@ -4,7 +4,7 @@ User guide
 Defining the geometry: :py:class:`~einsteinpy.metric` objects
 *************************************************************
 
-EinsteinPy provides a way to define the background geometry on which the code would deal with the dynamics. These geometry has a central operating quantity known as metric tensor  and encapsulate all the geometrical and topological information about the 4d spacetime in them.
+EinsteinPy provides a way to define the background geometry on which the code would deal with the dynamics. These geometry has a central operating quantity known as metric tensor and encapsulate all the geometrical and topological information about the 4d spacetime in them.
 
 * The central quantity required to simulate trajectory of a particle in a gravitational field is christoffel symbols.
 * EinsteinPy provides an easy to use interface to calculate these symbols.
@@ -135,11 +135,6 @@ EinsteinPy provides a great set of utility functions which are frequently used i
  * Cartesian/Spherical
  * Cartesian/Boyer-Lindquist
 
-* Symbolic calculation of relevant terms in GR
-
- * Christoffel Symbols
- * Riemann Curvature Tensor
-
 * Calculation of Schwarzschild Geometry related quantities
 
  * Schwarzschild Radius
@@ -192,7 +187,8 @@ Using the functions:
 
 Symbolic Calculations
 =====================
-EinsteinPy also supports smbolic calculations in :py:class:`~einsteinpy.utils.christoffel`
+EinsteinPy also supports symbolic calculations in
+:py:class:`~einsteinpy.symbolic`
 
     .. code-block:: python
 
@@ -208,9 +204,23 @@ EinsteinPy also supports smbolic calculations in :py:class:`~einsteinpy.utils.ch
         [0, 0, -r*(-a/r + 1), 0]
 
 
+    .. code-block:: python
+
+        import sympy
+        from einsteinpy.symbolic import SchwarzschildMetric, EinsteinTensor
+
+        m = SchwarzschildMetric()
+        G1 = EinsteinTensor.from_metric(m)
+        print(G1.arr)
+
+    .. code-block:: python
+
+        [[a*c**2*(-a + r)/r**4 + a*c**2*(a - r)/r**4, 0, 0, 0], [0, a/(r**2*(a - r)) + a/(r**2*(-a + r)), 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+
+
 Future Plans
 ============
 
 * Support for null-geodesics in different geometries
-* Ultimate goal is providing numerical solutions for Einstein's equations for arbitarily complex matter distribution.
+* Ultimate goal is providing numerical solutions for Einstein's equations for arbitrarily complex matter distribution.
 * Relativistic hydrodynamics
