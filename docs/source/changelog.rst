@@ -1,10 +1,13 @@
 What's new
 ==========
 
-einsteinpy 0.2.1 - 2019-09-15
+einsteinpy 0.2.1 - 2019-11-02
 -----------------------------
 
-This minor release would bring improvements and new feature additions to the already existing symbolic calculations module.
+This minor release would bring improvements and new feature additions to the already existing symbolic calculations module along
+with performance boosts of order of 15x.
+
+This release concludes the SOCIS 2019 porjects of Sofía Ortín Vela (ortinvela.sofia@gmail.com) and Varun Singh(varunsinghs2021@gmail.com).
 
 Part of this release is sponsored by European Space Agency, through Summer of Code in Space
 (SOCIS) 2019 program.
@@ -25,34 +28,21 @@ Features
 * Support for vectors at arbitrary space-time symbolically as 1\ :sup:`st` order tensor.
 * Support for scalars at arbitrary space-time symbolically as 0\ :sup:`th` order tensor.
 * Addition of constants sub-module to symbolic module
+* Improvement in speed of Geodesic plotting
+* Move away from Jupyter and Plotly Widgets
+* New Plotting Framework
 
+Contributors
+............
 
+This is the complete list of the people that contributed to this release, with a + sign indicating first contribution.
 
-einsteinpy 0.2.0 - 2019-07-15
------------------------------
-
-This minor release would bring improvements and new feature additions to the already existing symbolic calculations module.
-
-Part of this release is sponsored by European Space Agency, through Summer of Code in Space
-(SOCIS) 2019 program.
-
-Features
-........
-
-* New tensors in symbolic module
-
-  * Ricci Scalar
-  * Weyl Tensor
-  * Stress-Energy-Momentum Tensor
-  * Einstein Tensor
-  * Schouten Tensor
-
-* Improvement in performance of current tensors
-* Lambdify option for tensors
-* Support for vectors at arbitrary space-time symbolically as 1\ :sup:`st` order tensor.
-* Support for scalars at arbitrary space-time symbolically as 0\ :sup:`th` order tensor.
-* Addition of constants sub-module to symbolic module
-
+* Shreyas Bapat
+* Ritwik Saha
+* Sofía Ortín Vela
+* Varun Singh
+* Arnav Das+
+* Calvin Jay Ross+
 
 
 einsteinpy 0.2.0 - 2019-07-15
