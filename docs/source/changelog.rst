@@ -1,10 +1,13 @@
 What's new
 ==========
 
-einsteinpy 0.2.1 - 2019-09-15
+einsteinpy 0.2.1 - 2019-11-02
 -----------------------------
 
-This minor release would bring improvements and new feature additions to the already existing symbolic calculations module.
+This minor release would bring improvements and new feature additions to the already existing symbolic calculations module along
+with performance boosts of order of 15x.
+
+This release concludes the SOCIS 2019 projects of Sofía Ortín Vela (ortinvela.sofia@gmail.com) and Varun Singh(varunsinghs2021@gmail.com).
 
 Part of this release is sponsored by European Space Agency, through Summer of Code in Space
 (SOCIS) 2019 program.
@@ -25,19 +28,36 @@ Features
 * Support for vectors at arbitrary space-time symbolically as 1\ :sup:`st` order tensor.
 * Support for scalars at arbitrary space-time symbolically as 0\ :sup:`th` order tensor.
 * Addition of constants sub-module to symbolic module
+* Improvement in speed of Geodesic plotting
+* Move away from Jupyter and Plotly Widgets
+* New Plotting Framework
 
+Contributors
+............
+
+This is the complete list of the people that contributed to this release, with a + sign indicating first contribution.
+
+* Shreyas Bapat
+* Ritwik Saha
+* Sofía Ortín Vela
+* Varun Singh
+* Arnav Das+
+* Calvin Jay Ross+  
 
 
 einsteinpy 0.2.0 - 2019-07-15
 -----------------------------
 
-This release will bring a lots and lots of features with a more intuitive API, a better
-plotting support, more metrics introduced and what not. This is a major release which will
-short term support version and will be supported only till June 2020. This major release
-comes before Python in Astronomy 2019 workshop.
+This release brings a lot of new features for the EinsteinPy Users. 
 
-Part of this release is sponsored by European Space Agency, through Summer of Code in Space
-(SOCIS) 2019 program.
+A better API, intuitive structure and easy coordinates handling! This major release
+comes before Python in Astronomy 2019 workshop and brings a lots of cool stuff. 
+
+Part of this release is sponsored by ESA/ESTEC – Adv. Concepts & Studies Office
+(European Space Agency), through Summer of Code in Space (SOCIS) 2019 program.
+
+This is a short-term supported version and will be supported only until December 2019. 
+For any feature request, write a mail to developers@einsteinpy.org describing what you need.
 
 Features
 ........
