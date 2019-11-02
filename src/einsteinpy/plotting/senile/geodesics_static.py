@@ -135,7 +135,7 @@ class StaticGeodesicPlotter:
 
         lines, x0, y0 = self.plot_trajectory(geodesic, color)
 
-        l, = self.ax.plot(x0, y0, "o", mew=0, color=lines[0].get_color())
+        (l,) = self.ax.plot(x0, y0, "o", mew=0, color=lines[0].get_color())
         lines.append(l)
 
         self.ax.set_xlabel("$x$ (km)")
@@ -168,7 +168,7 @@ class StaticGeodesicPlotter:
         margin_y = (y_max - y_min) * 0.2
         frames = pos_x.shape[0]
 
-        pic, = self.ax.plot([], [], "--", color=color)
+        (pic,) = self.ax.plot([], [], "--", color=color)
 
         plt.xlim(x_min - margin_x, x_max + margin_x)
         plt.ylim(y_min - margin_y, y_max + margin_y)
