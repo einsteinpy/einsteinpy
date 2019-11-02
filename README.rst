@@ -26,7 +26,7 @@
    :target: https://github.com/einsteinpy/einsteinpy/raw/0.2.x/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://docs.einsteinpy.org/en/v0.2.0/?badge=latest
+   :target: https://docs.einsteinpy.org/en/v0.2.1/?badge=latest
 
 .. |travisci| image:: https://img.shields.io/travis/einsteinpy/einsteinpy/0.2.x.svg?style=flat-square&logo=travis
    :target: https://travis-ci.org/einsteinpy/einsteinpy
@@ -47,9 +47,10 @@
 .. |orcid-shreyas| image:: https://img.shields.io/badge/id-0000--0002--0870--4665-a6ce39.svg
    :target: https://orcid.org/0000-0002-0870-4665
 
+
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.2.0
+:Version: 0.2.1
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
@@ -81,7 +82,7 @@ Examples
 ========
 
 .. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
-   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/0.2.x?filepath=index.ipynb
+   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
 
 |mybinder|
 
@@ -90,7 +91,7 @@ applications of einsteinpy. You can consider theses Jupyter Notebooks as tutoria
 You can launch a cloud Jupyter server using `binder`_ to edit
 the notebooks without installing anything. Try it out!
 
-https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/0.2.x?filepath=index.ipynb
+https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
 
 .. _binder: https://beta.mybinder.org/
 
@@ -168,7 +169,7 @@ Contributing
 EinsteinPy is a community project, hence all contributions are more than
 welcome! For more information, head to `CONTRIBUTING.rst`_.
 
-.. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/0.2.x/CONTRIBUTING.rst
+.. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/master/CONTRIBUTING.rst
 
 Developers Documentation can be found here.
 
@@ -205,7 +206,7 @@ one:
 
 And this is an example citation format::
 
- Shreyas Bapat et al.. (2019). EinsteinPy: einsteinpy 0.2.0. Zenodo. 10.5281/zenodo.2582388
+ Shreyas Bapat et al.. (2019). EinsteinPy: einsteinpy 0.2.1 Zenodo. 10.5281/zenodo.2582388
 
 
 License
@@ -216,7 +217,7 @@ License
 EinsteinPy is released under the MIT license, hence allowing commercial
 use of the library. Please refer to `COPYING`_.
 
-.. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/0.2.x/COPYING
+.. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/master/COPYING
 
 FAQ
 ===
