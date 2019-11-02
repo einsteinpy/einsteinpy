@@ -42,7 +42,7 @@ This is the complete list of the people that contributed to this release, with a
 * Sofía Ortín Vela
 * Varun Singh
 * Arnav Das+
-* Calvin Jay Ross+
+* Calvin Jay Ross+  
 
 
 einsteinpy 0.2.0 - 2019-07-15
