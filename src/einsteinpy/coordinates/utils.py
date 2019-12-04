@@ -58,6 +58,8 @@ def cartesian_to_bl(x, y, z, a, v_x, v_y, v_z):
     """
     w = (x ** 2 + y ** 2 + z ** 2) - (a ** 2)
     r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (z ** 2)))))
+    if r == 0:
+        raise ValueError("Coordinate conversion not possible")
     theta = np.arccos(z / r)
     phi = np.arctan2(y, x)
     dw_dt = 2 * (x * v_x + y * v_y + z * v_z)
@@ -82,6 +84,8 @@ def cartesian_to_bl_novel(x, y, z, a):
     """
     w = (x ** 2 + y ** 2 + z ** 2) - (a ** 2)
     r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (a ** 2) * (z ** 2)))))
+    if r == 0:
+        raise ValueError("Coordinate conversion not possible")
     theta = np.arccos(z / r)
     phi = np.arctan2(y, x)
 
