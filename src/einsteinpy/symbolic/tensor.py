@@ -52,10 +52,7 @@ def _change_config(tensor, metric, newconfig):
                 )
                 # reshuffle the indices
                 tmp = np.array(t).reshape(t.shape)
-                source, dest = (
-                    [p for p in range(len(t.shape))],
-                    [p for p in range(len(t.shape))],
-                )
+                source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
                 dest.pop(i)
                 dest.insert(0, i)
                 tmp = np.moveaxis(tmp, source, dest)
