@@ -75,3 +75,24 @@ class GenericVector(BaseRelativityTensor):
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
+
+    def lorentz_transform(self, transformation_matrix):
+        """
+        Performs a Lorentz transform on the vector.
+
+        Parameters
+        ----------
+            transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+                Sympy Array or multi-dimensional list containing Sympy Expressions
+
+        Returns
+        -------
+            ~einsteinpy.symbolic.vector.GenericVector
+                lorentz transformed vector
+
+        """
+
+        t = super(GenericVector, self).lorentz_transform(transformation_matrix)
+        return GenericVector(
+            t.tensor(), syms=self.syms, config=self.config, parent_metric=None
+        )
