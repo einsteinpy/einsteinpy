@@ -1,3 +1,4 @@
+from .auxillary_functions import simplify_sympy_array
 from .christoffel import ChristoffelSymbols
 from .constants import SymbolicConstant, get_constant
 from .einstein import EinsteinTensor

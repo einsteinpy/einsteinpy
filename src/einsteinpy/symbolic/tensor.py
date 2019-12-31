@@ -4,6 +4,8 @@ from sympy import simplify, tensorcontraction, tensorproduct
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
+from einsteinpy.symbolic.auxillary_functions import simplify_sympy_array
+
 
 def _config_checker(config):
     # check if the string for config contains 'u' and 'l' only
@@ -51,7 +53,7 @@ def _change_config(tensor, metric, newconfig):
                     tensorcontraction(tensorproduct(met_dict[action], t), (1, 2 + i))
                 )
                 # reshuffle the indices
-                tmp = np.array(t).reshape(t.shape)
+                tmp = np.array(t.tolist()).reshape(t.shape)
                 source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
                 dest.pop(i)
                 dest.insert(0, i)
@@ -178,7 +180,8 @@ class Tensor:
             Simplified Tensor
 
         """
-        return sympy.simplify(self.tensor())
+        # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
+        return simplify_sympy_array(self.tensor())
 
 
 class BaseRelativityTensor(Tensor):
@@ -358,7 +361,7 @@ class BaseRelativityTensor(Tensor):
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (1, 2 + i)))
             else:
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (0, 2 + i)))
-            tmp = np.array(t).reshape(t.shape)
+            tmp = np.array(t.tolist()).reshape(t.shape)
             source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
             dest.pop(i)
             dest.insert(0, i)

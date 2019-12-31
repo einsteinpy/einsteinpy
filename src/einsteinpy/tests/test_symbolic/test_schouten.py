@@ -8,6 +8,7 @@ from einsteinpy.symbolic import (
     RicciTensor,
     RiemannCurvatureTensor,
     SchoutenTensor,
+    simplify_sympy_array,
 )
 
 
@@ -84,5 +85,5 @@ def test_SchoutenTensor_config_change():
     t3 = t2.change_config("ll")
     assert t1.config == "ll" and t3.config == "ll"
     compare = sympy.Array(np.zeros((4, 4), dtype=int))
-    testarr = sympy.simplify(t1.tensor() - t3.tensor())
+    testarr = simplify_sympy_array(t1.tensor() - t3.tensor())
     assert testarr == compare
