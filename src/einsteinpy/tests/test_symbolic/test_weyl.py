@@ -8,6 +8,7 @@ from einsteinpy.symbolic import (
     RicciTensor,
     RiemannCurvatureTensor,
     WeylTensor,
+    simplify_sympy_array,
 )
 
 
@@ -85,7 +86,7 @@ def test_weyl_conformal_rescaling():
     w1 = WeylTensor.from_metric(mw1).change_config("ulll")
     w2 = WeylTensor.from_metric(mw2).change_config("ulll")
     cmp_arr = sympy.Array(np.zeros(shape=w1.tensor().shape, dtype=int))
-    assert sympy.simplify(w1.tensor() - w2.tensor()) == cmp_arr
+    assert simplify_sympy_array(w1.tensor() - w2.tensor()) == cmp_arr
     assert w1.syms == w1.symbols()
     assert w1.parent_metric == w1._parent_metric
 
@@ -93,7 +94,7 @@ def test_weyl_conformal_rescaling():
 def test_weyl_contraction_1st_3rd_indices_zero():
     mw1 = anti_de_sitter_metric()
     w1 = WeylTensor.from_metric(mw1)
-    t1 = sympy.simplify(
+    t1 = simplify_sympy_array(
         sympy.tensorcontraction(w1.change_config("ulll").tensor(), (0, 2))
     )
     t0 = sympy.Array(np.zeros(shape=t1.shape, dtype=int))

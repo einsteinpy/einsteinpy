@@ -1,5 +1,5 @@
 import numpy as np
-from sympy import cos, simplify, symbols
+from sympy import cos, cosh, simplify, sinh, symbols
 
 from einsteinpy.symbolic import GenericVector, MetricTensor
 
@@ -46,3 +46,28 @@ def test_GenericVector_check_ValueErrors():
     except ValueError:
         boolstore = True
     assert boolstore
+
+
+def test_lorentz_transform():
+    def get_vector():
+        syms = symbols("t x y z")
+        t, x, y, z = syms
+        return GenericVector([t, x, y, z], syms=syms, config="u")
+
+    def get_lorentz_matrix():
+        list2d = [[0 for t1 in range(4)] for t2 in range(4)]
+        phi = symbols("phi")
+        list2d[0][0], list2d[0][1], list2d[1][0], list2d[1][1] = (
+            cosh(phi),
+            -sinh(phi),
+            -sinh(phi),
+            cosh(phi),
+        )
+        list2d[2][2], list2d[3][3] = 1, 1
+        return list2d
+
+    t, x, phi = symbols("t x phi")
+    v = get_vector().lorentz_transform(get_lorentz_matrix())
+    print(v.tensor())
+    assert simplify(v[0] - (t * cosh(phi) - x * sinh(phi))) == 0
+    assert simplify(v[1] - (x * cosh(phi) - t * sinh(phi))) == 0

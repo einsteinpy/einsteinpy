@@ -4,6 +4,8 @@ from sympy import simplify, tensorcontraction, tensorproduct
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
+from einsteinpy.symbolic.auxillary_functions import simplify_sympy_array
+
 
 def _config_checker(config):
     # check if the string for config contains 'u' and 'l' only
@@ -51,11 +53,8 @@ def _change_config(tensor, metric, newconfig):
                     tensorcontraction(tensorproduct(met_dict[action], t), (1, 2 + i))
                 )
                 # reshuffle the indices
-                tmp = np.array(t).reshape(t.shape)
-                source, dest = (
-                    [p for p in range(len(t.shape))],
-                    [p for p in range(len(t.shape))],
-                )
+                tmp = np.array(t.tolist()).reshape(t.shape)
+                source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
                 dest.pop(i)
                 dest.insert(0, i)
                 tmp = np.moveaxis(tmp, source, dest)
@@ -181,7 +180,8 @@ class Tensor:
             Simplified Tensor
 
         """
-        return sympy.simplify(self.tensor())
+        # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
+        return simplify_sympy_array(self.tensor())
 
 
 class BaseRelativityTensor(Tensor):
@@ -338,3 +338,41 @@ class BaseRelativityTensor(Tensor):
             numeric_arr = sympy.lambdify(args, self.arr, np)
             arg_list = tuple(args)
         return arg_list, numeric_arr
+
+    def lorentz_transform(self, transformation_matrix):
+        """
+        Performs a Lorentz transform on the tensor.
+
+        Parameters
+        ----------
+            transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+                Sympy Array or multi-dimensional list containing Sympy Expressions
+
+        Returns
+        -------
+            ~einsteinpy.symbolic.tensor.BaseRelativityTensor
+                lorentz transformed tensor(or vector)
+
+        """
+        tm = sympy.Array(transformation_matrix)
+        t = self.tensor()
+        for i in range(self.order):
+            if self.config[i] == "u":
+                t = simplify(tensorcontraction(tensorproduct(tm, t), (1, 2 + i)))
+            else:
+                t = simplify(tensorcontraction(tensorproduct(tm, t), (0, 2 + i)))
+            tmp = np.array(t.tolist()).reshape(t.shape)
+            source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
+            dest.pop(i)
+            dest.insert(0, i)
+            tmp = np.moveaxis(tmp, source, dest)
+            t = sympy.Array(tmp)
+
+        return BaseRelativityTensor(
+            t,
+            syms=self.syms,
+            config=self.config,
+            parent_metric=None,
+            variables=self.variables,
+            functions=self.functions,
+        )

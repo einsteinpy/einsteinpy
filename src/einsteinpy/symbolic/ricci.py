@@ -171,7 +171,7 @@ class RicciScalar(BaseRelativityTensor):
             arr=arr, syms=syms, config="", parent_metric=parent_metric
         )
         self._order = 0
-        self._expr = self.arr[0]
+        self._expr = sum(self.arr)  # sympy not allowing indexing, temporary fix!
 
     @property
     def expr(self):
