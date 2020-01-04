@@ -17,8 +17,9 @@ def cartesian_to_spherical(x, y, z, v_x, v_y, v_z):
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
     """
-    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
-    theta = np.arccos(z / r)
+    hxy = np.hypot(x, y)
+    r = np.hypot(hxy, z)
+    theta = np.arctan2(hxy, z)
     phi = np.arctan2(y, x)
     n1 = x ** 2 + y ** 2
     n2 = n1 + z ** 2
@@ -35,8 +36,9 @@ def cartesian_to_spherical_novel(x, y, z):
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
     """
-    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
-    theta = np.arccos(z / r)
+    hxy = np.hypot(x, y)
+    r = np.hypot(hxy, z)
+    theta = np.arctan2(hxy, z)
     phi = np.arctan2(y, x)
 
     return r, theta, phi
