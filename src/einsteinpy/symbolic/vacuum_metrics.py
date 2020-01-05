@@ -1,5 +1,6 @@
 import sympy
 
+from einsteinpy.symbolic.auxillary_functions import raise_warning
 from einsteinpy.symbolic.metric import MetricTensor
 
 
@@ -17,6 +18,10 @@ def SchwarzschildMetric(symbolstr="t r theta phi"):
     ~einsteinpy.symbolic.metric.MetricTensor
         Metric Tensor for Schwarzschild space-time
     """
+    raise_warning(
+        PendingDeprecationWarning,
+        "SchwarzschildMetric class would be deprecated with v0.3.0 !",
+    )
     list2d = [[0 for i in range(4)] for i in range(4)]
     syms = sympy.symbols(symbolstr)
     c, a = sympy.symbols("c a")
