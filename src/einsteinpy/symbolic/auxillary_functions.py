@@ -1,4 +1,10 @@
+import warnings
+
 import sympy
+
+
+def raise_warning(WarningType, message):
+    warnings.warn(message, WarningType)
 
 
 def _flatten_list(seq):
