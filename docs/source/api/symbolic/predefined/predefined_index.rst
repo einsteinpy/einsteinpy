@@ -8,3 +8,6 @@ metrics in General Relativity.
     :maxdepth: 2
 
     de_sitter
+    vacuum_solutions
+    minkowski
+    cmetric
