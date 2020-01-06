@@ -21,7 +21,7 @@ intersphinx_mapping = {
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "matplotlib": ("https://matplotlib.org", None),
-    "sympy": ("https://docs.sympy.org/latest", None),
+    "sympy": ("https://docs.sympy.org/1.5.1", None),
 }
 
 
@@ -63,6 +63,7 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx.ext.mathjax",  # New module for matrix visualization
     "sphinx.ext.graphviz",  # For creating the diagrams
+    "sphinx.ext.viewcode",  # View Source button
 ]
 templates_path = ["_templates"]
 
