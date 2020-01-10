@@ -102,8 +102,8 @@ class EinsteinTensor(BaseRelativityTensor):
 
         Returns
         -------
-            ~einsteinpy.symbolic.tensor.BaseRelativityTensor
-                lorentz transformed tensor(or vector)
+            ~einsteinpy.symbolic.einstein.EinsteinTensor
+                lorentz transformed tensor
 
         """
         t = super(EinsteinTensor, self).lorentz_transform(transformation_matrix)
