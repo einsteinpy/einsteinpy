@@ -108,5 +108,5 @@ class EinsteinTensor(BaseRelativityTensor):
         """
         t = super(EinsteinTensor, self).lorentz_transform(transformation_matrix)
         return EinsteinTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )

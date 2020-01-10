@@ -1,9 +1,14 @@
 import numpy as np
 import pytest
 import sympy
-from sympy import cos, simplify, sin, sinh, tensorcontraction
+from sympy import cos, cosh, simplify, sin, sinh, symbols, tensorcontraction
 
-from einsteinpy.symbolic import EinsteinTensor, MetricTensor, RicciScalar
+from einsteinpy.symbolic import (
+    EinsteinTensor,
+    MetricTensor,
+    RicciScalar,
+    simplify_sympy_array,
+)
 
 
 def schwarzschild_metric():
@@ -66,3 +71,32 @@ def test_EinsteinTensor_symbols_parent_metric_wrong_change_config():
     except Exception:
         boolstore = True
     assert boolstore
+
+
+def test_lorentz_transform():
+    # currently testing correct instance, proper theoretical tests needed
+    def get_lorentz_matrix():
+        list2d = [[0 for t1 in range(4)] for t2 in range(4)]
+        phi = symbols("phi")
+        list2d[0][0], list2d[0][1], list2d[1][0], list2d[1][1] = (
+            cosh(phi),
+            -sinh(phi),
+            -sinh(phi),
+            cosh(phi),
+        )
+        list2d[2][2], list2d[3][3] = 1, 1
+        return list2d
+
+    def get_tensor():
+        x, y, z, w = symbols("x y z w")
+        list2d = [[0 for t1 in range(4)] for t2 in range(4)]
+        list2d[0][0], list2d[0][1], list2d[1][0], list2d[1][1] = x, z, z, x
+        list2d[2][2], list2d[3][3] = y, y
+        return EinsteinTensor(
+            list2d, syms=(x, y, z, w), config="lu", parent_metric=None
+        )
+
+    tm = get_lorentz_matrix()
+    t0 = get_tensor()
+    t1 = t0.lorentz_transform(tm)
+    assert isinstance(t1, EinsteinTensor)
