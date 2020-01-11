@@ -87,3 +87,25 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
+
+    def lorentz_transform(self, transformation_matrix):
+        """
+        Performs a Lorentz transform on the tensor.
+
+        Parameters
+        ----------
+            transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+                Sympy Array or multi-dimensional list containing Sympy Expressions
+
+        Returns
+        -------
+            ~einsteinpy.symbolic.stress_energy_momentum.StressEnergyMomentumTensor
+                lorentz transformed tensor
+
+        """
+        t = super(StressEnergyMomentumTensor, self).lorentz_transform(
+            transformation_matrix
+        )
+        return StressEnergyMomentumTensor(
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+        )
