@@ -35,6 +35,9 @@
 .. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
 
+.. |ghactions| image:: https://img.shields.io/github/workflow/status/einsteinpy/einsteinpy/Test_MacOS?logo=github&style=flat-square
+   :target: https://github.com/einsteinpy/einsteinpy/actions?query=branch%3Amaster
+
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
    :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
 
@@ -50,7 +53,7 @@
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
-|circleci| |appveyor| |codecov| |codeclimate|
+|circleci| |ghactions| |appveyor| |codecov| |codeclimate|
 
 **EinsteinPy** is an open source pure Python package dedicated to problems arising
 in General Relativity and gravitational physics, such as geodesics plotting for
@@ -107,12 +110,13 @@ EinsteinPy requires the following Python packages:
 EinstienPy is usually tested on Linux, Windows and OS X on Python
 3.5, 3.6 and 3.7 against latest NumPy.
 
-==============  ============  ===================
-Platform        Site          Status
-==============  ============  ===================
-Linux           CircleCI      |circleci|
-Windows x64     Appveyor      |appveyor|
-==============  ============  ===================
+==============  ===============  ===================
+Platform        Site             Status
+==============  ===============  ===================
+Linux           CircleCI         |circleci|
+OS X            Github Actions   |ghactions|
+Windows x64     Appveyor         |appveyor|
+==============  ===============  ===================
 
 Installation
 ============
