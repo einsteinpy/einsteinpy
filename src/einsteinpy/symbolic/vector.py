@@ -8,7 +8,7 @@ class GenericVector(BaseRelativityTensor):
 
     """
 
-    def __init__(self, arr, syms, config="l", parent_metric=None):
+    def __init__(self, arr, syms, config="u", parent_metric=None):
         """
         Constructor and Initializer
 
@@ -51,8 +51,8 @@ class GenericVector(BaseRelativityTensor):
         newconfig : str
             Specify the new configuration. Defaults to 'u'
         metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Parent metric tensor for changing indices. 
-            Already assumes the value of the metric tensor from which it was initialized if passed with None. 
+            Parent metric tensor for changing indices.
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
             Defaults to None.
 
         Returns
