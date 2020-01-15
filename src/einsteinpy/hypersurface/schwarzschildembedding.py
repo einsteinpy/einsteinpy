@@ -1,5 +1,5 @@
-import numpy as np
 import astropy.units as u
+import numpy as np
 
 
 class SchwarzschildEmbedding:
@@ -172,34 +172,3 @@ class SchwarzschildEmbedding:
 
         Z.reshape((X.shape[0], X.shape[1]))
         return X, Y, Z
-
-    def plot_hypersurface(self, plot_type="wireframe", alpha=100):
-
-        """
-        Plots the surface thus obtained for the embedding.
-
-        Parameters
-        ----------
-        plot_type : str
-            type of texture for the plots - wireframe / surface, defaults to 'wireframe'
-        alpha : float
-            scaling factor to obtain the step size for incrementing r, defaults to 100
-
-        """
-        fig = plt.figure()
-        ax = plt.axes(projection="3d")
-        X, Y, Z = self.get_values_surface(alpha)
-        shape_tuple = X.shape
-        Z = Z.reshape((shape_tuple[0], shape_tuple[1]))
-        if plot_type == "wireframe":
-            ax.plot_wireframe(X, Y, Z, color="black")
-        elif plot_type == "surface":
-            ax.plot_surface(
-                X, Y, Z, rstride=1, cstride=1, cmap="cubehelix", edgecolor="none"
-            )
-
-    def show(self):
-        """
-        Show the plot made by plot_hypersurface()
-        """
-        plt.show()
