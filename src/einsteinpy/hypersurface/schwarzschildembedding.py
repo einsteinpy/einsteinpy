@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from astropy import units as u
-from mpl_toolkits import mplot3d
+import astropy.units as u
 
 
 class SchwarzschildEmbedding:
