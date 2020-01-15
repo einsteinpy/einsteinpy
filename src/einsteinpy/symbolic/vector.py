@@ -8,7 +8,7 @@ class GenericVector(BaseRelativityTensor):
 
     """
 
-    def __init__(self, arr, syms, config="l", parent_metric=None):
+    def __init__(self, arr, syms, config="u", parent_metric=None):
         """
         Constructor and Initializer
 
@@ -19,7 +19,7 @@ class GenericVector(BaseRelativityTensor):
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
-            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'l'.
+            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'u'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Generic Vector.
             Defaults to None.
@@ -51,8 +51,8 @@ class GenericVector(BaseRelativityTensor):
         newconfig : str
             Specify the new configuration. Defaults to 'u'
         metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Parent metric tensor for changing indices. 
-            Already assumes the value of the metric tensor from which it was initialized if passed with None. 
+            Parent metric tensor for changing indices.
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
             Defaults to None.
 
         Returns
