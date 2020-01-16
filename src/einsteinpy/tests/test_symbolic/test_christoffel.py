@@ -1,7 +1,9 @@
 import numpy as np
 import sympy
+from sympy import cosh, sinh, symbols
 
 from einsteinpy.symbolic import ChristoffelSymbols, MetricTensor
+from einsteinpy.symbolic.predefined import AntiDeSitter
 
 
 def schwarzschild_metric():
@@ -98,3 +100,27 @@ def test_properties():
         assert False
     except Exception:
         return True
+
+
+def test_lorentz_transform():
+    # currently testing correct instance, proper theoretical tests needed
+    def get_lorentz_matrix():
+        list2d = [[0 for t1 in range(4)] for t2 in range(4)]
+        phi = symbols("phi")
+        list2d[0][0], list2d[0][1], list2d[1][0], list2d[1][1] = (
+            cosh(phi),
+            -sinh(phi),
+            -sinh(phi),
+            cosh(phi),
+        )
+        list2d[2][2], list2d[3][3] = 1, 1
+        return list2d
+
+    def get_tensor():
+        metric = AntiDeSitter()
+        return ChristoffelSymbols.from_metric(metric)
+
+    tm = get_lorentz_matrix()
+    t0 = get_tensor()
+    t1 = t0.lorentz_transform(tm)
+    assert isinstance(t1, ChristoffelSymbols)
