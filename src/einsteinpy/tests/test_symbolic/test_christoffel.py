@@ -1,5 +1,6 @@
 import numpy as np
 import sympy
+from sympy import cosh, sinh, symbols
 
 from einsteinpy.symbolic import ChristoffelSymbols, MetricTensor
 from einsteinpy.symbolic.predefined import AntiDeSitter
@@ -104,16 +105,16 @@ def test_properties():
 def test_lorentz_transform():
     # currently testing correct instance, proper theoretical tests needed
     def get_lorentz_matrix():
-        list3d = [[[0 for t1 in range(4)] for t2 in range(4)] for t3 in range(4)]
-        phi = sympy.symbols("phi")
-        list3d[0][0], list3d[0][1], list3d[1][0], list3d[1][1] = (
-            sympy.cosh(phi),
-            -sympy.sinh(phi),
-            -sympy.sinh(phi),
-            sympy.cosh(phi),
+        list2d = [[0 for t1 in range(4)] for t2 in range(4)]
+        phi = symbols("phi")
+        list2d[0][0], list2d[0][1], list2d[1][0], list2d[1][1] = (
+            cosh(phi),
+            -sinh(phi),
+            -sinh(phi),
+            cosh(phi),
         )
-        list3d[2][2], list3d[3][3] = 1, 1
-        return list3d
+        list2d[2][2], list2d[3][3] = 1, 1
+        return list2d
 
     def get_tensor():
         metric = AntiDeSitter()

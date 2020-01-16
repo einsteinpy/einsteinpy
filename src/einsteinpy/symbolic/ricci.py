@@ -92,26 +92,6 @@ class RicciTensor(BaseRelativityTensor):
         )
         return cls.from_riemann(rt)
 
-    def lorentz_transform(self, transformation_matrix):
-        """
-        Performs a Lorentz transform on the tensor.
-
-        Parameters
-        ----------
-            transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-                Sympy Array or multi-dimensional list containing Sympy Expressions
-
-        Returns
-        -------
-            ~einsteinpy.symbolic.ricci.RicciTensor
-                lorentz transformed tensor
-
-        """
-        t = super(RicciTensor, self).lorentz_transform(transformation_matrix)
-        return RicciTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
-        )
-
     @classmethod
     def from_metric(cls, metric):
         """
@@ -159,6 +139,26 @@ class RicciTensor(BaseRelativityTensor):
             new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
+
+    def lorentz_transform(self, transformation_matrix):
+        """
+        Performs a Lorentz transform on the tensor.
+
+        Parameters
+        ----------
+            transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+                Sympy Array or multi-dimensional list containing Sympy Expressions
+
+        Returns
+        -------
+            ~einsteinpy.symbolic.ricci.RicciTensor
+                lorentz transformed tensor
+
+        """
+        t = super(RicciTensor, self).lorentz_transform(transformation_matrix)
+        return RicciTensor(
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+        )
 
 
 class RicciScalar(BaseRelativityTensor):
