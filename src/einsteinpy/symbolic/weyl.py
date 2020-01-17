@@ -156,5 +156,5 @@ class WeylTensor(BaseRelativityTensor):
         """
         t = super(WeylTensor, self).lorentz_transform(transformation_matrix)
         return WeylTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )

@@ -120,5 +120,5 @@ class SchoutenTensor(BaseRelativityTensor):
         """
         t = super(SchoutenTensor, self).lorentz_transform(transformation_matrix)
         return SchoutenTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )

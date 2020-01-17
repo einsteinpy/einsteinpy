@@ -5,7 +5,9 @@ from einsteinpy.symbolic.predefined import (
     AntiDeSitter,
     AntiDeSitterStatic,
     CMetric,
+    Davidson,
     DeSitter,
+    Godel,
     Minkowski,
     Schwarzschild,
 )
@@ -18,8 +20,11 @@ from einsteinpy.symbolic.predefined import (
         AntiDeSitterStatic(),
         DeSitter(),
         Schwarzschild(),
+        Schwarzschild(c=1, sch=2),
         Minkowski(),
         CMetric(),
+        Davidson(),
+        Godel(),
     ],
 )
 def test_all_predefined_metrics(metric_instance):

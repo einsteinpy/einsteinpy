@@ -125,5 +125,5 @@ class ChristoffelSymbols(BaseRelativityTensor):
         """
         t = super(ChristoffelSymbols, self).lorentz_transform(transformation_matrix)
         return ChristoffelSymbols(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )
