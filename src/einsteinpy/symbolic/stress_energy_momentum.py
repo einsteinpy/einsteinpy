@@ -107,5 +107,5 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
             transformation_matrix
         )
         return StressEnergyMomentumTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )

@@ -157,7 +157,7 @@ class RicciTensor(BaseRelativityTensor):
         """
         t = super(RicciTensor, self).lorentz_transform(transformation_matrix)
         return RicciTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None,
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )
 
 
