@@ -16,3 +16,4 @@ Jupyter notebooks
    /examples/Weyl_Tensor_symbolic_calculation.ipynb
    /examples/Einstein_Tensor_symbolic_calculation.ipynb
    /examples/Lambdify_symbolic_calculation.ipynb
+   /examples/Predefined_Metrics_in_Symbolic_Module.ipynb

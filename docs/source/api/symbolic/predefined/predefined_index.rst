@@ -7,7 +7,4 @@ metrics in General Relativity.
 .. toctree::
     :maxdepth: 2
 
-    de_sitter
-    vacuum_solutions
-    minkowski
-    cmetric
+    full_list
