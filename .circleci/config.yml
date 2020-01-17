@@ -2,7 +2,7 @@ version: 2
 jobs:
   quality:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3.7
     parallelism: 4
     working_directory: ~/repo
 
@@ -14,12 +14,15 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
+            pip install --upgrade pip --quiet
             pip install black isort mypy --quiet
       - run:
-          name: check Black style
+          name: Check Code Style
           command: |
             . venv/bin/activate
+            isort --version
             isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY  # This avoids installing einsteinpy
+            black --version
             black src/ setup.py --check
       - run:
           name: check MyPy
