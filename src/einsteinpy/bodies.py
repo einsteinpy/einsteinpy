@@ -72,6 +72,22 @@ class Body:
         self.coordinates = differential
         self.parent = parent
 
+    def __repr__(self):
+        return (
+            "'Body ( name: ({0}), mass: ({1}), radius: ({2}), coordinates: ({3}), spin factor: ({4}), charge: ({"
+            "5}) )'".format(
+                self.name, self.mass, self.R, self.coordinates, self.a, self.q
+            )
+        )
+
+    def __str__(self):
+        return (
+            "Body ( name: ({0}), mass: ({1}), radius: ({2}), coordinates: ({3}), spin factor: ({4}), charge: ({"
+            "5}) )".format(
+                self.name, self.mass, self.R, self.coordinates, self.a, self.q
+            )
+        )
+
 
 class _Sun(Body):
     def __init__(self):
