@@ -41,8 +41,8 @@
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
    :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
 
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/shreyasbapat/einsteinpy/master
-   :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy/master/branch
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/shreyasbapat/einsteinpy/master?logo=appveyor&style=flat-square
+   :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy/branch/master
 
 .. |orcid-shreyas| image:: https://img.shields.io/badge/id-0000--0002--0870--4665-a6ce39.svg
    :target: https://orcid.org/0000-0002-0870-4665
