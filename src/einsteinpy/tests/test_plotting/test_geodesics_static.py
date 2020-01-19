@@ -2,7 +2,6 @@ from unittest import mock
 
 import astropy.units as u
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 

@@ -1,5 +1,3 @@
-from unittest import mock
-
 from astropy import units as u
 from numpy.testing import assert_allclose
 

@@ -109,7 +109,7 @@ This is the complete list of the people that contributed to this release, with a
 * Jialin Ma+
 
 Bugs Fixed
-----------
+..........
 
 * `Issue #115`_: Coordinate Conversion had naming issues that made them confusing!
 * `Issue #185`_: Isort had conflicts with Black

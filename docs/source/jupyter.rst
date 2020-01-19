@@ -4,16 +4,16 @@ Jupyter notebooks
 .. toctree::
    :maxdepth: 1
 
-   /examples/Visualizing_advance_of_perihelion_of_a_test_particle_in_Schwarzschild_space-time.ipynb
-   /examples/Animations_in_EinsteinPy.ipynb
-   /examples/Symbolically_Understanding_Christoffel_Symbol_and_Riemann_Curvature_Tensor_using_EinsteinPy.ipynb
-   /examples/Playing_with_Contravariant_and_Covariant_Indices_in_Tensors(Symbolic).ipynb
-   /examples/Ricci_Tensor_and_Scalar_Curvature_symbolic_calculation.ipynb
-   /examples/Analysing_Earth_using_EinsteinPy!.ipynb
-   /examples/Visualizing_frame_dragging_in_Kerr_spacetime.ipynb
-   /examples/Visualizing_event_horizon_and_ergosphere_of_Kerr_black_hole.ipynb
-   /examples/Plotting_spacial_hypersurface_embedding_for_schwarzschild_spacetime.ipynb
-   /examples/Weyl_Tensor_symbolic_calculation.ipynb
-   /examples/Einstein_Tensor_symbolic_calculation.ipynb
-   /examples/Lambdify_symbolic_calculation.ipynb
-   /examples/Predefined_Metrics_in_Symbolic_Module.ipynb
+   /examples/Visualizing advance of perihelion of a test particle in Schwarzschild space-time.ipynb
+   /examples/Animations in EinsteinPy.ipynb
+   /examples/Symbolically Understanding Christoffel Symbol and Riemann Curvature Tensor using EinsteinPy.ipynb
+   /examples/Playing with Contravariant and Covariant Indices in Tensors(Symbolic).ipynb
+   /examples/Ricci Tensor and Scalar Curvature symbolic calculation.ipynb
+   /examples/Analysing Earth using EinsteinPy!.ipynb
+   /examples/Visualizing frame dragging in Kerr spacetime.ipynb
+   /examples/Visualizing event horizon and ergosphere of Kerr black hole.ipynb
+   /examples/Plotting spacial hypersurface embedding for schwarzschild spacetime.ipynb
+   /examples/Weyl Tensor symbolic calculation.ipynb
+   /examples/Einstein Tensor symbolic calculation.ipynb
+   /examples/Lambdify symbolic calculation.ipynb
+   /examples/Predefined Metrics in Symbolic Module.ipynb

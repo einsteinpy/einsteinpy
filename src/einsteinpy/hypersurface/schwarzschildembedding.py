@@ -1,7 +1,8 @@
-import matplotlib.pyplot as plt
+import warnings
+
+import astropy.units as u
 import numpy as np
-from astropy import units as u
-from mpl_toolkits import mplot3d
+from matplotlib import pyplot as plt
 
 
 class SchwarzschildEmbedding:
@@ -176,32 +177,13 @@ class SchwarzschildEmbedding:
         return X, Y, Z
 
     def plot_hypersurface(self, plot_type="wireframe", alpha=100):
-
-        """
-        Plots the surface thus obtained for the embedding.
-
-        Parameters
-        ----------
-        plot_type : str
-            type of texture for the plots - wireframe / surface, defaults to 'wireframe'
-        alpha : float
-            scaling factor to obtain the step size for incrementing r, defaults to 100
-
-        """
-        fig = plt.figure()
-        ax = plt.axes(projection="3d")
-        X, Y, Z = self.get_values_surface(alpha)
-        shape_tuple = X.shape
-        Z = Z.reshape((shape_tuple[0], shape_tuple[1]))
-        if plot_type == "wireframe":
-            ax.plot_wireframe(X, Y, Z, color="black")
-        elif plot_type == "surface":
-            ax.plot_surface(
-                X, Y, Z, rstride=1, cstride=1, cmap="cubehelix", edgecolor="none"
-            )
+        msg = "This method is deprecated from 0.2.2 . To plot the  \
+               hypersurface, use ~einsteinpy.plotting.HypersurfacePlotter \
+               Please have a look at the documentation for more details"
+        raise warnings.warn(msg, DeprecationWarning)
 
     def show(self):
-        """
-        Show the plot made by plot_hypersurface()
-        """
-        plt.show()
+        msg = "This method will be deprecated from 0.2.2 . To plot the  \
+               hypersurface, use ~einsteinpy.plotting.HypersurfacePlotter \
+               Please have a look at the documentation for more details"
+        raise warnings.warn(msg, DeprecationWarning)
