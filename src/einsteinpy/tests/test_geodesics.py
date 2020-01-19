@@ -37,3 +37,21 @@ def test_Geodesics_has_trajectory(dummy_data):
     body, t, _, end_lambda, stepsize = dummy_data
     geo = Geodesic(body, time=t, end_lambda=end_lambda, step_size=stepsize)
     assert isinstance(geo.trajectory, np.ndarray)
+
+
+def test_Geodesics_str_returns_members(dummy_data):
+    body, t, _, end_lambda, stepsize = dummy_data
+    geo = Geodesic(body, time=t, end_lambda=end_lambda, step_size=stepsize)
+    assert (
+        geo.__str__()
+        == "body name= (obj) , metric=(Schwarzschild) , parent name=(attractor) , parent mass=(6e+24 kg)"
+    )
+
+
+def test_Geodesics_repr_returns_members(dummy_data):
+    body, t, _, end_lambda, stepsize = dummy_data
+    geo = Geodesic(body, time=t, end_lambda=end_lambda, step_size=stepsize)
+    assert (
+        geo.__repr__()
+        == "body name= (obj) , metric=(Schwarzschild) , parent name=(attractor) , parent mass=(6e+24 kg)"
+    )

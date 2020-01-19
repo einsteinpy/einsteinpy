@@ -32,6 +32,22 @@ class Geodesic:
             return_cartesian=True,
         )[1]
 
+    def __repr__(self):
+        return "body name= ({0}) , metric=({1}) , parent name=({2}) , parent mass=({3})".format(
+            self.body.name,
+            self.metric.name,
+            self.body.parent.name,
+            self.body.parent.mass,
+        )
+
+    def __str__(self):
+        return "body name= ({0}) , metric=({1}) , parent name=({2}) , parent mass=({3})".format(
+            self.body.name,
+            self.metric.name,
+            self.body.parent.name,
+            self.body.parent.mass,
+        )
+
     @property
     def trajectory(self):
         return self._trajectory
