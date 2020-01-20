@@ -22,6 +22,7 @@ class KerrNewman:
     @u.quantity_input(time=u.s, M=u.kg, Q=u.C)
     def __init__(self, bl_coords, q, M, Q, time):
         self.input_coords = bl_coords
+        self.name = "KerrNewman"
         self.M = M
         self.a = self.input_coords.a.to(u.m)
         self.Q = Q

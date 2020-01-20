@@ -19,6 +19,7 @@ class Schwarzschild:
 
     @u.quantity_input(time=u.s, M=u.kg)
     def __init__(self, sph_coords, M, time):
+        self.name = "Schwarzschild"
         self.M = M
         self.input_coords = sph_coords
         self.time = time
