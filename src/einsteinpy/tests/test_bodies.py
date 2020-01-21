@@ -45,3 +45,22 @@ def test_differentials():
     assert isinstance(a.vel_vec, list)
     assert isinstance(b.pos_vec, list)
     assert isinstance(b.vel_vec, list)
+
+
+def test_body_str_return():
+    body = Body(name="BodyTest", mass=1.989e30 * u.kg, a=0.3 * u.m, R=30 * u.km)
+    assert (
+        body.__str__() == "Body ( name: (BodyTest), "
+        "mass: (1.989e+30 kg), radius: (30.0 km), "
+        "coordinates: (None), spin factor: (0.3 m), charge: (0.0 C) )"
+    )
+
+
+def test_body_repr_return():
+    body = Body(name="BodyTest", mass=1.989e30 * u.kg, a=0.3 * u.m, R=30 * u.km)
+    assert (
+        body.__repr__() == "'Body ( name: (BodyTest), "
+        "mass: (1.989e+30 kg), "
+        "radius: (30.0 km), "
+        "coordinates: (None), spin factor: (0.3 m), charge: (0.0 C) )'"
+    )
