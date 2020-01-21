@@ -1,6 +1,6 @@
 import numpy as np
 
-from .utils import (
+from einsteinpy.coordinates.utils import (
     bl_to_cartesian_fast,
     cartesian_to_bl_fast,
     cartesian_to_spherical_fast,
