@@ -1,7 +1,7 @@
 import random
 
-from .interactive import InteractiveGeodesicPlotter
-from .static import StaticGeodesicPlotter
+from einsteinpy.plotting.geodesics.interactive import InteractiveGeodesicPlotter
+from einsteinpy.plotting.geodesics.static import StaticGeodesicPlotter
 
 
 def in_ipynb():

@@ -1,7 +1,7 @@
 import astropy.units as u
 import numpy as np
 
-from einsteinpy.coordinates import (
+from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
     SphericalConversion,

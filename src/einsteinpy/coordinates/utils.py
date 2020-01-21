@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..ijit import jit
+from einsteinpy.ijit import jit
 
 
 def cartesian_to_spherical_fast(
