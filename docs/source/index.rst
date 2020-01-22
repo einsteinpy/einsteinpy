@@ -103,7 +103,7 @@ Contents
 
     getting_started
     user_guide
-    metric
+    theory/theory_index
     jupyter
     changelog
     dev_guide
