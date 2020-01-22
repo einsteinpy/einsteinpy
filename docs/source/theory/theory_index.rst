@@ -1,5 +1,5 @@
-Classical Mechanics, Special and General Relativity
-===================================================
+Theory of Relativity
+====================
 
 .. toctree::
     :maxdepth: 2
@@ -8,3 +8,7 @@ Classical Mechanics, Special and General Relativity
     classical
     relativity
     metric
+
+Parts of this section is copied as it is, with minor modifications from MIT-lincensed 
+`Theoretical Physics Reference <https://github.com/certik/theoretical-physics>`_ 
+by Ondřej Čertík.

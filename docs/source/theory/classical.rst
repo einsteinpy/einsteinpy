@@ -1,5 +1,3 @@
-.. index:: Newtonian physics, classical mechanics
-
 ===================
 Classical Mechanics
 ===================
@@ -8,11 +6,11 @@ Rigid Body Rotation
 ===================
 
 In all the sections below, the rigid body is rotating around
-the $\bomega$ axis, so:
+the :math:`\omega` axis, so:
 
 .. math::
 
-    {\bf v} = \bomega \times {\bf r}
+    {\bf v} = \omega \times {\bf r}
 
 Kinetic Energy
 --------------
@@ -21,23 +19,23 @@ The kinetic energy is:
 
 .. math::
 
-    T = \int \half\rho({\bf r}) v^2 \d^3 r =
+    T = \int \frac{1}{2}\rho({\bf r}) v^2 d^3 r =
 
-      = \int \half\rho({\bf r}) {\bf v}\cdot{\bf v} \d^3 r =
+      = \int \frac{1}{2}\rho({\bf r}) {\bf v}\cdot{\bf v} d^3 r =
 
-      = \int \half\rho({\bf r}) {\bf v}\cdot(\bomega \times {\bf r}) \d^3 r =
+      = \int \frac{1}{2}\rho({\bf r}) {\bf v}\cdot(\omega \times {\bf r}) d^3 r =
 
-      = \int \half\rho({\bf r}) \bomega\cdot({\bf r}\times {\bf v}) \d^3 r =
+      = \int \frac{1}{2}\rho({\bf r}) \omega\cdot({\bf r}\times {\bf v}) d^3 r =
 
-      = \half \bomega \cdot \int\rho({\bf r}) ({\bf r}\times {\bf v}) \d^3 r =
+      = \frac{1}{2} \omega \cdot \int\rho({\bf r}) ({\bf r}\times {\bf v}) d^3 r =
 
-      = \half \bomega \cdot {\bf L}
+      = \frac{1}{2} \omega \cdot {\bf L}
 
-where ${\bf L}$ is the total angular momentum:
+where :math:`{\bf L}` is the total angular momentum:
 
 .. math::
 
-      {\bf L} = \int\rho({\bf r}) ({\bf r}\times {\bf v}) \d^3 r
+      {\bf L} = \int\rho({\bf r}) ({\bf r}\times {\bf v}) d^3 r
 
 Angular Momentum
 ----------------
@@ -47,24 +45,24 @@ Total angular momentum is:
 .. math::
 
     {\bf L}
-        = \int \rho({\bf r}) ({\bf r} \times {\bf v}) \d^3 r =
+        = \int \rho({\bf r}) ({\bf r} \times {\bf v}) d^3 r =
 
-        = \int \rho({\bf r}) ({\bf r} \times (\bomega \times {\bf r}))
-                \d^3 r=
+        = \int \rho({\bf r}) ({\bf r} \times (\omega \times {\bf r}))
+                d^3 r=
 
-        = \int \rho({\bf r}) (\bomega r^2 - {\bf r} ({\bf r}
-                \cdot \bomega)) \d^3 r =
+        = \int \rho({\bf r}) (\omega r^2 - {\bf r} ({\bf r}
+                \cdot \omega)) d^3 r =
 
-        = \int \rho({\bf r}) (\one r^2 - {\bf r} {\bf r})
-                \d^3 r \cdot \bomega =
+        = \int \rho({\bf r}) (1 r^2 - {\bf r} {\bf r})
+                d^3 r \cdot \omega =
 
-        = {\bf I} \cdot \bomega
+        = {\bf I} \cdot \omega
 
-Where ${\bf I}$ is the moment of inertia tensor:
+Where :math:`{\bf I}` is the moment of inertia tensor:
 
 .. math::
 
-    {\bf I} = \int \rho({\bf r}) (\one r^2 - {\bf r} {\bf r}) \d^3 r
+    {\bf I} = \int \rho({\bf r}) (1 r^2 - {\bf r} {\bf r}) d^3 r
 
 Moment of Inertia
 -----------------
@@ -73,36 +71,36 @@ The moment of inertia tensor and its components are:
 
 .. math::
 
-    {\bf I} = \int \rho({\bf r}) (\one r^2 - {\bf r} {\bf r}) \d^3 r
+    {\bf I} = \int \rho({\bf r}) (1 r^2 - {\bf r} {\bf r}) d^3 r
 
-    I^{ij} = \int \rho({\bf r}) (\delta^{ij} r_k r^k - r^i r^j) \d^3 r
+    I^{ij} = \int \rho({\bf r}) (\delta^{ij} r_k r^k - r^i r^j) d^3 r
 
-Let's write $\bomega=\omega {\bf n}$ (where ${\bf n}$ is a unit vector),
+Let's write :math:`\omega=\omega {\bf n}` (where :math:`{\bf n}` is a unit vector),
 then the kinetic energy is:
 
 .. math::
 
-    T = \half \bomega \cdot {\bf L}
-      = \half \bomega \cdot {\bf I} \cdot \bomega
-      = \half {\bf n} \cdot {\bf I} \cdot {\bf n}\, \omega^2
-      = \half I \omega^2
+    T = \frac{1}{2} \omega \cdot {\bf L}
+      = \frac{1}{2} \omega \cdot {\bf I} \cdot \omega
+      = \frac{1}{2} {\bf n} \cdot {\bf I} \cdot {\bf n}\, \omega^2
+      = \frac{1}{2} I \omega^2
 
-where $I$ is the moment of inertia about the axis of rotation:
+where :math:`I` is the moment of inertia about the axis of rotation:
 
 .. math::
 
     I = {\bf n} \cdot {\bf I} \cdot {\bf n} =
 
-      = {\bf n} \cdot \int \rho({\bf r}) (\one r^2 - {\bf r} {\bf r}) \d^3 r
+      = {\bf n} \cdot \int \rho({\bf r}) (1 r^2 - {\bf r} {\bf r}) d^3 r
         \cdot {\bf n} =
 
-      = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) \d^3 r
+      = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) d^3 r
 
 Cylinder
 ^^^^^^^^
 
-Solid cylinder of radius $R$, height $h$ and mass $m$. We'll use cylindrical
-coordinates. First for rotation about the $z$ axis:
+Solid cylinder of radius :math:`R`, height :math:`h` and mass :math:`m`. We'll use cylindrical
+coordinates. First for rotation about the :math:`z` axis:
 
 .. math::
 
@@ -117,17 +115,17 @@ coordinates. First for rotation about the $z$ axis:
     r^2 = \rho^2 + z^2
 
 
-    I = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) \d^3 r
-      = \int {m\over V} (\rho^2+z^2 - z^2) \d^3 r =
+    I = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) d^3 r
+      = \int {m\over V} (\rho^2+z^2 - z^2) d^3 r =
 
-      = \int {m\over V} \rho^2 \d^3 r
-      = {m\over V} \int_0^{2\pi}\d\phi \int_0^R\d R \int_{-{h\over2}}^{h\over2}
-        \d z
+      = \int {m\over V} \rho^2 d^3 r
+      = {m\over V} \int_0^{2\pi} d\phi \int_0^Rd R \int_{-{h\over2}}^{h\over2}
+        d z
          \rho^2 \rho =
 
       = {m\over V} 2\pi {R^4\over 4} h
       = {m\over \pi R^2 h} 2\pi {R^4\over 4} h
-      = \half m R^2
+      = \frac{1}{2} m R^2
 
 Code::
 
@@ -139,7 +137,7 @@ Code::
     R**2*m/2
 
 
-And about the $x$ axis:
+And about the :math:`x` axis:
 
 .. math::
 
@@ -152,11 +150,11 @@ And about the $x$ axis:
     r^2 = \rho^2 + z^2
 
 
-    I = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) \d^3 r
-      = \int {m\over V} (\rho^2+z^2 - \rho^2\cos^2\phi) \d^3 r =
+    I = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) d^3 r
+      = \int {m\over V} (\rho^2+z^2 - \rho^2\cos^2\phi) d^3 r =
 
-      = {m\over V} \int_0^{2\pi}\d\phi \int_0^R\d R \int_{-{h\over2}}^{h\over2}
-        \d z (\rho^2+z^2 - \rho^2\cos^2\phi)\rho =
+      = {m\over V} \int_0^{2\pi} d\phi \int_0^Rd R \int_{-{h\over2}}^{h\over2}
+        d z (\rho^2+z^2 - \rho^2\cos^2\phi)\rho =
 
       = {m\over V}\left({\pi R^4 h\over 2}+{\pi R^2 h^3\over 12}
                     -{\pi R^4 h\over 4}\right) =
@@ -177,15 +175,15 @@ Code::
     >>> I.subs(V, pi * R**2 * h).simplify()
     m*(3*R**2 + h**2)/12
 
-Special cases are a rod of length $h$ (set $R=0$ above) and a thin solid disk
-of radius $R$ and mass $m$ (set $h=0$ above).
+Special cases are a rod of length :math:`h` (set :math:`R=0` above) and a thin solid disk
+of radius :math:`R` and mass :math:`m` (set :math:`h=0` above).
 
 Sphere
 ^^^^^^
 
-Solid sphere of radius $R$ and mass $m$. We'll use spherical
+Solid sphere of radius :math:`R` and mass :math:`m`. We'll use spherical
 coordinates. All axes are equivalent, so we use
-rotation about the $z$ axis:
+rotation about the :math:`z` axis:
 
 .. math::
 
@@ -200,15 +198,15 @@ rotation about the $z$ axis:
     r^2 = \rho^2
 
 
-    I = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) \d^3 r
-      = \int {m\over V} (\rho^2 - \rho^2\cos^2\theta) \d^3 r =
+    I = \int \rho({\bf r}) (r^2 - ({\bf r}\cdot {\bf n})^2) d^3 r
+      = \int {m\over V} (\rho^2 - \rho^2\cos^2\theta) d^3 r =
 
-      = {m\over V} \int_0^{2\pi}\d\phi \int_0^R\d R \int_0^\pi
-        \d \theta
+      = {m\over V} \int_0^{2\pi} d\phi \int_0^Rd R \int_0^\pi
+        d \theta
          \rho^2(1-\cos^2\theta) \rho^2\sin\theta =
 
-      = {m\over V} \int_0^{2\pi}\d\phi \int_0^R\d R \int_0^\pi
-        \d \theta
+      = {m\over V} \int_0^{2\pi} d\phi \int_0^Rd R \int_0^\pi
+        d \theta
          \rho^4\sin^3\theta =
 
       = {m\over V} 2\pi {R^5\over 5} {4\over 3} =

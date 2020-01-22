@@ -8,7 +8,7 @@ which relates local space-time curvature with local energy and
 momentum. In short, they determine the metric tensor of a spacetime 
 given arrangement of stress-energy in space-time. The EFE is given by
 
-..  image:: ./_static/metric/EFE.PNG
+..  image:: ../_static/metric/EFE.PNG
     :align: center
 
 Here, :math:`R_{\mu\nu}` is the Ricci Tensor, :math:`R` is the 
