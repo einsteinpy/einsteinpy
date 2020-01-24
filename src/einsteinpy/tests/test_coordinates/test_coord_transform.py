@@ -101,9 +101,6 @@ def test_cycle_BLSpherical(bl):
     assert_allclose(bl2.si_values(), bl.si_values(), rtol=0.0, atol=1e-6)
 
 
-# Tests for object.__repr__ and object.__str__
-
-
 def test_cartesian_norm():
     test_data_x = 1 * u.km
     test_data_y = 1 * u.km
@@ -135,6 +132,9 @@ def test_cartesian_dot():
         rtol=0,
         atol=1e-5,
     )
+
+
+# Tests for object.__repr__ and object.__str__
 
 
 def test_print_core_objects(cartesian, spherical, boyerlindquist):
