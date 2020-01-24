@@ -104,6 +104,32 @@ def test_cycle_BLSpherical(bl):
 # Tests for object.__repr__ and object.__str__
 
 
+def test_norm():
+    test_data_x = 1 * u.km
+    test_data_y = 1 * u.km
+    test_data_z = 1 * u.km
+
+    test_obj = Cartesian(x=test_data_x, y=test_data_y, z=test_data_z)
+    assert test_obj.norm() == np.sqrt(3) * u.km
+
+
+def test_dot():
+    test_data_x = 3 * u.km
+    test_data_y = 3 * u.km
+    test_data_z = 3 * u.km
+
+    test_data_x_target = 3 * u.km
+    test_data_y_target = 3 * u.km
+    test_data_z_target = 3 * u.km
+
+    test_obj = Cartesian(x=test_data_x, y=test_data_y, z=test_data_z)
+    test_target_obj = Cartesian(
+        x=test_data_x_target, y=test_data_y_target, z=test_data_z_target
+    )
+
+    assert test_obj.dot(test_target_obj) == 27 * u.km * u.km
+
+
 def test_print_core_objects(cartesian, spherical, boyerlindquist):
     old_stdout = sys.stdout
     # change stdout
