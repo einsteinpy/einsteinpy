@@ -125,8 +125,12 @@ The easiest and fastest way to get the package up and running is to
 install EinsteinPy using `conda <http://conda.io>`_::
 
   $ conda install einsteinpy --channel conda-forge
+  
+Or you can simply install it from `PyPI <https://pypi.org/>`_::
 
-Or for Debian/Ubuntu/Mint users, the package is installable from `apt <https://packages.debian.org/sid/python3-einsteinpy>`_::
+  $ pip install einsteinpy
+
+Or for Debian/Ubuntu/Mint users, the package is installable (Ubuntu 19.04 onwards) from `apt <https://packages.debian.org/sid/python3-einsteinpy>`_::
 
   $ sudo apt install python3-einsteinpy
 
