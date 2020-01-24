@@ -101,6 +101,39 @@ def test_cycle_BLSpherical(bl):
     assert_allclose(bl2.si_values(), bl.si_values(), rtol=0.0, atol=1e-6)
 
 
+def test_cartesian_norm():
+    test_data_x = 1 * u.km
+    test_data_y = 1 * u.km
+    test_data_z = 1 * u.km
+
+    test_obj = Cartesian(x=test_data_x, y=test_data_y, z=test_data_z)
+    assert_allclose(
+        (test_obj.norm()).si.value, (np.sqrt(3) * u.km).si.value, rtol=0, atol=1e-5
+    )
+
+
+def test_cartesian_dot():
+    test_data_x = 3 * u.km
+    test_data_y = 3 * u.km
+    test_data_z = 3 * u.km
+
+    test_data_x_target = 3 * u.km
+    test_data_y_target = 3 * u.km
+    test_data_z_target = 3 * u.km
+
+    test_obj = Cartesian(x=test_data_x, y=test_data_y, z=test_data_z)
+    test_target_obj = Cartesian(
+        x=test_data_x_target, y=test_data_y_target, z=test_data_z_target
+    )
+
+    assert_allclose(
+        (test_obj.dot(test_target_obj)).si.value,
+        (27 * u.km * u.km).si.value,
+        rtol=0,
+        atol=1e-5,
+    )
+
+
 # Tests for object.__repr__ and object.__str__
 
 
