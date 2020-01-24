@@ -108,3 +108,4 @@ Contents
     changelog
     dev_guide
     api/index
+    codeofconduct
