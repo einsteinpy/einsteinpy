@@ -191,14 +191,14 @@ class RicciScalar(BaseRelativityTensor):
             arr=arr, syms=syms, config="", parent_metric=parent_metric
         )
         self._order = 0
-        self._expr = sum(self.arr)  # sympy not allowing indexing, temporary fix!
 
     @property
     def expr(self):
         """
         Retuns the symbolic expression of the Ricci Scalar
         """
-        return self._expr
+        val = sum(self.arr)  # sympy not allowing indexing, temporary fix!
+        return val
 
     @classmethod
     def from_riccitensor(cls, riccitensor, parent_metric=None):

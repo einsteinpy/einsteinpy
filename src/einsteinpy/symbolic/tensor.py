@@ -89,7 +89,7 @@ class Tensor:
 
         """
 
-        if isinstance(arr, (list, tuple, np.ndarray, int, float, Expr)):
+        if isinstance(arr, (list, tuple, np.ndarray, int, float, np.number, Expr)):
             self.arr = sympy.Array(arr)
         elif isinstance(arr, sympy.Array):
             self.arr = arr
@@ -170,9 +170,15 @@ class Tensor:
         """
         return Tensor(self.tensor().subs(*args))
 
-    def simplify(self):
+    def simplify(self, set_self=True):
         """
         Returns a simplified Tensor
+
+        Parameters
+        ----------
+        set_self : bool
+            Replaces the tensor contained the class with its simplified version, if ``True``.
+            Defaults to ``True``.
 
         Returns
         -------
@@ -180,6 +186,9 @@ class Tensor:
             Simplified Tensor
 
         """
+        if set_self:
+            self.arr = simplify_sympy_array(self.tensor())
+            return self.tensor()
         # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
         return simplify_sympy_array(self.tensor())
 
