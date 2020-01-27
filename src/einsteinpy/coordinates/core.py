@@ -30,12 +30,7 @@ class Cartesian(CartesianConversion):
         self.z = z
         super().__init__(x.si.value, y.si.value, z.si.value)
         self.system = "Cartesian"
-        self._dimension = {
-            "x": self.x,
-            "y": self.y,
-            "z": self.z,
-            "system": "Cartesian",
-        }
+        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
         self._dimension_order = ("x", "y", "z")
 
     def __repr__(self):
@@ -52,9 +47,9 @@ class Cartesian(CartesianConversion):
 
         Parameters
         ----------
-        item : ~astropy.units.quantity.Quantity or integer
-                Name of the parameter or it's index.
-                If `system`, Name of coordinate is returned.
+        item : str or int
+                Name of the parameter or its index.
+                If ``'system'``, Name of coordinate is returned.
         """
         if isinstance(item, (int, np.integer)):
             return self._dimension[self._dimension_order[item]]
@@ -165,7 +160,7 @@ class Spherical(SphericalConversion):
             "r": self.r,
             "theta": self.theta,
             "phi": self.phi,
-            "system": "Spherical",
+            "system": self.system,
         }
         self._dimension_order = ("r", "theta", "phi")
 
@@ -185,9 +180,9 @@ class Spherical(SphericalConversion):
 
         Parameters
         ----------
-        item : ~astropy.units.quantity.Quantity or integer
-                Name of the parameter or it's index.
-                If `system`, Name of coordinate is returned.
+        item : str or int
+                Name of the parameter or its index.
+                If ``'system'``, Name of coordinate is returned.
         """
         if isinstance(item, (int, np.integer)):
             return self._dimension[self._dimension_order[item]]
@@ -268,7 +263,7 @@ class BoyerLindquist(BoyerLindquistConversion):
             "theta": self.theta,
             "phi": self.phi,
             "a": self.a,
-            "system": "BoyerLindquist",
+            "system": self.system,
         }
         self._dimension_order = ("r", "theta", "phi")
 
@@ -288,9 +283,10 @@ class BoyerLindquist(BoyerLindquistConversion):
 
         Parameters
         ----------
-        item : ~astropy.units.quantity.Quantity or integer
-                Name of the parameter or it's index.
-                If `system`, Name of coordinate is returned.
+        item : str or int
+                Name of the parameter or its index.
+                If ``'system'``, Name of coordinate is returned.
+                If ``'a'``, spin factor of the body, ``self.a`` is returned.
         """
         if isinstance(item, (int, np.integer)):
             return self._dimension[self._dimension_order[item]]
