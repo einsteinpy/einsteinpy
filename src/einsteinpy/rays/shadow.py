@@ -1,5 +1,6 @@
 import astropy.units as u
 import numpy as np
+from scipy.integrate import quadrature
 from scipy.optimize import newton
 
 from einsteinpy.ijit import jit
@@ -21,8 +22,7 @@ class Shadow:
         self.b = self._compute_B()
         self.z = list()
         for i in self.b:
-            root_eqn = lambda r: r / ((1 - (2 * self.mass.value / r))) ** 0.5 - i
-            root = newton(root_eqn, 0.1)
+            root = newton(self._root_equation, 0.1, args=(i,))
             if np.isreal(root):
                 self.z.append([i, np.real(root)])
         self.z = np.array(self.z)
@@ -31,6 +31,10 @@ class Shadow:
     @jit
     def _compute_B(self):
         return np.linspace(self.b_crit.value, self.distance, self.n_rays)
+
+    @jit
+    def _root_equation(self, r, i):
+        return r / ((1 - (2 * self.mass.value / r))) ** 0.5 - i
 
     def _intensity_blue_sch(self, r, b):
         GTT = 1 - (2 * self.mass.value / r)
@@ -54,13 +58,13 @@ class Shadow:
 
     def _intensity(self):
         intensity = []
-        for i in range(len(self.z)):
-            b = self.z[i, 0]
-            val1, err1 = si.integrate.quadrature(
-                self._intensity_blue_sch, self.distance.value, self.z[i, 1], args=(b,)
+        for i in np.arange(len(self.z)):
+            b = self.z[i][0]
+            val1, _ = quadrature(
+                self._intensity_blue_sch, self.distance.value, self.z[i][1], args=(b,)
             )
-            val2, err2 = si.integrate.quadrature(
-                self._intensity_red_sch, self.z[i, 1], self.distance.value, args=(b,)
+            val2, _ = quadrature(
+                self._intensity_red_sch, self.z[i][1], self.distance.value, args=(b,)
             )
             intensity.append(val1 + val2)
         return intensity
