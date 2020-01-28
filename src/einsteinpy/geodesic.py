@@ -23,7 +23,7 @@ class Geodesic:
         end_lambda : float
             Lambda(proper time in seconds) where iterations will stop
         step_size : float
-            Size of each increment in t
+            Size of each increment in proper time
         time : float
             Time of start (defaults to zero seconds)
         a : ~astropy.units.m, optional
