@@ -1,5 +1,5 @@
-Code of Conduct for the einsteinpy community
-============================================
+Code of Conduct
+===============
 
 The community of participants in einsteinpy is made up of members from around
 the globe with a diverse set of skills, personalities, and experiences. It is
