@@ -1,3 +1,7 @@
+"""
+In differential geometry, a geodesic is a curve representing in some sense the
+shortest path between two points in a surface.
+"""
 import astropy.units as u
 
 from einsteinpy.metric import Schwarzschild
@@ -14,7 +18,18 @@ class Geodesic:
         """
         Parameters
         ----------
-
+        end_lambda : float
+            Lambda(proper time) where iteartions will stop (defaults to 100000)
+        step_size : float
+            Size of each increment in t
+        time : float
+            Time of start (defaults to zero seconds)
+        a : ~astropy.units.m, optional
+            Spin factor of massive body. Should be less than half of schwarzschild radius.
+        q : ~astropy.units.C, optional
+            Charge on the massive body
+        parent : Body, optional
+            The parent object of the body.
         """
         self.body = body
         self.attractor = body.parent
