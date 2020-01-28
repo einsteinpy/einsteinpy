@@ -18,6 +18,8 @@ class Geodesic:
         """
         Parameters
         ----------
+        body : ~einsteinpy.bodies.Body
+            Test particle for which geodesics is to be calculated.
         end_lambda : float
             Lambda(proper time) where iteartions will stop (defaults to 100000)
         step_size : float
