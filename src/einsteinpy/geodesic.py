@@ -21,7 +21,7 @@ class Geodesic:
         body : ~einsteinpy.bodies.Body
             Test particle for which geodesics is to be calculated.
         end_lambda : float
-            Lambda(proper time) where iteartions will stop (defaults to 100000)
+            Lambda(proper time in seconds) where iterations will stop
         step_size : float
             Size of each increment in t
         time : float
