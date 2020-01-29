@@ -1,5 +1,5 @@
-Code of Conduct for the einsteinpy community
-============================================
+Code of Conduct
+===============
 
 The community of participants in einsteinpy is made up of members from around
 the globe with a diverse set of skills, personalities, and experiences. It is
@@ -44,7 +44,7 @@ As members of the community,
   action when members of our community violate this code such as contacting 
   shreyas@einsteinpy.org (all emails sent to this address will be treated with 
   the strictest confidence) or talking privately with the person.
-
+  
 This code of conduct applies to all community situations online and offline,
 including mailing lists, forums, social media, conferences, meetings,
 associated social events, and one-to-one interactions.
