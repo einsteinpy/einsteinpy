@@ -1,34 +1,5 @@
 version: 2
 jobs:
-  quality:
-    docker:
-      - image: circleci/python:3.7
-    parallelism: 4
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install --upgrade pip --quiet
-            pip install black isort mypy --quiet
-      - run:
-          name: Check Code Style
-          command: |
-            . venv/bin/activate
-            isort --version
-            isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY  # This avoids installing einsteinpy
-            black --version
-            black src/ setup.py --check
-      - run:
-          name: check MyPy
-          command: |
-            . venv/bin/activate
-            mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
   test_py35: &test-template  # See https://discuss.circleci.com/t/run-tests-on-multiple-versions-of-python/15462/2
     docker:
       - image: circleci/python:3.5
@@ -61,6 +32,11 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
+
+  test_py38:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
 
   coverage:
     docker:
@@ -119,19 +95,11 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - quality
-      - test_py35:
-          requires:
-            - quality
-      - test_py36:
-          requires:
-            - quality
-      - test_py37:
-          requires:
-            - quality
-      - coverage:
-          requires:
-            - quality
+      - test_py35
+      - test_py36
+      - test_py37
+      - test_py38
+      - coverage
       - docs:
           requires:
             - test_py35
