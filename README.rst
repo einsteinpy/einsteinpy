@@ -108,7 +108,7 @@ EinsteinPy requires the following Python packages:
 * Numba, for accelerating the code
 
 EinstienPy is usually tested on Linux, Windows and OS X on Python
-3.5, 3.6 and 3.7 against latest NumPy.
+3.5, 3.6, 3.7 and 3.8.
 
 ==============  ===============  ===================
 Platform        Site             Status
