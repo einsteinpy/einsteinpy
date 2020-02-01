@@ -17,3 +17,4 @@ Jupyter notebooks
    /examples/Einstein Tensor symbolic calculation.ipynb
    /examples/Lambdify symbolic calculation.ipynb
    /examples/Predefined Metrics in Symbolic Module.ipynb
+   /examples/Shadow cast by an thin emission disk around a black hole.ipynb
