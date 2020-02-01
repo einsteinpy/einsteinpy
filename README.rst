@@ -107,8 +107,8 @@ EinsteinPy requires the following Python packages:
 * SymPy, for symbolic calculations related to GR.
 * Numba, for accelerating the code
 
-EinstienPy is usually tested on Linux, Windows and OS X on Python
-3.5, 3.6 and 3.7 against latest NumPy.
+EinsteinPy is usually tested on Linux, Windows and OS X on Python
+3.5, 3.6, 3.7 and 3.8 against latest NumPy.
 
 ==============  ===============  ===================
 Platform        Site             Status
