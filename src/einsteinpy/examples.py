@@ -8,11 +8,6 @@ from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.geodesic import Geodesic
 
 
-"""
-A classic example of advancement of perihelion.
-"""
-
-
 def _perihelion():
     Attractor = Body(name="BH", mass=6e24 * u.kg, parent=None)
     sph_obj = SphericalDifferential(
