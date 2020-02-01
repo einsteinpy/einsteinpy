@@ -1,1 +1,1 @@
-from .core import ShadowPlotter
+from .shadow import ShadowPlotter

@@ -16,10 +16,10 @@ class Shadow:
         mass=u.kg, fov=u.km,
     )
     def __init__(self, mass, n_rays, fov, limit=0.001):
-        self.mass = mass
+        self.mass = mass.to(u.kg)
         self.limit = limit
         self.n_rays = n_rays
-        self.fov = fov
+        self.fov = fov.to(u.km)
         self.horizon = 2 * self.mass.value  # To be changed after 0.3.0
         self.b_crit = 3 * np.sqrt(3) * self.mass
         self.b = np.linspace(self.b_crit.value, self.fov.value, self.n_rays)

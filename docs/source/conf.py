@@ -21,7 +21,7 @@ intersphinx_mapping = {
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "matplotlib": ("https://matplotlib.org", None),
-    "sympy": ("https://docs.sympy.org/1.5.1", None),
+    "sympy": ("https://docs.sympy.org/latest", None),
 }
 
 
