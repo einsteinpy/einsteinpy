@@ -101,7 +101,7 @@ the MIT license, hence allowing commercial use of the library.
 
 .. figure:: _static/perihelion.png
    :align: center
-   :figwidth: 400px
+   :figwidth: 600px
    :alt: Advancement of perihelion in Schwarzschild space-time
 
 Contents
