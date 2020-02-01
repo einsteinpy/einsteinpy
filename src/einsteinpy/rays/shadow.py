@@ -9,7 +9,8 @@ from scipy.optimize import newton
 
 class Shadow:
     """
-    Class for calculating shadow of black holes as seen by distant observer.
+    Class for plotting the shadow of Schwarzschild Black Hole surrounded by a 
+    thin accreting emission disk as seen by a distant observer.
     """
 
     @u.quantity_input(
@@ -35,15 +36,26 @@ class Shadow:
         self.k0 = self._intensity()
         self.k1 = self._intensity_from_event_horizon()
         self.intensity = self.k1 + self.k0
-
+        def _compute_B(self):
+        '''
+        Returns an array of impact parameters
+        '''
+        return np.linspace(self.b_crit.value, self.distance, self.n_rays)
         # Just to make the plot symmetric on -x axis
         self.fb1 = list(self.b2) + list(self.bfin)
         self.fb2 = np.asarray(list(-np.asarray(self.b2)) + list(-np.asarray(self.bfin)))
 
     def _root_equation(self, r, i):
+        '''
+        Returns the root of the equation for r_tp (turning poitns) for some impact parameter
+        '''
         return r / ((1 - (2 * int(self.mass.value) / r))) ** 0.5 - i
 
     def _intensity_blue_sch(self, r, b):
+        '''
+        Returns the integrand for the blue shifted intensity to be integrated.
+        Reference : Cosimo Bambi, 10.1103/PhysRevD.87.107501
+        '''
         GTT = 1 - (2 * self.mass.value / r)
         GRR = (1 - (2 * self.mass.value / r)) ** (-1)
         KRKText = ((GTT / GRR) * (1 - (b ** 2 * GTT / (r ** 2)))) ** 0.5
@@ -54,6 +66,10 @@ class Shadow:
         return Iblue
 
     def _intensity_red_sch(self, r, b):
+        '''
+        Returns the integrand for the red shifted intensity to be integrated.
+        Reference : Cosimo Bambi, 10.1103/PhysRevD.87.107501
+        '''
         GTT = 1 - (2 * self.mass.value / r)
         GRR = (1 - (2 * self.mass.value / r)) ** (-1)
         KRKText = ((GTT / GRR) * (1 - (b ** 2 * GTT / (r ** 2)))) ** 0.5
@@ -64,6 +80,11 @@ class Shadow:
         return Ired
 
     def _intensity(self):
+        '''
+        Returns an array of the integrated values using ~scipy.integrate.quadrature as the 
+        intensities for the blue shifted and red shifted rays above the critical impact paratmeter 
+        from the distance to the emitter
+        '''
         intensity = []
         for i in np.arange(len(self.z)):
             b = self.z[i][0]
@@ -77,6 +98,11 @@ class Shadow:
         return intensity
 
     def _intensity_from_event_horizon(self):
+        '''
+        Returns an array of the integrated values using ~scipy.integrate.quadrature as the 
+        intensities for the blue shifted and red shifted rays below the critical impact paratmeter
+        from the event horizon to the distance given.
+        '''
         self.b2 = np.linspace(self.limit, self.b_crit.value, len(self.bfin))
         k1 = list()
         for i in self.b2:
@@ -88,6 +114,10 @@ class Shadow:
         return k1
 
     def smoothen(self, points=500):
+        '''
+        Returns the interpolated values for the intensities for smoothening of the plot
+        using ~scipy.interpolate.interp1d
+        '''
         b_new = np.linspace(np.min(self.fb1), np.max(self.fb1), points)
         interpolation = interp1d(self.fb1, self.intensity, kind="cubic")
         smoothened = interpolation(b_new)
