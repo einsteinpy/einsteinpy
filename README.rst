@@ -194,13 +194,13 @@ Please join our `[matrix]`_ channel or `gitter`_ chat room for further queries.
 
 .. _`gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
 
-If you still have a doubt, write a mail directly to `developers@einsteinpy.org <mailto:developers@einsteinpy.org>`_.
+If you still have a doubt, write a mail directly to `all@einsteinpy.org <mailto:all@einsteinpy.org>`_.
 
 Citing
 ======
 
 If you use EinsteinPy on your project, please
-`drop us a line <mailto:developers@einsteinpy.org>`_.
+`drop us a line <mailto:all@einsteinpy.org>`_.
 
 You can also use the DOI to cite it in your publications. This is the latest
 one:

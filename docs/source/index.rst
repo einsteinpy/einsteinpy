@@ -59,6 +59,8 @@ Key features of EinsteinPy are:
 
 * Hypersurface Embedding of Schwarzschild Space-Time
 
+* Shadow cast by an thin emission disk around a Schwarzschild Black Hole
+
 
 And more to come!
 
@@ -91,9 +93,16 @@ the MIT license, hence allowing commercial use of the library.
 
 .. code-block:: python
 
-    from einsteinpy.plotting import StaticGeodesicPlotter
-    a = StaticGeodesicPlotter(mass)
-    a.plot(r,v)
+    from einsteinpy.plotting import GeodesicPlotter
+    from einsteinpy.examples import perihelion
+    a = GeodesicPlotter()
+    a.plot(perihelion)
+    a.show()
+
+.. figure:: _static/perihelion.png
+   :align: right
+   :figwidth: 300
+   :alt: Advancement of perihelion in Schwarzschild space-time
 
 Contents
 --------

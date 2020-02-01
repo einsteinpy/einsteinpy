@@ -79,7 +79,7 @@ features then that's awesome! Before rushing out though please make sure it
 is within the scope of the library so you don't waste your time -
 `email`_ us or `chat`_ with us on Riot!.
 
-.. _`email`: developers@einsteinpy.org
+.. _`email`: all@einsteinpy.org
 .. _`chat`: https://riot.im/app/#/room/#einsteinpy:matrix.org
 
 If the feature you suggest happens to be useful and within scope, you will
