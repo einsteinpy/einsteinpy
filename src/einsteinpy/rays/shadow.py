@@ -4,7 +4,6 @@ import astropy.units as u
 import numpy as np
 from scipy.integrate import quadrature
 from scipy.interpolate import interp1d
-from scipy.ndimage import gaussian_filter
 from scipy.optimize import newton
 
 
