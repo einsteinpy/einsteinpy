@@ -1,9 +1,6 @@
-import os
 from datetime import datetime
 
 import alabaster
-
-import einsteinpy
 
 project = "EinsteinPy"
 year = datetime.now().year
@@ -43,6 +40,8 @@ html_theme_options = {
     "show_powered_by": False,
     "page_width": "80%",
     "github_banner": True,
+    "donate_url": "https://opencollective.com/einsteinpy",
+    "github_button": True,
     "extra_nav_links": {"Blog": "https://docs.einsteinpy.org/"},
 }
 

@@ -22,16 +22,20 @@ class Geodesic:
             Test particle for which geodesics is to be calculated.
         end_lambda : float
             Lambda(proper time in seconds) where iterations will stop
-        step_size : float
-            Size of each increment in proper time
-        time : float
-            Time of start (defaults to zero seconds)
+        step_size : float, optional
+            Size of each increment in proper time.
+            Defaults to ``1e-3``.
+        time : ~astropy.units.s, optional
+            Time of start, Defaults to 0 seconds.
         a : ~astropy.units.m, optional
             Spin factor of massive body. Should be less than half of schwarzschild radius.
         q : ~astropy.units.C, optional
             Charge on the massive body
-        parent : Body, optional
+        parent : ~einsteinpy.bodies.Body, optional
             The parent object of the body.
+        metric : ~einsteinpy.metric.schwarzschild.Schwarzschild or ~einsteinpy.metric.kerr.Kerr or ~einsteinpy.metric.kerrnewman.KerrNewman, optional
+            Class of the spacetime metric in which geodesics are to be calculated.
+            Defaults to ``Schwarzschild``.
         """
         self.body = body
         self.attractor = body.parent

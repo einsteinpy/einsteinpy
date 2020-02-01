@@ -29,9 +29,9 @@ jobs:
           command: |
             . venv/bin/activate
             mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
-  test_py35: &test-template  # See https://discuss.circleci.com/t/run-tests-on-multiple-versions-of-python/15462/2
+  test_py36: &test-template  # See https://discuss.circleci.com/t/run-tests-on-multiple-versions-of-python/15462/2
     docker:
-      - image: circleci/python:3.5
+      - image: circleci/python:3.6
 
     working_directory: ~/repo
 
@@ -52,15 +52,20 @@ jobs:
           command: |
             . venv/bin/activate
             MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
-  test_py36:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.6
-
   test_py37:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
+
+  test_py38:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+
+  test_py35:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5
 
   coverage:
     docker:
@@ -129,11 +134,16 @@ workflows:
       - test_py37:
           requires:
             - quality
+      - test_py38:
+          requires:
+            - quality
       - coverage:
           requires:
             - quality
+            - test_py35
       - docs:
           requires:
             - test_py35
             - test_py36
             - test_py37
+            - test_py38
