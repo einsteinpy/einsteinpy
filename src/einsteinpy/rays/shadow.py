@@ -9,8 +9,7 @@ from scipy.optimize import newton
 
 class Shadow:
     """
-    Class for plotting the shadow of Schwarzschild Black Hole surrounded by a 
-    thin accreting emission disk as seen by a distant observer.
+    Class for plotting the shadow of a Black Hole surrounded by a thin accreting emission disk as seen by a distant observer.
     """
 
     @u.quantity_input(
@@ -36,7 +35,7 @@ class Shadow:
         self.k0 = self._intensity()
         self.k1 = self._intensity_from_event_horizon()
         self.intensity = self.k1 + self.k0
-        def _compute_B(self):
+    def _compute_B(self):
         '''
         Returns an array of impact parameters
         '''
