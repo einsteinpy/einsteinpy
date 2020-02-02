@@ -22,3 +22,11 @@ def test_plot_calls_plt_show(mock_show, dummy_data):
     mock_show.assert_called_with()
     assert cl.alpha == 100
     assert cl.plot_type == "wireframe"
+
+
+def test_plot_works_with_different_plot_type(dummy_data):
+    surface = dummy_data
+    cl = HypersurfacePlotter(surface, plot_type="surface")
+    cl.plot()
+    cl.show()
+    assert cl.plot_type == "surface"

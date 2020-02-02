@@ -13,7 +13,7 @@ class ShadowPlotter:
 
         Parameters
         ----------
-        embedding : ~einsteinpy.rays.Shadow
+        shadow : ~einsteinpy.rays.Shadow
             The shadow object
         is_line_plot : bool, optional
             If the plot is a line plot or a contour plot. Defaults to True.
