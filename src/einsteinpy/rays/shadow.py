@@ -115,7 +115,7 @@ class Shadow:
 
     def smoothen(self, points=500):
         '''
-        Returns the interpolated values for the intensities for smoothening of the plot
+        Sets the interpolated values for the intensities for smoothening of the plot
         using ~scipy.interpolate.interp1d
         '''
         b_new = np.linspace(np.min(self.fb1), np.max(self.fb1), points)
