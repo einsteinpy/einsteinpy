@@ -28,8 +28,10 @@ class Geodesic:
             Spin factor of massive body. Should be less than half of schwarzschild radius.
         q : ~astropy.units.C, optional
             Charge on the massive body
-        parent : Body, optional
-            The parent object of the body.
+        metric : ~einsteinpy.metric.schwarzschild.Schwarzschild or ~einsteinpy.metric.kerr.Kerr 
+            or ~einsteinpy.metric.kerrnewman.KerrNewman
+            Metric for the space-time in which geodesics are being calculated.
+
         """
         self.body = body
         self.attractor = body.parent
@@ -48,7 +50,7 @@ class Geodesic:
         )[1]
 
     def __repr__(self):
-        return "body name= ({0}) , metric=({1}) , parent name=({2}) , parent mass=({3})".format(
+        return "'(Body (name: ({0}) , metric:({1}) , parent name:({2}) , parent mass:({3}) )'".format(
             self.body.name,
             self.metric.name,
             self.body.parent.name,
@@ -56,7 +58,7 @@ class Geodesic:
         )
 
     def __str__(self):
-        return "body name= ({0}) , metric=({1}) , parent name=({2}) , parent mass=({3})".format(
+        return "(Body ( name: ({0}) , metric:({1}) , parent name:({2}) , parent mass:({3}) )".format(
             self.body.name,
             self.metric.name,
             self.body.parent.name,
