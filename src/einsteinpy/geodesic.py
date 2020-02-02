@@ -50,7 +50,7 @@ class Geodesic:
         )[1]
 
     def __repr__(self):
-        return "'(Body (name: ({0}) , metric:({1}) , parent name:({2}) , parent mass:({3}) )'".format(
+        return "'(Geodesic object (name: ({0}) , metric:({1}) , parent name:({2}) , parent mass:({3}) )'".format(
             self.body.name,
             self.metric.name,
             self.body.parent.name,
@@ -58,7 +58,7 @@ class Geodesic:
         )
 
     def __str__(self):
-        return "(Body ( name: ({0}) , metric:({1}) , parent name:({2}) , parent mass:({3}) )".format(
+        return "(Geodesic object ( name: ({0}) , metric:({1}) , parent name:({2}) , parent mass:({3}) )".format(
             self.body.name,
             self.metric.name,
             self.body.parent.name,
