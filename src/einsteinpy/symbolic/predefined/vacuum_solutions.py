@@ -68,4 +68,5 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
 def KerrNewman(
     c=constants.c, G=constants.G, sch=symbols("r_s"), a=symbols("a"), Q=symbols("Q")
 ):
+    
     raise NotImplementedError

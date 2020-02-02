@@ -99,6 +99,17 @@ class RK45(integrate.RK45):
             atol=atol,
             vectorized=vectorized,
         )
+        super(DOP853,self).__init__(
+            fun=fun,
+            t0=t0,
+            y0=y0,
+            t_bound=self._t_bound,
+            first_step=0.8 * stepsize,
+            max_step=8.0 * stepsize,
+            rtol=rtol,
+            atol=atol,
+            vectorized=vectorized,
+        )
 
     def step(self):
         """
@@ -107,6 +118,7 @@ class RK45(integrate.RK45):
 
         try:
             super(RK45, self).step()
+            super(DOP853,self).step() ## adding this for 8th order runge_kunta 
         except RuntimeError:
             warnings.warn(
                 "Attempt to step on a failed or finished solver. (Invalid Value or out of bounds of t_bound)",
