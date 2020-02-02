@@ -44,11 +44,11 @@ class Shadow:
         """
         return np.linspace(self.b_crit.value, self.fov.value, self.n_rays)
 
-    def _root_equation(self, r, i):
+    def _root_equation(self, r_tp, i):
         """
-        Returns the root of the equation for r_tp (turning poitns) for some impact parameter
+        Returns the root of the equation for ``r_tp`` (turning points) for some impact parameter
         """
-        return r / ((1 - (2 * int(self.mass.value) / r))) ** 0.5 - i
+        return r_tp / ((1 - (2 * int(self.mass.value) / r_tp))) ** 0.5 - i
 
     def _intensity_blue_sch(self, r, b):
         """
