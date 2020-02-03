@@ -30,7 +30,11 @@ class Cartesian(CartesianConversion):
         self.z = z
         super().__init__(x.si.value, y.si.value, z.si.value)
         self.system = "Cartesian"
-        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
+        self._dimension = {
+                    "x": self.x,
+                    "y": self.y,
+                    "z": self.z,
+                    "system": self.system}
         self._dimension_order = ("x", "y", "z")
 
     def __repr__(self):
@@ -261,7 +265,10 @@ class BoyerLindquist(BoyerLindquistConversion):
         self.theta = theta
         self.phi = phi
         self.a = a
-        super().__init__(r.si.value, theta.si.value, phi.si.value, a=a.si.value)
+        super().__init__(r.si.value,
+                         theta.si.value,
+                         phi.si.value,
+                         a=a.si.value)
         self.system = "BoyerLindquist"
         self._dimension = {
             "r": self.r,
