@@ -70,7 +70,7 @@ def cartesian_to_bl(x, y, z, a, v_x, v_y, v_z):
             / (2 * np.sqrt((w ** 2) + (4 * (a ** 2) * (z ** 2))))
         )
     )
-    v_t = (-1 / np.sqrt(1-np.square(z / r))) * ((v_z * r - v_r * z) / (r ** 2))
+    v_t = (-1 / np.sqrt(1 - np.square(z / r))) * ((v_z * r - v_r * z) / (r ** 2))
     v_p = (1 / (1 + np.square(y / x))) * ((v_y * x - v_x * y) / (x ** 2))
 
     return r, theta, phi, v_r, v_t, v_p, a

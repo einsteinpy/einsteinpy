@@ -30,8 +30,7 @@ class Cartesian(CartesianConversion):
         self.z = z
         super().__init__(x.si.value, y.si.value, z.si.value)
         self.system = "Cartesian"
-        self._dimension = {"x": self.x, "y": self.y, "z": self.z,
-                           "system": self.system}
+        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
         self._dimension_order = ("x", "y", "z")
 
     def __repr__(self):
