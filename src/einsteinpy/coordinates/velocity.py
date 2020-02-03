@@ -252,9 +252,12 @@ class SphericalDifferential(SphericalConversion):
 
         """
         x, y, z, v_x, v_y, v_z = self.convert_cartesian()
-        return CartesianDifferential(
-            x*u.m, y*u.m, z*u.m, v_x*u.m / u.s, v_y*u.m / u.s, v_z*u.m / u.s
-        )
+        return CartesianDifferential(x * u.m,
+                                     y * u.m,
+                                     z * u.m,
+                                     v_x * u.m / u.s,
+                                     v_y * u.m / u.s,
+                                     v_z * u.m / u.s)
 
     @u.quantity_input(a=u.km)
     def bl_differential(self, a):
@@ -407,9 +410,12 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
 
         """
         x, y, z, v_x, v_y, v_z = self.convert_cartesian()
-        return CartesianDifferential(
-            x*u.m, y*u.m, z*u.m, v_x*u.m / u.s, v_y*u.m / u.s, v_z*u.m / u.s
-        )
+        return CartesianDifferential(x * u.m,
+                                     y * u.m,
+                                     z * u.m,
+                                     v_x * u.m / u.s,
+                                     v_y * u.m / u.s,
+                                     v_z * u.m / u.s)
 
     def spherical_differential(self):
         """
