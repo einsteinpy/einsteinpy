@@ -22,7 +22,9 @@ class CartesianConversion:
 
     def values(self):
         if self._velocities_provided:
-            return self.x_si, self.y_si, self.z_si, self.vx_si, self.vy_si, self.vz_si
+            return (self.x_si, self.y_si,
+                    self.z_si, self.vx_si,
+                    self.vy_si, self.vz_si)
         return self.x_si, self.y_si, self.z_si
 
     def convert_spherical(self):
@@ -63,7 +65,9 @@ class SphericalConversion:
 
     def values(self):
         if self._velocities_provided:
-            return self.r_si, self.t_si, self.p_si, self.vr_si, self.vt_si, self.vp_si
+            return (self.r_si, self.t_si,
+                    self.p_si, self.vr_si,
+                    self.vt_si, self.vp_si)
         return self.r_si, self.t_si, self.p_si
 
     def convert_cartesian(self):
