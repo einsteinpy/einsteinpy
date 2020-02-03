@@ -22,7 +22,8 @@ class RK4naive:
         y0 : ~numpy.array or float
             Initial y
         t_bound : float
-            Boundary time - the integration won’t continue beyond it. It also determines the direction of the integration.
+            Boundary time - the integration won’t continue beyond it.
+            It also determines the direction of the integration.
         stepsize : float
             Size of each increment in t
 
@@ -45,13 +46,15 @@ class RK4naive:
             return
         k0 = self._fun(self.t, self.y)
         k1 = self._fun(
-            self.t + (self.step_size / 2.0), self.y + (self.step_size / 2.0) * k0
+            self.t + (self.step_size / 2.0), self.y + (self.step_size / 2.0)*k0
         )
         k2 = self._fun(
-            self.t + (self.step_size / 2.0), self.y + (self.step_size / 2.0) * k1
+            self.t + (self.step_size / 2.0), self.y + (self.step_size / 2.0)*k1
         )
-        k3 = self._fun(self.t + self.step_size, self.y + (self.step_size) * k2)
-        self.y = self.y + ((self.step_size / 6.0) * (k0 + 2 * k1 + 2 * k2 + k3))
+        k3 = self._fun(self.t + self.step_size, self.y + (self.step_size)*k2)
+        self.m = ((self.step_size / 6.0) * (k0 + 2*k1 + 2*k2 + k3))
+
+        self.y = self.y + self.m
         self.t = self.t + self.step_size
 
 
@@ -73,14 +76,14 @@ class RK45(integrate.RK45):
         y0 : ~numpy.array or float
             Initial y
         t_bound : float
-            Boundary time - the integration won’t continue beyond it. It also determines the direction of the integration.
+            Boundary time - the integration won’t continue beyond it.
+            It also determines the direction of the integration.
         stepsize : float
             Size of each increment in t
         rtol : float
             Relative tolerance, defaults to 0.2*stepsize
         atol : float
             Absolute tolerance, defaults to rtol/0.8e3
-        
         """
         vectorized = not isinstance(y0, float)
         self._t_bound = t_bound
@@ -109,6 +112,6 @@ class RK45(integrate.RK45):
             super(RK45, self).step()
         except RuntimeError:
             warnings.warn(
-                "Attempt to step on a failed or finished solver. (Invalid Value or out of bounds of t_bound)",
-                RuntimeWarning,
+             "Attempt to step on a failed or finished solver. (Invalid Value or out of bounds of t_bound)",
+             RuntimeWarning,
             )
