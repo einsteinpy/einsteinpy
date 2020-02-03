@@ -30,7 +30,8 @@ class Cartesian(CartesianConversion):
         self.z = z
         super().__init__(x.si.value, y.si.value, z.si.value)
         self.system = "Cartesian"
-        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
+        self._dimension = {"x": self.x, "y": self.y, "z": self.z,
+                           "system": self.system}
         self._dimension_order = ("x", "y", "z")
 
     def __repr__(self):
@@ -41,7 +42,7 @@ class Cartesian(CartesianConversion):
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
+        Method to return coordinates.
         Objects are subsctiptable with both explicit names of parameters
         and integer indices.
 
@@ -122,7 +123,9 @@ class Cartesian(CartesianConversion):
         Parameters
         ----------
         a : ~astropy.units.quantity.Quantity
-            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
+            a = J/Mc , the angular momentum
+            per unit mass of the black hole
+            per speed of light.
 
         Returns
         -------
@@ -174,7 +177,7 @@ class Spherical(SphericalConversion):
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
+        Method to return coordinates.
         Objects are subsctiptable with both explicit names of parameters
         and integer indices.
 
@@ -198,7 +201,8 @@ class Spherical(SphericalConversion):
             Array containing values in SI units (m, rad, rad)
 
         """
-        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
+        element_list = [self.r.to(u.m),
+                        self.theta.to(u.rad), self.phi.to(u.rad)]
         return np.array([e.value for e in element_list], dtype=float)
 
     def to_cartesian(self):
@@ -222,7 +226,9 @@ class Spherical(SphericalConversion):
         Parameters
         ----------
         a : ~astropy.units.quantity.Quantity
-            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
+            a = J/Mc , the angular momentum
+            per unit mass of the black hole
+            per speed of light.
 
         Returns
         -------
@@ -277,8 +283,9 @@ class BoyerLindquist(BoyerLindquistConversion):
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
-        Objects are subsctiptable with both explicit names of parameters
+        Method to return coordinates.
+        Objects are subsctiptable with both
+        explicit names of parameters
         and integer indices.
 
         Parameters
@@ -302,7 +309,8 @@ class BoyerLindquist(BoyerLindquistConversion):
             Array containing values in SI units (m, rad, rad)
 
         """
-        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
+        element_list = [self.r.to(u.m),
+                        self.theta.to(u.rad), self.phi.to(u.rad)]
         return np.array([e.value for e in element_list], dtype=float)
 
     def to_cartesian(self):
