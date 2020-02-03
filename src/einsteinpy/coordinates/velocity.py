@@ -10,7 +10,8 @@ from einsteinpy.coordinates.conversion import (
 
 class CartesianDifferential(CartesianConversion):
     """
-    Class for calculating and transforming the velocity in Cartesian coordinates.
+    Class for calculating and transforming
+    the velocity in Cartesian coordinates.
     """
 
     @u.quantity_input(
@@ -37,7 +38,8 @@ class CartesianDifferential(CartesianConversion):
         self.v_y = v_y
         self.v_z = v_z
         super().__init__(
-            x.si.value, y.si.value, z.si.value, v_x.si.value, v_y.si.value, v_z.si.value
+            x.si.value, y.si.value, z.si.value,
+            v_x.si.value, v_y.si.value, v_z.si.value
         )
         self.system = "Cartesian"
 
@@ -56,7 +58,8 @@ class CartesianDifferential(CartesianConversion):
         Returns
         -------
         ~numpy.ndarray
-            Array containing values in SI units (m, m, m, m/s, m/s, m/s)
+            Array containing values in SI units
+            (m, m, m, m/s, m/s, m/s)
 
         """
         element_list = [
@@ -77,7 +80,8 @@ class CartesianDifferential(CartesianConversion):
         Parameters
         ----------
         return_np : bool
-            True for numpy array with SI values, False for list with astropy units.
+            True for numpy array with SI values,
+            False for list with astropy units.
             Defaults to False
 
         Returns
@@ -92,12 +96,14 @@ class CartesianDifferential(CartesianConversion):
 
     def spherical_differential(self):
         """
-        Function to convert velocity to spherical coordinates velocity
+        Function to convert velocity to
+        spherical coordinates velocity
 
         Returns
         -------
         ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Spherical representation of the velocity in Cartesian Coordinates.
+            Spherical representation of
+            the velocity in Cartesian Coordinates.
 
         """
         r, theta, phi, v_r, v_t, v_p = self.convert_spherical()
@@ -113,17 +119,21 @@ class CartesianDifferential(CartesianConversion):
     @u.quantity_input(a=u.km)
     def bl_differential(self, a):
         """
-        Function to convert velocity to Boyer-Lindquist coordinates
+        Function to convert velocity to
+        Boyer-Lindquist coordinates
 
         Parameters
         ----------
         a : ~astropy.units.quantity.Quantity
-            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
+            a = J/Mc , the angular momentum
+            per unit mass of the black hole
+            per speed of light.
 
         Returns
         -------
         ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
-            Boyer-Lindquist representation of the velocity in Cartesian Coordinates.
+            Boyer-Lindquist representation of
+            the velocity in Cartesian Coordinates.
 
         """
         r, theta, phi, v_r, v_t, v_p, a = self.convert_bl(a.si.value)
@@ -140,11 +150,14 @@ class CartesianDifferential(CartesianConversion):
 
 class SphericalDifferential(SphericalConversion):
     """
-    Class for calculating and transforming the velocity in Spherical coordinates.
+    Class for calculating and transforming
+    the velocity in Spherical coordinates.
     """
 
     @u.quantity_input(
-        r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=u.rad / u.s, v_p=u.rad / u.s
+        r=u.km, theta=u.rad, phi=u.rad,
+        v_r=u.km / u.s, v_t=u.rad / u.s,
+        v_p=u.rad / u.s
     )
     def __init__(self, r, theta, phi, v_r, v_t, v_p):
         """
@@ -191,7 +204,8 @@ class SphericalDifferential(SphericalConversion):
         Returns
         -------
         ~numpy.ndarray
-            Array containing values in SI units (m, rad, rad, m/s, rad/s, rad/s)
+        Array containing values in SI units
+        (m, rad, rad, m/s, rad/s, rad/s)
 
         """
         element_list = [
@@ -212,7 +226,8 @@ class SphericalDifferential(SphericalConversion):
         Parameters
         ----------
         return_np : bool
-            True for numpy array with SI values, False for list with astropy units.
+            True for numpy array with SI values,
+            False for list with astropy units.
             Defaults to False
 
         Returns
@@ -238,23 +253,28 @@ class SphericalDifferential(SphericalConversion):
         """
         x, y, z, v_x, v_y, v_z = self.convert_cartesian()
         return CartesianDifferential(
-            x * u.m, y * u.m, z * u.m, v_x * u.m / u.s, v_y * u.m / u.s, v_z * u.m / u.s
+            x*u.m, y*u.m, z*u.m, v_x*u.m / u.s, v_y*u.m / u.s, v_z*u.m / u.s
         )
 
     @u.quantity_input(a=u.km)
     def bl_differential(self, a):
         """
-        Function to convert velocity to Boyer-Lindquist coordinates
+        Function to convert velocity to
+        Boyer-Lindquist coordinates
 
         Parameters
         ----------
         a : ~astropy.units.quantity.Quantity
-            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
+
+        a = J/Mc , the angular momentum
+        per unit mass of the black hole
+        per speed of light.
 
         Returns
         -------
         ~einsteinpy.coordinates.velocity.BoyerLindquistDifferential
-            Boyer-Lindquist representation of the velocity in Spherical Coordinates.
+        Boyer-Lindquist representation of the velocity
+        in Spherical Coordinates.
 
         """
         r, theta, phi, v_r, v_t, v_p, a = self.convert_bl(a.si.value)
@@ -271,7 +291,8 @@ class SphericalDifferential(SphericalConversion):
 
 class BoyerLindquistDifferential(BoyerLindquistConversion):
     """
-    Class for calculating and transforming the velocity in Boyer-Lindquist coordinates
+    Class for calculating and transforming the velocity
+    in Boyer-Lindquist coordinates
     """
 
     @u.quantity_input(
@@ -320,10 +341,13 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         return (
             "Boyer-Lindquist r: {}, theta: {}, phi: {}\n"
             "vr: {}, vt: {}, vp: {}\n"
-            "a: {}".format(
-                self.r, self.theta, self.phi, self.v_r, self.v_t, self.v_p, self.a
-            )
-        )
+            "a: {}".format(self.r,
+                           self.theta,
+                           self.phi,
+                           self.v_r,
+                           self.v_t,
+                           self.v_p,
+                           self.a))
 
     def __str__(self):
         return self.__repr__()
@@ -335,7 +359,8 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         Returns
         -------
         ~numpy.ndarray
-            Array containing values in SI units (m, rad, rad, m/s, rad/s, rad/s)
+        Array containing values in SI units
+        (m, rad, rad, m/s, rad/s, rad/s)
 
         """
         element_list = [
@@ -356,7 +381,8 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         Parameters
         ----------
         return_np : bool
-            True for numpy array with SI values, False for list with astropy units.
+            True for numpy array with SI values,
+            False for list with astropy units.
             Defaults to False
 
         Returns
@@ -376,12 +402,13 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         Returns
         -------
         ~einsteinpy.coordinates.velocity.CartesianDifferential
-            Cartesian representation of the velocity in Boyer-Lindquist Coordinates.
+        Cartesian representation of the velocity
+        in Boyer-Lindquist Coordinates.
 
         """
         x, y, z, v_x, v_y, v_z = self.convert_cartesian()
         return CartesianDifferential(
-            x * u.m, y * u.m, z * u.m, v_x * u.m / u.s, v_y * u.m / u.s, v_z * u.m / u.s
+            x*u.m, y*u.m, z*u.m, v_x*u.m / u.s, v_y*u.m / u.s, v_z*u.m / u.s
         )
 
     def spherical_differential(self):
@@ -391,7 +418,8 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         Returns
         -------
         ~einsteinpy.coordinates.velocity.SphericalDifferential
-            Spherical representation of the velocity in Boyer-Lindquist Coordinates.
+        Spherical representation of the velocity
+        in Boyer-Lindquist Coordinates.
 
         """
         r, theta, phi, v_r, v_t, v_p = self.convert_spherical()
