@@ -44,9 +44,14 @@ class CartesianDifferential(CartesianConversion):
         self.system = "Cartesian"
 
     def __repr__(self):
-        return "Cartesian x: {}, y: {}, z: {}\n" "vx: {}, vy: {}, vz: {}".format(
-            self.x, self.y, self.z, self.v_x, self.v_y, self.v_z
-        )
+        return ("Cartesian x: {}, y: {}, z: {}\n",
+                "vx: {}, vy: {}, vz: {}".format(
+                    self.x,
+                    self.y,
+                    self.z,
+                    self.v_x,
+                    self.v_y,
+                    self.v_z))
 
     def __str__(self):
         return self.__repr__()
@@ -190,9 +195,14 @@ class SphericalDifferential(SphericalConversion):
         self.system = "Spherical"
 
     def __repr__(self):
-        return "Spherical r: {}, theta: {}, phi: {}\n" "vr: {}, vt: {}, vp: {}".format(
-            self.r, self.theta, self.phi, self.v_r, self.v_t, self.v_p
-        )
+        return ("Spherical r: {}, theta: {}, phi: {}\n",
+                "vr: {}, vt: {}, vp: {}".format(
+                    self.r,
+                    self.theta,
+                    self.phi,
+                    self.v_r,
+                    self.v_t,
+                    self.v_p))
 
     def __str__(self):
         return self.__repr__()
