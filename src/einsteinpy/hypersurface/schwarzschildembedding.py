@@ -25,10 +25,11 @@ class SchwarzschildEmbedding:
 
         """
         Constructor
-        Initialize mass and embedding initial radial coordinate in appropiate units
-        in order to render the plots of the surface in finite grid. The initial r
-        is taken to be just greater than schwarzschild radius but it is important
-        to note that the embedding breaks at r < 9m/4.
+        Initialize mass and embedding initial radial coordinate in
+        appropiate units in order to render the plots of the
+        surface in finite grid. The initial r is taken to be just
+        greater than schwarzschild radius but it is important to note
+        that the embedding breaks at r < 9m/4.
 
         Parameters
         ----------
@@ -53,7 +54,8 @@ class SchwarzschildEmbedding:
         Parameters
         ----------
         r : float
-            schwarzschild coordinate at which gradient is supposed to be obtained
+            schwarzschild coordinate at which
+            gradient is supposed to be obtained
 
         Returns
         -------
@@ -74,8 +76,8 @@ class SchwarzschildEmbedding:
     def radial_coord(self, r):
 
         """
-        Returns spherical radial coordinate (of the embedding) from given schwarzschild
-        coordinate.
+        Returns spherical radial coordinate (of the embedding)
+        from given schwarzschild coordinate.
 
         Parameters
         ----------
@@ -132,21 +134,22 @@ class SchwarzschildEmbedding:
     def get_values_surface(self, alpha):
 
         """
-        Obtain the same values as of the get_values function but reshapes them to obtain
-        values for all points on the solid of revolution about Z axis (as the
-        embedding is symmetric in angular coordinates).
+        Obtain the same values as of the get_values function but
+        reshapes them to obtain values for all points on the
+        solid of revolution about Z axis
+        (as the embedding is symmetric in angular coordinates).
 
         Parameters
         ----------
         alpha : float
             scaling factor to obtain the step size for incrementing r
-        
+
         Returns
         -------
         tuple
-            (~numpy.array of X, ~numpy.array of Y, ~numpy.array of Z) values in cartesian coordinates
+            (~numpy.array of X, ~numpy.array of Y, ~numpy.array of Z)
+            values in cartesian coordinates
             obtained after applying solid of revolution
-        
         """
         r_initial = self.r_init.value
         r_step = self.M.value / alpha
