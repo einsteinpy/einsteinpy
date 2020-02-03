@@ -9,8 +9,9 @@ from scipy.optimize import newton
 
 class Shadow:
     """
-    Class for plotting the shadow of Schwarzschild Black Hole surrounded by a 
-    thin accreting emission disk as seen by a distant observer.
+    Class for plotting the shadow of Schwarzschild Black Hole
+    surrounded by a thin accreting emission disk
+    as seen by a distant observer.
     """
 
     @u.quantity_input(mass=u.kg, fov=u.km)
@@ -36,7 +37,8 @@ class Shadow:
         self.intensity = self.k1 + self.k0
         # Just to make the plot symmetric on -x axis
         self.fb1 = list(self.b2) + list(self.bfin)
-        self.fb2 = np.asarray(list(-np.asarray(self.b2)) + list(-np.asarray(self.bfin)))
+        self.fb2 = np.asarray(
+            list(-np.asarray(self.b2)) + list(-np.asarray(self.bfin)))
 
     def _compute_B(self):
         """
@@ -46,7 +48,8 @@ class Shadow:
 
     def _root_equation(self, r_tp, i):
         """
-        Returns the root of the equation for ``r_tp`` (turning points) for some impact parameter
+        Returns the root of the equation for
+        ``r_tp`` (turning points) for some impact parameter
         """
         return r_tp / ((1 - (2 * int(self.mass.value) / r_tp))) ** 0.5 - i
 
@@ -59,8 +62,7 @@ class Shadow:
         GRR = (1 - (2 * self.mass.value / r)) ** (-1)
         KRKText = ((GTT / GRR) * (1 - (b ** 2 * GTT / (r ** 2)))) ** 0.5
         Gblue = (
-            (1 / GTT) - KRKText * (GRR / GTT) * ((1 - GTT) / (GTT * GRR)) ** 0.5
-        ) ** (-1)
+         (1 / GTT)-KRKText*(GRR/GTT)*((1-GTT)/(GTT*GRR))**0.5)**(-1)
         Iblue = -(Gblue ** 3) * (GTT / (r ** 2)) * (1 / KRKText)
         return Iblue
 
@@ -73,49 +75,55 @@ class Shadow:
         GRR = (1 - (2 * self.mass.value / r)) ** (-1)
         KRKText = ((GTT / GRR) * (1 - (b ** 2 * GTT / (r ** 2)))) ** 0.5
         Gred = (
-            (1 / GTT) + KRKText * (GRR / GTT) * ((1 - GTT) / (GTT * GRR)) ** 0.5
-        ) ** (-1)
+         (1/GTT)+KRKText*(GRR/GTT)*((1-GTT)/(GTT*GRR))**0.5)**(-1)
         Ired = (Gred ** 3) * (GTT / (r ** 2)) * (1 / KRKText)
         return Ired
 
     def _intensity(self):
         """
-        Returns an array of the integrated values using ~scipy.integrate.quadrature as the 
-        intensities for the blue shifted and red shifted rays above the critical impact paratmeter 
+        Returns an array of the integrated values using
+        ~scipy.integrate.quadrature
+        as the intensities for the blue shifted and red shifted rays
+        above the critical impact paratmeter
         from the distance to the emitter
         """
         intensity = []
         for i in np.arange(len(self.z)):
             b = self.z[i][0]
-            val1, _ = quadrature(
-                self._intensity_blue_sch, self.fov.value, self.z[i][1], args=(b,)
-            )
-            val2, _ = quadrature(
-                self._intensity_red_sch, self.z[i][1], self.fov.value, args=(b,)
-            )
+            val1, _ = quadrature(self._intensity_blue_sch,
+                                 self.fov.value,
+                                 self.z[i][1],
+                                 args=(b,))
+            val2, _ = quadrature(self._intensity_red_sch,
+                                 self.z[i][1],
+                                 self.fov.value,
+                                 args=(b,))
             intensity.append(val1 + val2)
         return intensity
 
     def _intensity_from_event_horizon(self):
         """
-        Returns an array of the integrated values using ~scipy.integrate.quadrature as the 
-        intensities for the blue shifted and red shifted rays below the critical impact paratmeter
+        Returns an array of the integrated values using
+        ~scipy.integrate.quadrature
+        as the intensities for the blue shifted and red shifted rays
+        below the critical impact paratmeter
         from the event horizon to the distance given.
         """
         self.b2 = np.linspace(self.limit, self.b_crit.value, len(self.bfin))
         k1 = list()
         for i in self.b2:
             arg = i
-            val3, _ = quadrature(
-                self._intensity_red_sch, self.horizon, self.fov.value, args=(arg,)
-            )
+            val3, _ = quadrature(self._intensity_red_sch,
+                                 self.horizon,
+                                 self.fov.value,
+                                 args=(arg,))
             k1.append(val3)
         return k1
 
     def smoothen(self, points=500):
         """
-        Sets the interpolated values for the intensities for smoothening of the plot
-        using ~scipy.interpolate.interp1d
+        Sets the interpolated values for the intensities for
+        smoothening of the plot using ~scipy.interpolate.interp1d
         """
         b_new = np.linspace(np.min(self.fb1), np.max(self.fb1), points)
         interpolation = interp1d(self.fb1, self.intensity, kind="cubic")
