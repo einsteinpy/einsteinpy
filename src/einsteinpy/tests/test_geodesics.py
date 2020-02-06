@@ -43,8 +43,8 @@ def test_Geodesics_str_returns_members(dummy_data):
     body, t, _, end_lambda, stepsize = dummy_data
     geo = Geodesic(body, time=t, end_lambda=end_lambda, step_size=stepsize)
     assert (
-        geo.__str__()
-        == "Geodesic object body name= (obj) , metric=(Schwarzschild) , parent name=(attractor) , parent mass=(6e+24 kg)"
+        geo.__str__() ==
+        "Geodesic object body name= (obj) , metric=(Schwarzschild) , parent name=(attractor) , parent mass=(6e+24 kg)"
     )
 
 
@@ -52,6 +52,6 @@ def test_Geodesics_repr_returns_members(dummy_data):
     body, t, _, end_lambda, stepsize = dummy_data
     geo = Geodesic(body, time=t, end_lambda=end_lambda, step_size=stepsize)
     assert (
-        geo.__repr__()
-        == "Geodesic object body name= (obj) , metric=(Schwarzschild) , parent name=(attractor) , parent mass=(6e+24 kg)"
+        geo.__repr__() ==
+        "Geodesic object body name= (obj) , metric=(Schwarzschild) , parent name=(attractor) , parent mass=(6e+24 kg)"
     )

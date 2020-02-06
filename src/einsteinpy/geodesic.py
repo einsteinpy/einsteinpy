@@ -28,7 +28,8 @@ class Geodesic:
             Spin factor of massive body. Should be less than half of schwarzschild radius.
         q : ~astropy.units.C, optional
             Charge on the massive body
-        metric : ~einsteinpy.metric.schwarzschild.Schwarzschild or ~einsteinpy.metric.kerr.Kerr or ~einsteinpy.metric.kerrnewman.KerrNewman
+        metric : ~einsteinpy.metric.schwarzschild.Schwarzschild or ~einsteinpy.metric.kerr.Kerr
+         or ~einsteinpy.metric.kerrnewman.KerrNewman
             Metric for the space-time in which geodesics are being calculated.
 
         """
