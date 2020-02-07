@@ -9,7 +9,7 @@ know the API of the classes and methods. If you find anything missing, please op
 .. graphviz::
 
     digraph {
-        "einsteinpy" -> "integrators", "metric", "utils", "plotting", "constant", "units", "coordinates", "geodesic", "bodies", "hypersurface", "symbolic"
+        "einsteinpy" -> "integrators", "metric", "utils", "plotting", "constant", "units", "coordinates", "geodesic", "bodies", "hypersurface", "symbolic", "rays"
 
     }
 
@@ -21,6 +21,7 @@ know the API of the classes and methods. If you find anything missing, please op
     metric/metric_index
     symbolic/symbolic_index
     hypersurface/hypersurface_index
+    rays/rays_index
     utils/utils_index
     plotting/plotting_index
     coordinates/coordinates_index

@@ -154,3 +154,14 @@ def test_print_core_objects(cartesian, spherical, boyerlindquist):
 
     # again switch to old stdout
     sys.stdout = old_stdout
+
+
+def test_coordinate_subscripting(cartesian, spherical, boyerlindquist):
+    assert cartesian["x"] == cartesian.x == cartesian[0] == cartesian[-3]
+    assert spherical["theta"] == spherical.theta == spherical[1] == spherical[-2]
+    assert (
+        boyerlindquist["phi"]
+        == boyerlindquist.phi
+        == boyerlindquist[2]
+        == boyerlindquist[-1]
+    )

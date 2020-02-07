@@ -17,6 +17,11 @@ def _flatten_list(seq):
 
 
 def simplify_sympy_array(arr):
-    flattened_list = _flatten_list(arr.tolist())
-    simplified_flattened_list = [sympy.simplify(e) for e in flattened_list]
-    return sympy.Array(simplified_flattened_list, arr.shape)
+    try:
+        flattened_list = _flatten_list(arr.tolist())
+        simplified_flattened_list = [sympy.simplify(e) for e in flattened_list]
+        return sympy.Array(simplified_flattened_list, arr.shape)
+    except AttributeError:
+        return sympy.simplify(arr)
+    except IndexError:
+        return sympy.Array(sympy.simplify(sum(arr)))

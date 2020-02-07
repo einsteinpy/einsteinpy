@@ -28,11 +28,9 @@ class Geodesic:
             Defaults to ``1e-3``.
         time : ~astropy.units.s, optional
             Time of start, Defaults to 0 seconds.
-        metric : ~einsteinpy.metric.schwarzschild.Schwarzschild or ~einsteinpy.metric.kerr.Kerr or
-            ~einsteinpy.metric.kerrnewman.KerrNewman, optional
+        metric : ~einsteinpy.metric.schwarzschild.Schwarzschild or ~einsteinpy.metric.kerr.Kerr or ~einsteinpy.metric.kerrnewman.KerrNewman, optional
             Class of the spacetime metric in which geodesics are to be calculated.
             Defaults to ``Schwarzschild``.
- 
         """
         self.body = body
         self.attractor = body.parent

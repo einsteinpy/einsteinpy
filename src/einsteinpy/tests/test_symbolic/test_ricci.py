@@ -85,13 +85,7 @@ def test_RicciScalar_is_constant_for_ADS_spacetime():
     # R is -12 for anti-de-Sitter spacetime
     mt = anti_de_sitter_metric()
     R = RicciScalar.from_metric(mt)
-    assert sympy.simplify(R._expr).is_constant()
-
-
-def test_RicciScalar_expr_property():
-    x, y = sympy.symbols("x y")
-    R = RicciScalar(x ** 2 * y * 3, (x, y))
-    assert sympy.simplify(R._expr - R.expr) == 0
+    assert sympy.simplify(R.expr).is_constant()
 
 
 def test_RicciScalar_raise_TypeError():
@@ -101,3 +95,11 @@ def test_RicciScalar_raise_TypeError():
         assert False
     except TypeError:
         assert True
+
+
+def test_RicciScalar_inbuilt_simplify_works():
+    x, y = sympy.symbols("x y")
+    R = RicciScalar((-y) + 2 * sin(x) * cos(x) + y - sin(2 * x), (x, y))
+    val = R.simplify(set_self=True)
+    assert R.expr == 0
+    assert sum(val) == 0

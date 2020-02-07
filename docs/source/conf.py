@@ -1,9 +1,6 @@
-import os
 from datetime import datetime
 
 import alabaster
-
-import einsteinpy
 
 project = "EinsteinPy"
 year = datetime.now().year
@@ -21,7 +18,7 @@ intersphinx_mapping = {
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "matplotlib": ("https://matplotlib.org", None),
-    "sympy": ("https://docs.sympy.org/1.5.1", None),
+    "sympy": ("https://docs.sympy.org/latest", None),
 }
 
 
@@ -43,6 +40,8 @@ html_theme_options = {
     "show_powered_by": False,
     "page_width": "80%",
     "github_banner": True,
+    "donate_url": "https://opencollective.com/einsteinpy",
+    "github_button": True,
     "extra_nav_links": {"Blog": "https://docs.einsteinpy.org/"},
 }
 
