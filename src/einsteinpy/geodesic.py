@@ -16,7 +16,7 @@ class Geodesic:
         self, body, end_lambda, step_size=1e-3, time=0 * u.s, metric=Schwarzschild
     ):
         """
-      
+
         Parameters
         ----------
         body : ~einsteinpy.bodies.Body
@@ -32,7 +32,7 @@ class Geodesic:
             ~einsteinpy.metric.kerrnewman.KerrNewman, optional
             Class of the spacetime metric in which geodesics are to be calculated.
             Defaults to ``Schwarzschild``.
-
+ 
         """
         self.body = body
         self.attractor = body.parent
