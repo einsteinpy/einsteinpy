@@ -1,5 +1,6 @@
 import sys
 from io import StringIO
+from unittest import mock
 
 import astropy.units as u
 import numpy as np
@@ -134,25 +135,18 @@ def test_cycle_BLCartesianDifferential(bl_differential2):
 # Tests for object.__repr__ and object.__str__
 
 
+@mock.patch("sys.stdout", new_callable=StringIO)
 def test_print_core_objects(
-    cartesian_differential, spherical_differential, bl_differential
+    mock_stdout, cartesian_differential, spherical_differential, bl_differential
 ):
-    old_stdout = sys.stdout
-    # change stdout
-    result = StringIO()
-    sys.stdout = result
-
     print(str(cartesian_differential))
-    assert "object at 0x" not in result.getvalue()
+    assert "object at 0x" not in mock_stdout.getvalue()
 
     print(str(spherical_differential))
-    assert "object at 0x" not in result.getvalue()
+    assert "object at 0x" not in mock_stdout.getvalue()
 
     print(str(bl_differential))
-    assert "object at 0x" not in result.getvalue()
-
-    # again switch to old stdout
-    sys.stdout = old_stdout
+    assert "object at 0x" not in mock_stdout.getvalue()
 
 
 # Tests for object.velocities()
