@@ -9,6 +9,7 @@ from einsteinpy.symbolic.predefined import (
     DeSitter,
     Godel,
     Kerr,
+    KerrNewman,
     Minkowski,
     Schwarzschild,
 )
@@ -23,6 +24,7 @@ from einsteinpy.symbolic.predefined import (
         Schwarzschild(),
         Schwarzschild(c=1, sch=2),
         Kerr(),
+        KerrNewman(),
         Minkowski(),
         CMetric(),
         Davidson(),
