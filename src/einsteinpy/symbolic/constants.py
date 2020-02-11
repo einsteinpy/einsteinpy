@@ -39,6 +39,7 @@ class SymbolicConstant(Symbol):
 c = SymbolicConstant("c", "Speed Of Light")
 G = SymbolicConstant("G", "Gravitational Constant")
 Cosmo_Const = SymbolicConstant("Lambda", "Cosmological Constant")
+eps_0 = SymbolicConstant("eps_0", "Permittivity of free space")
 
 
 def get_constant(name):
@@ -49,7 +50,7 @@ def get_constant(name):
     ----------
     name : str
         Name of the constant. 
-        Currently available names are 'c', 'G', 'Cosmo_Const'.
+        Currently available names are 'c', 'G', 'Cosmo_Const', 'eps_0'.
     
     Returns
     -------
@@ -57,5 +58,5 @@ def get_constant(name):
         An instance of the required constant
 
     """
-    const_dict = {"c": c, "G": G, "Cosmo_Const": Cosmo_Const}
+    const_dict = {"c": c, "G": G, "Cosmo_Const": Cosmo_Const, "eps_0": eps_0}
     return const_dict[name]
