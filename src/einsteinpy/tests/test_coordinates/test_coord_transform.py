@@ -1,5 +1,6 @@
 import sys
 from io import StringIO
+from unittest import mock
 
 import astropy.units as u
 import numpy as np
@@ -137,23 +138,16 @@ def test_cartesian_dot():
 # Tests for object.__repr__ and object.__str__
 
 
-def test_print_core_objects(cartesian, spherical, boyerlindquist):
-    old_stdout = sys.stdout
-    # change stdout
-    result = StringIO()
-    sys.stdout = result
-
+@mock.patch("sys.stdout", new_callable=StringIO)
+def test_print_core_objects(mock_stdout, cartesian, spherical, boyerlindquist):
     print(str(cartesian))
-    assert "object at 0x" not in result.getvalue()
+    assert "object at 0x" not in mock_stdout.getvalue()
 
     print(str(spherical))
-    assert "object at 0x" not in result.getvalue()
+    assert "object at 0x" not in mock_stdout.getvalue()
 
     print(str(boyerlindquist))
-    assert "object at 0x" not in result.getvalue()
-
-    # again switch to old stdout
-    sys.stdout = old_stdout
+    assert "object at 0x" not in mock_stdout.getvalue()
 
 
 def test_coordinate_subscripting(cartesian, spherical, boyerlindquist):
