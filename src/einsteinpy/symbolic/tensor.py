@@ -4,7 +4,7 @@ from sympy import simplify, tensorcontraction, tensorproduct
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
-from einsteinpy.symbolic.helpers import simplify_sympy_array
+from einsteinpy.symbolic.helpers import simplify_sympy_array, sympy_to_np_array
 
 
 def _config_checker(config):
@@ -53,7 +53,7 @@ def _change_config(tensor, metric, newconfig):
                     tensorcontraction(tensorproduct(met_dict[action], t), (1, 2 + i))
                 )
                 # reshuffle the indices
-                tmp = np.array(t.tolist()).reshape(t.shape)
+                tmp = sympy_to_np_array(t)
                 source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
                 dest.pop(i)
                 dest.insert(0, i)
@@ -370,7 +370,7 @@ class BaseRelativityTensor(Tensor):
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (1, 2 + i)))
             else:
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (0, 2 + i)))
-            tmp = np.array(t.tolist()).reshape(t.shape)
+            tmp = sympy_to_np_array(t)
             source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
             dest.pop(i)
             dest.insert(0, i)
