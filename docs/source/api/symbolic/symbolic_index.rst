@@ -8,6 +8,7 @@ calculations related to General Relativity.
     :maxdepth: 2
 
     predefined/predefined_index
+    helpers
     constants
     tensor
     vector
