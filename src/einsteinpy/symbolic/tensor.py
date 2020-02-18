@@ -4,7 +4,7 @@ from sympy import simplify, tensorcontraction, tensorproduct
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
-from einsteinpy.symbolic.auxillary_functions import simplify_sympy_array
+from einsteinpy.symbolic.helpers import simplify_sympy_array
 
 
 def _config_checker(config):

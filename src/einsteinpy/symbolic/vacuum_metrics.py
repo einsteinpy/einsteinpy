@@ -1,6 +1,6 @@
 import sympy
 
-from einsteinpy.symbolic.auxillary_functions import raise_warning
+from einsteinpy.symbolic.helpers import raise_warning
 from einsteinpy.symbolic.metric import MetricTensor
 
 
