@@ -2,7 +2,7 @@ import warnings
 
 import astropy.units as u
 import numpy as np
-from scipy.integrate import quadrature
+from scipy.integrate import fixed_quad
 from scipy.interpolate import interp1d
 from scipy.optimize import newton
 
@@ -87,10 +87,10 @@ class Shadow:
         intensity = []
         for i in np.arange(len(self.z)):
             b = self.z[i][0]
-            val1, _ = quadrature(
+            val1, _ = fixed_quad(
                 self._intensity_blue_sch, self.fov.value, self.z[i][1], args=(b,)
             )
-            val2, _ = quadrature(
+            val2, _ = fixed_quad(
                 self._intensity_red_sch, self.z[i][1], self.fov.value, args=(b,)
             )
             intensity.append(val1 + val2)
@@ -106,7 +106,7 @@ class Shadow:
         k1 = list()
         for i in self.b2:
             arg = i
-            val3, _ = quadrature(
+            val3, _ = fixed_quad(
                 self._intensity_red_sch, self.horizon, self.fov.value, args=(arg,)
             )
             k1.append(val3)
