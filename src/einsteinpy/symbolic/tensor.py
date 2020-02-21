@@ -4,7 +4,7 @@ from sympy import simplify, tensorcontraction, tensorproduct
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
-from einsteinpy.symbolic.auxillary_functions import simplify_sympy_array
+from einsteinpy.symbolic.helpers import simplify_sympy_array, sympy_to_np_array
 
 
 def _config_checker(config):
@@ -53,7 +53,7 @@ def _change_config(tensor, metric, newconfig):
                     tensorcontraction(tensorproduct(met_dict[action], t), (1, 2 + i))
                 )
                 # reshuffle the indices
-                tmp = np.array(t.tolist()).reshape(t.shape)
+                tmp = sympy_to_np_array(t)
                 source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
                 dest.pop(i)
                 dest.insert(0, i)
@@ -89,7 +89,7 @@ class Tensor:
 
         """
 
-        if isinstance(arr, (list, tuple, np.ndarray, int, float, Expr)):
+        if isinstance(arr, (list, tuple, np.ndarray, int, float, np.number, Expr)):
             self.arr = sympy.Array(arr)
         elif isinstance(arr, sympy.Array):
             self.arr = arr
@@ -170,9 +170,15 @@ class Tensor:
         """
         return Tensor(self.tensor().subs(*args))
 
-    def simplify(self):
+    def simplify(self, set_self=True):
         """
         Returns a simplified Tensor
+
+        Parameters
+        ----------
+        set_self : bool
+            Replaces the tensor contained the class with its simplified version, if ``True``.
+            Defaults to ``True``.
 
         Returns
         -------
@@ -180,6 +186,9 @@ class Tensor:
             Simplified Tensor
 
         """
+        if set_self:
+            self.arr = simplify_sympy_array(self.tensor())
+            return self.tensor()
         # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
         return simplify_sympy_array(self.tensor())
 
@@ -361,7 +370,7 @@ class BaseRelativityTensor(Tensor):
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (1, 2 + i)))
             else:
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (0, 2 + i)))
-            tmp = np.array(t.tolist()).reshape(t.shape)
+            tmp = sympy_to_np_array(t)
             source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
             dest.pop(i)
             dest.insert(0, i)

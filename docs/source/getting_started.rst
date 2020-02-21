@@ -72,7 +72,7 @@ For installing the development version, you can do two things:
 
        $ git clone https://github.com/einsteinpy/einsteinpy.git
        $ cd einsteinpy/
-       $ python setup.py install
+       $ pip install .
 
 - Install using pip:
 

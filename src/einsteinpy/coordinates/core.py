@@ -30,12 +30,30 @@ class Cartesian(CartesianConversion):
         self.z = z
         super().__init__(x.si.value, y.si.value, z.si.value)
         self.system = "Cartesian"
+        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
+        self._dimension_order = ("x", "y", "z")
 
     def __repr__(self):
         return "Cartesian x: {}, y: {}, z: {}".format(self.x, self.y, self.z)
 
     def __str__(self):
         return self.__repr__()
+
+    def __getitem__(self, item):
+        """
+        Method to return coordinates. 
+        Objects are subsctiptable with both explicit names of parameters
+        and integer indices.
+
+        Parameters
+        ----------
+        item : str or int
+                Name of the parameter or its index.
+                If ``'system'``, Name of coordinate is returned.
+        """
+        if isinstance(item, (int, np.integer)):
+            return self._dimension[self._dimension_order[item]]
+        return self._dimension[item]
 
     def si_values(self):
         """
@@ -138,6 +156,13 @@ class Spherical(SphericalConversion):
         self.phi = phi
         super().__init__(r.si.value, theta.si.value, phi.si.value)
         self.system = "Spherical"
+        self._dimension = {
+            "r": self.r,
+            "theta": self.theta,
+            "phi": self.phi,
+            "system": self.system,
+        }
+        self._dimension_order = ("r", "theta", "phi")
 
     def __repr__(self):
         return "Spherical r: {}, theta: {}, phi: {}".format(
@@ -146,6 +171,22 @@ class Spherical(SphericalConversion):
 
     def __str__(self):
         return self.__repr__()
+
+    def __getitem__(self, item):
+        """
+        Method to return coordinates. 
+        Objects are subsctiptable with both explicit names of parameters
+        and integer indices.
+
+        Parameters
+        ----------
+        item : str or int
+                Name of the parameter or its index.
+                If ``'system'``, Name of coordinate is returned.
+        """
+        if isinstance(item, (int, np.integer)):
+            return self._dimension[self._dimension_order[item]]
+        return self._dimension[item]
 
     def si_values(self):
         """
@@ -217,6 +258,14 @@ class BoyerLindquist(BoyerLindquistConversion):
         self.a = a
         super().__init__(r.si.value, theta.si.value, phi.si.value, a=a.si.value)
         self.system = "BoyerLindquist"
+        self._dimension = {
+            "r": self.r,
+            "theta": self.theta,
+            "phi": self.phi,
+            "a": self.a,
+            "system": self.system,
+        }
+        self._dimension_order = ("r", "theta", "phi")
 
     def __repr__(self):
         return "Boyer-Lindquist r: {}, theta: {}, phi: {} | a: {}".format(
@@ -225,6 +274,23 @@ class BoyerLindquist(BoyerLindquistConversion):
 
     def __str__(self):
         return self.__repr__()
+
+    def __getitem__(self, item):
+        """
+        Method to return coordinates. 
+        Objects are subsctiptable with both explicit names of parameters
+        and integer indices.
+
+        Parameters
+        ----------
+        item : str or int
+                Name of the parameter or its index.
+                If ``'system'``, Name of coordinate is returned.
+                If ``'a'``, spin factor of the body, ``self.a`` is returned.
+        """
+        if isinstance(item, (int, np.integer)):
+            return self._dimension[self._dimension_order[item]]
+        return self._dimension[item]
 
     def si_values(self):
         """

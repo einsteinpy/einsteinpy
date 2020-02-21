@@ -4,7 +4,33 @@ from numpy.testing import assert_allclose
 from sympy import Array, Function, cos, simplify, sin, symbols
 from sympy.abc import y, z
 
-from einsteinpy.symbolic import BaseRelativityTensor, MetricTensor, Tensor
+from einsteinpy.symbolic import (
+    BaseRelativityTensor,
+    MetricTensor,
+    Tensor,
+    simplify_sympy_array,
+)
+
+# test for simplify_sympy_array()
+
+
+def zero_expression():
+    return 2 * sin(y * z) * cos(z * y) - sin(2 * z * y)
+
+
+@pytest.mark.parametrize(
+    "target",
+    (Array([zero_expression(), 3]), Array(zero_expression()), zero_expression()),
+)
+def test_simplify_sympy_array_works_for_all(target):
+    try:
+        simplify_sympy_array(target)
+        assert True
+    except Exception:
+        assert False
+
+
+# tests for Tensor and BaseRelativityTensor
 
 
 def schwarzschild_tensor():
@@ -60,7 +86,18 @@ def test_Tensor():
     obj2 = Tensor(test_list)
     assert obj1.tensor() == obj2.tensor()
     assert isinstance(obj1.tensor(), Array)
-    assert obj1.simplify()[0, 1, 1] == 0
+
+
+def test_Tensor_simplify():
+    x, y, z = symbols("x y z")
+    test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]
+    obj = Tensor(test_list)
+    # with set_self = False
+    assert obj.simplify(set_self=False)[0, 1, 1] == 0
+    assert not obj.tensor()[0, 1, 1] == 0
+    # with set_self = True
+    obj.simplify(set_self=True)
+    assert obj.tensor()[0, 1, 1] == 0
 
 
 def test_Tensor_getitem():

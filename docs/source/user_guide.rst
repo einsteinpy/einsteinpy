@@ -119,8 +119,8 @@ Plotting the trajectory :
 
     .. code-block:: python
 
-        from einsteinpy.plotting import ScatterGeodesicPlotter
-        obj = ScatterGeodesicPlotter()
+        from einsteinpy.plotting import GeodesicPlotter
+        obj = GeodesicPlotter()
         obj.plot(geodesic)
         obj.show()
 
