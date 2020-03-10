@@ -6,10 +6,15 @@ from einsteinpy.symbolic import MetricTensor, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
     AntiDeSitter,
     AntiDeSitterStatic,
+    BarriolaVilekin,
+    BertottiKasner,
+    BesselGravitationalWave,
     CMetric,
     Davidson,
     DeSitter,
+    Ernst,
     Godel,
+    JanisNewmanWinicour,
     Kerr,
     KerrNewman,
     Minkowski,
@@ -31,6 +36,11 @@ from einsteinpy.symbolic.predefined import (
         CMetric(),
         Davidson(),
         Godel(),
+        BesselGravitationalWave(),
+        BarriolaVilekin(),
+        BertottiKasner(),
+        Ernst(),
+        JanisNewmanWinicour(),
     ],
 )
 def test_all_predefined_metrics(metric_instance):
