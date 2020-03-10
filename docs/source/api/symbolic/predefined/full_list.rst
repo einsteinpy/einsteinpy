@@ -48,3 +48,38 @@ Davidson
 
 .. automodule:: einsteinpy.symbolic.predefined.davidson
     :members:
+
+
+Bessel Gravitational Wave
+-------------------------
+
+.. automodule:: einsteinpy.symbolic.predefined.bessel_gravitational_wave
+    :members:
+
+
+Barriola Vilekin
+----------------
+
+.. automodule:: einsteinpy.symbolic.predefined.barriola_vilenkin
+    :members:
+
+
+Bertotti Kasner
+---------------
+
+.. automodule:: einsteinpy.symbolic.predefined.bertotti_kasner
+    :members:
+
+
+Ernst
+-----
+
+.. automodule:: einsteinpy.symbolic.predefined.ernst
+    :members:
+
+
+Janis Newman Winicour
+---------------------
+
+.. automodule:: einsteinpy.symbolic.predefined.janis_newman_winicour
+    :members:
