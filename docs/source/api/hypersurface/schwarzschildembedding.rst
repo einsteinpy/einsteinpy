@@ -5,3 +5,4 @@ Class for Utility functions for Schwarzschild Embedding surface to implement gra
 
 .. automodule:: einsteinpy.hypersurface.schwarzschildembedding
     :members:
+    :show-inheritance:

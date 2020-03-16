@@ -6,3 +6,4 @@ related to a Metric belonging to any arbitrary space-time symbolically:
 
 .. automodule:: einsteinpy.symbolic.riemann
     :members:
+    :show-inheritance:
