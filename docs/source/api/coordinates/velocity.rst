@@ -5,3 +5,4 @@ This module contains the basic classes for time differentials of coordinate syst
 
 .. automodule:: einsteinpy.coordinates.velocity
     :members:
+    :show-inheritance:

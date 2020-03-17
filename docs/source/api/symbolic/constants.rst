@@ -6,3 +6,4 @@ and classes used to define them:
 
 .. automodule:: einsteinpy.symbolic.constants
     :members:
+    :show-inheritance:

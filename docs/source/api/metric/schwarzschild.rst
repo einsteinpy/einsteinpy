@@ -5,3 +5,4 @@ This module contains the basic class for calculating time-like geodesics in Schw
 
 .. automodule:: einsteinpy.metric.schwarzschild
     :members:
+    :show-inheritance:

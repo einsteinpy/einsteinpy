@@ -5,3 +5,4 @@ This module contains Tensor class which serves as the base class for more specif
 
 .. automodule:: einsteinpy.symbolic.tensor
     :members:
+    :show-inheritance:

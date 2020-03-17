@@ -5,3 +5,4 @@ This module contains the basic classes for coordinate systems and their position
 
 .. automodule:: einsteinpy.coordinates.core
     :members:
+    :show-inheritance:

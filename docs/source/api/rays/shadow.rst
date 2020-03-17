@@ -5,3 +5,4 @@ Module for calculating Shadow cast by an thin emission disk around schwarzschild
 
 .. automodule:: einsteinpy.rays.shadow
     :members:
+    :show-inheritance:
