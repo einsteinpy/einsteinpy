@@ -27,7 +27,6 @@ def zero_expression():
 
 # Marking unexpectedly failing test functions
 
-# This will make XPASS ("Unexpectedly passing ") results from this test to fail the test suite.
 @xfail    
 def test_simplify_sympy_array_works_for_all(target):
     try:
