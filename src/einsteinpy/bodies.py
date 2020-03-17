@@ -111,3 +111,15 @@ class _Earth(Body):
 
 
 Earth = _Earth()
+
+
+class _Moon(Body):
+    def __init__(self):
+        parent = Earth
+        name = "Moon"
+        R = 1737.5 * u.km
+        mass = 7.34767309e22 * u.kg
+        super(_Moon, self).__init__(name=name, mass=mass, R=R, parent=parent)
+
+
+Moon = _Moon()
