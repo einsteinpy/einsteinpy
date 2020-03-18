@@ -21,7 +21,7 @@ def zero_expression():
     "target",
     (Array([zero_expression(), 3]), Array(zero_expression()), zero_expression()),
 )
-# Marking unexpectedly failing test functions    
+# Marking unexpectedly failing test functions
 def test_simplify_sympy_array_works_for_all(target):
     try:
         simplify_sympy_array(target)
@@ -113,11 +113,13 @@ def test_Tensor_repr():
     machine_representation = repr(obj1)
     assert not "object at 0x" in machine_representation
 
+
 @xfail(raises=TypeError, strict=True)
 def test_TypeError2():
     scht = schwarzschild_tensor().tensor()
     # pass non str object
     obj = Tensor(scht, config=0)
+
 
 @xfail(raises=TypeError, strict=True)
 def test_TypeError3():
