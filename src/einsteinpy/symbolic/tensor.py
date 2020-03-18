@@ -53,12 +53,10 @@ def _change_config(tensor, metric, newconfig):
                     tensorcontraction(tensorproduct(met_dict[action], t), (1, 2 + i))
                 )
                 # reshuffle the indices
-                tmp = sympy_to_np_array(t)
-                source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
-                dest.pop(i)
-                dest.insert(0, i)
-                tmp = np.moveaxis(tmp, source, dest)
-                t = sympy.Array(tmp)
+                dest = list(range(len(t.shape)))
+                dest.remove(0)
+                dest.insert(i, 0)
+                t = sympy.permutedims(t, dest)
         return t
 
     return chain_config_change()
@@ -370,12 +368,10 @@ class BaseRelativityTensor(Tensor):
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (1, 2 + i)))
             else:
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (0, 2 + i)))
-            tmp = sympy_to_np_array(t)
-            source, dest = list(range(len(t.shape))), list(range(len(t.shape)))
-            dest.pop(i)
-            dest.insert(0, i)
-            tmp = np.moveaxis(tmp, source, dest)
-            t = sympy.Array(tmp)
+            dest = list(range(len(t.shape)))
+            dest.remove(0)
+            dest.insert(i, 0)
+            t = sympy.permutedims(t, dest)
 
         return BaseRelativityTensor(
             t,
