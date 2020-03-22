@@ -25,4 +25,4 @@ def BarriolaVilekin(c=constants.c, k=symbols("k")):
     metric = diag(
         -1, 1 / (c ** 2), ((k * r) ** 2) / (c ** 2), ((k * r * sin(th)) ** 2) / (c ** 2)
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="BarriolaVilekinMetric")
