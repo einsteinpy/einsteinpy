@@ -8,4 +8,3 @@ This module contains Classes to  plot geodesics.
 
     core
     interactive
-    static
