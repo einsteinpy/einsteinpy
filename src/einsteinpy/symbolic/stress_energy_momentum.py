@@ -2,6 +2,7 @@ import numpy as np
 
 from einsteinpy.symbolic.constants import Cosmo_Const, G, c
 from einsteinpy.symbolic.einstein import EinsteinTensor
+from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
@@ -11,7 +12,14 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
     Class for defining Stress-Energy Coefficient Tensor
     """
 
-    def __init__(self, arr, syms, config="ll", parent_metric=None):
+    def __init__(
+        self,
+        arr,
+        syms,
+        config="ll",
+        parent_metric=None,
+        name="StressEnergyMomentumTensor",
+    ):
         """
         Constructor and Initializer
 
@@ -26,6 +34,8 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Stress-Energy Coefficient Tensor.
             Defaults to None.
+        name : str
+            Name of the Tensor. Defaults to "StressEnergyMomentumTensor".
 
         Raises
         ------
@@ -38,7 +48,7 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
 
         """
         super(StressEnergyMomentumTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
         )
         self._order = 2
         if not len(config) == self._order:
@@ -84,7 +94,11 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
         new_obj = EinsteinTensor(
-            new_tensor, self.syms, config=newconfig, parent_metric=metric
+            new_tensor,
+            self.syms,
+            config=newconfig,
+            parent_metric=metric,
+            name=_change_name(self.name, context="__" + newconfig),
         )
         return new_obj
 
@@ -107,5 +121,9 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
             transformation_matrix
         )
         return StressEnergyMomentumTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
+            t.tensor(),
+            syms=self.syms,
+            config=self._config,
+            parent_metric=None,
+            name=_change_name(self.name, context="__lt"),
         )

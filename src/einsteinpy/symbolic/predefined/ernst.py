@@ -31,4 +31,4 @@ def Ernst(B=symbols("B"), M=symbols("M")):
         ((r * lambd) ** 2),
         (((r * sin(th)) / lambd) ** 2),
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="ErnstMetric")

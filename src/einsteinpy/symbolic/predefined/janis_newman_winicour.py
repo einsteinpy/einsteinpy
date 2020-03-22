@@ -33,4 +33,4 @@ def JanisNewmanWinicour(
         (r ** 2) * (alpha ** (-gam + 1)),
         (r ** 2) * (alpha ** (-gam + 1)) * (sin(th) ** 2),
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="JanisNewmanWinicourMetric")

@@ -96,12 +96,12 @@ the MIT license, hence allowing commercial use of the library.
     from einsteinpy.plotting import GeodesicPlotter
     from einsteinpy.examples import perihelion
     a = GeodesicPlotter()
-    a.plot(perihelion)
+    a.plot(perihelion())
     a.show()
 
 .. figure:: _static/perihelion.png
    :align: center
-   :figwidth: 600px
+   :figwidth: 650px
    :alt: Advancement of perihelion in Schwarzschild space-time
 
 Contents
