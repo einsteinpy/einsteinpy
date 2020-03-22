@@ -9,7 +9,7 @@ class MetricTensor(BaseRelativityTensor):
     Class to define a metric tensor for a space-time
     """
 
-    def __init__(self, arr, syms, config="ll"):
+    def __init__(self, arr, syms, config="ll", name=None):
         """
         Constructor and Initializer
         
@@ -21,6 +21,8 @@ class MetricTensor(BaseRelativityTensor):
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
+        name : String or None
+            Name of the Metric Tensor. Defaults to None.
 
         Raises
         ------
@@ -33,7 +35,7 @@ class MetricTensor(BaseRelativityTensor):
         
         """
         super(MetricTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=self
+            arr=arr, syms=syms, config=config, parent_metric=self, name=name
         )
         self._order = 2
         self._invmetric = None

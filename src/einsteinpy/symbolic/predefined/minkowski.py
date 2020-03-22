@@ -17,4 +17,4 @@ def Minkowski(c=constants.c):
     """
     coords = symbols("t x y z")
     metric = diag(-1, 1 / (c ** 2), 1 / (c ** 2), 1 / (c ** 2)).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="MinkowskiMetric")
