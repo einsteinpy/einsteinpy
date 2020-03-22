@@ -18,6 +18,8 @@ from einsteinpy.symbolic.predefined import (
     Kerr,
     KerrNewman,
     Minkowski,
+    MinkowskiCartesian,
+    MinkowskiPolar,
     Schwarzschild,
 )
 
@@ -33,6 +35,8 @@ from einsteinpy.symbolic.predefined import (
         Kerr(),
         KerrNewman(),
         Minkowski(),
+        MinkowskiCartesian(),
+        MinkowskiPolar(),
         CMetric(),
         Davidson(),
         Godel(),
@@ -57,3 +61,10 @@ def test_all_predefined_metrics(metric_instance):
 def test_check_two_metrics_are_equal(m1, m2):
     zero_arr = Array(np.zeros(shape=m1.tensor().shape, dtype=int))
     assert simplify_sympy_array(m1.tensor() - m2.tensor()) == zero_arr
+
+
+def test_Minkowski_equality():
+    # Minkowski and MinkowskiCartesian are same
+    assert simplify_sympy_array(MinkowskiCartesian().tensor()) == simplify_sympy_array(
+        Minkowski().tensor()
+    )
