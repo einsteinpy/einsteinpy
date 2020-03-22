@@ -42,4 +42,4 @@ def BesselGravitationalWave(C=symbols("C")):
         exp(-2 * U) * (rho ** 2),
         exp(2 * U),
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="BesselGravitationalWaveMetric")

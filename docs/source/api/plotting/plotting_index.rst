@@ -10,5 +10,3 @@ This module contains the basic classes for static and interactive
     geodesics/geodesics_index
     hypersurface
     rays/rays_index
-    senile/geodesics_static
-    senile/geodesics_scatter
