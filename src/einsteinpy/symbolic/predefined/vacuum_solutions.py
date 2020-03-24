@@ -114,15 +114,14 @@ def KerrNewman(
         / c2,
     ).tolist()
     metric[0][3] = metric[3][0] = sch * r * a * (sin(theta) ** 2) / (Sigma * c)
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="KerrNewmanMetric")
 
 
-def Reissner_Nordstorm(
+def ReissnerNordstorm(
     c=constants.c,
     G=constants.G,
     eps_0=constants.eps_0,
     sch=symbols("r_s"),
-    a=symbols("a"),
     Q=symbols("Q"),
 ):
     """"
@@ -152,8 +151,9 @@ def Reissner_Nordstorm(
     t, r, theta, phi = coords
     rQsq = ((Q ** 2) * G) / (4 * pi * eps_0 * (c ** 4))
     Arn = 1 - sch / r + rQsq / r ** 2
+    c2 = c ** 2
 
     metric = diag(
-        (Arn * (c ** 2)), -(1 / Arn), -(r ** 2), -(r ** 2) * sin(theta) ** 2,
+        (Arn), -(1 / Arn) / c2, -(r ** 2) / c2, -(r ** 2) * sin(theta) ** 2 / c2,
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="ReissnerNordstormMetric")
