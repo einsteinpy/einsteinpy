@@ -8,5 +8,5 @@ from .ernst import Ernst
 from .find import find
 from .godel import Godel
 from .janis_newman_winicour import JanisNewmanWinicour
-from .minkowski import Minkowski
+from .minkowski import Minkowski, MinkowskiCartesian, MinkowskiPolar
 from .vacuum_solutions import Kerr, KerrNewman, Schwarzschild
