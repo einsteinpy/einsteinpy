@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from sympy import Array, symbols
+from sympy import Array, pi, symbols
 
 from einsteinpy.symbolic import MetricTensor, constants, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
