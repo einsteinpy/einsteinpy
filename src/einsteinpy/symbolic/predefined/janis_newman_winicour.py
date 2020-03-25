@@ -1,12 +1,13 @@
+from sympy import diag, sin, symbols
+
 from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
-from sympy import diag, sin, symbols
 
 
 def JanisNewmanWinicour(
     c=constants.c, G=constants.G, gam=symbols("gam"), M=symbols("M")
 ):
-    """ 
+    """
     Reality of the Schwarzschild singularity.
     Phys. Rev. Lett., 20:878–880, 1968.
     A. I. Janis, E. T. Newman, and J. Winicour.

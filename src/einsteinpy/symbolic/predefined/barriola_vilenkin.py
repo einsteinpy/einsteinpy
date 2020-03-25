@@ -1,11 +1,12 @@
+from sympy import diag, sin, symbols
+
 from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
-from sympy import diag, sin, symbols
 
 
 def BarriolaVilekin(c=constants.c, k=symbols("k")):
     """
-    Barriola-Vilekin monopol metric 
+    Barriola-Vilekin monopol metric
     Phys. Rev. Lett. 63, 341
     Manuel Barriola and Alexander Vilenkin
     Published 24 July 1989

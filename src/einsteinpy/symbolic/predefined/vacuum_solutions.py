@@ -1,6 +1,7 @@
+from sympy import cos, diag, pi, sin, symbols
+
 from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
-from sympy import cos, diag, pi, sin, symbols
 
 
 def Schwarzschild(c=constants.c, sch=symbols("r_s")):

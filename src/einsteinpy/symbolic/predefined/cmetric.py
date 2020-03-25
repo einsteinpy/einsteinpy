@@ -1,5 +1,6 @@
-from einsteinpy.symbolic.metric import MetricTensor
 from sympy import Function, diag, symbols
+
+from einsteinpy.symbolic.metric import MetricTensor
 
 
 def CMetric():

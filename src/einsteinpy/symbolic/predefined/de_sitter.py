@@ -1,5 +1,6 @@
-from einsteinpy.symbolic.metric import MetricTensor
 from sympy import cos, cosh, diag, exp, sin, sinh, symbols
+
+from einsteinpy.symbolic.metric import MetricTensor
 
 
 def AntiDeSitter():
@@ -38,7 +39,7 @@ def DeSitter():
     de Sitter space
 
     Hawking and Ellis p125
-    
+
     """
     coords = symbols("t x y z")
     t = coords[1]
