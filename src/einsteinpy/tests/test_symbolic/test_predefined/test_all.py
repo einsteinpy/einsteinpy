@@ -58,7 +58,7 @@ def test_all_predefined_metrics(metric_instance):
     [
         (Schwarzschild(), Kerr(a=0)),  # Schwarzschild is a special case of Kerr
         (Kerr(), KerrNewman(Q=0)),  # Kerr is a special case of Kerr-Newman
-        (ReissnerNordstorm(), KerrNewman(a=0)),
+        (ReissnerNordstorm(), KerrNewman(a=0)), #Reissner-Nordstorm is a special case of Kerr-Newman
     ],
 )
 def test_check_two_metrics_are_equal(m1, m2):
