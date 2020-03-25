@@ -156,4 +156,4 @@ def Reissner_Nordstorm(
     metric = diag(
         (Arn * (c ** 2)), -(1 / Arn), -(r ** 2), -(r ** 2) * sin(theta) ** 2,
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="Reissner_NordstormMetric")
