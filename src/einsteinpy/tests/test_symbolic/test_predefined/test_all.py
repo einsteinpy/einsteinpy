@@ -75,7 +75,7 @@ def test_check_two_metrics_are_equal(m1, m2):
     ],
 )
 def test_check_ReissnerNordstorm(m1, m2):
-    test_arr = Array(np.zeroes(shape=m1.tensor().shape, dtype=int))
+    test_arr = Array(np.zeros(shape=m1.tensor().shape, dtype=int))
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
     rQsq = ((Q ** 2) * G) / (4 * pi * eps_0 * (c ** 4))
