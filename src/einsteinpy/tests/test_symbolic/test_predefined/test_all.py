@@ -1,6 +1,10 @@
 import numpy as np
 import pytest
+<<<<<<< HEAD
+from sympy import Array, pi, symbols
+=======
 from sympy import Array, diag, pi, symbols
+>>>>>>> 0992cb0437a32ff61b9e0d2d3de7ec8c12631ff9
 
 from einsteinpy.symbolic import MetricTensor, constants, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
@@ -23,11 +27,6 @@ from einsteinpy.symbolic.predefined import (
     ReissnerNordstorm,
     Schwarzschild,
 )
-
-<<<<<<< HEAD
-=======
->>>>>>> 0992cb0437a32ff61b9e0d2d3de7ec8c12631ff9
-
 
 
 @pytest.mark.parametrize(
