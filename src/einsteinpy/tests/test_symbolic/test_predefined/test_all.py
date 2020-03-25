@@ -78,9 +78,9 @@ def test_check_ReissnerNordstorm(m1, m2):
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
     c, G, eps_0, Q = constants.c, constants.G, constants.eps_0, symbols("Q")
-    rQsq = (Q ** 2) * G) / (4 * pi * eps_0 * (c ** 4))
-    metric = diag(rQsq / r ** 2 , 0, 0, 0).tolist()
-    test_arr = MetricTensor(metric, coords, "ll", name='test_metric')
+    rQsq = (Q ** 2) * G / (4 * pi * eps_0 * (c ** 4))
+    metric = diag(rQsq / r ** 2, 0, 0, 0).tolist()
+    test_arr = MetricTensor(metric, coords, "ll", name="test_metric")
     assert simplify_sympy_array(m1.tensor() - m2.tensor()) == test_arr
 
 
