@@ -81,7 +81,9 @@ def test_check_ReissnerNordstorm(m1, m2):
     rQsq = (Q ** 2) * G / (4 * pi * eps_0 * (c ** 4))
     metric = diag(rQsq / r ** 2, 0, 0, 0).tolist()
     test_arr = MetricTensor(metric, coords, "ll", name="test_metric")
-    assert simplify_sympy_array(m1.tensor() - m2.tensor()) == test_arr
+    assert simplify_sympy_array(m1.tensor() - m2.tensor()) == simplify_sympy_array(
+        test_arr.tensor()
+    )
 
 
 def test_Minkowski_equality():
