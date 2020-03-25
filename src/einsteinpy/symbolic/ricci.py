@@ -2,6 +2,7 @@ import sympy
 from sympy import tensorcontraction, tensorproduct
 
 from einsteinpy.symbolic.christoffel import ChristoffelSymbols
+from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.metric import MetricTensor
 from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
@@ -13,7 +14,7 @@ class RicciTensor(BaseRelativityTensor):
     Class for defining Ricci Tensor
     """
 
-    def __init__(self, arr, syms, config="ll", parent_metric=None):
+    def __init__(self, arr, syms, config="ll", parent_metric=None, name="RicciTensor"):
         """
         Constructor and Initializer
 
@@ -28,6 +29,8 @@ class RicciTensor(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Ricci Tensor.
             Defaults to None.
+        name : str
+            Name of the Tensor. Defaults to "RicciTensor".
 
         Raises
         ------
@@ -40,7 +43,7 @@ class RicciTensor(BaseRelativityTensor):
 
         """
         super(RicciTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
         )
         self._order = 2
         if not len(config) == self._order:
@@ -136,7 +139,11 @@ class RicciTensor(BaseRelativityTensor):
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
         new_obj = RicciTensor(
-            new_tensor, self.syms, config=newconfig, parent_metric=metric
+            new_tensor,
+            self.syms,
+            config=newconfig,
+            parent_metric=metric,
+            name=_change_name(self.name, context="__" + newconfig),
         )
         return new_obj
 
@@ -157,7 +164,11 @@ class RicciTensor(BaseRelativityTensor):
         """
         t = super(RicciTensor, self).lorentz_transform(transformation_matrix)
         return RicciTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
+            t.tensor(),
+            syms=self.syms,
+            config=self._config,
+            parent_metric=None,
+            name=_change_name(self.name, context="__lt"),
         )
 
 
@@ -188,7 +199,11 @@ class RicciScalar(BaseRelativityTensor):
 
         """
         super(RicciScalar, self).__init__(
-            arr=arr, syms=syms, config="", parent_metric=parent_metric
+            arr=arr,
+            syms=syms,
+            config="",
+            parent_metric=parent_metric,
+            name="RicciScalar",
         )
         self._order = 0
 

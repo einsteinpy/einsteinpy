@@ -25,7 +25,7 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     metric = diag(
         val1, -1 / (val1 * c2), -1 * (r ** 2) / c2, -1 * ((r * sin(theta)) ** 2) / c2
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="SchwarzschildMetric")
 
 
 def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
@@ -62,7 +62,7 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
         / c2,
     ).tolist()
     metric[0][3] = metric[3][0] = sch * r * a * (sin(theta) ** 2) / (Sigma * c)
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="KerrMetric")
 
 
 def KerrNewman(

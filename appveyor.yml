@@ -4,6 +4,10 @@
 
 version: 0.3.dev0-{build}
 
+environment:
+  global:
+    MPLBACKEND: "Agg"
+
 branches:
   only:
     - master
