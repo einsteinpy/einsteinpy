@@ -18,4 +18,4 @@ def CMetric():
         1 / ((x + y) ** 2 * h),
         f / (x + y) ** 2,
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="CMetric")

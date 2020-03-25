@@ -6,7 +6,7 @@ from einsteinpy.symbolic.metric import MetricTensor
 
 def BarriolaVilekin(c=constants.c, k=symbols("k")):
     """
-    Barriola-Vilekin monopol metric 
+    Barriola-Vilekin monopol metric
     Phys. Rev. Lett. 63, 341
     Manuel Barriola and Alexander Vilenkin
     Published 24 July 1989
@@ -25,4 +25,4 @@ def BarriolaVilekin(c=constants.c, k=symbols("k")):
     metric = diag(
         -1, 1 / (c ** 2), ((k * r) ** 2) / (c ** 2), ((k * r * sin(th)) ** 2) / (c ** 2)
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="BarriolaVilekinMetric")
