@@ -122,7 +122,6 @@ def Reissner_Nordstorm(
     G=constants.G,
     eps_0=constants.eps_0,
     sch=symbols("r_s"),
-    a=symbols("a"),
     Q=symbols("Q"),
 ):
     """"
