@@ -187,3 +187,24 @@ class TransformationMatrix(ImmutableDenseNDimArray):
         tmp_array = np.reciprocal(tmp_array)
         self._inv = ImmutableDenseNDimArray(tmp_array)
         return self._inv
+
+
+def _change_name(curr_name: str, context: str) -> str:
+    """
+    Function to add descriptive tags to Tensor name, after the tensor is modified.
+    Currently handles Lorentz Transformation and Config Changes.
+
+    Parameters
+    ----------
+    curr_name : str
+            Current name of the tensor
+    context : str
+            Context of name change - '__lt', for lorentz_transformation
+                                   - '__' + newconfig, for config_change (cc)
+    Returns
+    -------
+    str
+        Altered name of the tensor, with appropriate tags
+
+    """
+    return curr_name + context if (curr_name is not None) else None
