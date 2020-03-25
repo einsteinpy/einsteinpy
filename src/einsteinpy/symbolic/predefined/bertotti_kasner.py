@@ -1,7 +1,6 @@
-from sympy import diag, exp, sin, sqrt, symbols
-
 from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
+from sympy import diag, exp, sin, sqrt, symbols
 
 
 def BertottiKasner(c=constants.c, k=symbols("k"), lambd=symbols("l")):
