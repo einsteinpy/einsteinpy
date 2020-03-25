@@ -23,9 +23,6 @@ assignees: ''
 
  * Comment below about what you've started working on.
  * Add, commit, push your changes
- * Submit a pull request.
- * Add this in the comments:
- 	- `Addresses #<put issue number here>` if you are partially fixing the issue.
- 	- `Fixes #<put issue number here>` if you are completely fixing the issue.
+ * Submit a pull request and add this in comments - `Addresses #<put issue number here>`
  * Ask for a review in comments section of pull request
  * Celebrate your contribution to this project 🎉
