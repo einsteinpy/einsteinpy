@@ -20,6 +20,7 @@ from einsteinpy.symbolic.predefined import (
     Minkowski,
     MinkowskiCartesian,
     MinkowskiPolar,
+    ReissnerNordstorm,
     Schwarzschild,
 )
 
@@ -45,6 +46,7 @@ from einsteinpy.symbolic.predefined import (
         BertottiKasner(),
         Ernst(),
         JanisNewmanWinicour(),
+        ReissnerNordstorm()
     ],
 )
 def test_all_predefined_metrics(metric_instance):
@@ -56,6 +58,7 @@ def test_all_predefined_metrics(metric_instance):
     [
         (Schwarzschild(), Kerr(a=0)),  # Schwarzschild is a special case of Kerr
         (Kerr(), KerrNewman(Q=0)),  # Kerr is a special case of Kerr-Newman
+        (ReissnerNordstorm(), KerrNewman(a=0))
     ],
 )
 def test_check_two_metrics_are_equal(m1, m2):
