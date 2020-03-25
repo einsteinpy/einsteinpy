@@ -143,10 +143,6 @@ def Reissner_Nordstorm(
     sch : ~sympy.core.basic.Basic or int or float
         Any value to assign to Schwarzschild Radius of the central object.
         Defaults to ``r_s``.
-    a : ~sympy.core.basic.Basic or int or float
-        Spin factor of the heavy body. Usually, given by ``J/(Mc)``,
-        where ``J`` is the angular momentum.
-        Defaults to ``a``.
     Q:  ~sympy.core.basic.Basic or int or float
         Any value to assign to eletric charge of the central object.
         Defaults to ``Q``.
