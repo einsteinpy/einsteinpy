@@ -1,3 +1,4 @@
+from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.ricci import RicciScalar, RicciTensor
 from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
@@ -10,7 +11,9 @@ class SchoutenTensor(BaseRelativityTensor):
 
     """
 
-    def __init__(self, arr, syms, config="ll", parent_metric=None):
+    def __init__(
+        self, arr, syms, config="ll", parent_metric=None, name="SchoutenTensor"
+    ):
         """
         Constructor and Initializer
 
@@ -24,6 +27,8 @@ class SchoutenTensor(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Corresponding Metric for the Schouten Tensor. Defaults to None.
+        name : str
+            Name of the Tensor. Defaults to "SchoutenTensor".
 
         Raises
         ------
@@ -36,7 +41,7 @@ class SchoutenTensor(BaseRelativityTensor):
 
         """
         super(SchoutenTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
         )
         self._order = 2
         if not len(config) == self._order:
@@ -99,7 +104,11 @@ class SchoutenTensor(BaseRelativityTensor):
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
         new_obj = SchoutenTensor(
-            new_tensor, self.syms, config=newconfig, parent_metric=metric
+            new_tensor,
+            self.syms,
+            config=newconfig,
+            parent_metric=metric,
+            name=_change_name(self.name, context="__" + newconfig),
         )
         return new_obj
 
@@ -120,5 +129,9 @@ class SchoutenTensor(BaseRelativityTensor):
         """
         t = super(SchoutenTensor, self).lorentz_transform(transformation_matrix)
         return SchoutenTensor(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
+            t.tensor(),
+            syms=self.syms,
+            config=self._config,
+            parent_metric=None,
+            name=_change_name(self.name, context="__lt"),
         )
