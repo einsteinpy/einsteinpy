@@ -30,4 +30,4 @@ def SchwarzschildMetric(symbolstr="t r theta phi"):
     list2d[2][2] = -1 * (syms[1] ** 2) / (c ** 2)
     list2d[3][3] = -1 * (syms[1] ** 2) * (sympy.sin(syms[2]) ** 2) / (c ** 2)
 
-    return MetricTensor(list2d, syms, name="SchwarzschildMetric")
+    return MetricTensor(list2d, syms)

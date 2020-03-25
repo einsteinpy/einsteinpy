@@ -2,7 +2,6 @@ import numpy as np
 import sympy
 
 from einsteinpy.symbolic.christoffel import ChristoffelSymbols
-from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
@@ -12,14 +11,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
     Class for defining Riemann Curvature Tensor
     """
 
-    def __init__(
-        self,
-        arr,
-        syms,
-        config="ulll",
-        parent_metric=None,
-        name="RiemannCurvatureTensor",
-    ):
+    def __init__(self, arr, syms, config="ulll", parent_metric=None):
         """
         Constructor and Initializer
         
@@ -33,8 +25,6 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor related to this Riemann Curvature Tensor.
-        name : str
-            Name of the Tensor. Defaults to "RiemannCurvatureTensor".
 
         Raises
         ------
@@ -47,7 +37,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         
         """
         super(RiemannCurvatureTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric
         )
         self._order = 4
         if not len(config) == self._order:
@@ -132,11 +122,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
         new_obj = RiemannCurvatureTensor(
-            new_tensor,
-            self.syms,
-            config=newconfig,
-            parent_metric=metric,
-            name=_change_name(self.name, context="__" + newconfig),
+            new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
 
@@ -157,9 +143,5 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         """
         t = super(RiemannCurvatureTensor, self).lorentz_transform(transformation_matrix)
         return RiemannCurvatureTensor(
-            t.tensor(),
-            syms=self.syms,
-            config=self._config,
-            parent_metric=None,
-            name=_change_name(self.name, context="__lt"),
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )

@@ -7,7 +7,7 @@ from einsteinpy.symbolic.metric import MetricTensor
 def JanisNewmanWinicour(
     c=constants.c, G=constants.G, gam=symbols("gam"), M=symbols("M")
 ):
-    """
+    """ 
     Reality of the Schwarzschild singularity.
     Phys. Rev. Lett., 20:878–880, 1968.
     A. I. Janis, E. T. Newman, and J. Winicour.
@@ -33,4 +33,4 @@ def JanisNewmanWinicour(
         (r ** 2) * (alpha ** (-gam + 1)),
         (r ** 2) * (alpha ** (-gam + 1)) * (sin(th) ** 2),
     ).tolist()
-    return MetricTensor(metric, coords, "ll", name="JanisNewmanWinicourMetric")
+    return MetricTensor(metric, coords, "ll")

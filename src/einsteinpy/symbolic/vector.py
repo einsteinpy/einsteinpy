@@ -1,4 +1,3 @@
-from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
@@ -9,7 +8,7 @@ class GenericVector(BaseRelativityTensor):
 
     """
 
-    def __init__(self, arr, syms, config="u", parent_metric=None, name="GenericVector"):
+    def __init__(self, arr, syms, config="u", parent_metric=None):
         """
         Constructor and Initializer
 
@@ -24,8 +23,6 @@ class GenericVector(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Generic Vector.
             Defaults to None.
-        name : str
-            Name of the Vector. Defaults to "GenericVector".
 
         Raises
         ------
@@ -36,7 +33,7 @@ class GenericVector(BaseRelativityTensor):
 
         """
         super(GenericVector, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric
         )
         if self.arr.rank() == 1:
             self._order = 1
@@ -75,11 +72,7 @@ class GenericVector(BaseRelativityTensor):
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
         new_obj = GenericVector(
-            new_tensor,
-            self.syms,
-            config=newconfig,
-            parent_metric=metric,
-            name=_change_name(self.name, context="__" + newconfig),
+            new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
 
@@ -101,9 +94,5 @@ class GenericVector(BaseRelativityTensor):
 
         t = super(GenericVector, self).lorentz_transform(transformation_matrix)
         return GenericVector(
-            t.tensor(),
-            syms=self.syms,
-            config=self.config,
-            parent_metric=None,
-            name=_change_name(self.name, context="__lt"),
+            t.tensor(), syms=self.syms, config=self.config, parent_metric=None
         )

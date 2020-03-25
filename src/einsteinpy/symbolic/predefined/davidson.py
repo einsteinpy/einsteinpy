@@ -17,4 +17,4 @@ def Davidson():
         t ** Rational(-2, 3) / expr,
         t ** Rational(4, 3) * r ** 2 / expr,
     ).tolist()
-    return MetricTensor(metric, coords, "ll", name="DavidsonMetric")
+    return MetricTensor(metric, coords, "ll")

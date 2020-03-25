@@ -4,11 +4,7 @@ from sympy import simplify, tensorcontraction, tensorproduct
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
-from einsteinpy.symbolic.helpers import (
-    _change_name,
-    simplify_sympy_array,
-    sympy_to_np_array,
-)
+from einsteinpy.symbolic.helpers import simplify_sympy_array, sympy_to_np_array
 
 
 def _config_checker(config):
@@ -213,8 +209,9 @@ class BaseRelativityTensor(Tensor):
         free variables in the tensor expression other than the variables describing space-time axis.
     functions : list
         Undefined functions in the tensor expression.
-    name : str or None
-        Name of the tensor. Defaults to "GenericTensor".
+    name : string or None
+        Name of the tensor.
+    
     
     """
 
@@ -226,7 +223,7 @@ class BaseRelativityTensor(Tensor):
         parent_metric=None,
         variables=list(),
         functions=list(),
-        name="GenericTensor",
+        name=None,
     ):
         """
         Constructor and Initializer
@@ -248,8 +245,8 @@ class BaseRelativityTensor(Tensor):
         functions : tuple or list or set
             List of symbolic functions used in epressing the tensor. 
             Calculates in real-time if left blank.
-        name : str or None
-            Name of the Tensor. Defaults to "GenericTensor".
+        name : string
+            Name of the Tensor. Defaults to None.
 
         Raises
         ------
@@ -383,5 +380,4 @@ class BaseRelativityTensor(Tensor):
             parent_metric=None,
             variables=self.variables,
             functions=self.functions,
-            name=_change_name(self.name, context="__lt"),
         )

@@ -1,12 +1,8 @@
 import numpy as np
 import pytest
-<<<<<<< HEAD
 from sympy import Array, pi, symbols
-=======
-from sympy import Array, diag, pi, symbols
->>>>>>> 0992cb0437a32ff61b9e0d2d3de7ec8c12631ff9
 
-from einsteinpy.symbolic import MetricTensor, constants, simplify_sympy_array
+from einsteinpy.symbolic import MetricTensor, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
     AntiDeSitter,
     AntiDeSitterStatic,
@@ -22,9 +18,6 @@ from einsteinpy.symbolic.predefined import (
     Kerr,
     KerrNewman,
     Minkowski,
-    MinkowskiCartesian,
-    MinkowskiPolar,
-    ReissnerNordstorm,
     Schwarzschild,
 )
 
@@ -40,8 +33,6 @@ from einsteinpy.symbolic.predefined import (
         Kerr(),
         KerrNewman(),
         Minkowski(),
-        MinkowskiCartesian(),
-        MinkowskiPolar(),
         CMetric(),
         Davidson(),
         Godel(),
@@ -50,7 +41,6 @@ from einsteinpy.symbolic.predefined import (
         BertottiKasner(),
         Ernst(),
         JanisNewmanWinicour(),
-        ReissnerNordstorm(),
     ],
 )
 def test_all_predefined_metrics(metric_instance):
@@ -67,31 +57,3 @@ def test_all_predefined_metrics(metric_instance):
 def test_check_two_metrics_are_equal(m1, m2):
     zero_arr = Array(np.zeros(shape=m1.tensor().shape, dtype=int))
     assert simplify_sympy_array(m1.tensor() - m2.tensor()) == zero_arr
-
-
-@pytest.mark.parametrize(
-    "m1, m2",
-    [
-        (
-            ReissnerNordstorm(),
-            KerrNewman(a=0),
-        ),  # Reissner-Nordstorm is a special case of Kerr-Newman
-    ],
-)
-def test_check_ReissnerNordstorm(m1, m2):
-    coords = symbols("t r theta phi")
-    t, r, theta, phi = coords
-    c, G, eps_0, Q = constants.c, constants.G, constants.eps_0, symbols("Q")
-    rQsq = (Q ** 2) * G / (4 * pi * eps_0 * (c ** 4))
-    metric = diag(rQsq / r ** 2, 0, 0, 0).tolist()
-    test_arr = MetricTensor(metric, coords, "ll", name="test_metric")
-    assert simplify_sympy_array(m1.tensor() - m2.tensor()) == simplify_sympy_array(
-        test_arr.tensor()
-    )
-
-
-def test_Minkowski_equality():
-    # Minkowski and MinkowskiCartesian are same
-    assert simplify_sympy_array(MinkowskiCartesian().tensor()) == simplify_sympy_array(
-        Minkowski().tensor()
-    )

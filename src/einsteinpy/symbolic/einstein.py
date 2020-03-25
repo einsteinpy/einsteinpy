@@ -1,6 +1,5 @@
 import sympy
 
-from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.ricci import RicciScalar, RicciTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
@@ -11,9 +10,7 @@ class EinsteinTensor(BaseRelativityTensor):
     Class for defining Einstein Tensor
     """
 
-    def __init__(
-        self, arr, syms, config="ll", parent_metric=None, name="EinsteinTensor"
-    ):
+    def __init__(self, arr, syms, config="ll", parent_metric=None):
         """
         Constructor and Initializer
 
@@ -28,8 +25,6 @@ class EinsteinTensor(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Einstein Tensor.
             Defaults to None.
-        name : str
-            Name of the Tensor. Defaults to "EinsteinTensor".
 
         Raises
         ------
@@ -42,7 +37,7 @@ class EinsteinTensor(BaseRelativityTensor):
 
         """
         super(EinsteinTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric
         )
         self._order = 2
         if not len(config) == self._order:
@@ -92,11 +87,7 @@ class EinsteinTensor(BaseRelativityTensor):
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
         new_obj = EinsteinTensor(
-            new_tensor,
-            self.syms,
-            config=newconfig,
-            parent_metric=metric,
-            name=_change_name(self.name, context="__" + newconfig),
+            new_tensor, self.syms, config=newconfig, parent_metric=metric
         )
         return new_obj
 
@@ -117,9 +108,5 @@ class EinsteinTensor(BaseRelativityTensor):
         """
         t = super(EinsteinTensor, self).lorentz_transform(transformation_matrix)
         return EinsteinTensor(
-            t.tensor(),
-            syms=self.syms,
-            config=self._config,
-            parent_metric=None,
-            name=_change_name(self.name, context="__lt"),
+            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
         )

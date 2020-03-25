@@ -1,6 +1,5 @@
 import sympy
 
-from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor
 
 
@@ -10,7 +9,7 @@ class MetricTensor(BaseRelativityTensor):
     Class to define a metric tensor for a space-time
     """
 
-    def __init__(self, arr, syms, config="ll", name="GenericMetricTensor"):
+    def __init__(self, arr, syms, config="ll"):
         """
         Constructor and Initializer
         
@@ -22,8 +21,6 @@ class MetricTensor(BaseRelativityTensor):
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
-        name : str
-            Name of the Metric Tensor. Defaults to "GenericMetricTensor".
 
         Raises
         ------
@@ -36,7 +33,7 @@ class MetricTensor(BaseRelativityTensor):
         
         """
         super(MetricTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=self, name=name
+            arr=arr, syms=syms, config=config, parent_metric=self
         )
         self._order = 2
         self._invmetric = None
@@ -71,7 +68,6 @@ class MetricTensor(BaseRelativityTensor):
                 sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
                 self.syms,
                 config=newconfig,
-                name=_change_name(self.name, context="__" + newconfig),
             )
             inv_met._invmetric = self
             return inv_met
@@ -129,9 +125,4 @@ class MetricTensor(BaseRelativityTensor):
 
         """
         t = super(MetricTensor, self).lorentz_transform(transformation_matrix)
-        return MetricTensor(
-            t.tensor(),
-            syms=self.syms,
-            config=self._config,
-            name=_change_name(self.name, context="__lt"),
-        )
+        return MetricTensor(t.tensor(), syms=self.syms, config=self._config)

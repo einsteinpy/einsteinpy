@@ -16,4 +16,4 @@ def Godel():
     metric = diag(-1, 1, -Rational(1, 2) * exp(2 * sqrt(2) * om * x), 1)
     metric[0, 2] = metric[2, 0] = -exp(sqrt(2) * om * x)
     metric = metric.tolist()
-    return MetricTensor(metric, coords, "ll", name="GodelMetric")
+    return MetricTensor(metric, coords, "ll")
