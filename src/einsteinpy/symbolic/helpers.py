@@ -198,15 +198,13 @@ def _change_name(curr_name: str, context: str) -> str:
     ----------
     curr_name : str
             Current name of the tensor
-    
     context : str
             Context of name change - '__lt', for lorentz_transformation
                                    - '__' + newconfig, for config_change (cc)
-    
     Returns
     -------
     str
         Altered name of the tensor, with appropriate tags
 
     """
-    return curr_name + context if curr_name else None
+    return curr_name + context if (curr_name is not None) else None

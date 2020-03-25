@@ -213,9 +213,8 @@ class BaseRelativityTensor(Tensor):
         free variables in the tensor expression other than the variables describing space-time axis.
     functions : list
         Undefined functions in the tensor expression.
-    name : str
-        Name of the tensor.
-    
+    name : str or None
+        Name of the tensor. Defaults to "GenericTensor".
     
     """
 
@@ -249,7 +248,7 @@ class BaseRelativityTensor(Tensor):
         functions : tuple or list or set
             List of symbolic functions used in epressing the tensor. 
             Calculates in real-time if left blank.
-        name : str
+        name : str or None
             Name of the Tensor. Defaults to "GenericTensor".
 
         Raises
