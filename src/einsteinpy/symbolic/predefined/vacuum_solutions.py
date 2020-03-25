@@ -114,7 +114,7 @@ def KerrNewman(
         / c2,
     ).tolist()
     metric[0][3] = metric[3][0] = sch * r * a * (sin(theta) ** 2) / (Sigma * c)
-    return MetricTensor(metric, coords, "ll", name='KerrNewmanMetric')
+    return MetricTensor(metric, coords, "ll", name="KerrNewmanMetric")
 
 
 def Reissner_Nordstorm(
