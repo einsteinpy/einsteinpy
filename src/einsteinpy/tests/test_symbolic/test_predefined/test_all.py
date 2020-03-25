@@ -1,10 +1,6 @@
 import numpy as np
 import pytest
-<<<<<<< HEAD
 from sympy import Array, diag, pi, symbols
-=======
-from sympy import Array, pi, symbols
->>>>>>> parent of 38cf771... Revert "parent 8f1ff7efb1f1a84e0fc835639aca1561935d9cf3"
 
 from einsteinpy.symbolic import MetricTensor, constants, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
@@ -27,6 +23,11 @@ from einsteinpy.symbolic.predefined import (
     ReissnerNordstorm,
     Schwarzschild,
 )
+
+<<<<<<< HEAD
+=======
+>>>>>>> parent of 38cf771... Revert "parent 8f1ff7efb1f1a84e0fc835639aca1561935d9cf3"
+
 
 
 @pytest.mark.parametrize(
