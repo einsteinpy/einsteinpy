@@ -17,7 +17,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
         syms,
         config="ull",
         parent_metric=None,
-        name="GenericChristoffelSymbolsTensor",
+        name="ChristoffelSymbols",
     ):
         """
         Constructor and Initializer
@@ -33,7 +33,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor from which Christoffel symbol is calculated. Defaults to None.
         name : str
-            Name of the Christoffel Symbols Tensor. Defaults to "GenericChristoffelSymbolsTensor".
+            Name of the Christoffel Symbols Tensor. Defaults to "ChristoffelSymbols".
 
         Raises
         ------
