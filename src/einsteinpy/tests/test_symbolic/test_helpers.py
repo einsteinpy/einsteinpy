@@ -61,12 +61,15 @@ def test_TransformationMatrix_variables_are_not_None(cart2sph_matrix):
     assert obj.new2old is not None
 
 
-@pytest.mark.parametrize("curr_name, context, expected", [
-    ['tens', '__lt', 'tens__lt'],
-    ['tens__ulu', '__ull', 'tens__ulu__ull'],
-    ['tens__lt', '__lt', 'tens__lt__lt'],
-    [None, '__lt', None]
-])
+@pytest.mark.parametrize(
+    "curr_name, context, expected",
+    [
+        ["tens", "__lt", "tens__lt"],
+        ["tens__ulu", "__ull", "tens__ulu__ull"],
+        ["tens__lt", "__lt", "tens__lt__lt"],
+        [None, "__lt", None],
+    ],
+)
 def test_change_name(curr_name, context, expected):
     altered_name = _change_name(curr_name, context)
-    assert altered_name ==  expected
+    assert altered_name == expected

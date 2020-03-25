@@ -12,12 +12,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
     """
 
     def __init__(
-        self,
-        arr,
-        syms,
-        config="ull",
-        parent_metric=None,
-        name="ChristoffelSymbols",
+        self, arr, syms, config="ull", parent_metric=None, name="ChristoffelSymbols",
     ):
         """
         Constructor and Initializer
