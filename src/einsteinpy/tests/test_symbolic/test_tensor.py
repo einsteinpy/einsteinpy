@@ -126,6 +126,12 @@ def test_Tensor_repr():
 
 
 @xfail(raises=TypeError, strict=True)
+def test_TypeError1():
+    # pass non array, number or expression in arr
+    obj = Tensor("value", config="ll")
+
+
+@xfail(raises=TypeError, strict=True)
 def test_TypeError2():
     scht = schwarzschild_tensor().tensor()
     # pass non str object
@@ -165,6 +171,15 @@ def test_check_properties():
 
 
 # Tests for BaseRelativityTensor
+@xfail(raises=TypeError, strict=True)
+def test_BaseRelativilyTensor_TypeError():
+    # pass non list, tuple, set to variables
+    t1, _, functions = arbitrary_tensor1()
+    t2 = BaseRelativityTensor(
+        t1.arr, t1.symbols(), config=t1.config, variables="value", functions=functions
+    )
+
+
 def test_BaseRelativityTensor_automatic_calculation_of_free_variables():
     t1, variables, functions = arbitrary_tensor1()
     t2 = BaseRelativityTensor(
