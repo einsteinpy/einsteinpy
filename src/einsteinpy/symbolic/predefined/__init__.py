@@ -9,4 +9,4 @@ from .find import find
 from .godel import Godel
 from .janis_newman_winicour import JanisNewmanWinicour
 from .minkowski import Minkowski
-from .vacuum_solutions import Kerr, KerrNewman, Schwarzschild
+from .vacuum_solutions import Kerr, KerrNewman,ReissnerNordstorm, Schwarzschild
