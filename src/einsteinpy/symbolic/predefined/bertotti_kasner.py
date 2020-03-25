@@ -27,4 +27,4 @@ def BertottiKasner(c=constants.c, k=symbols("k"), lambd=symbols("l")):
         1 / (lambd * (c ** 2)),
         (sin(th) ** 2) / (lambd * (c ** 2)),
     ).tolist()
-    return MetricTensor(metric, coords, "ll")
+    return MetricTensor(metric, coords, "ll", name="BertottiKasnerMetric")
