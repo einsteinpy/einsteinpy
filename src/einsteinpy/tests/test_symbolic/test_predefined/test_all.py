@@ -58,15 +58,29 @@ def test_all_predefined_metrics(metric_instance):
     [
         (Schwarzschild(), Kerr(a=0)),  # Schwarzschild is a special case of Kerr
         (Kerr(), KerrNewman(Q=0)),  # Kerr is a special case of Kerr-Newman
+    ],
+)
+def test_check_two_metrics_are_equal(m1, m2):
+    zero_arr = Array(np.zeros(shape=m1.tensor().shape, dtype=int))
+    assert simplify_sympy_array(m1.tensor() - m2.tensor()) == zero_arr
+
+
+@pytest.mark.parametrize(
+    "m1, m2",
+    [
         (
             ReissnerNordstorm(),
             KerrNewman(a=0),
         ),  # Reissner-Nordstorm is a special case of Kerr-Newman
     ],
 )
-def test_check_two_metrics_are_equal(m1, m2):
-    zero_arr = Array(np.zeros(shape=m1.tensor().shape, dtype=int))
-    assert simplify_sympy_array(m1.tensor() - m2.tensor()) == zero_arr
+def test_check_ReissnerNordstorm(m1, m2):
+    test_arr = Array(np.zeroes(shape=m1.tensor().shape, dtype=int))
+    coords = symbols("t r theta phi")
+    t, r, theta, phi = coords
+    rQsq = ((Q ** 2) * G) / (4 * pi * eps_0 * (c ** 4))
+    test_arr[0][0] = rQsq / r ** 2
+    assert simplify_sympy_array(m1.tensor() - m2.tensor()) == test_arr
 
 
 def test_Minkowski_equality():
