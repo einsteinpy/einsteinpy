@@ -51,7 +51,9 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
         1 - (sch * r / Sigma),
         -Sigma / (Delta * c2),
         -Sigma / c2,
-        (Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) * sin(theta) ** 2 / (Sigma * c2),
+        (Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2)
+        * sin(theta) ** 2
+        / (Sigma * c2),
     ).tolist()
     metric[0][3] = metric[3][0] = 2 * sch * r * a * (sin(theta) ** 2) / (Sigma * c)
     return MetricTensor(metric, coords, "ll", name="KerrMetric")
@@ -97,7 +99,9 @@ def KerrNewman(
         1 + ((rQsq - sch * r) / Sigma),
         -Sigma / (Delta * c2),
         -Sigma / c2,
-        (Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) * sin(theta) ** 2 / (Sigma * c2),
+        (Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2)
+        * sin(theta) ** 2
+        / (Sigma * c2),
     ).tolist()
     metric[0][3] = metric[3][0] = (
         (sch * r - rQsq) * 2 * a * (sin(theta) ** 2) / (Sigma * c)
