@@ -9,7 +9,6 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     Schwarzschild exterior metric in curvature coordinates
     Schwarzschild, Sitz. Preuss. Akad. Wiss., p189, (1916)
     Stephani (13.19) p157
-
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -17,7 +16,6 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     sch : ~sympy.core.basic.Basic or int or float
         Any value to assign to Schwarzschild Radius of the central object.
         Defaults to ``r_s``.
-
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
@@ -31,7 +29,6 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
 def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
     """
     Kerr Metric in Boyer Lindquist coordinates.
-
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -43,7 +40,6 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
         Spin factor of the heavy body. Usually, given by ``J/(Mc)``,
         where ``J`` is the angular momentum.
         Defaults to ``a``.
-
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
@@ -53,13 +49,13 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
 
     metric = diag(
         1 - (sch * r / Sigma),
-        -(Sigma ** 2) / (Delta * c2),
-        -(Sigma ** 2) / c2,
-        ((Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) / Sigma ** 2)
+        -Sigma / (Delta * c2),
+        -Sigma / c2,
+        ((Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) / Sigma)
         * sin(theta) ** 2
         / c2,
     ).tolist()
-    metric[0][3] = metric[3][0] = 2 * sch * r * a * (sin(theta) ** 2) / (Sigma ** 2 * c)
+    metric[0][3] = metric[3][0] = 2 * sch * r * a * (sin(theta) ** 2) / (Sigma * c)
     return MetricTensor(metric, coords, "ll", name="KerrMetric")
 
 
@@ -73,7 +69,6 @@ def KerrNewman(
 ):
     """
     Kerr-Newman Metric in Boyer Lindquist coordinates.
-
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -92,7 +87,6 @@ def KerrNewman(
     Q:  ~sympy.core.basic.Basic or int or float
         Any value to assign to eletric charge of the central object.
         Defaults to ``Q``.
-
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
@@ -103,14 +97,14 @@ def KerrNewman(
 
     metric = diag(
         1 + ((rQsq - sch * r) / Sigma),
-        -(Sigma ** 2) / (Delta * c2),
-        -(Sigma ** 2) / c2,
-        ((Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) / Sigma ** 2)
+        -Sigma / (Delta * c2),
+        -Sigma / c2,
+        ((Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) / Sigma)
         * sin(theta) ** 2
         / c2,
     ).tolist()
-    metric[0][3] = metric[3][0] = (sch * r - rQsq) * (
-        2 * a * (sin(theta) ** 2) / ((Sigma ** 2) * c)
+    metric[0][3] = metric[3][0] = (
+        (sch * r - rQsq) * 2 * a * (sin(theta) ** 2) / (Sigma * c)
     )
     return MetricTensor(metric, coords, "ll", name="KerrNewmanMetric")
 
@@ -124,11 +118,9 @@ def ReissnerNordstorm(
 ):
     """"
     The Reissner–Nordström metric in spherical coordinates
-
     A static solution to the Einstein–Maxwell field equations,
     which corresponds to the gravitational field of a charged,
     non-rotating, spherically symmetric body of mass M.
-
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -143,7 +135,6 @@ def ReissnerNordstorm(
     Q:  ~sympy.core.basic.Basic or int or float
         Any value to assign to eletric charge of the central object.
         Defaults to ``Q``.
-
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
