@@ -9,6 +9,7 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     Schwarzschild exterior metric in curvature coordinates
     Schwarzschild, Sitz. Preuss. Akad. Wiss., p189, (1916)
     Stephani (13.19) p157
+
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -16,6 +17,7 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     sch : ~sympy.core.basic.Basic or int or float
         Any value to assign to Schwarzschild Radius of the central object.
         Defaults to ``r_s``.
+
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
@@ -29,6 +31,7 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
 def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
     """
     Kerr Metric in Boyer Lindquist coordinates.
+
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -40,6 +43,7 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
         Spin factor of the heavy body. Usually, given by ``J/(Mc)``,
         where ``J`` is the angular momentum.
         Defaults to ``a``.
+
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
@@ -69,6 +73,7 @@ def KerrNewman(
 ):
     """
     Kerr-Newman Metric in Boyer Lindquist coordinates.
+
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -87,6 +92,7 @@ def KerrNewman(
     Q:  ~sympy.core.basic.Basic or int or float
         Any value to assign to eletric charge of the central object.
         Defaults to ``Q``.
+
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
@@ -121,6 +127,7 @@ def ReissnerNordstorm(
     A static solution to the Einstein–Maxwell field equations,
     which corresponds to the gravitational field of a charged,
     non-rotating, spherically symmetric body of mass M.
+
     Parameters
     ----------
     c : ~sympy.core.basic.Basic or int or float
@@ -135,6 +142,7 @@ def ReissnerNordstorm(
     Q:  ~sympy.core.basic.Basic or int or float
         Any value to assign to eletric charge of the central object.
         Defaults to ``Q``.
+
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
