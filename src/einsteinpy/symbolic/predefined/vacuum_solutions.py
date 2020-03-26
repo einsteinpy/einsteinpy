@@ -23,7 +23,7 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     t, r, theta, phi = coords
     val1, c2 = 1 - sch / r, c ** 2
     metric = diag(
-        val1, -1 / (val1 * c2), -1 * (r ** 2) / c2, -1 * ((r * sin(theta)) ** 2) / c2
+        val1, -1 / (val1 * c2), -(r ** 2) / c2, -((r * sin(theta)) ** 2) / c2
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="SchwarzschildMetric")
 
@@ -53,15 +53,13 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
 
     metric = diag(
         1 - (sch * r / Sigma),
-        -Sigma / (Delta * c2),
-        -Sigma / c2,
-        -(
-            (r ** 2 + a ** 2 + (sch * r * (a ** 2) * (sin(theta) ** 2) / Sigma))
-            * (sin(theta) ** 2)
-        )
+        -(Sigma ** 2) / (Delta * c2),
+        -(Sigma ** 2) / c2,
+        ((Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) / Sigma ** 2)
+        * sin(theta) ** 2
         / c2,
     ).tolist()
-    metric[0][3] = metric[3][0] = sch * r * a * (sin(theta) ** 2) / (Sigma * c)
+    metric[0][3] = metric[3][0] = 2 * sch * r * a * (sin(theta) ** 2) / (Sigma ** 2 * c)
     return MetricTensor(metric, coords, "ll", name="KerrMetric")
 
 
@@ -104,16 +102,16 @@ def KerrNewman(
     c2 = c ** 2
 
     metric = diag(
-        1 - (sch * r / Sigma),
-        -Sigma / (Delta * c2),
-        -Sigma / c2,
-        -(
-            (r ** 2 + a ** 2 + (sch * r * (a ** 2) * (sin(theta) ** 2) / Sigma))
-            * (sin(theta) ** 2)
-        )
+        1 + ((rQsq - sch * r) / Sigma),
+        -(Sigma ** 2) / (Delta * c2),
+        -(Sigma ** 2) / c2,
+        ((Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2) / Sigma ** 2)
+        * sin(theta) ** 2
         / c2,
     ).tolist()
-    metric[0][3] = metric[3][0] = sch * r * a * (sin(theta) ** 2) / (Sigma * c)
+    metric[0][3] = metric[3][0] = (sch * r - rQsq) * (
+        2 * a * (sin(theta) ** 2) / ((Sigma ** 2) * c)
+    )
     return MetricTensor(metric, coords, "ll", name="KerrNewmanMetric")
 
 
