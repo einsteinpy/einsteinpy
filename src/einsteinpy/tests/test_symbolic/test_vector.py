@@ -1,7 +1,11 @@
 import numpy as np
+import pytest
 from sympy import cos, cosh, simplify, sinh, symbols
 
 from einsteinpy.symbolic import GenericVector, MetricTensor
+
+# Making an xfail marker to indicate that you expect a test to fail
+xfail = pytest.mark.xfail
 
 
 def euclidean_space_metric():
@@ -25,6 +29,14 @@ def test_GenericVector_change_config_theoretical_test():
     covec = cnvec.change_config("l")  # get contravariant vector
     assert simplify(covec.tensor()[0] - (a + b * cos(th))) == 0
     assert simplify(covec.tensor()[1] - (b + a * cos(th))) == 0
+
+
+@xfail(strict=True)
+def test_GenericVector_check_Metric():
+    syms = symbols("t x y z")
+    t, x, y, z = syms
+    obj = GenericVector([t, x, y, z], syms=syms, config="u", parent_metric=None)
+    obj.change_config("u", None)
 
 
 def test_GenericVector_check_ValueErrors():

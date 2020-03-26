@@ -1,6 +1,7 @@
 import numpy as np
 import sympy
 
+from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
@@ -10,7 +11,9 @@ class ChristoffelSymbols(BaseRelativityTensor):
     Class for defining christoffel symbols.
     """
 
-    def __init__(self, arr, syms, config="ull", parent_metric=None):
+    def __init__(
+        self, arr, syms, config="ull", parent_metric=None, name="ChristoffelSymbols"
+    ):
         """
         Constructor and Initializer
         
@@ -24,6 +27,8 @@ class ChristoffelSymbols(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ull'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor from which Christoffel symbol is calculated. Defaults to None.
+        name : str
+            Name of the Christoffel Symbols Tensor. Defaults to "ChristoffelSymbols".
 
         Raises
         ------
@@ -36,7 +41,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
         
         """
         super(ChristoffelSymbols, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
         )
         self._order = 3
         if not len(self.config) == self._order:
@@ -104,7 +109,11 @@ class ChristoffelSymbols(BaseRelativityTensor):
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
         new_obj = ChristoffelSymbols(
-            new_tensor, self.syms, config=newconfig, parent_metric=metric
+            new_tensor,
+            self.syms,
+            config=newconfig,
+            parent_metric=metric,
+            name=_change_name(self.name, context="__" + newconfig),
         )
         return new_obj
 
@@ -125,5 +134,9 @@ class ChristoffelSymbols(BaseRelativityTensor):
         """
         t = super(ChristoffelSymbols, self).lorentz_transform(transformation_matrix)
         return ChristoffelSymbols(
-            t.tensor(), syms=self.syms, config=self._config, parent_metric=None
+            t.tensor(),
+            syms=self.syms,
+            config=self._config,
+            parent_metric=None,
+            name=_change_name(self.name, context="__lt"),
         )
