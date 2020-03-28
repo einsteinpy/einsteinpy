@@ -24,31 +24,31 @@ class VisualizeOrbits:
         print(self.create_object().ephemerides(quantities=22))
 
     def S_distance(self):
-        # Calculates "Sub solar" point positional angle and 
+        # Calculates "Sub solar" point positional angle and
         # the angular distance from the sub-observer point (center of disk).
         # UNITS: Degrees and Arcseconds
         print(self.create_object().ephemerides(quantities=16))
 
     def N_distance(self):
-        # Calculates North Pole positional angle and the 
+        # Calculates North Pole positional angle and the
         # angular distance from the sub-observer point (center of disk).
         # UNITS: Degrees and Arcseconds
         print(self.create_object().ephemerides(quantities=17))
 
     def az_el(self):
-        # The apparent azimuthal and elevation angle of the target. 
+        # The apparent azimuthal and elevation angle of the target.
         # Elevation is taken perpendicular to the local zentih direction.
         # UNITS: Degrees
         print(self.create_object().ephemerides(quantities=4))
 
     def R_ascdecl(self):
-        # Apparent right ascension and declination of the 
+        # Apparent right ascension and declination of the
         # target with respect to the specified observing center/site.
         # UNITS: HMS/DMS or Degrees
         print(self.create_object().ephemerides(quantities=2))
 
     def angsep(self):
-        # The angle between the center of a non-lunar target body and the 
+        # The angle between the center of a non-lunar target body and the
         # center of the primary body it revolves around, as seen by the observer.
         # UNITS: Arcseconds
         print(self.create_object().ephemerides(quantities=12))
