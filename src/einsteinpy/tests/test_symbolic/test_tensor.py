@@ -113,8 +113,9 @@ def test_Tensor_getitem():
 def test_Tensor_str():
     x, y, z = symbols("x y z")
     test_list = [[[x, y], [y, x]], [[z, x], [y, z]]]
-    obj1 = Tensor(test_list)
+    obj1 = Tensor(test_list, name="Test")
     assert "object at 0x" not in str(obj1)
+    assert "Test" in str(obj1)
 
 
 def test_Tensor_repr():

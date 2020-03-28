@@ -71,7 +71,7 @@ class Tensor:
     Base Class for Tensor manipulation
     """
 
-    def __init__(self, arr, config="ll"):
+    def __init__(self, arr, config="ll", name=None):
         """
         Constructor and Initializer
         
@@ -81,6 +81,8 @@ class Tensor:
             Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
         config : str
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
+        name : str or None
+            Name of the tensor.
 
         Raises
         ------
@@ -104,6 +106,7 @@ class Tensor:
             raise TypeError(
                 "config is either not of type 'str' or does contain characters other than 'l' or 'u'"
             )
+        self.name = name
 
     @property
     def order(self):
@@ -129,7 +132,10 @@ class Tensor:
         Returns a String with a readable representation of the object of class Tensor
 
         """
-        representation = "Tensor" + "\n"
+        representation = "Tensor"
+        if self.name is not None:
+            representation = " ".join((representation, self.name))
+        representation += "\n"
         representation += self.arr.__str__()
         return representation
 
@@ -263,11 +269,10 @@ class BaseRelativityTensor(Tensor):
             Raised when argument parent_metric does not belong to MetricTensor class and isn't None.
 
         """
-        super(BaseRelativityTensor, self).__init__(arr=arr, config=config)
+        super(BaseRelativityTensor, self).__init__(arr=arr, config=config, name=name)
         # Cannot implement the check that parent metric belongs to the class MetricTensor
         # Due to the issue of cyclic imports, would find a workaround
         self._parent_metric = parent_metric
-        self.name = name
         if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
