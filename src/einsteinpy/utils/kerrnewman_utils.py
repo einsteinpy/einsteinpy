@@ -590,6 +590,12 @@ def event_horizon(
         Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
     coord : str
         Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
 
     Returns
     -------
@@ -636,6 +642,12 @@ def radius_ergosphere(
         Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
     coord : str
         Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
 
     Returns
     -------
