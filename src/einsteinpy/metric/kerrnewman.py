@@ -85,32 +85,32 @@ class KerrNewman:
         for i in range(4):
             vals[i] = vec[i + 4]
         vals[4] = -2.0 * (
-            chl[0][0][1] * vec[4] * vec[5]
-            + chl[0][0][2] * vec[4] * vec[6]
-            + chl[0][1][3] * vec[5] * vec[7]
-            + chl[0][2][3] * vec[6] * vec[7]
+            chl[0,0,1] * vec[4] * vec[5]
+            + chl[0,0,2] * vec[4] * vec[6]
+            + chl[0,1,3] * vec[5] * vec[7]
+            + chl[0,2,3] * vec[6] * vec[7]
         )
         vals[5] = -1.0 * (
-            chl[1][0][0] * vec[4] * vec[4]
-            + 2 * chl[1][0][3] * vec[4] * vec[7]
-            + chl[1][1][1] * vec[5] * vec[5]
-            + 2 * chl[1][1][2] * vec[5] * vec[6]
-            + chl[1][2][2] * vec[6] * vec[6]
-            + chl[1][3][3] * vec[7] * vec[7]
+            chl[1,0,0] * vec[4] * vec[4]
+            + 2 * chl[1,0,3] * vec[4] * vec[7]
+            + chl[1,1,1] * vec[5] * vec[5]
+            + 2 * chl[1,1,2] * vec[5] * vec[6]
+            + chl[1,2,2] * vec[6] * vec[6]
+            + chl[1,3,3] * vec[7] * vec[7]
         )
         vals[6] = -1.0 * (
-            chl[2][0][0] * vec[4] * vec[4]
-            + 2 * chl[2][0][3] * vec[4] * vec[7]
-            + chl[2][1][1] * vec[5] * vec[5]
-            + 2 * chl[2][1][2] * vec[5] * vec[6]
-            + chl[2][2][2] * vec[6] * vec[6]
-            + chl[2][3][3] * vec[7] * vec[7]
+            chl[2,0,0] * vec[4] * vec[4]
+            + 2 * chl[2,0,3] * vec[4] * vec[7]
+            + chl[2,1,1] * vec[5] * vec[5]
+            + 2 * chl[2,1,2] * vec[5] * vec[6]
+            + chl[2,2,2] * vec[6] * vec[6]
+            + chl[2,3,3] * vec[7] * vec[7]
         )
         vals[7] = -2.0 * (
-            chl[3][0][1] * vec[4] * vec[5]
-            + chl[3][0][2] * vec[4] * vec[6]
-            + chl[3][1][3] * vec[5] * vec[7]
-            + chl[3][2][3] * vec[6] * vec[7]
+            chl[3,0,1] * vec[4] * vec[5]
+            + chl[3,0,2] * vec[4] * vec[6]
+            + chl[3,1,3] * vec[5] * vec[7]
+            + chl[3,2,3] * vec[6] * vec[7]
         )
         vals[4:] -= self.q.value * np.dot(
             vec[4:].reshape((4,)), np.matmul(metric, maxwell)
