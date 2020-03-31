@@ -2,6 +2,35 @@ version: 2
 jobs:
   quality:
     docker:
+      - image: circleci/python:3.7
+    parallelism: 4
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip --quiet
+            pip install black isort mypy --quiet
+      - run:
+          name: Check Code Style
+          command: |
+            . venv/bin/activate
+            isort --version
+            isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY  # This avoids installing einsteinpy
+            black --version
+            black src/ setup.py --check
+      - run:
+          name: check MyPy
+          command: |
+            . venv/bin/activate
+            mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
+  test_py36: &test-template  # See https://discuss.circleci.com/t/run-tests-on-multiple-versions-of-python/15462/2
+    docker:
       - image: circleci/python:3.6
 
     working_directory: ~/repo
@@ -14,32 +43,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install black isort mypy --quiet
-      - run:
-          name: check Black style
-          command: |
-            . venv/bin/activate
-            isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY  # This avoids installing einsteinpy
-            black src/ setup.py --check
-      - run:
-          name: check MyPy
-          command: |
-            . venv/bin/activate
-            mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
-  test_py35: &test-template  # See https://discuss.circleci.com/t/run-tests-on-multiple-versions-of-python/15462/2
-    docker:
-      - image: circleci/python:3.5
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
+            pip install --upgrade pip --quiet
             pip install numpy --quiet
             pip install . --quiet
             pip install .[dev] --quiet
@@ -47,16 +51,21 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            MPLBACKEND=Agg pytest -vv  # Test against installed code (Can use --doctest-modules)
-  test_py36:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.6
-
+            MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
   test_py37:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
+
+  test_py38:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+
+  test_py35:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5
 
   coverage:
     docker:
@@ -125,11 +134,16 @@ workflows:
       - test_py37:
           requires:
             - quality
+      - test_py38:
+          requires:
+            - quality
       - coverage:
           requires:
             - quality
+            - test_py35
       - docs:
           requires:
             - test_py35
             - test_py36
             - test_py37
+            - test_py38

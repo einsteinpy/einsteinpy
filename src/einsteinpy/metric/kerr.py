@@ -4,10 +4,9 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
+from einsteinpy.coordinates import BoyerLindquistConversion
 from einsteinpy.integrators import RK45
-from einsteinpy.utils import *
-from einsteinpy.utils import kerr_utils
-from einsteinpy.utils import schwarzschild_radius as scr
+from einsteinpy.utils import kerr_utils, schwarzschild_radius
 
 _G = constant.G.value
 _c = constant.c.value
@@ -19,106 +18,52 @@ class Kerr:
     """
 
     @u.quantity_input(time=u.s, M=u.kg)
-    def __init__(self, pos_vec, vel_vec, time, M, a):
+    def __init__(self, bl_coords, M, time):
+        self.input_coords = bl_coords
+        self.name = "Kerr"
         self.M = M
-        self.a = a
-        self.pos_vec = pos_vec
-        self.vel_vec = vel_vec
+        self.a = self.input_coords.a.to(u.m)
         self.time = time
-        self.time_vel = kerr_utils.kerr_time_velocity(
-            self.pos_vec, self.vel_vec, self.M, self.a
+
+        pos_vec, vel_vec = (
+            self.input_coords.si_values()[:3],
+            self.input_coords.si_values()[3:],
         )
+        time_vel = kerr_utils.kerr_time_velocity(pos_vec, vel_vec, self.M, self.a.value)
+
         self.initial_vec = np.hstack(
-            (self.time.value, self.pos_vec, self.time_vel.value, self.vel_vec)
+            (self.time.value, pos_vec, time_vel.value, vel_vec)
         )
-        self.schwarzschild_r = scr(M)
+        self.scr = schwarzschild_radius(M)
 
     @classmethod
-    def _classmethod_handler(cls, pos_vec, vel_vec, time, M, a):
-        cls.units_list = [
-            u.s,
-            u.m,
-            u.rad,
-            u.rad,
-            u.one,
-            u.m / u.s,
-            u.rad / u.s,
-            u.rad / u.s,
-        ]
-        pos_vec_vals = [
-            pos_vec[i].to(cls.units_list[i + 1]).value for i in range(len(pos_vec))
-        ]
-        vel_vec_vals = [
-            vel_vec[i].to(cls.units_list[i + 5]).value for i in range(len(vel_vec))
-        ]
-        return cls(
-            np.array(pos_vec_vals), np.array(vel_vec_vals), time.to(u.s), M.to(u.kg), a
-        )
-
-    @classmethod
-    @u.quantity_input(time=u.s, M=u.kg)
-    def from_BL(cls, pos_vec, vel_vec, time, M, a):
+    @u.quantity_input(time=u.s, M=u.kg, a=u.m)
+    def from_coords(cls, coords, M, q=None, Q=None, time=0 * u.s, a=0 * u.m):
         """
         Constructor
-        Initialize from Boyer-Lindquist Coordinates
 
         Parameters
         ----------
-        pos_vec : list
-            list of r, theta & phi components along with ~astropy.units
-        vel_vec : list
-            list of velocities of r, theta & phi components along with ~astropy.units
-        time : ~astropy.units.s
-            Time of start
-        M : ~astropy.units.kg
+        coords : ~einsteinpy.coordinates.velocity.CartesianDifferential
+            Object having both initial positions and velocities of particle in Cartesian Coordinates
+        M : ~astropy.units.quantity.Quantity
             Mass of the body
-        a : float
-            Spin factor of massive body
+        a : ~astropy.units.quantity.Quantity
+            Spin factor of the massive body. Angular momentum divided by mass divided by speed of light.
+        time : ~astropy.units.quantity.Quantity
+            Time of start, defaults to 0 seconds.
 
         """
-        cls.input_coord_system = "Boyer-Lindquist"
-        cls.input_units_list = (
-            [time.unit]
-            + [pos_vec[i].unit for i in range(len(pos_vec))]
-            + [u.one]
-            + [vel_vec[i].unit for i in range(len(vel_vec))]
-        )
-        return cls._classmethod_handler(pos_vec, vel_vec, time, M, a)
-
-    @classmethod
-    def from_cartesian(cls, pos_vec, vel_vec, time, M, a):
-        """
-        Constructor
-        Initialize from Cartesian Coordinates
-
-        Parameters
-        ----------
-        pos_vec : list
-            list of x, y and z components along with ~astropy.units
-        vel_vec : list
-            list of velocities of x, y, and z components along with ~astropy.units
-        time : ~astropy.units.s
-            Time of start
-        M : ~astropy.units.kg
-            Mass of the body
-        a : float
-            Spin factor of massive body
-
-        """
-        cls.input_coord_system = "Cartesian"
-        cls.input_units_list = (
-            [time.unit]
-            + [pos_vec[i].unit for i in range(len(pos_vec))]
-            + [u.one]
-            + [vel_vec[i].unit for i in range(len(vel_vec))]
-        )
-        bl_pos_vec, bl_vel_vec = C2BL_units(pos_vec, vel_vec, a)
-        return cls._classmethod_handler(bl_pos_vec, bl_vel_vec, time, M, a)
+        if coords.system == "Cartesian":
+            bl_coords = coords.bl_differential(a)
+            return cls(bl_coords, M, time)
+        if coords.system == "Spherical":
+            bl_coords = coords.bl_differential(a)
+            return cls(bl_coords, M, time)
+        return cls(coords, M, time)
 
     def f_vec(self, ld, vec):
-        chl = kerr_utils.christoffels(
-            _c, vec[1], vec[2], self.schwarzschild_r.value, self.a
-        )
+        chl = kerr_utils.christoffels(vec[1], vec[2], self.M.value, self.a.value)
         vals = np.zeros(shape=(8,), dtype=float)
         for i in range(4):
             vals[i] = vec[i + 4]
@@ -166,9 +111,9 @@ class Kerr:
         Parameters
         ----------
         start_lambda : float
-            Starting lambda, defaults to 0.0, (lambda ~= t)
+            Starting lambda(proper time), defaults to 0, (lambda ~= t)
         end_lamdba : float
-            Lambda where iteartions will stop, defaults to 100000
+            Lambda(proper time) where iteartions will stop, defaults to 100000
         stop_on_singularity : bool
             Whether to stop further computation on reaching singularity, defaults to True
         OdeMethodKwargs : dict
@@ -179,13 +124,15 @@ class Kerr:
 
         Returns
         -------
-        tuple
-            (~numpy.array of lambda, (n,8) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+        ~numpy.ndarray
+            N-element array containing proper time.
+        ~numpy.ndarray
+            (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
 
         """
-        vec_list = list()
-        lambda_list = list()
-        singularity_reached = False
+        vecs = list()
+        lambdas = list()
+        crossed_event_horizon = False
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -193,42 +140,47 @@ class Kerr:
             t_bound=end_lambda,
             **OdeMethodKwargs
         )
+<<<<<<< HEAD
         _scr = self.schwarzschild_r.value * 1.001
         _event_hor = (
             kerr_utils.event_horizon(self.schwarzschild_r.value, self.a)[0] * 1.001
         )
+=======
+
+        _event_hor = kerr_utils.event_horizon(self.M.value, self.a.value)[0] * 1.001
+
+>>>>>>> 0e311bec1be2508a28ebd8a3f8b7b944db997269
         while ODE.t < end_lambda:
-            vec_list.append(ODE.y)
-            lambda_list.append(ODE.t)
+            vecs.append(ODE.y)
+            lambdas.append(ODE.t)
             ODE.step()
+<<<<<<< HEAD
             if (not singularity_reached) and (ODE.y[1] <= _event_hor):
                 warnings.warn(
                     "r component of position vector reached event horizon. ",
                     RuntimeWarning,
                 )
+=======
+            if (not crossed_event_horizon) and (ODE.y[1] <= _event_hor):
+                warnings.warn("particle reached event horizon. ", RuntimeWarning)
+>>>>>>> 0e311bec1be2508a28ebd8a3f8b7b944db997269
                 if stop_on_singularity:
                     break
                 else:
-                    singularity_reached = True
+                    crossed_event_horizon = True
 
-        def _not_cartesian():
-            return (np.array(lambda_list), np.array(vec_list))
+        vecs, lambdas = np.array(vecs), np.array(lambdas)
 
-        def _cartesian():
-            self.units_list = [
-                u.s,
-                u.m,
-                u.m,
-                u.m,
-                u.one,
-                u.m / u.s,
-                u.m / u.s,
-                u.m / u.s,
-            ]
-            return (np.array(lambda_list), BL2C_8dim(np.array(vec_list), self.a))
-
-        choice_dict = {0: _not_cartesian, 1: _cartesian}
-        return choice_dict[int(return_cartesian)]()
+        if not return_cartesian:
+            return lambdas, vecs
+        else:
+            cart_vecs = list()
+            for v in vecs:
+                si_vals = BoyerLindquistConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7], self.a.value
+                ).convert_cartesian()
+                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
+            return lambdas, np.array(cart_vecs)
 
     def calculate_trajectory_iterator(
         self,
@@ -238,8 +190,8 @@ class Kerr:
         return_cartesian=False,
     ):
         """
-        Calculate trajectory in manifold according to geodesic equation
-        Yields an iterator
+        Calculate trajectory in manifold according to geodesic equation.
+        Yields an iterator.
 
         Parameters
         ----------
@@ -255,11 +207,12 @@ class Kerr:
 
         Yields
         ------
-        tuple
-            (lambda, (8,) shape ~numpy.array of [t, pos1, pos2, pos3, velocity_of_time, vel1, vel2, vel3])
+        float
+            proper time
+        ~numpy.ndarray
+            array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
 
         """
-        singularity_reached = False
         ODE = RK45(
             fun=self.f_vec,
             t0=start_lambda,
@@ -267,6 +220,7 @@ class Kerr:
             t_bound=1e300,
             **OdeMethodKwargs
         )
+<<<<<<< HEAD
         _scr = self.schwarzschild_r.value * 1.001
         _event_hor = (
             kerr_utils.event_horizon(self.schwarzschild_r.value, self.a)[0] * 1.001
@@ -305,3 +259,24 @@ class Kerr:
                 u.m / u.s,
             ]
         return yielder_func()
+=======
+        crossed_event_horizon = False
+        _event_hor = kerr_utils.event_horizon(self.M.value, self.a.value)[0] * 1.001
+
+        while True:
+            if not return_cartesian:
+                yield ODE.t, ODE.y
+            else:
+                v = ODE.y
+                si_vals = BoyerLindquistConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7], self.a.value
+                ).convert_cartesian()
+                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
+            ODE.step()
+            if (not crossed_event_horizon) and (ODE.y[1] <= _event_hor):
+                warnings.warn("particle reached event horizon. ", RuntimeWarning)
+                if stop_on_singularity:
+                    break
+                else:
+                    crossed_event_horizon = True
+>>>>>>> 0e311bec1be2508a28ebd8a3f8b7b944db997269

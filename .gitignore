@@ -30,6 +30,9 @@ docs/_build
 # Pycharm editor project files
 .idea
 
+# for virtual environment
+venv/
+
 # Floobits project files
 .floo
 .flooignore
@@ -63,5 +66,12 @@ pip-wheel-metadata
 # VS Code
 .vscode
 
-#jupyter notebook
-*.ipynb_checkpoints
+# Emacs
+TAGS
+
+# default pytest cache directory
+*/.pytest_cache
+.pytest_cache/
+
+#Tox
+.tox

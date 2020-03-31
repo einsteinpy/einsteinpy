@@ -1,0 +1,14 @@
+  
+@import url("alabaster.css");
+
+body {
+    min-width: 100px;
+}
+
+div.body{
+    min-width: 100px;
+}
+
+div.sphinxsidebar ul{
+	list-style-type: square;
+}

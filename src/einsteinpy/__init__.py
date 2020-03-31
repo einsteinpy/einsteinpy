@@ -3,8 +3,8 @@
 einsteinpy
 ==========
 
-Utilities and Python wrappers for General Relativity
+Python for General Relativity
 
 """
 
-__version__ = "0.2.dev0"
+__version__ = "0.3.dev0"

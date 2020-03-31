@@ -40,11 +40,10 @@ As members of the community,
   same respect as people within our community.
 
 * We pledge to help the entire community follow the code of conduct, and to
-  not remain silent when we see violations of the code of conduct. We will
-  take action when members of our community violate this code such as
-  contacting einsteinpy.project@gmail.com (all emails sent to this
-  address will be treated with the strictest confidence) or talking privately
-  with the person.
+  not remain silent when we see violations of the code of conduct. We will take 
+  action when members of our community violate this code such as contacting 
+  shreyas@einsteinpy.org (all emails sent to this address will be treated with 
+  the strictest confidence) or talking privately with the person.
 
 This code of conduct applies to all community situations online and offline,
 including mailing lists, forums, social media, conferences, meetings,

@@ -5,3 +5,4 @@ This module contains the basic class for calculating time-like geodesics in Kerr
 
 .. automodule:: einsteinpy.metric.kerr
     :members:
+    :show-inheritance:

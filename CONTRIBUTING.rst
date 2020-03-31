@@ -45,10 +45,6 @@ And point your browser to http://0.0.0.0:8000.
 Code writing
 ------------
 
-.. image:: https://img.shields.io/waffle/label/einsteinpy/einsteinpy/1%20-%20Ready.svg?style=flat-square
-    :target: https://waffle.io/einsteinpy/einsteinpy
-    :alt: 'Stories in Ready'
-
 Code contributions are welcome! If you are looking for a place to start,
 help us fixing bugs in einsteinpy and check out the `"easy" tag`_. Those
 should be easier to fix than the others and require less knowledge about the

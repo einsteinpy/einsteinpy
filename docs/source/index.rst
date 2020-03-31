@@ -1,18 +1,21 @@
 EinsteinPy - Making Einstein possible in Python
 ===============================================
 
-.. image:: http://einsteinpy.github.io/img/logo.png
-   :target: http://einsteinpy.github.io/
+.. image:: https://einsteinpy.org/img/wordmark.png
+   :target: https://einsteinpy.org/
    :alt: EinsteinPy logo
    :width: 675px
    :align: center
 
 
 **EinsteinPy** is an open source pure Python package dedicated to problems arising
-in General Relativity and relativistic physics, such as goedesics plotting for
-Schwarzschild space-time model, calculation of Schwarzschild radius for any mass given.
-Features like visualisation of geodesics of curved black holes and 3D visualisations
-are some of the features which are planned. It is released under the MIT license.
+in General Relativity and gravitational physics, such as goedesics plotting for
+Schwarzschild, Kerr and Kerr Newman space-time model, calculation of Schwarzschild
+radius, calculation of Event Horizon and Ergosphere for Kerr space-time. Symbolic
+Manipulations of various tensors like Metric, Riemann, Ricci and Christoffel Symbols
+is also possible using the library. EinsteinPy also features Hypersurface Embedding of
+Schwarzschild space-time, which will soon lead to modelling of Gravitational Lensing!
+It is released under the MIT license.
 
 
 View `source code`_ of EinsteinPy!
@@ -22,7 +25,7 @@ View `source code`_ of EinsteinPy!
 
 Key features of EinsteinPy are:
 
-* Geometry analysis and trajectory calculation in vaccum solutions of Einstein's field equations
+* Geometry analysis and trajectory calculation in vacuum solutions of Einstein's field equations
  
  * Schwarzschild space-time
  * Kerr space-time
@@ -35,17 +38,28 @@ Key features of EinsteinPy are:
  * Maxwell Tensor and electromagnetic potential in Kerr-Newman space-time
  * And much more!
 
-* Symbolic Calculation of various quantities in GR
+* Symbolic Calculation of various quantities
 
  * Christoffel Symbols
  * Riemann Curvature Tensor
+ * Ricci Tensor
+ * Index uppering and lowering!
  * Simplification of symbolic expressions
 
-* Static Geodesic Plotting
+* Geodesic Plotting
+
+ * Static Plotting using Matplotlib
+ * Interactive 2D plotting
+ * Environment aware plotting!
+
 * Coordinate conversion with unit handling
 
  * Spherical/Cartesian Coordinates
  * Boyer-Lindquist/Cartesian Coordinates
+
+* Hypersurface Embedding of Schwarzschild Space-Time
+
+* Shadow cast by an thin emission disk around a Schwarzschild Black Hole
 
 
 And more to come!
@@ -79,9 +93,16 @@ the MIT license, hence allowing commercial use of the library.
 
 .. code-block:: python
 
-    from einsteinpy.plotting import StaticGeodesicPlotter
-    a = StaticGeodesicPlotter(mass)
-    a.plot(r,v)
+    from einsteinpy.plotting import GeodesicPlotter
+    from einsteinpy.examples import perihelion
+    a = GeodesicPlotter()
+    a.plot(perihelion())
+    a.show()
+
+.. figure:: _static/perihelion.png
+   :align: center
+   :figwidth: 650px
+   :alt: Advancement of perihelion in Schwarzschild space-time
 
 Contents
 --------
@@ -91,6 +112,9 @@ Contents
 
     getting_started
     user_guide
+    metric
     jupyter
     changelog
+    dev_guide
     api/index
+    codeofconduct
