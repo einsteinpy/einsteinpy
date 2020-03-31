@@ -174,7 +174,7 @@ def test_event_horizon_for_nonrotating_uncharged_case():
     a = 0.0
     Q = 0.0
     _scr = schwarzschild_radius_dimensionless(M)
-    a1 = kerrnewman_utils.event_horizon(M, a, Q, np.pi / 4)
+    a1 = kerrnewman_utils.event_horizon(M, a, Q, np.pi / 4, "Spherical")
     a2 = kerr_utils.event_horizon(M, a, np.pi / 4)
     assert_allclose(a1, a2, rtol=0.0, atol=1e-4)
     assert_allclose(a1[0], _scr, rtol=0.0, atol=1e-4)
@@ -185,7 +185,7 @@ def test_radius_ergosphere_for_nonrotating_uncharged_case():
     a = 0.0
     Q = 0.0
     _scr = schwarzschild_radius_dimensionless(M)
-    a1 = kerrnewman_utils.radius_ergosphere(M, a, Q, np.pi / 4)
+    a1 = kerrnewman_utils.radius_ergosphere(M, a, Q, np.pi / 4, "Spherical")
     a2 = kerr_utils.radius_ergosphere(M, a, np.pi / 4)
     assert_allclose(a1, a2, rtol=0.0, atol=1e-4)
     assert_allclose(a1[0], _scr, rtol=0.0, atol=1e-4)
