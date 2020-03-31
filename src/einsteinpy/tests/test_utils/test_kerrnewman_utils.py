@@ -4,7 +4,11 @@ from astropy import units as u
 from numpy.testing import assert_allclose
 
 from einsteinpy import constant, utils
-from einsteinpy.utils import kerr_utils, kerrnewman_utils
+from einsteinpy.utils import (
+    kerr_utils,
+    kerrnewman_utils,
+    schwarzschild_radius_dimensionless,
+)
 
 _c = constant.c.value
 _G = constant.G.value
@@ -139,3 +143,25 @@ def test_maxwell_tensor_contravariant_for_natural_units():
         i = int(t / 4) % 4
         j = t % 4
         assert_allclose(0, m[i, j] + m[j, i], rtol=0.0, atol=1e-10)
+
+
+def test_event_horizon_for_nonrotating_uncharged_case():
+    M = 5e27
+    a = 0.0
+    Q = 0.0
+    _scr = schwarzschild_radius_dimensionless(M)
+    a1 = kerrnewman_utils.event_horizon(M, a, Q, np.pi / 4, "Spherical")
+    a2 = kerr_utils.event_horizon(M, a, np.pi / 4)
+    assert_allclose(a1, a2, rtol=1e-4, atol=0.0)
+    assert_allclose(a1[0], _scr, rtol=1e-4, atol=0.0)
+
+
+def test_radius_ergosphere_for_nonrotating_uncharged_case():
+    M = 5e27
+    a = 0.0
+    Q = 0.0
+    _scr = schwarzschild_radius_dimensionless(M)
+    a1 = kerrnewman_utils.radius_ergosphere(M, a, Q, np.pi / 4, "Spherical")
+    a2 = kerr_utils.radius_ergosphere(M, a, np.pi / 4)
+    assert_allclose(a1, a2, rtol=1e-4, atol=0.0)
+    assert_allclose(a1[0], _scr, rtol=1e-4, atol=0.0)
