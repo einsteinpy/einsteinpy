@@ -91,7 +91,7 @@ def sigma(r, theta, a):
     -------
     float
         The value r^2 + a^2 * cos^2(theta)
-    
+
     """
     return (r ** 2) + ((a * np.cos(theta)) ** 2)
 
@@ -114,7 +114,7 @@ def delta(r, M, a, c=constant.c.value, G=constant.G.value):
     -------
     float
         The value r^2 - Rs * r + a^2
-    
+
     """
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2)
@@ -126,7 +126,7 @@ def metric(r, theta, M, a, c=constant.c.value, G=constant.G.value):
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -166,7 +166,7 @@ def metric_inv(r, theta, M, a, c=constant.c.value, G=constant.G.value):
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -193,7 +193,7 @@ def dmetric_dx(r, theta, M, a, c=constant.c.value, G=constant.G.value):
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -261,7 +261,7 @@ def christoffels(r, theta, M, a, c=constant.c.value, G=constant.G.value):
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -385,7 +385,7 @@ def spin_factor(J, M, c):
     -------
     float
         Spin factor (J/(Mc))
-    
+
     """
     return J / (M * c)
 
@@ -406,12 +406,16 @@ def event_horizon(
         Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
     coord : str
         Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
 
     Returns
     -------
     ~numpy.array
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
-    
+
     """
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     Rh = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2)))
@@ -442,12 +446,16 @@ def radius_ergosphere(
         Angle from z-axis in Boyer-Lindquist coordinates in radians. Defaults to pi/2.
     coord : str
         Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
 
     Returns
     -------
     ~numpy.array
         [Radius of ergosphere(R), angle from z axis(theta)] in BL/Spherical coordinates
-    
+
     """
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     Re = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2) * (np.cos(theta) ** 2)))

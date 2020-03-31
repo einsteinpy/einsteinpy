@@ -2,6 +2,8 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant, utils
+from einsteinpy.coordinates import BoyerLindquist, Spherical
+from einsteinpy.utils import schwarzschild_radius_dimensionless
 
 nonzero_christoffels_list = [
     (0, 0, 1),
@@ -83,7 +85,7 @@ def rho(r, theta, a):
     -------
     float
         The value sqrt(r^2 + a^2 * cos^2(theta))
-    
+
     """
     return np.sqrt((r ** 2) + ((a * np.cos(theta)) ** 2))
 
@@ -116,7 +118,7 @@ def delta(
     -------
     float
         The value r^2 - Rs * r + a^2 + Rq^2
-    
+
     """
     Rs = utils.schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
@@ -137,7 +139,7 @@ def metric(
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -193,7 +195,7 @@ def metric_inv(
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -234,7 +236,7 @@ def dmetric_dx(
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -251,7 +253,7 @@ def dmetric_dx(
         Gravitational constant
     Cc : float
         Coulomb's constant
-    
+
     Returns
     -------
     dmdx : ~numpy.array
@@ -335,7 +337,7 @@ def christoffels(
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -392,7 +394,7 @@ def em_potential(
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -413,7 +415,7 @@ def em_potential(
     -------
     ~numpy.array
         Numpy array of shape (4,)
-    
+
     """
     rq, rh2, c2 = charge_length_scale(Q, c, G, Cc), rho(r, theta, a) ** 2, c ** 2
     vec = np.zeros((4,), dtype=float)
@@ -437,7 +439,7 @@ def maxwell_tensor_covariant(
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -493,7 +495,7 @@ def maxwell_tensor_contravariant(
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -561,3 +563,107 @@ def kerrnewman_time_velocity(pos_vec, vel_vec, mass, a, Q):
     D = (B ** 2) - (4 * A * C)
     vt = (B + np.sqrt(D)) / (2 * A)
     return vt * u.one
+
+
+def event_horizon(
+    M,
+    a,
+    Q,
+    theta=np.pi / 2,
+    coord="BL",
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
+    """
+    Calculate the radius of event horizon of Kerr-Newman black hole
+
+    Parameters
+    ----------
+    M : float
+        Mass of massive body
+    a : float
+        Black hole spin factor
+    Q : float
+        Charge on the black hole
+    theta : float
+        Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
+    coord : str
+        Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
+
+    Returns
+    -------
+    ~numpy.array
+        [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
+
+    """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
+    rQsq = (Q ** 2) * G * Cc / c ** 4
+    Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 - rQsq)
+    if coord == "BL":
+        ans = np.array([Rh, theta], dtype=float)
+    else:
+        ans = (
+            BoyerLindquist(Rh * u.m, theta * u.rad, 0.0 * u.rad, a * u.m)
+            .to_spherical()
+            .si_values()[:2]
+        )
+    return ans
+
+
+def radius_ergosphere(
+    M,
+    a,
+    Q,
+    theta=np.pi / 2,
+    coord="BL",
+    c=constant.c.value,
+    G=constant.G.value,
+    Cc=constant.coulombs_const.value,
+):
+    """
+    Calculate the radius of ergospere of Kerr-Newman black hole at a specific azimuthal angle
+
+    Parameters
+    ----------
+    M : float
+        Mass of massive body
+    a : float
+        Black hole spin factor
+    Q : float
+        Charge on the black hole
+    theta : float
+        Angle from z-axis in Boyer-Lindquist coordinates in radians. Mandatory for coord=='Spherical'. Defaults to pi/2.
+    coord : str
+        Output coordinate system. 'BL' for Boyer-Lindquist & 'Spherical' for spherical. Defaults to 'BL'.
+    c : float
+        Speed of light
+    G : float
+        Gravitational constant
+    Cc : float
+        Coulomb's constant
+
+    Returns
+    -------
+    ~numpy.array
+        [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
+
+    """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
+    rQsq = (Q ** 2) * G * Cc / c ** 4
+    Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 * np.cos(theta) ** 2 - rQsq)
+    if coord == "BL":
+        ans = np.array([Rh, theta], dtype=float)
+    else:
+        ans = (
+            BoyerLindquist(Rh * u.m, theta * u.rad, 0.0 * u.rad, a * u.m)
+            .to_spherical()
+            .si_values()[:2]
+        )
+    return ans
