@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-from sympy import Array, diag, pi, symbols
+from sympy import Array
 
-from einsteinpy.symbolic import MetricTensor, constants, simplify_sympy_array
+from einsteinpy.symbolic import MetricTensor, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
     AntiDeSitter,
     AntiDeSitterStatic,
@@ -62,6 +62,10 @@ def test_all_predefined_metrics(metric_instance):
             ReissnerNordstorm(),
             KerrNewman(a=0),
         ),  # Reissner-Nordstorm is a special case of Kerr-Newman
+        (
+            Schwarzschild(),
+            ReissnerNordstorm(Q=0),
+        ),  # Schwarzschild is a special case of Reissner-Nordstorm
     ],
 )
 def test_check_two_metrics_are_equal(m1, m2):
