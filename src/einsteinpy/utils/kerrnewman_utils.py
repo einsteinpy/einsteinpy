@@ -2,6 +2,8 @@ import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant, utils
+from einsteinpy.coordinates import BoyerLindquist, Spherical
+from einsteinpy.utils import schwarzschild_radius_dimensionless
 
 nonzero_christoffels_list = [
     (0, 0, 1),
