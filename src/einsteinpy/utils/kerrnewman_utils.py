@@ -645,7 +645,7 @@ def radius_ergosphere(
     """
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     rQsq = (Q ** 2) * G * Cc / c ** 4
-    Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 * cos(theta) ** 2 - rQsq)
+    Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 * np.cos(theta) ** 2 - rQsq)
     if coord == "BL":
         ans = np.array([Rh, theta], dtype=float)
     else:
