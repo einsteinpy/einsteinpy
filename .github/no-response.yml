@@ -7,4 +7,4 @@ responseRequiredLabel: Support
 # Comment to post when closing an Issue for lack of response. Set to `false` to disable
 closeComment: >
   This issue has been automatically closed because there have been no comments for 21 days.
-  Please reach out if you have further questions or have made prgress and want to reopen the issue.
+  Please reach out if you have further questions or have made progress and want to reopen the issue.
