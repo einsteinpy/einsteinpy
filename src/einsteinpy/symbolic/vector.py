@@ -4,7 +4,6 @@ from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 class GenericVector(BaseRelativityTensor):
     """
-    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor.
     Class to represent a vector in arbitrary space-time symbolically
 
     """

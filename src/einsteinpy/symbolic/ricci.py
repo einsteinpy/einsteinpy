@@ -10,7 +10,6 @@ from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 class RicciTensor(BaseRelativityTensor):
     """
-    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
     Class for defining Ricci Tensor
     """
 
@@ -174,7 +173,6 @@ class RicciTensor(BaseRelativityTensor):
 
 class RicciScalar(BaseRelativityTensor):
     """
-    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor
     Class for defining Ricci Scalar
     """
 
