@@ -13,7 +13,6 @@ calculations related to General Relativity.
     tensor
     vector
     metric
-    vacuum_metrics
     christoffel
     riemann
     ricci
