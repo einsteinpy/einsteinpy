@@ -79,5 +79,5 @@ def test_no_exception_raised_passing_christoffel_with_unconventional_indices():
     try:
         rm = RiemannCurvatureTensor.from_christoffels(ch2)
         assert True
-    except:
+    except Exception:
         assert False
