@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import alabaster
-
+## Wow
 project = "EinsteinPy"
 year = datetime.now().year
 copyright = "%d EinsteinPy Development Team" % year
