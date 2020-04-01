@@ -8,7 +8,6 @@ from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 class RiemannCurvatureTensor(BaseRelativityTensor):
     """
-    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
     Class for defining Riemann Curvature Tensor
     """
 

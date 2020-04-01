@@ -203,7 +203,6 @@ class Tensor:
 
 class BaseRelativityTensor(Tensor):
     """
-    Inherits from ~einsteinpy.symbolic.tensor.Tensor . 
     Generic class for defining tensors in General Relativity. 
     This would act as a base class for other Tensorial quantities in GR.
 
