@@ -68,8 +68,6 @@ class TransformationMatrix(ImmutableDenseNDimArray):
     """
     Class for defining transformation matrix for basis change of vectors and tensors.
 
-    Inherits from sympy class ``ImmutableDenseNDimArray``.
-
     """
 
     def __init__(

@@ -6,7 +6,6 @@ from einsteinpy.symbolic.tensor import BaseRelativityTensor
 
 class MetricTensor(BaseRelativityTensor):
     """
-    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
     Class to define a metric tensor for a space-time
     """
 

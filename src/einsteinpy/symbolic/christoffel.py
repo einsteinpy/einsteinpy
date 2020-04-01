@@ -7,7 +7,6 @@ from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 class ChristoffelSymbols(BaseRelativityTensor):
     """
-    Inherits from ~einsteinpy.symbolic.tensor.BaseRelativityTensor .
     Class for defining christoffel symbols.
     """
 
