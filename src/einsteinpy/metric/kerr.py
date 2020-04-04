@@ -14,7 +14,7 @@ _c = constant.c.value
 
 class Kerr:
     """
-    Class for defining Kerr Goemetry Methdos
+    Class for defining Kerr Geometry Methods
     """
 
     @u.quantity_input(time=u.s, M=u.kg)
