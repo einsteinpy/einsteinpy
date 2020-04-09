@@ -148,6 +148,7 @@ def test_TypeError3():
 
 @xfail(raises=ValueError, strict=True)
 def test_ValueError1():
+<<<<<<< HEAD
     x, y = symbols("x y")
     test_list = [[x, y], [y, x]]
     # pass array with shape (2,2) when (2,2,2) implied by argument syms
@@ -156,6 +157,8 @@ def test_ValueError1():
 
 @xfail(raises=ValueError, strict=True)
 def test_ValueError2():
+=======
+>>>>>>> 8bcd88c... Resolves #485
     x, y, z = symbols("x y z")
     test_list = [[x, y], [y, x]]
     # pass 2x2 array when 3x3 implied by argument syms
