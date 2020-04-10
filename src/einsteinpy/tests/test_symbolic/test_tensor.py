@@ -146,6 +146,14 @@ def test_TypeError3():
     obj = Tensor(scht, config="al")
 
 
+@xfail(raises=ValueError, strict=True)
+def test_ValueError1():
+    x, y, z = symbols("x y z")
+    test_list = [[x, y], [y, x]]
+    # pass 2x2 array when 3x3 implied by argument syms
+    obj = BaseRelativityTensor(test_list, [x, y, z])
+
+
 def test_subs_single():
     # replacing only schwarzschild radius(a) with 0
     T = schwarzschild_tensor()
