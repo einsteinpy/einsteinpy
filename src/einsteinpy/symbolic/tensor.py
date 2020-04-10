@@ -273,7 +273,7 @@ class BaseRelativityTensor(Tensor):
         super(BaseRelativityTensor, self).__init__(arr=arr, config=config, name=name)
 
         if len(self.arr.shape) != 0 and self.arr.shape[0] != len(syms):
-                raise ValueError(f"invalid shape of argument arr for syms: {syms}")
+            raise ValueError(f"invalid shape of argument arr for syms: {syms}")
 
         # Cannot implement the check that parent metric belongs to the class MetricTensor
         # Due to the issue of cyclic imports, would find a workaround
