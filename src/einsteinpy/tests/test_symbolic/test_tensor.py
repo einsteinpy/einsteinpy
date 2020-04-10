@@ -82,8 +82,8 @@ def test_Tensor():
     x, y, z = symbols("x y z")
     test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]
     test_arr = Array(test_list)
-    obj1 = Tensor(test_arr)
-    obj2 = Tensor(test_list)
+    obj1 = Tensor(test_arr, config='ull')
+    obj2 = Tensor(test_list, config='ull')
     assert obj1.tensor() == obj2.tensor()
     assert isinstance(obj1.tensor(), Array)
 
@@ -91,7 +91,7 @@ def test_Tensor():
 def test_Tensor_simplify():
     x, y, z = symbols("x y z")
     test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]
-    obj = Tensor(test_list)
+    obj = Tensor(test_list, config='ull')
     # with set_self = False
     assert obj.simplify(set_self=False)[0, 1, 1] == 0
     assert not obj.tensor()[0, 1, 1] == 0
@@ -103,7 +103,7 @@ def test_Tensor_simplify():
 def test_Tensor_getitem():
     x, y, z = symbols("x y z")
     test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]
-    obj = Tensor(test_list)
+    obj = Tensor(test_list, config='ull')
     n = 2
     for i in range(n ** 3):
         p, q, r = i % n, int(i / n) % n, int(i / n ** 2) % n
@@ -113,7 +113,7 @@ def test_Tensor_getitem():
 def test_Tensor_str():
     x, y, z = symbols("x y z")
     test_list = [[[x, y], [y, x]], [[z, x], [y, z]]]
-    obj1 = Tensor(test_list, name="Test")
+    obj1 = Tensor(test_list, config='ull', name="Test")
     assert "object at 0x" not in str(obj1)
     assert "Test" in str(obj1)
 
@@ -121,7 +121,7 @@ def test_Tensor_str():
 def test_Tensor_repr():
     x, y, z = symbols("x y z")
     test_list = [[[x, y], [y, sin(2 * z) - 2 * sin(z) * cos(z)]], [[z ** 2, x], [y, z]]]
-    obj1 = Tensor(test_list)
+    obj1 = Tensor(test_list, config='ull')
     machine_representation = repr(obj1)
     assert not "object at 0x" in machine_representation
 
@@ -214,7 +214,7 @@ def test_BaseRelativityTensor_automatic_calculation_of_free_variables():
 
 @pytest.mark.parametrize("scalar", [11.89, y * z + 5])
 def test_tensor_scalar(scalar):
-    scalar_tensor = Tensor(scalar)
+    scalar_tensor = Tensor(scalar, config="")
     assert scalar_tensor.tensor().rank() == 0
 
 
