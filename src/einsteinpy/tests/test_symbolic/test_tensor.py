@@ -147,6 +147,14 @@ def test_TypeError3():
 
 
 @xfail(raises=ValueError, strict=True)
+def test_ValueError2():
+    x, y = symbols("x y")
+    test_list = [[x, y], [y, x]]
+    # pass an array of shape (2,2) when (2,2,2) implied by config
+    obj = Tensor(test_list, config="lll")
+
+
+@xfail(raises=ValueError, strict=True)
 def test_ValueError1():
     x, y, z = symbols("x y z")
     test_list = [[x, y], [y, x]]
