@@ -90,6 +90,8 @@ class Tensor:
             Raised when arr is not a list or sympy array
         TypeError
             Raised when config is not of type str or contains characters other than 'l' or 'u'
+        ValueError
+            Raised when ``config`` implies order of Tensor different than that indicated by shape of ``arr``
 
         """
 
@@ -105,6 +107,12 @@ class Tensor:
         else:
             raise TypeError(
                 "config is either not of type 'str' or does contain characters other than 'l' or 'u'"
+            )
+        if len(self.arr.shape) != len(config):
+            raise ValueError(
+                "invalid shape of array for tensor of order implied by config: '{}'".format(
+                    config
+                )
             )
         self.name = name
 
