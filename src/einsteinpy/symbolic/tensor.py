@@ -266,9 +266,15 @@ class BaseRelativityTensor(Tensor):
             Raised when arguments syms, variables, functions have data type other than list, tuple or set.
         TypeError
             Raised when argument parent_metric does not belong to MetricTensor class and isn't None.
+        ValueError
+            Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
         super(BaseRelativityTensor, self).__init__(arr=arr, config=config, name=name)
+
+        if len(self.arr.shape) != 0 and self.arr.shape[0] != len(syms):
+            raise ValueError("invalid shape of argument arr for syms: {}".format(syms))
+
         # Cannot implement the check that parent metric belongs to the class MetricTensor
         # Due to the issue of cyclic imports, would find a workaround
         self._parent_metric = parent_metric
