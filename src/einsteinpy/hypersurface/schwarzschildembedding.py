@@ -140,13 +140,13 @@ class SchwarzschildEmbedding:
         ----------
         alpha : float
             scaling factor to obtain the step size for incrementing r
-        
+
         Returns
         -------
         tuple
             (~numpy.array of X, ~numpy.array of Y, ~numpy.array of Z) values in cartesian coordinates
             obtained after applying solid of revolution
-        
+
         """
         r_initial = self.r_init.value
         r_step = self.M.value / alpha
@@ -175,15 +175,3 @@ class SchwarzschildEmbedding:
 
         Z.reshape((X.shape[0], X.shape[1]))
         return X, Y, Z
-
-    def plot_hypersurface(self, plot_type="wireframe", alpha=100):
-        msg = "This method is deprecated from 0.2.2 . To plot the  \
-               hypersurface, use ~einsteinpy.plotting.HypersurfacePlotter \
-               Please have a look at the documentation for more details"
-        raise warnings.warn(msg, DeprecationWarning)
-
-    def show(self):
-        msg = "This method will be deprecated from 0.2.2 . To plot the  \
-               hypersurface, use ~einsteinpy.plotting.HypersurfacePlotter \
-               Please have a look at the documentation for more details"
-        raise warnings.warn(msg, DeprecationWarning)
