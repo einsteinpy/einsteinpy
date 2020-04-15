@@ -156,16 +156,22 @@ class Tensor:
         interpretable_representation += self.arr.__repr__()
         return interpretable_representation
 
-    def tensor(self):
+    def tensor(self,auto_simplify=False):
         """
         Returns the sympy Array
-
+        Parameters
+        ----------
+        auto_simplify : bool
+            Returns simplified version of the Tensor contained in the class, if ``True``.
+            Defaults to ``False``.
         Returns
         -------
         ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
             Sympy Array object
         
         """
+        if auto_simplify:
+            return simplify_sympy_array(self.tensor())
         return self.arr
 
     def subs(self, *args):
