@@ -49,7 +49,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.3.dev0
+:Version: 0.4.dev0
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
@@ -108,7 +108,7 @@ EinsteinPy requires the following Python packages:
 * Numba, for accelerating the code
 
 EinsteinPy is usually tested on Linux, Windows and OS X on Python
-3.5, 3.6, 3.7 and 3.8 against latest NumPy.
+3.6, 3.7 and 3.8 against latest NumPy.
 
 ==============  ===============  ===================
 Platform        Site             Status
