@@ -7,7 +7,7 @@ year = datetime.now().year
 copyright = "%d EinsteinPy Development Team" % year
 
 version = "0.3"
-release = "0.3.dev0"
+release = "0.3.0"
 highlight_language = "python"
 pygments_style = "sphinx"
 autoclass_content = "both"
