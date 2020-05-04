@@ -1,6 +1,73 @@
 What's new
 ==========
 
+einsteinpy 0.3.0 - 2020-05-05
+-----------------------------
+
+This major release would bring some very important improvements. This release fixes a very crucial
+bug with sympy. Fixes coordinate conversions so they don't fail on edge cases anymore.
+
+EinsteinPy now uses GitHub Actions for macOS builds. Big changes to the plotting module.
+
+The release comes for the paper of EinsteinPy. The release marks the beginning of Google Summer of Code 2020.
+The release also brings a new rays module, which will form the base for null geodesics in future releases.
+
+Features
+........
+
+* Loads of Predefined Metrics
+* Sympy version incompatibilities handled
+* Numba as a default installation
+* Lorentz Transform for Einstein Tensor
+* Lorentz Transform to Tensor Class
+* Hypersurface Plotting API similar to the common plotting API
+* Find Function in Predefined Metrics
+* Increased Code Coverage
+* New rays module
+* Plotting Black Hole Shadows
+* Coordinate Subscripting
+* Supports Python 3.8, dropping support fpr Python 3.5
+* numpy moveaxis replaced with sympy permutedims
+* name parameter in Metric Tensor
+* Tags to Tensor names
+
+Contributors
+............
+
+This is the complete list of the people that contributed to this release, with a + sign indicating first contribution.
+
+* Shreyas Bapat
+* Ritwik Saha
+* Manvi Gupta
+* Micky Yun Chan+
+* DylanBrdt+ (GitHub Username)
+* Vineet Gandham+
+* Pratyush Kerhalkar+
+* Bhavam Vidyarthi+
+* Khalid Shaikh+
+* Rohit Sanjay+
+* Saurabh+
+* Raahul Singh+
+* Nimesh Vashishtha+
+* Shamanth R Nayak K+
+* Arnav Das+
+* Gim Seng Ng+
+* Nihar Gupte+
+* Suyash Salampuria+
+* Atul Mangat+
+* Ganesh Tarone+
+* Shreyas Kalvankar+
+* Swastik Singh+
+* Jyotirmaya Shivottam+
+* Sitara Srinivasan+
+* Aayush Gautam+
+* Zac Yauney+
+* Gagan-Shenoy+
+* Bibek Gautam+
+* Erin Allard+
+* Suyog Garg+
+
+
 einsteinpy 0.2.1 - 2019-11-02
 -----------------------------
 
