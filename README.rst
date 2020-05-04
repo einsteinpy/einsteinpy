@@ -23,26 +23,26 @@
    :target: https://riot.im/app/#/room/#einsteinpy:matrix.org
 
 .. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
-   :target: https://github.com/einsteinpy/einsteinpy/raw/master/COPYING
+   :target: https://github.com/einsteinpy/einsteinpy/raw/0.3.x/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://docs.einsteinpy.org/en/latest/?badge=latest
+   :target: https://docs.einsteinpy.org/en/v0.3.0/?badge=latest
 
 .. |codeclimate| image:: https://img.shields.io/codeclimate/maintainability/einsteinpy/einsteinpy.svg?logo=code-climate&style=flat-square
    :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
    :alt: Maintainability
 
-.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/master.svg?style=flat-square&logo=circleci
+.. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/0.3.x.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
 
 .. |ghactions| image:: https://img.shields.io/github/workflow/status/einsteinpy/einsteinpy/Test_MacOS?logo=github&style=flat-square
-   :target: https://github.com/einsteinpy/einsteinpy/actions?query=branch%3Amaster
+   :target: https://github.com/einsteinpy/einsteinpy/actions?query=branch%3A0.3.x
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/einsteinpy/einsteinpy.svg?style=flat-square
-   :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=master
+   :target: https://codecov.io/github/einsteinpy/einsteinpy?branch=0.3.x
 
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/shreyasbapat/einsteinpy/master?logo=appveyor&style=flat-square
-   :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy/branch/master
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/shreyasbapat/einsteinpy/0.3.x?logo=appveyor&style=flat-square
+   :target: https://ci.appveyor.com/project/shreyasbapat/einsteinpy/branch/0.3.x
 
 .. |orcid-shreyas| image:: https://img.shields.io/badge/id-0000--0002--0870--4665-a6ce39.svg
    :target: https://orcid.org/0000-0002-0870-4665
@@ -81,7 +81,7 @@ Examples
 ========
 
 .. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
-   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/0.3.x?filepath=index.ipynb
 
 |mybinder|
 
@@ -90,7 +90,7 @@ applications of einsteinpy. You can consider theses Jupyter Notebooks as tutoria
 You can launch a cloud Jupyter server using `binder`_ to edit
 the notebooks without installing anything. Try it out!
 
-https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/0.3.x?filepath=index.ipynb
 
 .. _binder: https://beta.mybinder.org/
 
@@ -172,7 +172,7 @@ Contributing
 EinsteinPy is a community project, hence all contributions are more than
 welcome! For more information, head to `CONTRIBUTING.rst`_.
 
-.. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/master/CONTRIBUTING.rst
+.. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/0.3.x/CONTRIBUTING.rst
 
 Developers Documentation can be found here.
 
@@ -220,7 +220,7 @@ License
 EinsteinPy is released under the MIT license, hence allowing commercial
 use of the library. Please refer to `COPYING`_.
 
-.. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/master/COPYING
+.. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/0.3.x/COPYING
 
 FAQ
 ===
