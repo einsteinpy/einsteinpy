@@ -62,11 +62,6 @@ jobs:
     docker:
       - image: circleci/python:3.8
 
-  test_py35:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.5
-
   coverage:
     docker:
       - image: circleci/python:3.6
@@ -125,9 +120,6 @@ workflows:
   build_and_test:
     jobs:
       - quality
-      - test_py35:
-          requires:
-            - quality
       - test_py36:
           requires:
             - quality
@@ -140,10 +132,8 @@ workflows:
       - coverage:
           requires:
             - quality
-            - test_py35
       - docs:
           requires:
-            - test_py35
             - test_py36
             - test_py37
             - test_py38
