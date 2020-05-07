@@ -235,7 +235,7 @@ class RicciScalar(BaseRelativityTensor):
         if parent_metric is None:
             parent_metric = riccitensor.parent_metric
         ricci_scalar = tensorcontraction(riccitensor.tensor(), (0, 1))
-        return cls(ricci_scalar, riccitensor.syms, parent_metric=parent_metric)
+        return cls(ricci_scalar.simplify(), riccitensor.syms, parent_metric=parent_metric)
 
     @classmethod
     def from_riemann(cls, riemann, parent_metric=None):
