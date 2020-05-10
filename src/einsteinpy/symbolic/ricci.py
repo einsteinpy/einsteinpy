@@ -68,7 +68,7 @@ class RicciTensor(BaseRelativityTensor):
         if parent_metric is None:
             parent_metric = riemann.parent_metric
         return cls(
-            sympy.tensorcontraction(riemann.tensor(), (0, 2)),
+            simplify_sympy_array(sympy.tensorcontraction(riemann.tensor(), (0, 2))),
             riemann.syms,
             config="ll",
             parent_metric=parent_metric,
