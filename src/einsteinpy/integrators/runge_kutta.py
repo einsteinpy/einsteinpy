@@ -112,14 +112,16 @@ class RK45(integrate.RK45):
                 "Attempt to step on a failed or finished solver. (Invalid Value or out of bounds of t_bound)",
                 RuntimeWarning,
             )
+<<<<<<< HEAD
+=======
 
 
 # DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
-# Cannot make adaptive meshing an optional parameter 
+# Cannot make adaptive meshing an optional parameter
 # in the RK45 class, above, as stepsize control is
 # not available in scipy.integrate.
 # In prep for use with KerrShadow in rays.shadow
-class RK45Adaptive(): #
+class RK45Adaptive:  #
     """
     Implements RK45 integration scheme, with Adaptive Stepsize Control
     """
@@ -148,9 +150,9 @@ class RK45Adaptive(): #
             Absolute tolerance, defaults to rtol/0.8e3
         
         """
-        pass
+        raise NotImplementedError
 
-    def _nextstepsize(self, x1, x2, x3, u1, u2, u3, prev_step):
+    def _nextstep(self, x1, x2, x3, u1, u2, u3, prev_step):
         """
         Returns next stepsize, which depends on position (x), velocity (u) and previous stepsize
         Specific to BL Coordinates, for now - ????
@@ -181,25 +183,27 @@ class RK45Adaptive(): #
             
         """
         # To protect against division by 0
-        delta =  1e-20 # ???? Choose appropriate delta
-        delta2 = delta**2
+        delta = 1e-20  # ???? Choose appropriate delta
+        delta2 = delta ** 2
 
-        dlx1  = prev_step / (np.abs(u1) + delta2)
-        dlx2  = prev_step * np.min(x2, 1. - x2)/ (np.abs(u2) + delta2)
-        dlx3  = prev_step / (np.abs(u3) + delta2)
+        dlx1 = prev_step / (np.abs(u1) + delta2)
+        dlx2 = prev_step * np.min(x2, 1.0 - x2) / (np.abs(u2) + delta2)
+        dlx3 = prev_step / (np.abs(u3) + delta2)
 
-        idlx1 = 1. / (np.abs(dlx1) + delta2)
-        idlx2 = 1. / (np.abs(dlx2) + delta2)
-        idlx3 = 1. / (np.abs(dlx3) + delta2)
+        idlx1 = 1.0 / (np.abs(dlx1) + delta2)
+        idlx2 = 1.0 / (np.abs(dlx2) + delta2)
+        idlx3 = 1.0 / (np.abs(dlx3) + delta2)
 
-        next_step = -np.max([1. / (idlx1 + idlx2 + idlx3), 1e-12])
+        next_step = -np.max([1.0 / (idlx1 + idlx2 + idlx3), 1e-12])
         return next_step
 
     def step(self):
         """
         Moves integration forward by one step
         """
-        # Calls _nextstepsize() for getting the stepsize of next integration step
-        pass
+        # Calls _nextstep() for getting the stepsize
+        raise NotImplementedError
+
 
 # DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
+>>>>>>> d6b3608... Refactor - Formatting issues

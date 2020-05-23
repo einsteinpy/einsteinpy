@@ -1,3 +1,5 @@
+import warnings
+
 import astropy.units as u
 import numpy as np
 
@@ -64,6 +66,13 @@ def charge_length_scale(
         returns (coulomb's constant^0.5)*(Q/c^2)*G^0.5
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.charge_length_scale() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.charge_geometrized(Q)!",
+        PendingDeprecationWarning,
+    )
+
     return (Q / (c ** 2)) * np.sqrt(G * Cc)
 
 
@@ -87,6 +96,13 @@ def rho(r, theta, a):
         The value sqrt(r^2 + a^2 * cos^2(theta))
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.rho() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.rho(r, theta, a)!",
+        PendingDeprecationWarning,
+    )
+
     return np.sqrt((r ** 2) + ((a * np.cos(theta)) ** 2))
 
 
@@ -120,6 +136,13 @@ def delta(
         The value r^2 - Rs * r + a^2 + Rq^2
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.delta() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.delta(r, M, a, Q)!",
+        PendingDeprecationWarning,
+    )
+
     Rs = utils.schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
@@ -162,6 +185,14 @@ def metric(
         Numpy array of shape (4,4)
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.metric() \
+        will be deprecated in Version 0.5.0 \
+        Please use \
+        einsteinpy.metric.KerrNewman.metric_covariant(x_vec)!",
+        PendingDeprecationWarning,
+    )
+
     m = np.zeros((4, 4), dtype=float)
     rh2, dl = rho(r, theta, a) ** 2, delta(r, M, a, Q, c, G, Cc)
     c2 = c ** 2
@@ -218,6 +249,14 @@ def metric_inv(
         Numpy array of shape (4,4)
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.metric_inv() \
+        will be deprecated in Version 0.5.0 \
+        Please use \
+        einsteinpy.metric.KerrNewman.metric_contravariant(x_vec)!",
+        PendingDeprecationWarning,
+    )
+
     return np.linalg.inv(metric(r, theta, M, a, Q, c, G, Cc))
 
 
@@ -261,6 +300,13 @@ def dmetric_dx(
         dmdx[0], dmdx[1], dmdx[2] & dmdx[3] is differentiation of metric w.r.t. t, r, theta & phi respectively
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.dmetric_dx() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.KerrNewman._dg_dx_bl(x_vec)!",
+        PendingDeprecationWarning,
+    )
+
     Rs = utils.schwarzschild_radius_dimensionless(M, c, G)
     dmdx = np.zeros((4, 4, 4), dtype=float)
     rh2, dl = rho(r, theta, a) ** 2, delta(r, M, a, Q, c, G, Cc)
@@ -360,6 +406,13 @@ def christoffels(
         Numpy array of shape (4,4,4)
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.christoffels() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.KerrNewman.christoffels(x_vec)!",
+        PendingDeprecationWarning,
+    )
+
     invg = metric_inv(r, theta, M, a, Q, c, G, Cc)
     dmdx = dmetric_dx(r, theta, M, a, Q, c, G, Cc)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
@@ -417,6 +470,14 @@ def em_potential(
         Numpy array of shape (4,)
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.em_potential() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.metric.em_potential_covariant(r, theta, M, a, Q) or \
+        einsteinpy.metric.Metric.em_potential_contravariant(r, theta, M, a, Q)!",
+        PendingDeprecationWarning,
+    )
+
     rq, rh2, c2 = charge_length_scale(Q, c, G, Cc), rho(r, theta, a) ** 2, c ** 2
     vec = np.zeros((4,), dtype=float)
     vec[0] = r * rq / rh2
@@ -462,6 +523,13 @@ def maxwell_tensor_covariant(
         Numpy array of shape (4,4)
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.maxwell_tensor_covariant() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.maxwell_tensor_covariant(r, theta, M, a, Q)!",
+        PendingDeprecationWarning,
+    )
+
     c2 = c ** 2
     m = np.zeros((4, 4), dtype=float)
     rh2, rq = rho(r, theta, a) ** 2, charge_length_scale(Q, c, G, Cc)
@@ -518,6 +586,13 @@ def maxwell_tensor_contravariant(
         Numpy array of shape (4,4)
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.maxwell_tensor_contravariant() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.maxwell_tensor_contravariant(r, theta, M, a, Q)!",
+        PendingDeprecationWarning,
+    )
+
     mcov = maxwell_tensor_covariant(r, theta, a, Q, M, c, G, Cc)
     ginv = metric_inv(r, theta, M, a, Q, c, G, Cc)
     # contravariant F = contravariant g X covariant F X transpose(contravariant g)
@@ -603,6 +678,16 @@ def event_horizon(
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.event_horizon() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
+        PendingDeprecationWarning,
+    )
+<<<<<<< HEAD
+
+=======
+>>>>>>> 31c64c9... Refactor - Cleaning up metric and utils
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     rQsq = (Q ** 2) * G * Cc / c ** 4
     Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 - rQsq)
@@ -655,6 +740,13 @@ def radius_ergosphere(
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
 
     """
+    warnings.warn(
+        "einteinpy.utils.kerrnewman_utils.radius_ergosphere() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
+        PendingDeprecationWarning,
+    )
+    
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     rQsq = (Q ** 2) * G * Cc / c ** 4
     Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 * np.cos(theta) ** 2 - rQsq)

@@ -179,59 +179,35 @@ def bl_to_cartesian_novel(r, t, p, a):
     z = r * np.cos(t)
     return x, y, z
 
-# DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
-# Cartesian KS uses normal cartesian coordinates
-# Difference is in the definition of the metric,
-# which changes metric derivatives too
-# This affects metric.Kerr
-# and associated f_vec for use with ODE Solver.
-# So, einsteinpy.coordinates should not see major changes
-# just a few more interfaces
-# Note: numba.jit() is not needed here
-def cartesian_to_ks_fast(
-    x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
-):
-    if velocities_provided:
-        return cartesian_to_ks(x, y, z, v_x, v_y, v_z)
-    return cartesian_to_ks_novel(x, y, z)
 
-
-def cartesian_to_ks(x, y, z, v_x, v_y, v_z):
+def time_velocity(pos_vec, vel_vec, mass, a):
     """
-    Utility function to convert cartesian to KS.
-    This function should eventually result in Coordinate Transformation Graph!
+    # Velocity of coordinate time wrt proper metric
+    Timelike component of 4-Velocity
+
+    Parameters
+    ----------
+    pos_vector : ~numpy.array
+        Vector with r, theta, phi components in SI units
+    vel_vector : ~numpy.array
+        Vector with velocities of r, theta, phi components in SI units
+    mass : ~astropy.units.kg
+        Mass of gravitating body
+    a : float
+        Any constant
+    Q : ~astropy.units.C
+    Charge on gravitating body
+
+    Returns
+    -------
+    ~astropy.units.one
+        # Velocity of time
+        Timelike component of 4-Velocity
+
     """
-    return x, y, z, v_x, v_y, v_z
+    # Similar function for Kerr and Kerr-Newman
+    # Perhaps, this should be in coordinates in some form
+    raise NotImplementedError
 
 
-def cartesian_to_ks_novel(x, y, z):
-    """
-    Utility function to convert cartesian to KS.
-    This function should eventually result in Coordinate Transformation Graph!
-    """
-    return x, y, z
-
-
-def ks_to_cartesian_fast(
-    x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
-):
-    if velocities_provided:
-        return cartesian_to_ks(x, y, z, v_x, v_y, v_z)
-    return cartesian_to_ks_novel(x, y, z)
-
-
-def ks_to_cartesian(x, y, z, v_x, v_y, v_z):
-    """
-    Utility function to convert KS to cartesian.
-    This function should eventually result in Coordinate Transformation Graph!
-    """
-    return x, y, z, v_x, v_y, v_z
-
-
-def ks_to_cartesian_novel(x, y, z):
-    """
-    Utility function to convert KS to cartesian.
-    This function should eventually result in Coordinate Transformation Graph!
-    """
-    return x, y, z
 # DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
