@@ -4,6 +4,7 @@ import numpy as np
 from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
+    KerrSchildConversion,
     SphericalConversion,
 )
 
@@ -137,6 +138,26 @@ class CartesianDifferential(CartesianConversion):
             a * u.m,
         )
 
+    def ks_differential(self): # - ????
+        """
+        Function to convert velocity to Kerr-Schild coordinates
+
+        Returns
+        -------
+        ~einsteinpy.coordinates.velocity.KerrSchildDifferential
+            Cartesian representation of the velocity in Kerr-Schild Coordinates.
+
+        """
+        x, y, z, v_x, v_y, v_z = self.convert_ks()
+        return KerrSchildDifferential(
+            x * u.m,
+            y * u.m,
+            z * u.m,
+            v_x * u.m / u.s,
+            v_y * u.m / u.s,
+            v_z * u.m / u.s
+        )
+
 
 class SphericalDifferential(SphericalConversion):
     """
@@ -266,6 +287,26 @@ class SphericalDifferential(SphericalConversion):
             v_t * u.rad / u.s,
             v_p * u.rad / u.s,
             a * u.m,
+        )
+    
+    def ks_differential(self): # - ????
+        """
+        Function to convert velocity to Kerr-Schild coordinates
+
+        Returns
+        -------
+        ~einsteinpy.coordinates.velocity.KerrSchildDifferential
+            Cartesian representation of the velocity in Kerr-Schild Coordinates.
+
+        """
+        x, y, z, v_x, v_y, v_z = self.convert_ks()
+        return KerrSchildDifferential(
+            x * u.m,
+            y * u.m,
+            z * u.m,
+            v_x * u.m / u.s,
+            v_y * u.m / u.s,
+            v_z * u.m / u.s
         )
 
 
@@ -403,3 +444,95 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
             v_t * u.rad / u.s,
             v_p * u.rad / u.s,
         )
+    
+    def ks_differential(self): # - ????
+        """
+        Function to convert velocity to Kerr-Schild coordinates
+
+        Returns
+        -------
+        ~einsteinpy.coordinates.velocity.KerrSchildDifferential
+            Cartesian representation of the velocity in Kerr-Schild Coordinates.
+
+        """
+        x, y, z, v_x, v_y, v_z = self.convert_ks()
+        return KerrSchildDifferential(
+            x * u.m,
+            y * u.m,
+            z * u.m,
+            v_x * u.m / u.s,
+            v_y * u.m / u.s,
+            v_z * u.m / u.s
+        )
+
+
+# DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
+class KerrSchildDifferential(KerrSchildConversion, CartesianDifferential):
+    """
+    Class for calculating and transforming the velocity in Kerr Schild coordinates.
+    Also inherits CartesianDifferential to 
+    reduce redundant code-rewrite - ????
+    """
+
+    # Overrides CartesianConversion.__init__()
+    @u.quantity_input(
+        x=u.km, y=u.km, z=u.km, v_x=u.km / u.s, v_y=u.km / u.s, v_z=u.km / u.s
+    )
+    def __init__(self, x, y, z, v_x, v_y, v_z):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        x : ~astropy.units.quantity.Quantity
+        y : ~astropy.units.quantity.Quantity
+        z : ~astropy.units.quantity.Quantity
+        v_x : ~astropy.units.quantity.Quantity
+        v_y : ~astropy.units.quantity.Quantity
+        v_z : ~astropy.units.quantity.Quantity
+
+        """
+        self.x = x
+        self.y = y
+        self.z = z
+        self.v_x = v_x
+        self.v_y = v_y
+        self.v_z = v_z
+        super().__init__(
+            x.si.value, y.si.value, z.si.value, v_x.si.value, v_y.si.value, v_z.si.value
+        )
+        self.system = "Cartesian Kerr-Schild"
+
+    # Overrides CartesianConversion.__repr__()
+    def __repr__(self):
+        return "Cartesian Kerr-Schild x: {}, y: {}, z: {}\n" "vx: {}, vy: {}, vz: {}".format(
+            self.x, self.y, self.z, self.v_x, self.v_y, self.v_z
+        )
+
+    # Functions gained from CartesianDifferential: - ????
+    # str
+    # si_values, velocities
+    # spherical_differential
+    # bl_differential
+
+    def cartesian_differential(self):
+        """
+        Function to convert velocity to cartesian coordinates
+
+        Returns
+        -------
+        ~einsteinpy.coordinates.velocity.CartesianDifferential
+            Cartesian representation of the velocity in Boyer-Lindquist Coordinates.
+
+        """
+        x, y, z, v_x, v_y, v_z = self.convert_cartesian()
+        return CartesianDifferential(
+            x * u.m, y * u.m, z * u.m, v_x * u.m / u.s, v_y * u.m / u.s, v_z * u.m / u.s
+        )
+    
+    # Overrides CartesianDifferential.ks_differential()
+    @property
+    def ks_differential(self):
+        raise AttributeError("'KerrSchildDifferential' Object has no attribute 'ks_differential'")
+    
+# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
