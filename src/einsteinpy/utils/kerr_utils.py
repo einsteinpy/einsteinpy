@@ -418,6 +418,7 @@ def event_horizon(
 
     """
     Rs = schwarzschild_radius_dimensionless(M, c, G)
+    # Using Rs = 2M => M = 0.5 * Rs
     Rh = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2)))
     if coord == "BL":
         ans = np.array([Rh, theta], dtype=float)
@@ -468,3 +469,186 @@ def radius_ergosphere(
             .si_values()[:2]
         )
     return ans
+
+
+# DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
+def r_ks(x, y, z, a):
+    """
+    Returns the value of r, after solving (x**2 + y**2) / (r**2 + a**2) + z**2 / r**2 = 1
+    'r' is not the Radius Coordinate of Spherical Polar or BL Coordinates
+    Specific to Cartesian form of Kerr-Schild Coordinates
+
+    Parameters
+    ----------
+    x : float
+        Cartesian x-coordinate
+    y : float
+        Cartesian y-coordinate
+    z : float
+        Cartesian z-coordinate
+    a : float
+        Black Hole spin factor
+    Returns
+    -------
+    float
+        Value obtained after solving (x**2 + y**2) / (r**2 + a**2) + z**2 / r**2 = 1
+
+    """
+    # A BETTER EQUATION FOR r CAN BE USED - ????
+    r = 0
+    # EDIT HERE
+    return r
+
+
+def metric_ks(x, y, z, M, a, c=constant.c.value, G=constant.G.value):
+    """
+    Returns the Kerr Metric in Cartesian form of Kerr-Schild Coordinates
+
+    Parameters
+    ----------
+    x : float
+        Cartesian x-coordinate
+    y : float
+        Cartesian y-coordinate
+    z : float
+        Cartesian z-coordinate
+    M : float
+        Mass of massive body
+    a : float
+        Black Hole spin factor
+    c : float
+        Speed of light
+    Returns
+    -------
+    ~numpy.array
+        Numpy array of shape (4,4)
+
+    """
+    m = np.zeros(shape=(4, 4), dtype=float)
+    # EDIT HERE
+    return m
+
+
+def metric_ks_inv(x, y, z, M, a, c=constant.c.value, G=constant.G.value):
+    """
+    Returns the inverse of Kerr Metric in Cartesian form of Kerr-Schild Coordinates
+
+    Parameters
+    ----------
+    x : float
+        Cartesian x-coordinate
+    y : float
+        Cartesian y-coordinate
+    z : float
+        Cartesian z-coordinate
+    M : float
+        Mass of massive body
+    a : float
+        Black Hole spin factor
+    c : float
+        Speed of light
+    Returns
+    -------
+    ~numpy.array
+        Numpy array of shape (4,4)
+
+    """
+    m = metric_ks(x, y, z, M, a, c, G)
+    return np.linalg.inv(m)
+
+
+def dmetric_ks_dx(x, y, z, M, a, c=constant.c.value, G=constant.G.value):
+    """
+    Returns differentiation of each component of Kerr Schild form of Kerr Metric tensor w.r.t. t, x, y, z
+
+    Parameters
+    ----------
+    x : float
+        Cartesian x-coordinate
+    y : float
+        Cartesian y-coordinate
+    z : float
+        Cartesian z-coordinate
+    M : float
+        Mass of massive body
+    a : float
+        Black Hole spin factor
+    c : float
+        Speed of light
+    Returns
+    -------
+    dmdx : ~numpy.array
+        Numpy array of shape (4,4,4)
+        dmdx[0], dmdx[1], dmdx[2] & dmdx[3] is differentiation of metric w.r.t. t, r, theta & phi respectively
+
+    """
+    Rs = schwarzschild_radius_dimensionless(M, c, G)
+    dmdx = np.zeros(shape=(4, 4, 4), dtype=float)
+    r = r_ks(x, y, z, a)
+    c2 = c ** 2
+
+    # differentiation of metric wrt x
+    def due_to_x():
+        nonlocal dmdx
+        # EDIT HERE
+
+    # differentiation of metric wrt y
+    def due_to_y():
+        nonlocal dmdx
+        # EDIT HERE
+    
+     # differentiation of metric wrt z
+    def due_to_z():
+        nonlocal dmdx
+        # EDIT HERE
+
+    due_to_x()
+    due_to_y()
+    due_to_z()
+    return dmdx
+
+
+def christoffels_ks(x, y, z, M, a, c=constant.c.value, G=constant.G.value):
+    """
+    Returns the numpy array, containing Christoffel Symbols for the Kerr-Schild form of Kerr Metric
+
+    Parameters
+    ----------
+    x : float
+        Cartesian x-coordinate
+    y : float
+        Cartesian y-coordinate
+    z : float
+        Cartesian z-coordinate
+    M : float
+        Mass of massive body
+    a : float
+        Black Hole spin factor
+    c : float
+        Speed of light
+    Returns
+    -------
+    ~numpy.array
+        Numpy array of shape (4,4,4)
+
+    """
+    invg = metric_ks_inv(x, y, z, M, a, c, G)
+    dmdx = dmetric_ks_dx(x, y, z, M, a, c, G)
+    chl = np.zeros(shape=(4, 4, 4), dtype=float)
+    # NEED TO CHECK BELOW - ????
+    for _, k, l in nonzero_christoffels_list[0:4]:
+        val1 = dmdx[l, 0, k] + dmdx[k, 0, l]
+        val2 = dmdx[l, 3, k] + dmdx[k, 3, l]
+        chl[0, k, l] = chl[0, l, k] = 0.5 * (invg[0, 0] * (val1) + invg[0, 3] * (val2))
+        chl[3, k, l] = chl[3, l, k] = 0.5 * (invg[3, 0] * (val1) + invg[3, 3] * (val2))
+    for i, k, l in nonzero_christoffels_list[8:16]:
+        chl[i, k, l] = 0.5 * (
+            invg[i, i] * (dmdx[l, i, k] + dmdx[k, i, l] - dmdx[i, k, l])
+        )
+    for i, k, l in nonzero_christoffels_list[16:20]:
+        chl[i, k, l] = chl[i, l, k] = 0.5 * (
+            invg[i, i] * (dmdx[l, i, k] + dmdx[k, i, l] - dmdx[i, k, l])
+        )
+    return chl
+
+# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????

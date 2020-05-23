@@ -19,6 +19,7 @@ class Kerr:
 
     @u.quantity_input(time=u.s, M=u.kg)
     def __init__(self, bl_coords, M, time):
+        # ???? Perhaps a name change to "coords" will be preferable
         self.input_coords = bl_coords
         self.name = "Kerr"
         self.M = M
@@ -60,6 +61,10 @@ class Kerr:
         if coords.system == "Spherical":
             bl_coords = coords.bl_differential(a)
             return cls(bl_coords, M, time)
+        
+        # DON'T CHANGE coords IF coords == "Kerr-Schild" - ????
+        # Calculations will be done in KS
+
         return cls(coords, M, time)
 
     def f_vec(self, ld, vec):
@@ -97,12 +102,23 @@ class Kerr:
         )
         return vals
 
+    # DRAFT CHANGES/ADDITIONS - ????
+    # OPTIONAL
+    def f_vec_ks(self, ld, vec):
+        """
+        For use with GRay2's implementation
+
+        """
+        pass
+    # DRAFT CHANGES/ADDITIONS - ????
+
     def calculate_trajectory(
         self,
         start_lambda=0.0,
         end_lambda=10.0,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
+        coords="BL", # ????
         return_cartesian=False,
     ):
         """
@@ -119,6 +135,9 @@ class Kerr:
         OdeMethodKwargs : dict
             Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
             Dictionary with key 'stepsize' along with an float value is expected.
+        coords : string # ????
+            Coordinate System, in which integration will be performed
+            Can either be "BL" or "KS". Defaults to "BL"
         return_cartesian : bool
             True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to False
 
@@ -134,7 +153,7 @@ class Kerr:
         lambdas = list()
         crossed_event_horizon = False
         ODE = RK45(
-            fun=self.f_vec,
+            fun=self.f_vec if coords == "BL" else self.f_vec_ks, # ????
             t0=start_lambda,
             y0=self.initial_vec,
             t_bound=end_lambda,
@@ -172,6 +191,7 @@ class Kerr:
         start_lambda=0.0,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
+        coords="BL", # ????
         return_cartesian=False,
     ):
         """
@@ -187,6 +207,9 @@ class Kerr:
         OdeMethodKwargs : dict
             Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
             Dictionary with key 'stepsize' along with an float value is expected.
+        coords : string # ????
+            Coordinate System, in which integration will be performed
+            Can either be "BL" or "KS". Defaults to "BL"
         return_cartesian : bool
             True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to Falsed
 
@@ -199,7 +222,7 @@ class Kerr:
 
         """
         ODE = RK45(
-            fun=self.f_vec,
+            fun=self.f_vec if coords == "BL" else self.f_vec_ks, # ????
             t0=start_lambda,
             y0=self.initial_vec,
             t_bound=1e300,
