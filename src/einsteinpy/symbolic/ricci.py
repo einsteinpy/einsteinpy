@@ -2,7 +2,7 @@ import sympy
 from sympy import tensorcontraction, tensorproduct
 
 from einsteinpy.symbolic.christoffel import ChristoffelSymbols
-from einsteinpy.symbolic.helpers import _change_name
+from einsteinpy.symbolic.helpers import _change_name, simplify_sympy_array
 from einsteinpy.symbolic.metric import MetricTensor
 from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
@@ -68,7 +68,7 @@ class RicciTensor(BaseRelativityTensor):
         if parent_metric is None:
             parent_metric = riemann.parent_metric
         return cls(
-            sympy.tensorcontraction(riemann.tensor(), (0, 2)),
+            simplify_sympy_array(sympy.tensorcontraction(riemann.tensor(), (0, 2))),
             riemann.syms,
             config="ll",
             parent_metric=parent_metric,
@@ -235,7 +235,11 @@ class RicciScalar(BaseRelativityTensor):
         if parent_metric is None:
             parent_metric = riccitensor.parent_metric
         ricci_scalar = tensorcontraction(riccitensor.tensor(), (0, 1))
-        return cls(ricci_scalar, riccitensor.syms, parent_metric=parent_metric)
+        return cls(
+            simplify_sympy_array(ricci_scalar),
+            riccitensor.syms,
+            parent_metric=parent_metric,
+        )
 
     @classmethod
     def from_riemann(cls, riemann, parent_metric=None):

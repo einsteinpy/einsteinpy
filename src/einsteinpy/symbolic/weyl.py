@@ -100,7 +100,7 @@ class WeylTensor(BaseRelativityTensor):
             return cls(C, metric.syms, config="llll", parent_metric=metric)
         if metric.dims == 3:
             return cls(
-                sympy.Array(np.zeros((3, 3), dtype=int)),
+                sympy.Array(np.zeros((3, 3, 3, 3), dtype=int)),
                 metric.syms,
                 config="llll",
                 parent_metric=metric,
