@@ -178,3 +178,60 @@ def bl_to_cartesian_novel(r, t, p, a):
     y = sin_norm * np.sin(p)
     z = r * np.cos(t)
     return x, y, z
+
+# DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
+# Cartesian KS uses normal cartesian coordinates
+# Difference is in the definition of the metric,
+# which changes metric derivatives too
+# This affects metric.Kerr
+# and associated f_vec for use with ODE Solver.
+# So, einsteinpy.coordinates should not see major changes
+# just a few more interfaces
+# Note: numba.jit() is not needed here
+def cartesian_to_ks_fast(
+    x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
+):
+    if velocities_provided:
+        return cartesian_to_ks(x, y, z, v_x, v_y, v_z)
+    return cartesian_to_ks_novel(x, y, z)
+
+
+def cartesian_to_ks(x, y, z, v_x, v_y, v_z):
+    """
+    Utility function to convert cartesian to KS.
+    This function should eventually result in Coordinate Transformation Graph!
+    """
+    return x, y, z, v_x, v_y, v_z
+
+
+def cartesian_to_ks_novel(x, y, z):
+    """
+    Utility function to convert cartesian to KS.
+    This function should eventually result in Coordinate Transformation Graph!
+    """
+    return x, y, z
+
+
+def ks_to_cartesian_fast(
+    x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
+):
+    if velocities_provided:
+        return cartesian_to_ks(x, y, z, v_x, v_y, v_z)
+    return cartesian_to_ks_novel(x, y, z)
+
+
+def ks_to_cartesian(x, y, z, v_x, v_y, v_z):
+    """
+    Utility function to convert KS to cartesian.
+    This function should eventually result in Coordinate Transformation Graph!
+    """
+    return x, y, z, v_x, v_y, v_z
+
+
+def ks_to_cartesian_novel(x, y, z):
+    """
+    Utility function to convert KS to cartesian.
+    This function should eventually result in Coordinate Transformation Graph!
+    """
+    return x, y, z
+# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
