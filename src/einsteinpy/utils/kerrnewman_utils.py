@@ -1,6 +1,8 @@
 import astropy.units as u
 import numpy as np
 
+import warnings
+
 from einsteinpy import constant, utils
 from einsteinpy.coordinates import BoyerLindquist, Spherical
 from einsteinpy.utils import schwarzschild_radius_dimensionless
@@ -64,6 +66,10 @@ def charge_length_scale(
         returns (coulomb's constant^0.5)*(Q/c^2)*G^0.5
 
     """
+    warnings.warn("einteinpy.utils.kerrnewman_utils.charge_length_scale() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.charge_geometrized(Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     return (Q / (c ** 2)) * np.sqrt(G * Cc)
 
 
@@ -87,6 +93,10 @@ def rho(r, theta, a):
         The value sqrt(r^2 + a^2 * cos^2(theta))
 
     """
+    warnings.warn("einteinpy.kerrnewman_utils.rho() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.rho(r, theta, a).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     return np.sqrt((r ** 2) + ((a * np.cos(theta)) ** 2))
 
 
@@ -120,6 +130,10 @@ def delta(
         The value r^2 - Rs * r + a^2 + Rq^2
 
     """
+    warnings.warn("einteinpy.utils.kerrnewman_utils.delta() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.delta(r, M, a, Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     Rs = utils.schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2) + (charge_length_scale(Q, c, G, Cc) ** 2)
 
@@ -417,6 +431,10 @@ def em_potential(
         Numpy array of shape (4,)
 
     """
+    warnings.warn("einteinpy.utils.kerrnewman_utils.em_potential() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.em_potential_covariant(r, theta, M, a, Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     rq, rh2, c2 = charge_length_scale(Q, c, G, Cc), rho(r, theta, a) ** 2, c ** 2
     vec = np.zeros((4,), dtype=float)
     vec[0] = r * rq / rh2
@@ -603,6 +621,10 @@ def event_horizon(
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
 
     """
+    warnings.warn("einteinpy.utils.kerrnewman_utils.event_horizon() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.singularities(M, a, Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     rQsq = (Q ** 2) * G * Cc / c ** 4
     Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 - rQsq)
@@ -655,6 +677,10 @@ def radius_ergosphere(
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
 
     """
+    warnings.warn("einteinpy.utils.kerrnewman_utils.radius_ergosphere() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.singularities(M, a, Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     rQsq = (Q ** 2) * G * Cc / c ** 4
     Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 * np.cos(theta) ** 2 - rQsq)

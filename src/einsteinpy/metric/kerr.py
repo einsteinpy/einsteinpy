@@ -1,6 +1,7 @@
 import warnings
 
 import astropy.units as u
+
 import numpy as np
 
 from einsteinpy import constant
@@ -11,31 +12,43 @@ from einsteinpy.utils import kerr_utils, schwarzschild_radius
 _G = constant.G.value
 _c = constant.c.value
 
+from einsteinpy.metric import Metric
 
-class Kerr:
+
+class Kerr(Metric):
     """
-    Class for defining Kerr Geometry Methods
+    Class for defining the Kerr Geometry
     """
 
-    @u.quantity_input(time=u.s, M=u.kg)
-    def __init__(self, bl_coords, M, time):
-        # ???? Perhaps a name change to "coords" will be preferable
-        self.input_coords = bl_coords
+    # @u.quantity_input(time=u.s, M=u.kg)
+    def __init__(self, coords, M, a):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        coords : ~einsteinpy.coordinates.v
+        name : 
+        M :
+        a : 
+
+        """
+        self.coords = coords
         self.name = "Kerr"
         self.M = M
-        self.a = self.input_coords.a.to(u.m)
-        self.time = time
+        self.a = a
+        # self.time = time
 
-        pos_vec, vel_vec = (
-            self.input_coords.si_values()[:3],
-            self.input_coords.si_values()[3:],
-        )
-        time_vel = kerr_utils.kerr_time_velocity(pos_vec, vel_vec, self.M, self.a.value)
+        # pos_vec, vel_vec = (
+        #     self.input_coords.si_values()[:3],
+        #     self.input_coords.si_values()[3:],
+        # )
+        # time_vel = kerr_utils.kerr_time_velocity(pos_vec, vel_vec, self.M, self.a.value)
 
-        self.initial_vec = np.hstack(
-            (self.time.value, pos_vec, time_vel.value, vel_vec)
-        )
-        self.scr = schwarzschild_radius(M)
+        # self.initial_vec = np.hstack(
+        #     (self.time.value, pos_vec, time_vel.value, vel_vec)
+        # )
+        # self.scr = schwarzschild_radius(M)
 
     @classmethod
     @u.quantity_input(time=u.s, M=u.kg, a=u.m)

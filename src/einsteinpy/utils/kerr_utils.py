@@ -1,6 +1,8 @@
 import astropy.units as u
 import numpy as np
 
+import warnings
+
 from einsteinpy import constant, utils
 from einsteinpy.coordinates import BoyerLindquist, Spherical
 from einsteinpy.utils import schwarzschild_radius_dimensionless
@@ -67,6 +69,10 @@ def scaled_spin_factor(a, M, c=constant.c.value, G=constant.G.value):
         If a not between 0 & 1
 
     """
+    warnings.warn("einteinpy.kerr_utils.scaled_spin_factor() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.scaled_spin_parameter(a, M).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     half_scr = (schwarzschild_radius_dimensionless(M, c, G)) / 2
     if a < 0 or a > 1:
         raise ValueError("a to be supplied between 0 and 1")
@@ -93,6 +99,10 @@ def sigma(r, theta, a):
         The value r^2 + a^2 * cos^2(theta)
 
     """
+    warnings.warn("einteinpy.utils.kerr_utils.sigma() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.sigma(r, theta, a).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     return (r ** 2) + ((a * np.cos(theta)) ** 2)
 
 
@@ -116,6 +126,10 @@ def delta(r, M, a, c=constant.c.value, G=constant.G.value):
         The value r^2 - Rs * r + a^2
 
     """
+    warnings.warn("einteinpy.utils.kerr_utils.delta() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.delta(r, M, a, Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2)
 
@@ -387,6 +401,10 @@ def spin_factor(J, M, c):
         Spin factor (J/(Mc))
 
     """
+    warnings.warn("einteinpy.utils.kerr_utils.spin_factor() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.spin_parameter(J, M).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     return J / (M * c)
 
 
@@ -417,6 +435,10 @@ def event_horizon(
         [Radius of event horizon(R), angle from z axis(theta)] in BL/Spherical coordinates
 
     """
+    warnings.warn("einteinpy.utils.kerr_utils.event_horizon() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.singularities(M, a, Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     # Using Rs = 2M => M = 0.5 * Rs
     Rh = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2)))
@@ -458,6 +480,10 @@ def radius_ergosphere(
         [Radius of ergosphere(R), angle from z axis(theta)] in BL/Spherical coordinates
 
     """
+    warnings.warn("einteinpy.utils.kerr_utils.radius_ergosphere() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.singularities(M, a, Q).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     Re = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2) * (np.cos(theta) ** 2)))
     if coord == "BL":

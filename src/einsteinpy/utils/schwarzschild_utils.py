@@ -3,6 +3,8 @@ import numpy as np
 
 from einsteinpy import constant
 
+import warnings
+
 
 def schwarzschild_radius(mass, c=constant.c, G=constant.G):
     """
@@ -20,6 +22,10 @@ def schwarzschild_radius(mass, c=constant.c, G=constant.G):
         Schwarzschild radius for a given mass
 
     """
+    warnings.warn("einteinpy.schwarzschild_utils.schwarzschild_radius() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.schwarzschild_radius(M).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     if not isinstance(mass, u.quantity.Quantity):
         mass = mass * u.kg
     if not isinstance(c, u.quantity.Quantity):
@@ -47,6 +53,10 @@ def schwarzschild_radius_dimensionless(M, c=constant.c.value, G=constant.G.value
     Rs : float
         Schwarzschild radius for a given mass
     """
+    warnings.warn("einteinpy.utils.schwarzschild_utils.schwarzschild_radius_dimensionless() \
+        will be deprecated in Version 0.4. \
+        Please use einsteinpy.metric.metric.schwarzschild_radius_dimensionless(M).", \
+        PendingDeprecationWarning) # - ????? Version/Warning
     Rs = 2 * M * G / c ** 2
     return Rs
 
@@ -75,12 +85,12 @@ def time_velocity(pos_vec, vel_vec, mass):
     # this function considers SI units only
     a = schwarzschild_radius(mass).value
     c = constant.c.value
-    num1 = (1 / ((c ** 2) * (1 + (a / pos_vec[0])))) * (vel_vec[0] ** 2)
+    num1 = (1 / ((c ** 2) * (1 + (a / pos_vec[0])))) * (vel_vec[0] ** 2) # 1 - a / r - ?????
     num2 = ((pos_vec[0] ** 2) / (c ** 2)) * (vel_vec[1] ** 2)
     num3 = (
         ((pos_vec[0] ** 2) / (c ** 2)) * (np.sin(pos_vec[1]) ** 2) * (vel_vec[2] ** 2)
     )
-    deno = 1 + (a / pos_vec[0])
+    deno = 1 + (a / pos_vec[0]) # 1 - a / r - ?????
     time_vel_squared = (1 + num1 + num2 + num3) / deno
     time_vel = np.sqrt(time_vel_squared)
     return time_vel * u.one
