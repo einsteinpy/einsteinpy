@@ -141,22 +141,6 @@ Please check out the `guide for alternative installation methods`_.
 
 .. _`guide for alternative installation methods`: https://einsteinpy.github.io/installation/
 
-Testing
-=======
-
-|codecov|
-
-If installed correctly, the tests can be run using pytest::
-
-  $ python -c "import einsteinpy.testing; einsteinpy.testing.test()"
-  ============================= test session starts ==============================
-  platform linux -- Python 3.7.1, pytest-4.3.1, py-1.8.0, pluggy-0.9.0
-  rootdir: /home/shreyas/Local Forks/einsteinpy, inifile: setup.cfg
-  plugins: remotedata-0.3.1, openfiles-0.3.1, doctestplus-0.3.0, cov-2.5.1, arraydiff-0.3
-  collected 56 items
-  [...]
-  ==================== 56 passed, 1 warnings in 28.19 seconds ====================
-  $
 
 Problems
 ========

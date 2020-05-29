@@ -75,7 +75,7 @@ def test_weyl_dim3():
     syms = sympy.symbols(symbolstr)
     metric = MetricTensor(list_metric, syms)
     obj = WeylTensor.from_metric(metric).arr
-    assert obj == sympy.Array(np.zeros((3, 3, 3, 3), dtype=int))
+    assert obj == sympy.Array(np.zeros((3, 3), dtype=int))
 
 
 def test_weyl_conformal_rescaling():
