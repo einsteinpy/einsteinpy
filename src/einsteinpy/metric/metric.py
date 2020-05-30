@@ -30,8 +30,6 @@ class Metric:
     ):
         """
         Constructor
-
-        Geometrized Unit System should be preferred here - ????? (Also docs list)
         
         Parameters
         ----------
@@ -52,22 +50,22 @@ class Metric:
             Name of the Metric Tensor. Defaults to ``"Generic Metric"``
         metric_cov : function
             Function, defining Covariant Metric Tensor
-            It should return a real-valued tensor (2D Array), at supplied coordinates - ?????
+            It should return a real-valued tensor (2D Array), at supplied coordinates
             Defaults to ``None``
             Consult pre-defined classes for function definition
         christoffels : function
             Function, defining Christoffel Symbols
-            It should return a real-valued (4,4,4) array, at supplied coordinates - ?????
+            It should return a real-valued (4,4,4) array, at supplied coordinates
             Defaults to ``None``
             Consult pre-defined classes for function definition
         f_vec : function
             Function, defining RHS of Geodesic Equation
-            It should return a real-valued (8) vector, at supplied coordinates - ?????
+            It should return a real-valued (8) vector, at supplied coordinates
             Defaults to ``None``
             Consult pre-defined classes for function definition
         perturbation : function
             Function, defining Covariant Perturbation Tensor
-            It should return a real-valued tensor (2D Array), at supplied coordinates - ?????
+            It should return a real-valued tensor (2D Array), at supplied coordinates
             Defaults to ``None``
             Function definition similar to ``metric_cov``
         
@@ -474,7 +472,7 @@ class Metric:
     @u.quantity_input(r=u.km, theta=u.rad, M=u.kg, a=u.km, Q=u.C)
     def maxwell_tensor_covariant(self, r, theta, M, a, Q):
         """
-        Returns Covariant Maxwell Stress Tensor - ????? (Value of)
+        Returns Covariant Maxwell Stress Tensor
         Specific to Kerr-Newman Geometries
 
         Parameters

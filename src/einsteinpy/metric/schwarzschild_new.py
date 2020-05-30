@@ -33,7 +33,6 @@ class Schwarzschild(Metric):
             f_vec = self.f_vec_
         )
 
-    # - ????? (Overrides Metric.metric_covariant() - ✅)
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Schwarzschild Metric Tensor \
