@@ -134,7 +134,7 @@ class Cartesian(CartesianConversion):
         r, theta, phi, a = self.convert_bl(a.si.value)
         return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
 
-    def to_ks(self): # - ????
+    def to_ks(self):  # - ????
         """
         Method for conversion to Kerr-Schild coordinates.
 
@@ -146,7 +146,6 @@ class Cartesian(CartesianConversion):
         """
         x, y, z = self.convert_ks()
         return KerrSchild(x * u.m, y * u.m, z * u.m)
-
 
 
 class Spherical(SphericalConversion):
@@ -248,7 +247,7 @@ class Spherical(SphericalConversion):
         r, theta, phi, a = self.convert_bl(a.si.value)
         return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
 
-    def to_ks(self): # - ????
+    def to_ks(self):  # - ????
         """
         Method for conversion to Kerr-Schild coordinates.
 
@@ -260,7 +259,6 @@ class Spherical(SphericalConversion):
         """
         x, y, z = self.convert_ks()
         return KerrSchild(x * u.m, y * u.m, z * u.m)
-
 
 
 class BoyerLindquist(BoyerLindquistConversion):
@@ -360,7 +358,7 @@ class BoyerLindquist(BoyerLindquistConversion):
         r, theta, phi = self.convert_spherical()
         return Spherical(r * u.m, theta * u.rad, phi * u.rad)
 
-    def to_ks(self): # - ????
+    def to_ks(self):  # - ????
         """
         Method for conversion to Kerr-Schild coordinates.
 
@@ -372,7 +370,6 @@ class BoyerLindquist(BoyerLindquistConversion):
         """
         x, y, z = self.convert_ks()
         return KerrSchild(x * u.m, y * u.m, z * u.m)
-
 
 
 # DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
@@ -402,12 +399,7 @@ class KerrSchild(KerrSchildConversion, CartesianConversion):
         self.z = z
         super().__init__(x.si.value, y.si.value, z.si.value)
         self.system = "Cartesian Kerr-Schild"
-        self._dimension = {
-            "x": self.x,
-            "y": self.y,
-            "z": self.z,
-            "system": self.system
-        }
+        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
         self._dimension_order = ("x", "y", "z")
 
     # Overrides CartesianConversion.__repr__()
@@ -438,4 +430,6 @@ class KerrSchild(KerrSchildConversion, CartesianConversion):
     @property
     def to_ks(self):
         raise AttributeError("'KerrSchild' Object has no attribute 'to_ks'")
+
+
 # DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????

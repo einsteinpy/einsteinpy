@@ -7,9 +7,10 @@ import astropy.units as u
 from einsteinpy.metric import Schwarzschild
 
 
-class TimelikeGeodesic:
+class Geodesic:
     """
     Class for defining Timelike Geodesics in different Geometries
+
     """
 
     def __init__(
@@ -41,7 +42,7 @@ class TimelikeGeodesic:
             time=time,
             a=self.attractor.a,
         )
-        self._trajectory = self.calculate_trajectory( # - ????
+        self._trajectory = self.calculate_trajectory(  # - ?????
             end_lambda=end_lambda,
             OdeMethodKwargs={"stepsize": step_size},
             return_cartesian=True,
@@ -62,7 +63,6 @@ class TimelikeGeodesic:
             self.body.parent.name,
             self.body.parent.mass,
         )
-    
 
     # DRAFT CHANGES/ADDITIONS - ????
     def calculate_trajectory(
@@ -71,7 +71,7 @@ class TimelikeGeodesic:
         end_lambda=10.0,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL", # ????
+        coords="BL",  # ????
         return_cartesian=False,
     ):
         """
@@ -84,7 +84,7 @@ class TimelikeGeodesic:
         start_lambda=0.0,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL", # ????
+        coords="BL",  # ????
         return_cartesian=False,
     ):
         """
@@ -92,6 +92,7 @@ class TimelikeGeodesic:
         Yields an iterator.
         """
         pass
+
     # DRAFT CHANGES/ADDITIONS - ????
 
     @property
@@ -100,44 +101,27 @@ class TimelikeGeodesic:
 
 
 # DRAFT CHANGES/ADDITIONS - ????
-class NullGeodesic(Geodesic):
+class NullGeodesic:
     """
     Class for defining Null Geodesics in different Geometries
     """
 
-    def __init__(
-        self, coords, end_lambda, start_lambda=0, step_size=1e-3, metric=Schwarzschild
-    ):
+    def __init__(self, init_coords, end_lambda, step_size=1e-3, metric=Schwarzschild):
         """
         Parameters
         ----------
-        coords : einsteinpy.coordinates.*
-            Initial Coordinates of the Photon
+        init_coords : einsteinpy.coordinates.* - ?????
+            Initial 4-Position and 4-Momentum of the Photon
         end_lambda : float
             Affine Parameter value, where iterations will end
-        start_lambda : float, optional
-            Affine Parameter value, where iterations start
-            Defaults to 0
         step_size : float, optional
             Size of each increment in proper time
             Defaults to ``1e-3``
-        metric : einsteinpy.metric.*
-            Geometry to work in
+        metric : einsteinpy.metric.* - ?????
+            Spacetime Geometry
             Defaults to ``Schwarzschild``.
         """
-        self.metric = metric.from_coords(
-            coords=self.body.coordinates,
-            M=self.attractor.mass,
-            q=self.body.q,
-            Q=self.attractor.q,
-            time=time,
-            a=self.attractor.a,
-        )
-        self._trajectory = self.calculate_trajectory( # - ????
-            end_lambda=end_lambda,
-            OdeMethodKwargs={"stepsize": step_size},
-            return_cartesian=True,
-        )[1]
+        pass
 
     def __repr__(self):
         pass
@@ -145,28 +129,19 @@ class NullGeodesic(Geodesic):
     def __str__(self):
         pass
 
-
     def calculate_trajectory(
-        self,
-        start_lambda=0.0,
-        end_lambda=10.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL", # ????
-        return_cartesian=False,
+        self, end_lambda=10.0, OdeMethodKwargs={"stepsize": 1e-3}, coords="BL",  # ????
     ):
         """
         Calculates photon trajectory, by solving Geodesic Equation
+
+        Allow users to convert coordinates after calculations are done
+        So as to not slow down the function exit - ?????
         """
         pass
 
     def calculate_trajectory_iterator(
-        self,
-        start_lambda=0.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL", # ????
-        return_cartesian=False,
+        self, OdeMethodKwargs={"stepsize": 1e-3}, coords="BL",  # ????
     ):
         """
         Calculates photon trajectory, by solving Geodesic Equation
@@ -174,7 +149,9 @@ class NullGeodesic(Geodesic):
         """
         pass
 
-    @property
-    def trajectory(self):
-        return self._trajectory
+    # @property
+    # def trajectory(self):
+    #     return self._trajectory
+
+
 # DRAFT CHANGES/ADDITIONS - ????

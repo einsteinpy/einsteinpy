@@ -8,6 +8,17 @@ from einsteinpy.coordinates.conversion import (
     SphericalConversion,
 )
 
+# Currently, we have these coords:
+# Base -> Cartesian & Polar (Spherical Polar)
+# Modifications -> BL (of Spherical Polar) for Kerr BH
+
+# Proposed new structure:
+# Base classes: Cartesian <-> Spherical Polar
+# For Schwarzschild BH -> Schwarzschild Coords
+# Just needs a wrapper around Sph Pol
+# For Kerr BH -> BL (Modified Spherical Polar) & KS (Modified Cartesian)
+# For Kerr-Newman BH -> BL & KS
+
 
 class CartesianDifferential(CartesianConversion):
     """
@@ -138,7 +149,7 @@ class CartesianDifferential(CartesianConversion):
             a * u.m,
         )
 
-    def ks_differential(self): # - ????
+    def ks_differential(self):  # - ????
         """
         Function to convert velocity to Kerr-Schild coordinates
 
@@ -150,12 +161,7 @@ class CartesianDifferential(CartesianConversion):
         """
         x, y, z, v_x, v_y, v_z = self.convert_ks()
         return KerrSchildDifferential(
-            x * u.m,
-            y * u.m,
-            z * u.m,
-            v_x * u.m / u.s,
-            v_y * u.m / u.s,
-            v_z * u.m / u.s
+            x * u.m, y * u.m, z * u.m, v_x * u.m / u.s, v_y * u.m / u.s, v_z * u.m / u.s
         )
 
 
@@ -288,8 +294,8 @@ class SphericalDifferential(SphericalConversion):
             v_p * u.rad / u.s,
             a * u.m,
         )
-    
-    def ks_differential(self): # - ????
+
+    def ks_differential(self):  # - ????
         """
         Function to convert velocity to Kerr-Schild coordinates
 
@@ -301,12 +307,7 @@ class SphericalDifferential(SphericalConversion):
         """
         x, y, z, v_x, v_y, v_z = self.convert_ks()
         return KerrSchildDifferential(
-            x * u.m,
-            y * u.m,
-            z * u.m,
-            v_x * u.m / u.s,
-            v_y * u.m / u.s,
-            v_z * u.m / u.s
+            x * u.m, y * u.m, z * u.m, v_x * u.m / u.s, v_y * u.m / u.s, v_z * u.m / u.s
         )
 
 
@@ -444,8 +445,8 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
             v_t * u.rad / u.s,
             v_p * u.rad / u.s,
         )
-    
-    def ks_differential(self): # - ????
+
+    def ks_differential(self):  # - ????
         """
         Function to convert velocity to Kerr-Schild coordinates
 
@@ -457,12 +458,7 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         """
         x, y, z, v_x, v_y, v_z = self.convert_ks()
         return KerrSchildDifferential(
-            x * u.m,
-            y * u.m,
-            z * u.m,
-            v_x * u.m / u.s,
-            v_y * u.m / u.s,
-            v_z * u.m / u.s
+            x * u.m, y * u.m, z * u.m, v_x * u.m / u.s, v_y * u.m / u.s, v_z * u.m / u.s
         )
 
 
@@ -505,8 +501,11 @@ class KerrSchildDifferential(KerrSchildConversion, CartesianDifferential):
 
     # Overrides CartesianConversion.__repr__()
     def __repr__(self):
-        return "Cartesian Kerr-Schild x: {}, y: {}, z: {}\n" "vx: {}, vy: {}, vz: {}".format(
-            self.x, self.y, self.z, self.v_x, self.v_y, self.v_z
+        return (
+            "Cartesian Kerr-Schild x: {}, y: {}, z: {}\n"
+            "vx: {}, vy: {}, vz: {}".format(
+                self.x, self.y, self.z, self.v_x, self.v_y, self.v_z
+            )
         )
 
     # Functions gained from CartesianDifferential: - ????
@@ -529,10 +528,13 @@ class KerrSchildDifferential(KerrSchildConversion, CartesianDifferential):
         return CartesianDifferential(
             x * u.m, y * u.m, z * u.m, v_x * u.m / u.s, v_y * u.m / u.s, v_z * u.m / u.s
         )
-    
+
     # Overrides CartesianDifferential.ks_differential()
     @property
     def ks_differential(self):
-        raise AttributeError("'KerrSchildDifferential' Object has no attribute 'ks_differential'")
-    
+        raise AttributeError(
+            "'KerrSchildDifferential' Object has no attribute 'ks_differential'"
+        )
+
+
 # DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
