@@ -179,6 +179,7 @@ def bl_to_cartesian_novel(r, t, p, a):
     z = r * np.cos(t)
     return x, y, z
 
+
 # DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
 # Cartesian KS uses normal cartesian coordinates
 # Difference is in the definition of the metric,
@@ -235,6 +236,7 @@ def ks_to_cartesian_novel(x, y, z):
     """
     return x, y, z
 
+
 # @u.quantity_input(mass=u.kg)
 def time_velocity(pos_vec, vel_vec, mass, a):
     """
@@ -264,5 +266,6 @@ def time_velocity(pos_vec, vel_vec, mass, a):
     # Similar function for Kerr and Kerr-Newman
     # Perhaps, this should be in coordinates in some form
     pass
-# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
 
+
+# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????

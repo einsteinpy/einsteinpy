@@ -7,6 +7,7 @@ _c = constant.c
 _G = constant.G
 _Cc = constant.coulombs_const
 
+
 class Metric:
     """
     Class for defining general Metric Tensors
@@ -26,7 +27,7 @@ class Metric:
         metric_cov=None,
         christoffels=None,
         f_vec=None,
-        perturbation=None
+        perturbation=None,
     ):
         """
         Constructor
@@ -183,7 +184,7 @@ class Metric:
         'r' is not the Radius Coordinate of Spherical Polar or BL Coordinates
         Specific to Cartesian form of Kerr-Schild Coordinates
         """
-        pass
+        raise NotImplementedError
 
     @staticmethod
     @u.quantity_input(M=u.kg)
@@ -203,7 +204,7 @@ class Metric:
         return 2 * _G * M / _c ** 2
 
     @staticmethod
-    @u.quantity_input(J= u.kg * u.m ** 2 / u.s, M=u.kg)
+    @u.quantity_input(J=u.kg * u.m ** 2 / u.s, M=u.kg)
     def spin_parameter(J, M):
         """
         Returns Spin Parameter (a) of a Rotating Body, in SI units
@@ -222,7 +223,7 @@ class Metric:
 
         """
         return J / (M * _c)
-    
+
     @staticmethod
     @u.quantity_input(a=u.km, M=u.kg)
     def scaled_spin_parameter(a, M):
@@ -276,7 +277,7 @@ class Metric:
         # Belongs in the `einsteinpy.units` module - ?????
         # Unused - ?????
         return (Q / (_c.value ** 2)) * np.sqrt(_G.value * _Cc.value)
-    
+
     @staticmethod
     @u.quantity_input(M=u.kg, a=u.km, Q=u.C)
     def singularities(M, a, Q=0, coords="BL"):
@@ -318,19 +319,31 @@ class Metric:
         inner_ergosphere = outer_ergosphere = None
         inner_horizon = outer_horizon = 0
 
-        if coords == "S": # Schwarzschild Geometry
+        if coords == "S":  # Schwarzschild Geometry
             inner_ergosphere = inner_horizon = 0
             outer_horizon = outer_ergosphere = r_s
-        
-        elif coords == "BL": # Kerr & Kerr-Newman Geometries
-            inner_ergosphere = lambda theta: (r_s - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))) / 2
+
+        elif coords == "BL":  # Kerr & Kerr-Newman Geometries
+            inner_ergosphere = (
+                lambda theta: (
+                    r_s
+                    - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))
+                )
+                / 2
+            )
             inner_horizon = (r_s - np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
             outer_horizon = (r_s + np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
-            outer_ergosphere = lambda theta: (r_s + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))) / 2
-        
-        elif coords == "KS": # Kerr & Kerr-Newman Geometries
+            outer_ergosphere = (
+                lambda theta: (
+                    r_s
+                    + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))
+                )
+                / 2
+            )
+
+        elif coords == "KS":  # Kerr & Kerr-Newman Geometries
             # - ????? (To be filled in, after refactoring `coordinates`)
-            pass
+            raise NotImplementedError
 
         return {
             "inner_ergosphere": inner_ergosphere,
@@ -338,7 +351,6 @@ class Metric:
             "outer_horizon": outer_horizon,
             "outer_ergosphere": outer_ergosphere,
         }
-
 
     # Derived classes should only define metric_covariant() function
     # Check Kerr or Kerr Newman for understanding this
@@ -432,7 +444,9 @@ class Metric:
         A = np.zeros((4,), dtype=float)
         A[0] = r * r_Q / rho2
         # (_c ** 2 / _G * M) is extraneous - ?????
-        A[3] = (_c.value ** 2 / _G.value * M) *  (-r * a * r_Q * np.sin(theta) ** 2 / rho2)
+        A[3] = (_c.value ** 2 / _G.value * M) * (
+            -r * a * r_Q * np.sin(theta) ** 2 / rho2
+        )
 
         return A
 
@@ -463,7 +477,7 @@ class Metric:
 
         """
         A_cov = self.em_potential_covariant(r, theta, M, a, Q)
-        x_vec = [0, r, theta, 0] # t & phi have no bearing on Metric
+        x_vec = [0, r, theta, 0]  # t & phi have no bearing on Metric
         g_contra = self.metric_contravariant(x_vec=x_vec)
         # @ has similar perf to np.dot or np.matmul
         # https://stackoverflow.com/a/58116209/11922029
@@ -509,21 +523,23 @@ class Metric:
         F[2, 0] = -F[0, 2]
         # (_c.value ** 2 / _G.value * M) is extraneous - ????? (Issue #144, perhaps)
         F[1, 3] = (
-            (_c.value ** 2 / _G.value * M) * 
-            (1 / rho2 ** 2) * (a * r_Q * np.sin(theta) ** 2) * 
-            (rho2 ** 2 - 2 * r ** 2)
+            (_c.value ** 2 / _G.value * M)
+            * (1 / rho2 ** 2)
+            * (a * r_Q * np.sin(theta) ** 2)
+            * (rho2 ** 2 - 2 * r ** 2)
         )
         F[3, 1] = -F[1, 3]
         # (_c.value ** 2 / _G.value * M) is extraneous - ????? (Issue #144, perhaps)
         F[2, 3] = (
-            (_c.value ** 2 / _G.value * M) * 
-            (1 / rho2 ** 2) * (a * r_Q * r * np.sin(2 * theta)) * 
-            (rho2 + (a * np.sin(theta) ** 2))
+            (_c.value ** 2 / _G.value * M)
+            * (1 / rho2 ** 2)
+            * (a * r_Q * r * np.sin(2 * theta))
+            * (rho2 + (a * np.sin(theta) ** 2))
         )
         F[3, 2] = -F[2, 3]
 
         return F
-    
+
     @u.quantity_input(r=u.km, theta=u.rad, M=u.kg, a=u.km, Q=u.C)
     def maxwell_tensor_contravariant(self, r, theta, M, a, Q):
         """

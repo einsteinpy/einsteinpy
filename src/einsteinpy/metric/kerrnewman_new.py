@@ -6,7 +6,6 @@ import numpy as np
 from einsteinpy import constant
 from einsteinpy.metric import Metric
 
-
 _c = constant.c.value
 
 # Precomputed list of tuples, containing indices \
@@ -46,6 +45,7 @@ nonzero_christoffels_list = [
     (3, 3, 2),
 ]
 
+
 class KerrNewman(Metric):
     """
     Class for defining Kerr-Newman Goemetry
@@ -69,14 +69,14 @@ class KerrNewman(Metric):
 
         """
         super().__init__(
-            coords = coords,
-            M = M,
-            a = a,
-            Q = Q,
-            name = "Kerr-Newman Metric",
-            metric_cov = self.metric_covariant,
-            christoffels = self.christoffels_,
-            f_vec = self.f_vec_
+            coords=coords,
+            M=M,
+            a=a,
+            Q=Q,
+            name="Kerr-Newman Metric",
+            metric_cov=self.metric_covariant,
+            christoffels=self.christoffels_,
+            f_vec=self.f_vec_,
         )
 
     # - ????? (Overrides Metric.metric_covariant() - ✅)
@@ -99,13 +99,13 @@ class KerrNewman(Metric):
         """
         if self.coords == "BL":
             return self._g_cov_bl(x_vec)
-        
+
         elif self.coords == "KS":
             return self._g_cov_ks(x_vec)
-        
+
         # Default choice
         return self._g_cov_bl(x_vec)
-    
+
     # - ????? (Contravariant form returned by super class) - ✅
 
     def _g_cov_bl(self, x_vec):
@@ -191,7 +191,7 @@ class KerrNewman(Metric):
         rho2, dl = Metric.rho(r, th, a), Metric.delta(r, M, a)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
-        
+
         # Metric is invariant on t & phi
         # Differentiation of metric wrt r
         def due_to_r():
@@ -240,9 +240,7 @@ class KerrNewman(Metric):
             )
             dgdx[2, 0, 3] = dgdx[2, 3, 0] = (
                 (-a * (dl - r ** 2 - a ** 2)) / (_c * (rho2 ** 2))
-            ) * (
-                (2 * np.sin(th) * np.cos(th) * rho2) - (drh2dth * (np.sin(th) ** 2))
-            )
+            ) * ((2 * np.sin(th) * np.cos(th) * rho2) - (drh2dth * (np.sin(th) ** 2)))
 
         due_to_r()
         due_to_theta()
@@ -287,10 +285,10 @@ class KerrNewman(Metric):
         """
         if self.coords == "BL":
             return self._ch_sym_bl(x_vec)
-        
+
         elif self.coords == "KS":
             return self._ch_sym_ks(x_vec)
-        
+
         # Default choice
         return self._ch_sym_bl(x_vec)
 
@@ -320,8 +318,12 @@ class KerrNewman(Metric):
         for _, k, l in nonzero_christoffels_list[0:4]:
             val1 = dgdx[l, 0, k] + dgdx[k, 0, l]
             val2 = dgdx[l, 3, k] + dgdx[k, 3, l]
-            chl[0, k, l] = chl[0, l, k] = 0.5 * (g_contra[0, 0] * (val1) + g_contra[0, 3] * (val2))
-            chl[3, k, l] = chl[3, l, k] = 0.5 * (g_contra[3, 0] * (val1) + g_contra[3, 3] * (val2))
+            chl[0, k, l] = chl[0, l, k] = 0.5 * (
+                g_contra[0, 0] * (val1) + g_contra[0, 3] * (val2)
+            )
+            chl[3, k, l] = chl[3, l, k] = 0.5 * (
+                g_contra[3, 0] * (val1) + g_contra[3, 3] * (val2)
+            )
         for i, k, l in nonzero_christoffels_list[8:16]:
             chl[i, k, l] = 0.5 * (
                 g_contra[i, i] * (dgdx[l, i, k] + dgdx[k, i, l] - dgdx[i, k, l])
@@ -375,10 +377,10 @@ class KerrNewman(Metric):
         """
         if self.coords == "BL":
             return self._f_vec_bl(lambda_, x_vec)
-        
+
         elif self.coords == "KS":
             return self._f_vec_ks(lambda_, x_vec)
-        
+
         # Default choice
         return self._f_vec_bl(lambda_, x_vec)
 
@@ -410,14 +412,14 @@ class KerrNewman(Metric):
         F_contra = self.maxwell_tensor_contravariant(
             vec[1], vec[2], self.a.value, self.Q.value, self.M.value
         )
-        x_vec = [0, vec[1], vec[2], 0] # t & phi have no bearing on Metric
+        x_vec = [0, vec[1], vec[2], 0]  # t & phi have no bearing on Metric
         g_cov = self.metric_covariant(x_vec)
 
         vals = np.zeros(shape=(8,), dtype=float)
 
         for i in range(4):
             vals[i] = vec[i + 4]
-        
+
         vals[4] = -2.0 * (
             chl[0, 0, 1] * vec[4] * vec[5]
             + chl[0, 0, 2] * vec[4] * vec[6]
@@ -446,9 +448,7 @@ class KerrNewman(Metric):
             + chl[3, 1, 3] * vec[5] * vec[7]
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
-        vals[4:] -= self.Q.value * np.dot(
-            vec[4:].reshape((4,)), g_cov @ F_contra
-        )
+        vals[4:] -= self.Q.value * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)
 
         return vals
 

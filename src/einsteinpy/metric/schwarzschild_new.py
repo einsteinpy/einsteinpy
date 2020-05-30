@@ -4,8 +4,8 @@ import numpy as np
 from einsteinpy import constant
 from einsteinpy.metric import Metric
 
-
 _c = constant.c.value
+
 
 class Schwarzschild(Metric):
     """
@@ -25,12 +25,12 @@ class Schwarzschild(Metric):
 
         """
         super().__init__(
-            coords = "S",
-            M = M,
-            name = "Schwarzschild Metric",
-            metric_cov = self.metric_covariant,
-            christoffels = self.christoffels_,
-            f_vec = self.f_vec_
+            coords="S",
+            M=M,
+            name="Schwarzschild Metric",
+            metric_cov=self.metric_covariant,
+            christoffels=self.christoffels_,
+            f_vec=self.f_vec_,
         )
 
     def metric_covariant(self, x_vec):
@@ -57,7 +57,7 @@ class Schwarzschild(Metric):
         r_s = self.sch_rad.value
         g_cov = np.zeros(shape=(4, 4), dtype=float)
 
-        tmp, c2 = 1. - (r_s / r), _c ** 2
+        tmp, c2 = 1.0 - (r_s / r), _c ** 2
         g_cov[0, 0] = tmp
         g_cov[1, 1] = -1.0 / (tmp * c2)
         g_cov[2, 2] = -1 * (r ** 2) / c2
@@ -134,14 +134,12 @@ class Schwarzschild(Metric):
             + chl[1, 2, 2] * (vec[6] ** 2)
             + chl[1, 3, 3] * (vec[7] ** 2)
         )
-        vals[6] = -2 * chl[2, 2, 1] * vec[6] * vec[5] - 1 * \
-            chl[2, 3, 3] * (vec[7] ** 2)
-        
-        vals[7] = -2 * ( chl[3, 3, 1] * vec[7] * vec[5] + 
-            chl[3, 3, 2] * vec[7] * vec[6] 
-        )
+        vals[6] = -2 * chl[2, 2, 1] * vec[6] * vec[5] - 1 * chl[2, 3, 3] * (vec[7] ** 2)
+
+        vals[7] = -2 * (chl[3, 3, 1] * vec[7] * vec[5] + chl[3, 3, 2] * vec[7] * vec[6])
 
         return vals
+
 
 # time_velocity to be moved to `coordinates`
 # calculate_trajectory to be moved to `geodesic`

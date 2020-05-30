@@ -32,11 +32,13 @@ def scalar_factor(t, era="md", tuning_param=1.0):
     ValueError : If era is not 'md' , 'rd', and 'ded'.
 
     """
-    warnings.warn("einteinpy.utils.scalar_factor.scalar_factor() \
+    warnings.warn(
+        "einteinpy.utils.scalar_factor.scalar_factor() \
         will be deprecated in Version 0.4. Please use \
-        einsteinpy.metric.Metric.scalar_factor(t, era, tuning_param)!", \
-        PendingDeprecationWarning) # - ????? Version/Warning
-    
+        einsteinpy.metric.Metric.scalar_factor(t, era, tuning_param)!",
+        PendingDeprecationWarning,
+    )  # - ????? Version/Warning
+
     T = t.to(u.s).value
     if era == "md":
         return tuning_param * (T ** (2 / 3))
@@ -76,11 +78,13 @@ def scalar_factor_derivative(t, era="md", tuning_param=1.0):
     ValueError : If era is not 'md' , 'rd', and 'ded'.
 
     """
-    warnings.warn("einteinpy.utils.scalar_factor.scalar_factor_derivative() \
+    warnings.warn(
+        "einteinpy.utils.scalar_factor.scalar_factor_derivative() \
         will be deprecated in Version 0.4. Please use \
-        einsteinpy.metric.Metric.scalar_factor_derivative(t, era, tuning_param)!", \
-        PendingDeprecationWarning) # - ????? Version/Warning
-    
+        einsteinpy.metric.Metric.scalar_factor_derivative(t, era, tuning_param)!",
+        PendingDeprecationWarning,
+    )  # - ????? Version/Warning
+
     T = t.to(u.s).value
     if era == "md":
         return (2 / 3) * tuning_param * (T ** (-1 / 3))

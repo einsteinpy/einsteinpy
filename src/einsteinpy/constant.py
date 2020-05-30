@@ -2,10 +2,10 @@ import astropy.units as u
 import numpy as np
 from astropy import constants
 
-c = constants.c # = 1
-G = constants.G # = 1
+c = constants.c  # = 1
+G = constants.G  # = 1
 eps0 = constants.eps0
-coulombs_const = 1 / (4 * np.pi * eps0) # Use Geometrized equivalent
+coulombs_const = 1 / (4 * np.pi * eps0)  # Use Geometrized equivalent
 
 Cosmo_Const_base = constants.Constant(
     "lambda",

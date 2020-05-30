@@ -1,11 +1,11 @@
 import numpy as np
 
+from einsteinpy.coordinates.utils import cartesian_to_ks_fast  # - ????
+from einsteinpy.coordinates.utils import ks_to_cartesian_fast  # - ????
 from einsteinpy.coordinates.utils import (
     bl_to_cartesian_fast,
     cartesian_to_bl_fast,
-    cartesian_to_ks_fast, # - ????
     cartesian_to_spherical_fast,
-    ks_to_cartesian_fast, # - ????
     spherical_to_cartesian_fast,
 )
 
@@ -49,8 +49,8 @@ class CartesianConversion:
             self.vz_si,
             self._velocities_provided,
         )
-    
-    def convert_ks(self): # - ????
+
+    def convert_ks(self):  # - ????
         return cartesian_to_ks_fast(
             self.x_si,
             self.y_si,
@@ -94,8 +94,8 @@ class SphericalConversion:
         transformed_cartesian = self.convert_cartesian()
         cart = CartesianConversion(*transformed_cartesian)
         return cart.convert_bl(a)
-    
-    def convert_ks(self): # - ????
+
+    def convert_ks(self):  # - ????
         transformed_cartesian = self.convert_cartesian()
         cart = CartesianConversion(*transformed_cartesian)
         return cart.convert_ks()
@@ -143,17 +143,19 @@ class BoyerLindquistConversion:
         transformed_cartesian = self.convert_cartesian()
         cart = CartesianConversion(*transformed_cartesian)
         return cart.convert_spherical()
-    
-    def convert_ks(self): # - ????
+
+    def convert_ks(self):  # - ????
         transformed_cartesian = self.convert_cartesian()
         cart = CartesianConversion(*transformed_cartesian)
         return cart.convert_ks()
+
 
 # DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
 class KerrSchildConversion:
     """
     Interface for conversion to/from Cartesian form of Kerr-Schild Coordinates
     """
+
     def __init__(self, x, y, z, v_x=None, v_y=None, v_z=None):
         self.x_si = x
         self.y_si = y
@@ -169,7 +171,7 @@ class KerrSchildConversion:
         if self._velocities_provided:
             return self.x_si, self.y_si, self.z_si, self.vx_si, self.vy_si, self.vz_si
         return self.x_si, self.y_si, self.z_si
-    
+
     def convert_cartesian(self):
         return ks_to_cartesian_fast(
             self.x_si,
@@ -190,4 +192,6 @@ class KerrSchildConversion:
         transformed_cartesian = self.convert_cartesian()
         cart = CartesianConversion(*transformed_cartesian)
         return cart.convert_bl(a)
-# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????        
+
+
+# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
