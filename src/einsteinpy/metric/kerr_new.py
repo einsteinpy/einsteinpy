@@ -58,8 +58,10 @@ class Kerr(Metric):
 
         Parameters
         ----------
-        coords : einsteinpy.coordinates.* - ?????
+        coords : string
             Coordinate system, in which Metric is to be represented
+            "BL" - Boyer-Lindquist: Applicable to Kerr-Newman solutions
+            "KS" - Kerr-Schild: Useful for adding perturbations to Kerr-Newman solutions
         M : float
             Mass of gravitating body, e.g. Black Hole
         a : float
