@@ -316,6 +316,18 @@ class Metric:
         # Square of Geometrized Charge
         r_Q2 = (Q ** 2) * _G.value * _Cc.value / _c.value ** 4
 
+        def _in_ergo(theta):
+            return (
+                r_s
+                - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
+            )
+
+        def _out_ergo(theta):
+            return (
+                r_s
+                + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
+            )
+
         inner_ergosphere = None
         inner_horizon = 0
         outer_horizon = 0
@@ -328,16 +340,10 @@ class Metric:
             outer_ergosphere = r_s
 
         elif coords == "BL":  # Kerr & Kerr-Newman Geometries
-            inner_ergosphere = (
-                lambda theta: r_s
-                - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
-            )
+            inner_ergosphere = _in_ergo
             inner_horizon = (r_s - np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
             outer_horizon = (r_s + np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
-            outer_ergosphere = (
-                lambda theta: r_s
-                + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
-            )
+            outer_ergosphere = _out_ergo
 
         elif coords == "KS":  # Kerr & Kerr-Newman Geometries
             # - ????? (To be filled in, after refactoring `coordinates`)
