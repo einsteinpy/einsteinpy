@@ -319,11 +319,7 @@ class Metric:
         inner_ergosphere = outer_ergosphere = None
         inner_horizon = outer_horizon = 0
 
-        if coords == "S":  # Schwarzschild Geometry
-            inner_ergosphere = inner_horizon = 0
-            outer_horizon = outer_ergosphere = r_s
-
-        elif coords == "BL":  # Kerr & Kerr-Newman Geometries
+        if coords == "BL":  # Kerr & Kerr-Newman Geometries
             inner_ergosphere = (
                 lambda theta: r_s
                 - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
@@ -338,6 +334,10 @@ class Metric:
         elif coords == "KS":  # Kerr & Kerr-Newman Geometries
             # - ????? (To be filled in, after refactoring `coordinates`)
             raise NotImplementedError
+
+        elif coords == "S":  # Schwarzschild Geometry
+            inner_ergosphere = inner_horizon = 0
+            outer_horizon = outer_ergosphere = r_s
 
         return {
             "inner_ergosphere": inner_ergosphere,

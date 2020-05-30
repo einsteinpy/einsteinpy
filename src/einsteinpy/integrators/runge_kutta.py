@@ -148,7 +148,7 @@ class RK45Adaptive:  #
             Absolute tolerance, defaults to rtol/0.8e3
         
         """
-        pass
+        raise NotImplementedError
 
     def _nextstep(self, x1, x2, x3, u1, u2, u3, prev_step):
         """
@@ -200,7 +200,7 @@ class RK45Adaptive:  #
         Moves integration forward by one step
         """
         # Calls _nextstep() for getting the stepsize
-        pass
+        raise NotImplementedError
 
 
 # DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
