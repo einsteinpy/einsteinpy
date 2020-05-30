@@ -77,7 +77,7 @@ class Geodesic:
         """
         Calculate trajectory in manifold according to geodesic equation
         """
-        pass
+        raise NotImplementedError
 
     def calculate_trajectory_iterator(
         self,
@@ -91,7 +91,7 @@ class Geodesic:
         Calculate trajectory in manifold according to geodesic equation.
         Yields an iterator.
         """
-        pass
+        raise NotImplementedError
 
     # DRAFT CHANGES/ADDITIONS - ????
 
@@ -121,13 +121,13 @@ class NullGeodesic:
             Spacetime Geometry
             Defaults to ``Schwarzschild``.
         """
-        pass
+        raise NotImplementedError
 
     def __repr__(self):
-        pass
+        raise NotImplementedError
 
     def __str__(self):
-        pass
+        raise NotImplementedError
 
     def calculate_trajectory(
         self, end_lambda=10.0, OdeMethodKwargs={"stepsize": 1e-3}, coords="BL",  # ????
@@ -138,7 +138,7 @@ class NullGeodesic:
         Allow users to convert coordinates after calculations are done
         So as to not slow down the function exit - ?????
         """
-        pass
+        raise NotImplementedError
 
     def calculate_trajectory_iterator(
         self, OdeMethodKwargs={"stepsize": 1e-3}, coords="BL",  # ????
@@ -147,7 +147,7 @@ class NullGeodesic:
         Calculates photon trajectory, by solving Geodesic Equation
         Yields an iterator
         """
-        pass
+        raise NotImplementedError
 
     # @property
     # def trajectory(self):

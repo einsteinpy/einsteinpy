@@ -199,11 +199,7 @@ class RK45Adaptive:  #
         """
         Moves integration forward by one step
         """
-<<<<<<< HEAD
         # Calls _nextstepsize() for getting the stepsize of next integration step
-=======
-        # Calls _nextstep() for getting the stepsize
->>>>>>> fc0ed0a... Draft PR - integrator | metric
         pass
 
 
