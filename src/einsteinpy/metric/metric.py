@@ -329,27 +329,26 @@ class Metric:
             )
 
         if coords == "S":  # Schwarzschild Geometry
-            inner_ergosphere = 0
-            inner_horizon = 0
-            outer_horizon = r_s
-            outer_ergosphere = r_s
+            return {
+                "inner_ergosphere": 0,
+                "inner_horizon": 0,
+                "outer_horizon": r_s,
+                "outer_ergosphere": r_s,
+            }
 
         elif coords == "BL":  # Kerr & Kerr-Newman Geometries
-            inner_ergosphere = _in_ergo
-            inner_horizon = (r_s - np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
-            outer_horizon = (r_s + np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
-            outer_ergosphere = _out_ergo
+            return {
+                "inner_ergosphere": _in_ergo,
+                "inner_horizon": (r_s - np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2)))
+                / 2,
+                "outer_horizon": (r_s + np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2)))
+                / 2,
+                "outer_ergosphere": _out_ergo,
+            }
 
         elif coords == "KS":  # Kerr & Kerr-Newman Geometries
             # - ????? (To be filled in, after refactoring `coordinates`)
             raise NotImplementedError
-
-        return {
-            "inner_ergosphere": inner_ergosphere,
-            "inner_horizon": inner_horizon,
-            "outer_horizon": outer_horizon,
-            "outer_ergosphere": outer_ergosphere,
-        }
 
     # Derived classes should only define metric_covariant() function
     # Check Kerr or Kerr Newman for understanding this
