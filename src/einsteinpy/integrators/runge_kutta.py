@@ -150,7 +150,7 @@ class RK45Adaptive:  #
         """
         pass
 
-    def _nextstep(x1, x2, x3, u1, u2, u3, prev_step):
+    def _nextstep(self, x1, x2, x3, u1, u2, u3, prev_step):
         """
         Returns next stepsize, which depends on position (x), velocity (u) and previous stepsize
         Specific to BL Coordinates, for now - ????

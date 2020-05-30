@@ -325,20 +325,14 @@ class Metric:
 
         elif coords == "BL":  # Kerr & Kerr-Newman Geometries
             inner_ergosphere = (
-                lambda theta: (
-                    r_s
-                    - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))
-                )
-                / 2
+                lambda theta: r_s
+                - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
             )
             inner_horizon = (r_s - np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
             outer_horizon = (r_s + np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
             outer_ergosphere = (
-                lambda theta: (
-                    r_s
-                    + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))
-                )
-                / 2
+                lambda theta: r_s
+                + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
             )
 
         elif coords == "KS":  # Kerr & Kerr-Newman Geometries
