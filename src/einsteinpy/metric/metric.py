@@ -1,14 +1,7 @@
 import astropy.units as u
 import numpy as np
 
-# utils may not be required
-from einsteinpy import utils # - ????
-
-
-from einsteinpy import constant, utils
-from einsteinpy.coordinates import BoyerLindquist, KerrSchild, Spherical
-# from einsteinpy.utils import schwarzschild_radius_dimensionless
-
+from einsteinpy import constant
 
 _c = constant.c
 _G = constant.G
@@ -18,73 +11,93 @@ class Metric:
     """
     Class for defining general Metric Tensors
 
-    A place to gather functions from einsteinpy.utils - ?????
-
-    This module + `utils.scalar_factor` (with perhaps a name change) 
-    should have all relevant Numerical Relativity utilities
-
-    Main usage will be in perturbative treatment 
-    of EFE and its solutions
-
-    @staticmethods: to maintain their usage as utility functions,
-    even when they are logically connected to this class - ?????
+    To be used in perturbative treatment of EFE and its solutions
+   
     """
 
-    # Precomputed list of tuples consisting of indices 
-    # of christoffel symbols which are non-zero in the Metric
-    # Purpose: To exploit symmetries to reduce number of computations
-    nonzero_christoffels_list = []
-
-    def __init__(self, arr, coords, M, a, Q, name="GenericMetricTensor"):
+    @u.quantity_input(M=u.kg, a=u.km, Q=u.C)
+    def __init__(
+        self,
+        coords,
+        M,
+        a=0,
+        Q=0,
+        name="Generic Metric",
+        metric_cov=None,
+        christoffels=None,
+        f_vec=None,
+        perturbation=None
+    ):
         """
         Constructor
 
-        Units: Geometrized Unit System
+        Geometrized Unit System should be preferred here - ????? (Also docs list)
         
         Parameters
         ----------
-        arr : ~numpy.array
-            Numpy Array containing Metric components
-        coords : einsteinpy.coordinates
-            Coordinate system, in which Metric has been represented
+        coords : string
+            Coordinate system, in which Metric is to be represented
+            "S" - Schwarzschild: Only applicable to Schwarzschild solutions
+            "BL" - Boyer-Lindquist: Applicable to Kerr-Newman solutions
+            "KS" - Kerr-Schild: Useful for adding perturbations to Kerr-Newman solutions
         M : float
             Mass of gravitating body, e.g. Black Hole
         a : float
             Spin Parameter, 0 <= a <= 1 - ???? (Only if Geom Units)
+            Defaults to ``0``
         Q : float
             Charge on gravitating body, e.g. Black Hole
+            Defaults to ``0``
         name : str
-            Name of the Metric Tensor. Defaults to "GenericMetricTensor"
+            Name of the Metric Tensor. Defaults to ``"Generic Metric"``
+        metric_cov : function
+            Function, defining Covariant Metric Tensor
+            It should return a real-valued tensor (2D Array), at supplied coordinates - ?????
+            Defaults to ``None``
+            Consult pre-defined classes for function definition
+        christoffels : function
+            Function, defining Christoffel Symbols
+            It should return a real-valued (4,4,4) array, at supplied coordinates - ?????
+            Defaults to ``None``
+            Consult pre-defined classes for function definition
+        f_vec : function
+            Function, defining RHS of Geodesic Equation
+            It should return a real-valued (8) vector, at supplied coordinates - ?????
+            Defaults to ``None``
+            Consult pre-defined classes for function definition
+        perturbation : function
+            Function, defining Covariant Perturbation Tensor
+            It should return a real-valued tensor (2D Array), at supplied coordinates - ?????
+            Defaults to ``None``
+            Function definition similar to ``metric_cov``
+        
         """
         self.name = name
-        # - ?????
-        # Need to decide how to allow arbitray metric,
-        # that connects well with `coords`,
-        # and leaves predefined metric classes immutable
-        self.arr = arr
         self.coords = coords
         self.M = M
         self.a = a
         self.Q = Q
+        self.metric_cov = metric_cov
+        self.christoffels = christoffels
+        self.f_vec = f_vec
+        self.perturbation = perturbation
+        # Need physical checks for `perturbation`
+        # Expert opinion needed
 
+        self.sch_rad = self.schwarzschild_radius(M)
 
-    def __str__(self): # - ????? (arr)
-        return (
-            " ( name: ({0}), coordinates: ({1}), array: ({2}). mass: ({3}), spin parameter: ({4}), charge: ({"
-            "5}) )".format(
-                self.name, self.coords, self.arr, self.M, self.a, self.Q
-            )
-        )
+    def __str__(self):
+        return f"( Name: ({self.name}), Coordinates: ({self.coords}), \
+            Mass: ({self.M}), Spin parameter: ({self.a}), \
+            Charge: ({self.Q}), Schwarzschild Radius: ({self.sch_rad}) )"
 
-    def __repr__(self): # - ????? (arr)
-        return (
-            " ( name: ({0}), coordinates: ({1}), array: ({2}). mass: ({3}), spin parameter: ({4}), charge: ({"
-            "5}) )".format(
-                self.name, self.coords, self.arr, self.M, self.a, self.Q
-            )
-        )
+    def __repr__(self):
+        return f"( Name: ({self.name}), Coordinates: ({self.coords}), \
+            Mass: ({self.M}), Spin parameter: ({self.a}), \
+            Charge: ({self.Q}), Schwarzschild Radius: ({self.sch_rad}) )"
 
     @staticmethod
+    @u.quantity_input(r=u.km, theta=u.rad, a=u.km)
     def sigma(r, theta, a):
         """
         Returns the value r^2 + a^2 * cos^2(theta)
@@ -108,9 +121,10 @@ class Metric:
         return sigma
 
     @staticmethod
+    @u.quantity_input(r=u.km, M=u.kg, a=u.km, Q=u.C)
     def delta(r, M, a, Q=0):
         """
-        Returns the value of (r^2 - Rs * r + a^2 + Rq^2)
+        Returns the value of (r^2 - r_s * r + a^2 + r_Q^2)
         Specific to Boyer-Lindquist coordinates
         Applies to Kerr Geometry
 
@@ -124,22 +138,22 @@ class Metric:
             Spin Parameter
         Q : float
             Charge on gravitating body
-            Defaults to 0 (for Kerr Geometry)
+            Defaults to ``0`` (for Kerr Geometry)
 
         Returns
         -------
         float
-            The value of ``r^2 - Rs * r + a^2 + Rq^2``
+            The value of ``r^2 - r_s * r + a^2 + r_Q^2``
 
         """
-        # Removing c, G, Cc as parameters - ?????
-        Rs = 2 * M * _G.value / _c.value ** 2
+        r_s = 2 * M * _G.value / _c.value ** 2
         # Square of Geometrized Charge
-        RQ2 = (Q ** 2) * _G.value * _Cc.value / _c.value ** 4
-        delta = (r ** 2) - (Rs * r) + (a ** 2) + RQ2
+        r_Q2 = (Q ** 2) * _G.value * _Cc.value / _c.value ** 4
+        delta = (r ** 2) - (r_s * r) + (a ** 2) + r_Q2
         return delta
 
     @staticmethod
+    @u.quantity_input(r=u.km, theta=u.rad, a=u.km)
     def rho(r, theta, a):
         """
         Returns the value of sqrt(r^2 + a^2 * cos^2(theta)) == sqrt(sigma)
@@ -164,6 +178,7 @@ class Metric:
         return np.sqrt(Metric.sigma(r, theta, a))
 
     @staticmethod
+    @u.quantity_input(x=u.km, y=u.km, z=u.km, a=u.km)
     def r_ks(x, y, z, a):
         """
         Returns the value of r, after solving (x**2 + y**2) / (r**2 + a**2) + z**2 / r**2 = 1
@@ -173,6 +188,7 @@ class Metric:
         pass
 
     @staticmethod
+    @u.quantity_input(M=u.kg)
     def schwarzschild_radius(M):
         """
         Returns Schwarzschild Radius in SI units
@@ -186,34 +202,10 @@ class Metric:
         r : ~astropy.units.m
             Schwarzschild Radius for a given mass, in m
         """
-        if not isinstance(M, u.quantity.Quantity):
-            M = M * u.kg
-        # Removing c & G as parameters - ?????
-        M = M.to(u.kg)
-        num = 2 * _G * M
-        deno = _c ** 2
-        return num / deno
+        return 2 * _G * M / _c ** 2
 
     @staticmethod
-    def schwarzschild_radius_dimensionless(M):
-        """
-        Returns the value of Schwarzschild Radius
-
-        Parameters
-        ----------
-        M : float
-            Mass of gravitating body
-        Returns
-        -------
-        Rs : float
-            Schwarzschild Radius for a given mass
-        """
-        # Removing c & G as parameters - ?????
-        # Unused - ?????
-        Rs = 2 * M * _G.value / _c.value ** 2
-        return Rs
-
-    @staticmethod
+    @u.quantity_input(J= u.kg * u.m ** 2 / u.s, M=u.kg)
     def spin_parameter(J, M):
         """
         Returns Spin Parameter (a) of a Rotating Body, in SI units
@@ -231,10 +223,10 @@ class Metric:
             Spin Parameter
 
         """
-        # Removing c as parameter - ?????
         return J / (M * _c)
     
     @staticmethod
+    @u.quantity_input(a=u.km, M=u.kg)
     def scaled_spin_parameter(a, M):
         """
         Returns scaled Spin Parameter (a), to incorporate changed units
@@ -257,16 +249,17 @@ class Metric:
             If a is not between 0 and 1
 
         """
+        # Unused - ?????
         # Where is this to be used - ?????
         # What are we scaling to - ????? (Mass?)
         # Can perhaps put in einsteinpy.units
-        # Removing c & G as parameters - ?????
         half_rs = _G.value * M / _c.value ** 2
         if a < 0 or a > 1:
             raise ValueError("a should be between 0 and 1.")
         return a * half_rs
 
     @staticmethod
+    @u.quantity_input(Q=u.C)
     def charge_geometrized(Q):
         """
         Geometrized representation of the Electric Charge on the gravitating body
@@ -282,12 +275,12 @@ class Metric:
             Geometrized Charge
 
         """
-        # Removing c, G, Cc as parameters - ?????
         # Belongs in the `einsteinpy.units` module - ?????
         # Unused - ?????
         return (Q / (_c.value ** 2)) * np.sqrt(_G.value * _Cc.value)
     
     @staticmethod
+    @u.quantity_input(M=u.kg, a=u.km, Q=u.C)
     def singularities(M, a, Q=0, coords="BL"):
         """
         Returns the Singularities of the Metric
@@ -302,122 +295,114 @@ class Metric:
             Spin Parameter
         Q : float
             Charge on gravitating body in the Metric
-            Defaults to 0 (for Kerr Geometry)
+            Defaults to ``0 `(for Kerr Geometry)
         coords : str
-            Coordinates, in which to calculate and return the singularities
+            Coordinate System, in which singularities are calculated
             "BL" for Boyer-Lindquist, "KS" for Kerr-Schild
-            Defaults to "BL"
+            Defaults to ``"BL"``
 
         Returns
         -------
-        dict - ????? (Docs)
+        dict
             Dictionary of singularities in the geometry
             ``{
-                "inner_ergosphere": lambda function
-                "inner_horizon": float
-                "outer_horizon": float
-                "outer_ergosphere": lambda function
+            "inner_ergosphere": function(theta),
+            "inner_horizon": float,
+            "outer_horizon": float,
+            "outer_ergosphere": function(theta)
             }``
 
         """
-        # Removing c, G, Cc as parameters - ?????
-        Rs = 2 * M * _G.value / _c.value ** 2
+        r_s = 2 * M * _G.value / _c.value ** 2
         # Square of Geometrized Charge
-        RQ2 = (Q ** 2) * _G.value * _Cc.value / _c.value ** 4
+        r_Q2 = (Q ** 2) * _G.value * _Cc.value / _c.value ** 4
 
-        inner_ergosphere = None
-        inner_horizon = 0
-        outer_horizon = 0
-        outer_ergosphere = None
+        inner_ergosphere = outer_ergosphere = None
+        inner_horizon = outer_horizon = 0
+
+        if coords == "S": # Schwarzschild Geometry
+            inner_ergosphere = inner_horizon = 0
+            outer_horizon = outer_ergosphere = r_s
         
-        if coords == "BL":
-            inner_ergosphere = lambda theta: (Rs - np.sqrt((Rs ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * RQ2))) / 2
-            inner_horizon = (Rs - np.sqrt((Rs ** 2) - (4 * a ** 2) - (4 * RQ2))) / 2
-            outer_horizon = (Rs + np.sqrt((Rs ** 2) - (4 * a ** 2) - (4 * RQ2))) / 2
-            outer_ergosphere = lambda theta: (Rs + np.sqrt((Rs ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * RQ2))) / 2
+        elif coords == "BL": # Kerr & Kerr-Newman Geometries
+            inner_ergosphere = lambda theta: (r_s - np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))) / 2
+            inner_horizon = (r_s - np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
+            outer_horizon = (r_s + np.sqrt((r_s ** 2) - (4 * a ** 2) - (4 * r_Q2))) / 2
+            outer_ergosphere = lambda theta: (r_s + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2))) / 2
         
-        elif coords == "KS":
+        elif coords == "KS": # Kerr & Kerr-Newman Geometries
             # - ????? (To be filled in, after refactoring `coordinates`)
             pass
 
         return {
-                "inner_ergosphere": inner_ergosphere,
-                "inner_horizon": inner_horizon,
-                "outer_horizon": outer_horizon,
-                "outer_ergosphere": outer_ergosphere,
-            }
+            "inner_ergosphere": inner_ergosphere,
+            "inner_horizon": inner_horizon,
+            "outer_horizon": outer_horizon,
+            "outer_ergosphere": outer_ergosphere,
+        }
 
 
-    # The methods below are based on how a user wants to set up a problem
-    # Potentially, this should lead to support for exotic geometries
-    # Some functions below are to be used as blueprints for
-    # defining classes for well-known Metric Tensors.
-    def metric(self, r, theta, M, a):
+    # Derived classes should only define metric_covariant() function
+    # Check Kerr or Kerr Newman for understanding this
+    # No need for metric_contravariant()
+    def metric_covariant(self, x_vec):
         """
-        Returns the Metric in its general form
+        Returns Covariant Metric Tensor
+        Adds Kerr-Schild (Linear) Perturbation to metric, \
+        if ``perturbation`` is defined in Metric object
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.array
+            Covariant Metric Tensor
+            Numpy array of shape (4,4)
+
         """
-        pass
+        g_cov = self.metric_cov(x_vec, self.M, self.a, self.Q)
 
-    def metric_inv(self, r, theta, M, a):
+        if self.perturbation:
+            p_cov = self.perturbation(x_vec, self.M, self.a, self.Q)
+            return g_cov + p_cov
+
+        return g_cov
+
+    def metric_contravariant(self, x_vec):
         """
-        Returns the inverse of Metric
+        Returns Contravariant Metric Tensor
+        Adds Kerr-Schild (Linear) Perturbation to metric, \
+        if ``perturbation`` is not None in Metric object
+        
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+        
+        Returns
+        -------
+        ~numpy.array
+            Contravariant Metric Tensor
+
         """
-        pass
+        g_cov = self.metric_covariant(x_vec)
+        g_contra = np.linalg.inv(g_cov)
 
-    def dmetric_dx(self, r, theta, M, a):
-        """
-        Returns differentiation of each Metric component w.r.t. coordinates
-        """
-        dmdx = np.zeros(shape=(4, 4, 4), dtype=float)
-        def due_to_x0():
-            # Diff wrt x_0 component
-            nonlocal dmdx
-            pass
+        return g_contra
 
-        def due_to_x1():
-            # Diff wrt x_1 component
-            nonlocal dmdx
-            pass
+    # Christoffels to be supplied as a function
+    # f_vec to be supplied as a function
 
-        def due_to_x2():
-            # Diff wrt x_2 component
-            nonlocal dmdx
-            pass
-
-        def due_to_x3():
-            # Diff wrt x_3 component
-            nonlocal dmdx
-            pass
-
-        due_to_x0()
-        due_to_x1()
-        due_to_x2()
-        due_to_x3()
-        return dmdx
-
-    def christoffels(self, r, theta, M, a):
-        """
-        Returns Christoffel Symbols for the Metric
-        """
-        pass
-
-    def nonzero_christoffels(self):
-        """
-        Returns a list of tuples consisting of indices 
-        of christoffel symbols, which are non-zero
-        in the Metric, computed in real-time.
-        """
-        pass
-    """ FUNCTIONS TO INCLUDE -- (END) - ???? """
-
-
-
-
-    """ FUNCTIONS THAT MAY BE INCLUDED HERE - ???? """
+    # M not needed as parameter in 5 functions below - ????? \
+    # (if (_c.value ** 2 / _G.value * M) is erroneous)
+    @u.quantity_input(r=u.km, theta=u.rad, M=u.kg, a=u.km, Q=u.C)
     def em_potential_covariant(self, r, theta, M, a, Q):
         """
-        Returns Electromagnetic 4-Potential
-        Specific to Kerr-Newman Geometry
+        Returns Covariant Electromagnetic 4-Potential
+        Specific to Kerr-Newman Geometries
 
         Check Eq. (1), Page 2: https://arxiv.org/pdf/1407.1530.pdf - ?????
         Or, Wikipedia: https://en.wikipedia.org/wiki/Kerr%E2%80%93Newman_metric#Electromagnetic_field_tensor_in_Boyer-Lindquist_form
@@ -438,25 +423,26 @@ class Metric:
         Returns
         -------
         ~numpy.array
-            Electromagnetic 4-Potential
+            Covariant Electromagnetic 4-Potential
             Numpy array of shape (4,)
 
         """
-        # Removing c, G, Cc as parameters - ?????
         # Square of Geometrized Charge
-        RQ = np.sqrt((Q ** 2 * _G * _Cc) / _c ** 4)
+        r_Q = np.sqrt((Q ** 2 * _G.value * _Cc.value) / _c.value ** 4)
         rho2 = Metric.rho(r, theta, a) ** 2
-        pot = np.zeros((4,), dtype=float)
-        pot[0] = r * RQ / rho2
+
+        A = np.zeros((4,), dtype=float)
+        A[0] = r * r_Q / rho2
         # (_c ** 2 / _G * M) is extraneous - ?????
-        pot[3] = (_c ** 2 / _G * M) *  (-r * a * RQ * np.sin(theta) ** 2 / rho2)
+        A[3] = (_c.value ** 2 / _G.value * M) *  (-r * a * r_Q * np.sin(theta) ** 2 / rho2)
 
-        return pot
+        return A
 
-    def maxwell_tensor_covariant(self, r, theta, M, a, Q):
+    @u.quantity_input(r=u.km, theta=u.rad, M=u.kg, a=u.km, Q=u.C)
+    def em_potential_contravariant(self, r, theta, M, a, Q):
         """
-        Returns Covariant Maxwell Stress Tensor
-        Specific to Kerr-Newman Geometry
+        Returns Contravariant Electromagnetic 4-Potential
+        Specific to Kerr-Newman Geometries
 
         Parameters
         ----------
@@ -474,50 +460,181 @@ class Metric:
         Returns
         -------
         ~numpy.array
-            Maxwell Stress Tensor
-            Numpy array of shape (4, 4)
+            Contravariant Electromagnetic 4-Potential
+            Numpy array of shape (4,)
 
         """
-        # Removing c, G, Cc as parameters - ?????
-        pass
+        A_cov = self.em_potential_covariant(r, theta, M, a, Q)
+        x_vec = [0, r, theta, 0] # t & phi have no bearing on Metric
+        g_contra = self.metric_contravariant(x_vec=x_vec)
+        # @ has similar perf to np.dot or np.matmul
+        # https://stackoverflow.com/a/58116209/11922029
+        return g_contra @ A_cov
 
-    def maxwell_tensor_contravariant( r, theta, M, a, Q):
+    @u.quantity_input(r=u.km, theta=u.rad, M=u.kg, a=u.km, Q=u.C)
+    def maxwell_tensor_covariant(self, r, theta, M, a, Q):
         """
-        Returns Contravariant Maxwell Stress Tensor
-        Specific to Kerr-Newman Geometry
-        """
-        pass
-    """ FUNCTIONS THAT MAY BE INCLUDED HERE -- (END) - ???? """
-
-
-    """ NOT SURE, IF THESE SHOULD BE HERE - ???? """
-    # @u.quantity_input(mass=u.kg)
-    def time_velocity(pos_vec, vel_vec, mass, a):
-        """
-        # Velocity of coordinate time wrt proper metric
-        Timelike component of 4-Velocity
+        Returns Covariant Maxwell Stress Tensor - ????? (Value of)
+        Specific to Kerr-Newman Geometries
 
         Parameters
         ----------
-        pos_vector : ~numpy.array
-            Vector with r, theta, phi components in SI units
-        vel_vector : ~numpy.array
-            Vector with velocities of r, theta, phi components in SI units
-        mass : ~astropy.units.kg
+        r : float
+            r-component of 4-Position
+        theta : float
+            theta-component of 4-Position
+        M : float
             Mass of gravitating body
         a : float
-            Any constant
-        Q : ~astropy.units.C
-        Charge on gravitating body
+            Spin Parameter
+        Q : float
+            Charge on gravitating body
+        
+        Returns
+        -------
+        ~numpy.array
+            Covariant Maxwell Stress Tensor
+            Numpy array of shape (4, 4)
+
+        """
+        r_Q = np.sqrt((Q ** 2 * _G.value * _Cc.value) / _c.value ** 4)
+        rho2 = Metric.rho(r, theta, a) ** 2
+        # Partial derivatives of rho2
+        drho2_dr = 2 * r
+        drho2_dtheta = -(a ** 2 * np.sin(2 * theta))
+
+        F = np.zeros((4, 4), dtype=float)
+
+        F[0, 1] = -(r_Q * (rho2 - drho2_dr * r)) / (rho2 ** 2)
+        F[1, 0] = -F[0, 1]
+        F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2 ** 2)
+        F[2, 0] = -F[0, 2]
+        # (_c.value ** 2 / _G.value * M) is extraneous - ????? (Issue #144, perhaps)
+        F[1, 3] = (
+            (_c.value ** 2 / _G.value * M) * 
+            (1 / rho2 ** 2) * (a * r_Q * np.sin(theta) ** 2) * 
+            (rho2 ** 2 - 2 * r ** 2)
+        )
+        F[3, 1] = -F[1, 3]
+        # (_c.value ** 2 / _G.value * M) is extraneous - ????? (Issue #144, perhaps)
+        F[2, 3] = (
+            (_c.value ** 2 / _G.value * M) * 
+            (1 / rho2 ** 2) * (a * r_Q * r * np.sin(2 * theta)) * 
+            (rho2 + (a * np.sin(theta) ** 2))
+        )
+        F[3, 2] = -F[2, 3]
+
+        return F
+    
+    @u.quantity_input(r=u.km, theta=u.rad, M=u.kg, a=u.km, Q=u.C)
+    def maxwell_tensor_contravariant(self, r, theta, M, a, Q):
+        """
+        Returns Contravariant Maxwell Stress Tensor
+        Specific to Kerr-Newman Geometries
+
+        Parameters
+        ----------
+        r : float
+            r-component of 4-Position
+        theta : float
+            theta-component of 4-Position
+        M : float
+            Mass of gravitating body
+        a : float
+            Spin Parameter
+        Q : float
+            Charge on gravitating body
+        
+        Returns
+        -------
+        ~numpy.array
+            Contravariant Maxwell Stress Tensor
+            Numpy array of shape (4, 4)
+
+        """
+        F_cov = self.maxwell_tensor_covariant(r, theta, M, a, Q)
+        x_vec = [0, r, theta, 0]
+        g_contra = self.metric_contravariant(x_vec=x_vec)
+
+        F_contra = g_contra @ F_cov @ g_contra
+
+        return F_contra
+
+    # Functions below are untouched
+    @staticmethod
+    @u.quantity_input(t=u.s)
+    def scalar_factor(t, era="md", tuning_param=1.0):
+        """
+        Acceleration of the universe in cosmological models of Robertson Walker
+        Flat Universe.
+
+        Parameters
+        ----------
+        era : string
+            Can be chosen from 'md' (Matter Dominant),
+            'rd' (Radiation Dominant) and 'ded' (Dark Energy Dominant)
+        t : ~astropy.units.s
+            Time for the event
+        tuning_param : float, optional
+            Unit scaling factor, defaults to 1
 
         Returns
         -------
-        ~astropy.units.one
-            # Velocity of time
-            Timelike component of 4-Velocity
+        float
+            Value of scalar factor at time t.
+
+        Raises
+        ------
+        ValueError : If era is not 'md' , 'rd', and 'ded'.
 
         """
-        # Similar function for Kerr and Kerr-Newman
-        # Perhaps, this should be in coordinates in some form
-        pass
-    """ NOT SURE, IF THESE SHOULD BE HERE -- (END) - ???? """
+        T = t.to(u.s).value
+        if era == "md":
+            return tuning_param * (T ** (2 / 3))
+        elif era == "rd":
+            return tuning_param * (T ** (0.5))
+        elif era == "ded":
+            hubble_const = (constant.Cosmo_Const / 3) ** 0.5
+            val = np.e ** (hubble_const.value * T)
+            return tuning_param * val
+        else:
+            raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")
+
+    @staticmethod
+    @u.quantity_input(t=u.s)
+    def scalar_factor_derivative(t, era="md", tuning_param=1.0):
+        """
+        Derivative of acceleration of the universe in cosmological models of Robertson Walker
+        Flat Universe.
+
+        Parameters
+        ----------
+        era : string
+            Can be chosen from 'md' (Matter Dominant),
+            'rd' (Radiation Dominant) and 'ded' (Dark Energy Dominant)
+        t : ~astropy.units.s
+            Time for the event
+        tuning_param : float, optional
+            Unit scaling factor, defaults to 1
+
+        Returns
+        -------
+        float
+            Value of derivative of scalar factor at time t.
+
+        Raises
+        ------
+        ValueError : If era is not 'md' , 'rd', and 'ded'.
+
+        """
+        T = t.to(u.s).value
+        if era == "md":
+            return (2 / 3) * tuning_param * (T ** (-1 / 3))
+        elif era == "rd":
+            return 0.5 * tuning_param * (T ** (-0.5))
+        elif era == "ded":
+            hubble_const = (constant.Cosmo_Const / 3) ** 0.5
+            val = hubble_const.value * (np.e ** (hubble_const.value * T))
+            return tuning_param * val
+        else:
+            raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")
