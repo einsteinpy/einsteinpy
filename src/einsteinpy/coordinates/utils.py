@@ -234,4 +234,35 @@ def ks_to_cartesian_novel(x, y, z):
     This function should eventually result in Coordinate Transformation Graph!
     """
     return x, y, z
+
+# @u.quantity_input(mass=u.kg)
+def time_velocity(pos_vec, vel_vec, mass, a):
+    """
+    # Velocity of coordinate time wrt proper metric
+    Timelike component of 4-Velocity
+
+    Parameters
+    ----------
+    pos_vector : ~numpy.array
+        Vector with r, theta, phi components in SI units
+    vel_vector : ~numpy.array
+        Vector with velocities of r, theta, phi components in SI units
+    mass : ~astropy.units.kg
+        Mass of gravitating body
+    a : float
+        Any constant
+    Q : ~astropy.units.C
+    Charge on gravitating body
+
+    Returns
+    -------
+    ~astropy.units.one
+        # Velocity of time
+        Timelike component of 4-Velocity
+
+    """
+    # Similar function for Kerr and Kerr-Newman
+    # Perhaps, this should be in coordinates in some form
+    pass
 # DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
+
