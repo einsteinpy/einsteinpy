@@ -66,6 +66,56 @@ def _change_config(tensor, metric, newconfig):
     return chain_config_change()
 
 
+def tensor_product(tensor1, tensor2, i=None, j=None):
+    """Tensor Product of ``tensor1`` and ``tensor2``
+
+    Parameters
+    ----------
+    tensor1 : ~einsteinpy.symbolic.BaseRelativityTensor
+    tensor2 : ~einsteinpy.symbolic.BaseRelativityTensor
+    i : int, optional
+        contract ``i``th index of ``tensor1``
+    j : int, optional
+        contract ``j``th index of ``tensor2``
+
+
+    Returns
+    -------
+    ~einsteinpy.symbolic.BaseRelativityTensor
+        tensor of appropriate rank
+
+    Raises
+    ------
+    ValueError
+        Raised when ``i`` and ``j`` both indicate 'u' or 'l' indices
+    """
+    product = tensorproduct(tensor1.arr, tensor2.arr)
+
+    if (i or j) is None:
+        newconfig = tensor1.config + tensor2.config
+    else:
+        if tensor1.config[i] == tensor2.config[j]:
+            raise ValueError(
+                "Index summation not allowed between %s and %s indices"
+                % (tensor1.config[i], tensor2.config[j])
+            )
+
+        product = simplify(tensorcontraction(product, (i, len(tensor1.config) + j)))
+
+        con = tensor1.config[:i] + tensor1.config[i + 1 :]
+        fig = tensor2.config[:j] + tensor2.config[j + 1 :]
+        newconfig = con + fig
+
+    return BaseRelativityTensor(
+        product,
+        syms=tensor1.syms,
+        config=newconfig,
+        parent_metric=tensor1.parent_metric,
+        variables=tensor1.variables,
+        functions=tensor1.functions,
+    )
+
+
 class Tensor:
     """
     Base Class for Tensor manipulation
@@ -211,7 +261,7 @@ class Tensor:
 
 class BaseRelativityTensor(Tensor):
     """
-    Generic class for defining tensors in General Relativity. 
+    Generic class for defining tensors in General Relativity.
     This would act as a base class for other Tensorial quantities in GR.
 
     Attributes
