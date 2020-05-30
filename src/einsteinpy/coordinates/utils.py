@@ -265,7 +265,7 @@ def time_velocity(pos_vec, vel_vec, mass, a):
     """
     # Similar function for Kerr and Kerr-Newman
     # Perhaps, this should be in coordinates in some form
-    pass
+    raise NotImplementedError
 
 
 # DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????
