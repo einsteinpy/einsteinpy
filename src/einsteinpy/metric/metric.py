@@ -328,11 +328,6 @@ class Metric:
                 + np.sqrt((r_s ** 2) - (4 * (a * np.cos(theta)) ** 2) - (4 * r_Q2)) / 2
             )
 
-        inner_ergosphere = None
-        inner_horizon = 0
-        outer_horizon = 0
-        outer_ergosphere = None
-
         if coords == "S":  # Schwarzschild Geometry
             inner_ergosphere = 0
             inner_horizon = 0
