@@ -34,10 +34,10 @@ def scalar_factor(t, era="md", tuning_param=1.0):
     """
     warnings.warn(
         "einteinpy.utils.scalar_factor.scalar_factor() \
-        will be deprecated in Version 0.4. Please use \
+        will be deprecated in Version 0.5.0 Please use \
         einsteinpy.metric.Metric.scalar_factor(t, era, tuning_param)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     T = t.to(u.s).value
     if era == "md":
@@ -80,10 +80,10 @@ def scalar_factor_derivative(t, era="md", tuning_param=1.0):
     """
     warnings.warn(
         "einteinpy.utils.scalar_factor.scalar_factor_derivative() \
-        will be deprecated in Version 0.4. Please use \
+        will be deprecated in Version 0.5.0 Please use \
         einsteinpy.metric.Metric.scalar_factor_derivative(t, era, tuning_param)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     T = t.to(u.s).value
     if era == "md":

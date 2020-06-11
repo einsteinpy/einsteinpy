@@ -33,6 +33,8 @@ class Schwarzschild(Metric):
             f_vec=self.f_vec_,
         )
 
+    # Overrides Metric.metric_covariant()
+    # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Schwarzschild Metric Tensor \
@@ -65,8 +67,6 @@ class Schwarzschild(Metric):
 
         return g_cov
 
-    # - ????? (Contravariant form returned by super class) - ✅
-
     def christoffels_(self, x_vec):
         """
         Returns the Christoffel Symbols for Schwarzschild Metric
@@ -85,7 +85,6 @@ class Schwarzschild(Metric):
             Numpy array of shape (4,4,4)
 
         """
-        # Removing c, G as parameters - ?????
         r, th = x_vec[1], x_vec[2]
         r_s = self.sch_rad
         c2 = _c ** 2

@@ -65,7 +65,7 @@ class Kerr(Metric):
         M : float
             Mass of gravitating body, e.g. Black Hole
         a : float
-            Spin Parameter, 0 <= a <= 1 - ???? (Only if Geom Units)
+            Spin Parameter
 
         """
         super().__init__(
@@ -78,7 +78,8 @@ class Kerr(Metric):
             f_vec=self.f_vec_,
         )
 
-    # - ????? (Overrides Metric.metric_covariant() - ✅)
+    # Overrides Metric.metric_covariant()
+    # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Kerr Metric Tensor \
@@ -104,8 +105,6 @@ class Kerr(Metric):
 
         # Default choice
         return self._g_cov_bl(x_vec)
-
-    # - ????? (Contravariant form returned by super class) - ✅
 
     def _g_cov_bl(self, x_vec):
         """

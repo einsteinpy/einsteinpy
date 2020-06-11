@@ -42,7 +42,7 @@ class Metric:
         M : float
             Mass of gravitating body, e.g. Black Hole
         a : float
-            Spin Parameter, 0 <= a <= 1 - ???? (Only if Geom Units)
+            Spin Parameter
             Defaults to ``0``
         Q : float
             Charge on gravitating body, e.g. Black Hole
@@ -248,10 +248,9 @@ class Metric:
             If a is not between 0 and 1
 
         """
-        # Unused - ?????
-        # Where is this to be used - ?????
+        # Unused - Not used in any method ?????
         # What are we scaling to - ????? (Mass?)
-        # Can perhaps put in einsteinpy.units
+        # Can perhaps put in einsteinpy.units?
         half_rs = _G.value * M / _c.value ** 2
         if a < 0 or a > 1:
             raise ValueError("a should be between 0 and 1.")
@@ -274,8 +273,9 @@ class Metric:
             Geometrized Charge
 
         """
-        # Belongs in the `einsteinpy.units` module - ?????
-        # Unused - ?????
+        # Unused - Not used in any method ?????
+        # What are we scaling to - ????? (Mass?)
+        # Can perhaps put in einsteinpy.units?
         return (Q / (_c.value ** 2)) * np.sqrt(_G.value * _Cc.value)
 
     @staticmethod
@@ -406,14 +406,13 @@ class Metric:
 
     # M not needed as parameter in 5 functions below - ????? \
     # (if (_c.value ** 2 / _G.value * M) is erroneous)
+    # Check Eq. (1), Page 2: https://arxiv.org/pdf/1407.1530.pdf - ?????
+    # Or: https://en.wikipedia.org/wiki/Kerr%E2%80%93Newman_metric#Electromagnetic_field_tensor_in_Boyer-Lindquist_form
     @u.quantity_input(r=u.km, theta=u.rad, M=u.kg, a=u.km, Q=u.C)
     def em_potential_covariant(self, r, theta, M, a, Q):
         """
         Returns Covariant Electromagnetic 4-Potential
         Specific to Kerr-Newman Geometries
-
-        Check Eq. (1), Page 2: https://arxiv.org/pdf/1407.1530.pdf - ?????
-        Or, Wikipedia: https://en.wikipedia.org/wiki/Kerr%E2%80%93Newman_metric#Electromagnetic_field_tensor_in_Boyer-Lindquist_form
 
         Parameters
         ----------

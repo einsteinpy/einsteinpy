@@ -24,10 +24,10 @@ def schwarzschild_radius(mass, c=constant.c, G=constant.G):
     """
     warnings.warn(
         "einteinpy.utils.schwarzschild_utils.schwarzschild_radius() \
-        will be removed in Version 0.4. \
+        will be removed in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.schwarzschild_radius(M)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     if not isinstance(mass, u.quantity.Quantity):
         mass = mass * u.kg
@@ -58,10 +58,10 @@ def schwarzschild_radius_dimensionless(M, c=constant.c.value, G=constant.G.value
     """
     warnings.warn(
         "einteinpy.utils.schwarzschild_utils.schwarzschild_radius_dimensionless() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.schwarzschild_radius(M)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     Rs = 2 * M * G / c ** 2
     return Rs
@@ -89,16 +89,16 @@ def time_velocity(pos_vec, vel_vec, mass):
 
     """
     # this function considers SI units only
-    a = schwarzschild_radius(mass).value
+    a = -schwarzschild_radius(mass).value
     c = constant.c.value
     num1 = (1 / ((c ** 2) * (1 + (a / pos_vec[0])))) * (
         vel_vec[0] ** 2
-    )  # 1 - a / r - ?????
+    )
     num2 = ((pos_vec[0] ** 2) / (c ** 2)) * (vel_vec[1] ** 2)
     num3 = (
         ((pos_vec[0] ** 2) / (c ** 2)) * (np.sin(pos_vec[1]) ** 2) * (vel_vec[2] ** 2)
     )
-    deno = 1 + (a / pos_vec[0])  # 1 - a / r - ?????
+    deno = 1 + (a / pos_vec[0])
     time_vel_squared = (1 + num1 + num2 + num3) / deno
     time_vel = np.sqrt(time_vel_squared)
     return time_vel * u.one
@@ -127,11 +127,11 @@ def metric(r, theta, M, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.schwarzschild_utils.metric() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use \
         einsteinpy.metric.Schwarzschild.metric_covariant(x_vec)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     m = np.zeros(shape=(4, 4), dtype=float)
@@ -167,11 +167,11 @@ def christoffels(r, theta, M, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.schwarzschild_utils.christoffels() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Schwarzschild.christoffels(x_vec)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
-
+    )
+    
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     c2 = c ** 2
