@@ -41,7 +41,6 @@ class Kerr:
     def from_coords(cls, coords, M, q=None, Q=None, time=0 * u.s, a=0 * u.m):
         """
         Constructor
-
         Parameters
         ----------
         coords : ~einsteinpy.coordinates.velocity.CartesianDifferential
@@ -52,7 +51,6 @@ class Kerr:
             Spin factor of the massive body. Angular momentum divided by mass divided by speed of light.
         time : ~astropy.units.quantity.Quantity
             Time of start, defaults to 0 seconds.
-
         """
         if coords.system == "Cartesian":
             bl_coords = coords.bl_differential(a)
@@ -107,7 +105,6 @@ class Kerr:
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
-
         Parameters
         ----------
         start_lambda : float
@@ -121,14 +118,12 @@ class Kerr:
             Dictionary with key 'stepsize' along with an float value is expected.
         return_cartesian : bool
             True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to False
-
         Returns
         -------
         ~numpy.ndarray
             N-element array containing proper time.
         ~numpy.ndarray
             (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
-
         """
         vecs = list()
         lambdas = list()
@@ -177,7 +172,6 @@ class Kerr:
         """
         Calculate trajectory in manifold according to geodesic equation.
         Yields an iterator.
-
         Parameters
         ----------
         start_lambda : float
@@ -189,14 +183,12 @@ class Kerr:
             Dictionary with key 'stepsize' along with an float value is expected.
         return_cartesian : bool
             True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to Falsed
-
         Yields
         ------
         float
             proper time
         ~numpy.ndarray
             array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
-
         """
         ODE = RK45(
             fun=self.f_vec,

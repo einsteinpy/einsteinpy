@@ -1,3 +1,5 @@
+import warnings
+
 import astropy.units as u
 import numpy as np
 
@@ -20,6 +22,13 @@ def schwarzschild_radius(mass, c=constant.c, G=constant.G):
         Schwarzschild radius for a given mass
 
     """
+    warnings.warn(
+        "einteinpy.utils.schwarzschild_utils.schwarzschild_radius() \
+        will be removed in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.schwarzschild_radius(M)!",
+        PendingDeprecationWarning,
+    )
+
     if not isinstance(mass, u.quantity.Quantity):
         mass = mass * u.kg
     if not isinstance(c, u.quantity.Quantity):
@@ -47,6 +56,13 @@ def schwarzschild_radius_dimensionless(M, c=constant.c.value, G=constant.G.value
     Rs : float
         Schwarzschild radius for a given mass
     """
+    warnings.warn(
+        "einteinpy.utils.schwarzschild_utils.schwarzschild_radius_dimensionless() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Metric.schwarzschild_radius(M)!",
+        PendingDeprecationWarning,
+    )
+
     Rs = 2 * M * G / c ** 2
     return Rs
 
@@ -73,8 +89,9 @@ def time_velocity(pos_vec, vel_vec, mass):
 
     """
     # this function considers SI units only
-    a = schwarzschild_radius(mass).value
+    a = -schwarzschild_radius(mass).value
     c = constant.c.value
+
     num1 = (1 / ((c ** 2) * (1 + (a / pos_vec[0])))) * (vel_vec[0] ** 2)
     num2 = ((pos_vec[0] ** 2) / (c ** 2)) * (vel_vec[1] ** 2)
     num3 = (
@@ -107,6 +124,14 @@ def metric(r, theta, M, c=constant.c.value, G=constant.G.value):
         Numpy array of shape (4,4)
 
     """
+    warnings.warn(
+        "einteinpy.utils.schwarzschild_utils.metric() \
+        will be deprecated in Version 0.5.0 \
+        Please use \
+        einsteinpy.metric.Schwarzschild.metric_covariant(x_vec)!",
+        PendingDeprecationWarning,
+    )
+
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     m = np.zeros(shape=(4, 4), dtype=float)
     tmp, c2 = 1.0 - (Rs / r), c ** 2
@@ -137,8 +162,15 @@ def christoffels(r, theta, M, c=constant.c.value, G=constant.G.value):
     -------
     ~numpy.array
         Numpy array of shape (4,4,4)
-
+        
     """
+    warnings.warn(
+        "einteinpy.utils.schwarzschild_utils.christoffels() \
+        will be deprecated in Version 0.5.0 \
+        Please use einsteinpy.metric.Schwarzschild.christoffels(x_vec)!",
+        PendingDeprecationWarning,
+    )
+
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     c2 = c ** 2
