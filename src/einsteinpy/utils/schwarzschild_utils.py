@@ -91,9 +91,7 @@ def time_velocity(pos_vec, vel_vec, mass):
     # this function considers SI units only
     a = -schwarzschild_radius(mass).value
     c = constant.c.value
-    num1 = (1 / ((c ** 2) * (1 + (a / pos_vec[0])))) * (
-        vel_vec[0] ** 2
-    )
+    num1 = (1 / ((c ** 2) * (1 + (a / pos_vec[0])))) * (vel_vec[0] ** 2)
     num2 = ((pos_vec[0] ** 2) / (c ** 2)) * (vel_vec[1] ** 2)
     num3 = (
         ((pos_vec[0] ** 2) / (c ** 2)) * (np.sin(pos_vec[1]) ** 2) * (vel_vec[2] ** 2)
@@ -163,7 +161,7 @@ def christoffels(r, theta, M, c=constant.c.value, G=constant.G.value):
     -------
     ~numpy.array
         Numpy array of shape (4,4,4)
-
+        
     """
     warnings.warn(
         "einteinpy.utils.schwarzschild_utils.christoffels() \
@@ -171,7 +169,7 @@ def christoffels(r, theta, M, c=constant.c.value, G=constant.G.value):
         Please use einsteinpy.metric.Schwarzschild.christoffels(x_vec)!",
         PendingDeprecationWarning,
     )
-    
+
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     chl = np.zeros(shape=(4, 4, 4), dtype=float)
     c2 = c ** 2

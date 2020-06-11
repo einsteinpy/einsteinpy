@@ -127,6 +127,7 @@ class Kerr:
             (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
         """
         pass
+
     # DRAFT CHANGES/ADDITIONS - ????
 
     def calculate_trajectory(
@@ -135,7 +136,7 @@ class Kerr:
         end_lambda=10.0,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL", # ????
+        coords="BL",  # ????
         return_cartesian=False,
     ):
         """
@@ -164,13 +165,11 @@ class Kerr:
         ~numpy.ndarray
             (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
         """
-=======
->>>>>>> b6dc664... Refactor of 'metric' and 'utils' modules
         vecs = list()
         lambdas = list()
         crossed_event_horizon = False
         ODE = RK45(
-            fun=self.f_vec if coords == "BL" else self.f_vec_ks, # ????
+            fun=self.f_vec if coords == "BL" else self.f_vec_ks,  # ????
             t0=start_lambda,
             y0=self.initial_vec,
             t_bound=end_lambda,
@@ -208,7 +207,7 @@ class Kerr:
         start_lambda=0.0,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL", # ????
+        coords="BL",  # ????
         return_cartesian=False,
     ):
         """
@@ -230,9 +229,10 @@ class Kerr:
             array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
         """
         ODE = RK45(
-            fun=self.f_vec if coords == "BL" else self.f_vec_ks, # ????
+            fun=self.f_vec if coords == "BL" else self.f_vec_ks,  # ????
             t0=start_lambda,
-        _event_hor = kerr_utils.event_horizon(self.M.value, self.a.value)[0] * 1.001
+            _event_hor=kerr_utils.event_horizon(self.M.value, self.a.value)[0] * 1.001,
+        )
 
         while True:
             if not return_cartesian:
