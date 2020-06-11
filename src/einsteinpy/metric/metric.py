@@ -347,7 +347,7 @@ class Metric:
             }
 
         elif coords == "KS":  # Kerr & Kerr-Newman Geometries
-            # - ????? (To be filled in, after refactoring `coordinates`)
+            # To be filled in, after refactoring `coordinates` - ?????
             raise NotImplementedError
 
     # Derived classes should only define metric_covariant() function
