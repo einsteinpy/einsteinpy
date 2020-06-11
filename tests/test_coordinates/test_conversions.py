@@ -38,10 +38,8 @@ def strip_velocities(coords):
     if isinstance(coords, BoyerLindquistConversion):
         vals = coords.values()
         return BoyerLindquistConversion(*vals[:3], a=vals[-1])
-    elif isinstance(coords, (CartesianConversion, SphericalConversion)):
-        vals = coords.values()
-        return type(coords)(*vals[:3])
-    return None
+    vals = coords.values()
+    return type(coords)(*vals[:3])
 
 
 def test_CartesianToSpherical(cartesian_coords, spherical_coords):
