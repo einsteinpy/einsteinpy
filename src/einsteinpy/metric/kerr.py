@@ -105,6 +105,7 @@ class Kerr:
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
+
         Parameters
         ----------
         start_lambda : float
@@ -125,7 +126,6 @@ class Kerr:
         ~numpy.ndarray
             (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
         """
-<<<<<<< HEAD
         pass
     # DRAFT CHANGES/ADDITIONS - ????
 
@@ -157,14 +157,12 @@ class Kerr:
             Can either be "BL" or "KS". Defaults to "BL"
         return_cartesian : bool
             True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to False
-
         Returns
         -------
         ~numpy.ndarray
             N-element array containing proper time.
         ~numpy.ndarray
             (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
-
         """
 =======
 >>>>>>> b6dc664... Refactor of 'metric' and 'utils' modules
@@ -172,11 +170,7 @@ class Kerr:
         lambdas = list()
         crossed_event_horizon = False
         ODE = RK45(
-<<<<<<< HEAD
             fun=self.f_vec if coords == "BL" else self.f_vec_ks, # ????
-=======
-            fun=self.f_vec,
->>>>>>> b6dc664... Refactor of 'metric' and 'utils' modules
             t0=start_lambda,
             y0=self.initial_vec,
             t_bound=end_lambda,
@@ -233,8 +227,6 @@ class Kerr:
             Coordinate System, in which integration will be performed
             Can either be "BL" or "KS". Defaults to "BL"
             True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to Falsed
-
-=======
             array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
         """
         ODE = RK45(
