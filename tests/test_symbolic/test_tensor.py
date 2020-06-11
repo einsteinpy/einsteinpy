@@ -10,6 +10,7 @@ from einsteinpy.symbolic import (
     Tensor,
     simplify_sympy_array,
 )
+from einsteinpy.symbolic.tensor import tensor_product
 
 # Making an xfail marker to indicate that you expect a test to fail
 xfail = pytest.mark.xfail
@@ -76,6 +77,23 @@ def arbitrary_tensor1():
     list2d[0][3] = list2d[3][0] = 5 * f2
     list2d[2][1] = list2d[1][2] = f3
     return BaseRelativityTensor(list2d, syms, config="ll"), [a, c], [f1, f2, f3]
+
+
+def test_tensor_product():
+    x, y = symbols("x y")
+    test_list = [[x, y], [y, x]]
+    obj1 = BaseRelativityTensor(test_list, syms=[x, y], config="ll")
+    obj2 = BaseRelativityTensor(test_list, syms=[x, y], config="ul")
+    # contract along 'l' and 'u'
+    obj3 = tensor_product(obj1, obj2, 1, 0)
+    product_arr = [[x ** 2 + y ** 2, 2 * x * y], [2 * x * y, x ** 2 + y ** 2]]
+    obj4 = BaseRelativityTensor(product_arr, syms=[x, y], config="ll")
+    assert obj3.tensor() == obj4.tensor()
+    assert obj3.syms == obj4.syms
+    assert obj3.config == obj4.config
+    # tensor_product with no contraction
+    obj5 = tensor_product(obj1, obj2)
+    assert obj5.config == "llul"
 
 
 def test_Tensor():
@@ -160,6 +178,16 @@ def test_ValueError2():
     test_list = [[x, y], [y, x]]
     # pass 2x2 array when 3x3 implied by argument syms
     obj = BaseRelativityTensor(test_list, [x, y, z])
+
+
+@xfail(raises=ValueError, strict=True)
+def test_tensorproduct_ValueError():
+    x, y = symbols("x y")
+    test_list = [[x, y], [y, x]]
+    obj1 = BaseRelativityTensor(test_list, syms=[x, y], config="ll")
+    obj2 = BaseRelativityTensor(test_list, syms=[x, y], config="ul")
+    # contract along 'l' and 'l'
+    tensor_product(obj1, obj2, 0, 1)
 
 
 def test_subs_single():
