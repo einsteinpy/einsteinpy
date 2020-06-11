@@ -179,7 +179,6 @@ def bl_to_cartesian_novel(r, t, p, a):
     z = r * np.cos(t)
     return x, y, z
 
-
 def time_velocity(pos_vec, vel_vec, mass, a):
     """
     # Velocity of coordinate time wrt proper metric
@@ -208,6 +207,3 @@ def time_velocity(pos_vec, vel_vec, mass, a):
     # Similar function for Kerr and Kerr-Newman
     # Perhaps, this should be in coordinates in some form
     raise NotImplementedError
-
-
-# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????

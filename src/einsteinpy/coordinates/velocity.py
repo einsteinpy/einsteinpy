@@ -7,7 +7,6 @@ from einsteinpy.coordinates.conversion import (
     SphericalConversion,
 )
 
-
 class CartesianDifferential(CartesianConversion):
     """
     Class for calculating and transforming the velocity in Cartesian coordinates.
@@ -137,14 +136,13 @@ class CartesianDifferential(CartesianConversion):
             a * u.m,
         )
 
-
 class SphericalDifferential(SphericalConversion):
     """
     Class for calculating and transforming the velocity in Spherical coordinates.
     """
 
     @u.quantity_input(
-        r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=1u.rad / u.s, v_p=u.rad / u.s
+        r=u.km, theta=u.rad, phi=u.rad, v_r=u.km / u.s, v_t=u.rad / u.s, v_p=u.rad / u.s
     )
     def __init__(self, r, theta, phi, v_r, v_t, v_p):
         """
@@ -267,7 +265,6 @@ class SphericalDifferential(SphericalConversion):
             v_p * u.rad / u.s,
             a * u.m,
         )
-
 
 class BoyerLindquistDifferential(BoyerLindquistConversion):
     """

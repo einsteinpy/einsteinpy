@@ -64,37 +64,6 @@ class Geodesic:
             self.body.parent.mass,
         )
 
-    # DRAFT CHANGES/ADDITIONS - ????
-    def calculate_trajectory(
-        self,
-        start_lambda=0.0,
-        end_lambda=10.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL",  # ????
-        return_cartesian=False,
-    ):
-        """
-        Calculate trajectory in manifold according to geodesic equation
-        """
-        raise NotImplementedError
-
-    def calculate_trajectory_iterator(
-        self,
-        start_lambda=0.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        coords="BL",  # ????
-        return_cartesian=False,
-    ):
-        """
-        Calculate trajectory in manifold according to geodesic equation.
-        Yields an iterator.
-        """
-        raise NotImplementedError
-
-    # DRAFT CHANGES/ADDITIONS - ????
-
     @property
     def trajectory(self):
         return self._trajectory

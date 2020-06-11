@@ -134,19 +134,6 @@ class Cartesian(CartesianConversion):
         r, theta, phi, a = self.convert_bl(a.si.value)
         return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
 
-    def to_ks(self):  # - ????
-        """
-        Method for conversion to Kerr-Schild coordinates.
-
-        Returns
-        -------
-        ~einsteinpy.coordinates.core.KerrSchild
-            Cartesian representation of the KS Coordinates.
-
-        """
-        x, y, z = self.convert_ks()
-        return KerrSchild(x * u.m, y * u.m, z * u.m)
-
 
 class Spherical(SphericalConversion):
     """
@@ -247,27 +234,6 @@ class Spherical(SphericalConversion):
         r, theta, phi, a = self.convert_bl(a.si.value)
         return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
 
-    def to_ks(self):  # - ????
-        """
-        Method for conversion to Kerr-Schild coordinates.
-
-        Returns
-        -------
-        ~einsteinpy.coordinates.core.KerrSchild
-            Cartesian representation of the KS Coordinates.
-
-        """
-        x, y, z = self.convert_ks()
-        return KerrSchild(x * u.m, y * u.m, z * u.m)
-
-<<<<<<< HEAD
-=======
-
-<<<<<<< HEAD
->>>>>>> a47c2f5... Draft PR - coordinates
-
-=======
->>>>>>> b48fdc4... Refactor - Code reformatted
 class BoyerLindquist(BoyerLindquistConversion):
     """
     Class for Spherical Coordinates and related transformations.
@@ -364,85 +330,3 @@ class BoyerLindquist(BoyerLindquistConversion):
         """
         r, theta, phi = self.convert_spherical()
         return Spherical(r * u.m, theta * u.rad, phi * u.rad)
-
-    def to_ks(self):  # - ????
-<<<<<<< HEAD
-=======
-        """
-        Method for conversion to Kerr-Schild coordinates.
->>>>>>> b48fdc4... Refactor - Code reformatted
-
-        """
-        -------
-        ~einsteinpy.coordinates.core.KerrSchild
-            Cartesian representation of the KS Coordinates.
-
-        """
-        x, y, z = self.convert_ks()
-        return KerrSchild(x * u.m, y * u.m, z * u.m)
-
-<<<<<<< HEAD
-=======
-
->>>>>>> b48fdc4... Refactor - Code reformatted
-# DRAFT CHANGES/ADDITIONS -- STARTS HERE - ????
-class KerrSchild(KerrSchildConversion, CartesianConversion):
-    """
-    Class for Cartesian form of KerrSchild Coordinates 
-    and related transformations.
-    Also inherits CartesianConversion to 
-    reduce redundant code-rewrite - ????
-    """
-
-    # Overrides CartesianConversion.__init__()
-    @u.quantity_input(x=u.km, y=u.km, z=u.km)
-        """
-        Parameters
-        ----------
-        x : ~astropy.units.quantity.Quantity
-        y : ~astropy.units.quantity.Quantity
-        z : ~astropy.units.quantity.Qauntity
-
-        """
-        self.x = x
-        self.y = y
-        self.z = z
-        super().__init__(x.si.value, y.si.value, z.si.value)
-        self.system = "Cartesian Kerr-Schild"
-        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
-        self._dimension_order = ("x", "y", "z")
-
-    # Overrides CartesianConversion.__repr__()
-    def __repr__(self):
-        return "Cartesian Kerr-Schild x: {}, y: {}, z: {}".format(
-            self.x, self.y, self.z
-        )
-
-    # Functions gained from CartesianConversion: - ????
-    # str, getitem
-    # si_values, norm, dot
-    # to_spherical, to_bl
-
-    def to_cartesian(self):
-        """
-        Method for conversion to cartesian coordinates.
-
-        Returns
-        -------
-        ~einsteinpy.coordinates.core.Cartesian
-            Cartesian representation of the Spherical Coordinates.
-
-        """
-        x, y, z = self.convert_cartesian()
-        return Cartesian(x * u.m, y * u.m, z * u.m)
-
-    # Overrides CartesianConversion.to_ks()
-    @property
-    def to_ks(self):
-        raise AttributeError("'KerrSchild' Object has no attribute 'to_ks'")
-
-<<<<<<< HEAD
-=======
-
->>>>>>> b48fdc4... Refactor - Code reformatted
-# DRAFT CHANGES/ADDITIONS -- ENDS HERE - ????

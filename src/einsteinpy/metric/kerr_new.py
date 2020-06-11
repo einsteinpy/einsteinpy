@@ -188,7 +188,6 @@ class Kerr(Metric):
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
-
         # Metric is invariant on t & phi
         # Differentiation of metric wrt r
         def due_to_r():
@@ -447,7 +446,6 @@ class Kerr(Metric):
         """
         # To be implemented after KS Coordinates
         raise NotImplementedError
-
 
     @staticmethod
     def nonzero_christoffels():

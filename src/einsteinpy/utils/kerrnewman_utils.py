@@ -684,10 +684,7 @@ def event_horizon(
         Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
         PendingDeprecationWarning,
     )
-<<<<<<< HEAD
 
-=======
->>>>>>> 31c64c9... Refactor - Cleaning up metric and utils
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     rQsq = (Q ** 2) * G * Cc / c ** 4
     Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 - rQsq)
@@ -746,7 +743,7 @@ def radius_ergosphere(
         Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
         PendingDeprecationWarning,
     )
-    
+
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     rQsq = (Q ** 2) * G * Cc / c ** 4
     Rh = 0.5 * Rs + np.sqrt((Rs ** 2) / 4 - a ** 2 * np.cos(theta) ** 2 - rQsq)
