@@ -71,10 +71,10 @@ def scaled_spin_factor(a, M, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.scaled_spin_factor() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.scaled_spin_parameter(a, M)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     half_scr = (schwarzschild_radius_dimensionless(M, c, G)) / 2
     if a < 0 or a > 1:
@@ -104,11 +104,10 @@ def sigma(r, theta, a):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.sigma() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.sigma(r, theta, a)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
-
+    )
     return (r ** 2) + ((a * np.cos(theta)) ** 2)
 
 
@@ -134,10 +133,10 @@ def delta(r, M, a, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.delta() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.delta(r, M, a, Q)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     return (r ** 2) - (Rs * r) + (a ** 2)
@@ -168,10 +167,10 @@ def metric(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.metric() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Kerr.metric_covariant(x_vec)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     m = np.zeros(shape=(4, 4), dtype=float)
@@ -215,11 +214,11 @@ def metric_inv(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.metric_inv() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use \
         einsteinpy.metric.Kerr.metric_contravariant(x_vec)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     m = metric(r, theta, M, a, c, G)
     return np.linalg.inv(m)
@@ -251,10 +250,10 @@ def dmetric_dx(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.dmetric_dx() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Kerr._dg_dx_bl(x_vec)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     dmdx = np.zeros(shape=(4, 4, 4), dtype=float)
@@ -325,10 +324,10 @@ def christoffels(r, theta, M, a, c=constant.c.value, G=constant.G.value):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.christoffels() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Kerr.christoffels(x_vec)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     invg = metric_inv(r, theta, M, a, c, G)
     dmdx = dmetric_dx(r, theta, M, a, c, G)
@@ -397,10 +396,10 @@ def nonzero_christoffels():
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.nonzero_christoffels() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Kerr.nonzero_christoffels()!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     # Below is the code for algorithmically calculating the indices of nonzero christoffel symbols in Kerr Metric.
     invg = np.zeros(shape=(4, 4), dtype=bool)
@@ -448,10 +447,10 @@ def spin_factor(J, M, c):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.spin_factor() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.spin_parameter(J, M)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     return J / (M * c)
 
@@ -485,10 +484,10 @@ def event_horizon(
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.event_horizon() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     Rh = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2)))
@@ -532,10 +531,10 @@ def radius_ergosphere(
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.radius_ergosphere() \
-        will be deprecated in Version 0.4. \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
         PendingDeprecationWarning,
-    )  # - ????? Version/Warning
+    )
 
     Rs = schwarzschild_radius_dimensionless(M, c, G)
     Re = 0.5 * (Rs + np.sqrt((Rs ** 2) - 4 * (a ** 2) * (np.cos(theta) ** 2)))
