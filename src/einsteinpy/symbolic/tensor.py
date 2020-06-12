@@ -116,6 +116,33 @@ def tensor_product(tensor1, tensor2, i=None, j=None):
     )
 
 
+def _parse_vector(x, syms):
+    """ Make a proper vector (tensor of config 'u') out of given x
+    Parameters
+    ----------
+    x : list or ~sympy.Symbol
+        components of the expected vector or a symbol of the only non-zero component
+    syms : list of ~sympy.Symbol
+        `syms` of the expected vector
+
+    Returns
+    -------
+    ~BaseRelativityTensor : Tensor of config 'u' with given `syms`
+    """
+    if isinstance(x, list):
+        arr = x
+    elif isinstance(x, sympy.Symbol):
+        arr = [1 if i == x else 0 for i in syms]
+    else:
+        raise TypeError("Unexpected argument x of type %s" % type(x))
+
+    if len(arr) != len(syms):
+        raise ValueError("Expected length of vector %s, got %s" % (len(syms), len(x)))
+    x = BaseRelativityTensor(arr, syms=syms, config="u")
+
+    return x
+
+
 class Tensor:
     """
     Base Class for Tensor manipulation
@@ -124,7 +151,7 @@ class Tensor:
     def __init__(self, arr, config="ll", name=None):
         """
         Constructor and Initializer
-        
+
         Parameters
         ----------
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
@@ -452,4 +479,51 @@ class BaseRelativityTensor(Tensor):
             variables=self.variables,
             functions=self.functions,
             name=_change_name(self.name, context="__lt"),
+        )
+
+    def derivative(self, x):
+        """Ordinary Derivative of a tensor along the direction given by x
+
+        Parameters
+        ----------
+        x : ~einsteinpy.symbolic.BaseRelativityTensor or ~sympy.Symbol or list
+            differentiate along vector x
+
+            Assumes, if ``x`` is of type:
+            list: vector components
+            symbols: a coordinate vector
+            BaseRelativityTensor: a tensor of config 'u'
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.BaseRelativityTensor
+
+        Raises
+        ------
+        ValueError
+            If ``x`` is a list but length doesn't match length of ``syms``
+        TypeError
+            If argument ``x`` is of type other than listed above
+        """
+        if isinstance(x, BaseRelativityTensor) and (
+            x.config != "u" or x.syms != self.syms
+        ):
+            raise ValueError("Expected a tensor of config 'u' with syms %s" % self.syms)
+        if not isinstance(x, BaseRelativityTensor):
+            x = _parse_vector(x, self.syms)
+
+        arr = np.zeros(self.arr.shape, dtype=int)
+        arr = sympy.Array(arr)
+        for i in range(len(self.syms)):
+            if x[i]:
+                arr += x[i] * self.arr.diff(self.syms[i])
+
+        return BaseRelativityTensor(
+            arr,
+            syms=self.syms,
+            config=self.config,
+            parent_metric=self.parent_metric,
+            variables=self.variables,
+            functions=self.functions,
+            name=self.name,
         )
