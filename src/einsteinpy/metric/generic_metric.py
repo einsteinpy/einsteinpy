@@ -7,15 +7,6 @@ _G = constant.G.value
 _Cc = constant.coulombs_const.value
 
 
-@property
-def _private(self):
-    """
-    Used to hide unrelated methods, across metric classes
-
-    """
-    raise AttributeError("Object has no such attribute.")
-
-
 class GenericMetric:
     """
     Class for defining general Metric Tensors
@@ -101,6 +92,14 @@ class GenericMetric:
         return f"( Name: ({self.name}), Coordinates: ({self.coords}), \
             Mass: ({self.M}), Spin parameter: ({self.a}), \
             Charge: ({self.Q}), Schwarzschild Radius: ({self.sch_rad}) )"
+
+    @property
+    def _private(self):
+        """
+        Used to hide unrelated methods, across metric classes
+
+        """
+        raise AttributeError("Object has no such attribute.")
 
     @staticmethod
     def sigma(r, theta, M, a):

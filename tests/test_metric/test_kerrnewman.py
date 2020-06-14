@@ -154,5 +154,3 @@ def test_em_tensor_contravariant():
     mkn_em_contra = mkn.em_tensor_contravariant(r, theta, M, a, Q)
     
     assert_allclose(0., mkn_em_contra + np.transpose(mkn_em_contra), atol=1e-8)
-
-

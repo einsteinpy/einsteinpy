@@ -1,7 +1,7 @@
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.metric import GenericMetric, _private
+from einsteinpy.metric import GenericMetric
 
 _c = constant.c.value
 
@@ -505,8 +505,8 @@ class Kerr(GenericMetric):
     # calculate_trajectory moved to `geodesic`
 
     # Hiding unrelated methods
-    charge_geometrized = _private
-    em_potential_covariant = _private
-    em_potential_contravariant = _private
-    em_tensor_covariant = _private
-    em_tensor_contravariant = _private
+    charge_geometrized = GenericMetric._private
+    em_potential_covariant = GenericMetric._private
+    em_potential_contravariant = GenericMetric._private
+    em_tensor_covariant = GenericMetric._private
+    em_tensor_contravariant = GenericMetric._private
