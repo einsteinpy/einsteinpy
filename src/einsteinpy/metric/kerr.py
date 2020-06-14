@@ -1,70 +1,403 @@
-import warnings
-
-import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.coordinates import BoyerLindquistConversion
-from einsteinpy.integrators import RK45
-from einsteinpy.utils import kerr_utils, schwarzschild_radius
+from einsteinpy.metric import GenericMetric, _private
 
-_G = constant.G.value
 _c = constant.c.value
 
 
-class Kerr:
+class Kerr(GenericMetric):
     """
-    Class for defining Kerr Geometry Methods
+    Class for defining the Kerr Geometry
+    
     """
 
-    @u.quantity_input(time=u.s, M=u.kg)
-    def __init__(self, bl_coords, M, time):
-        self.input_coords = bl_coords
-        self.name = "Kerr"
-        self.M = M
-        self.a = self.input_coords.a.to(u.m)
-        self.time = time
+    # Precomputed list of tuples, containing indices \
+    # of non-zero Christoffel Symbols for Kerr Metric \
+    # in Boyer-Lindquist Coordinates
+    nonzero_christoffels_list_bl = [
+        (0, 0, 1),
+        (0, 0, 2),
+        (0, 1, 3),
+        (0, 2, 3),
+        (0, 1, 0),
+        (0, 2, 0),
+        (0, 3, 1),
+        (0, 3, 2),
+        (1, 0, 0),
+        (1, 1, 1),
+        (1, 2, 2),
+        (1, 3, 3),
+        (2, 0, 0),
+        (2, 1, 1),
+        (2, 2, 2),
+        (2, 3, 3),
+        (1, 0, 3),
+        (1, 1, 2),
+        (2, 0, 3),
+        (2, 1, 2),
+        (1, 2, 1),
+        (1, 3, 0),
+        (2, 2, 1),
+        (2, 3, 0),
+        (3, 0, 1),
+        (3, 0, 2),
+        (3, 1, 0),
+        (3, 1, 3),
+        (3, 2, 0),
+        (3, 2, 3),
+        (3, 3, 1),
+        (3, 3, 2),
+    ]
 
-        pos_vec, vel_vec = (
-            self.input_coords.si_values()[:3],
-            self.input_coords.si_values()[3:],
-        )
-        time_vel = kerr_utils.kerr_time_velocity(pos_vec, vel_vec, self.M, self.a.value)
-
-        self.initial_vec = np.hstack(
-            (self.time.value, pos_vec, time_vel.value, vel_vec)
-        )
-        self.scr = schwarzschild_radius(M)
-
-    @classmethod
-    @u.quantity_input(time=u.s, M=u.kg, a=u.m)
-    def from_coords(cls, coords, M, q=None, Q=None, time=0 * u.s, a=0 * u.m):
+    def __init__(self, coords, M, a):
         """
         Constructor
+
         Parameters
         ----------
-        coords : ~einsteinpy.coordinates.velocity.CartesianDifferential
-            Object having both initial positions and velocities of particle in Cartesian Coordinates
-        M : ~astropy.units.quantity.Quantity
-            Mass of the body
-        a : ~astropy.units.quantity.Quantity
-            Spin factor of the massive body. Angular momentum divided by mass divided by speed of light.
-        time : ~astropy.units.quantity.Quantity
-            Time of start, defaults to 0 seconds.
-        """
-        if coords.system == "Cartesian":
-            bl_coords = coords.bl_differential(a)
-            return cls(bl_coords, M, time)
-        if coords.system == "Spherical":
-            bl_coords = coords.bl_differential(a)
-            return cls(bl_coords, M, time)
-        return cls(coords, M, time)
+        coords : string
+            Coordinate system, in which Metric is to be represented
+            "BL" - Boyer-Lindquist: Applicable to Kerr-Newman solutions
+            "KS" - Kerr-Schild: Useful for adding perturbations to Kerr-Newman solutions
+        M : float
+            Mass of gravitating body, e.g. Black Hole
+        a : float
+            Spin Parameter
 
-    def f_vec(self, ld, vec):
-        chl = kerr_utils.christoffels(vec[1], vec[2], self.M.value, self.a.value)
+        """
+        super().__init__(
+            coords=coords,
+            M=M,
+            a=a,
+            name="Kerr Metric",
+            metric_cov=self.metric_covariant,
+            christoffels=self._christoffels,
+            f_vec=self._f_vec,
+        )
+
+    # Overrides GenericMetric.metric_covariant()
+    # Contravariant form returned by super class
+    def metric_covariant(self, x_vec):
+        """
+        Returns Covariant Kerr Metric Tensor \
+        in chosen Coordinates
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.array
+            Covariant Kerr Metric Tensor in chosen Coordinates
+            Numpy array of shape (4,4)
+
+        """
+        if self.coords == "BL":
+            return self._g_cov_bl(x_vec)
+
+        elif self.coords == "KS":
+            return self._g_cov_ks(x_vec)
+
+        # Default choice
+        return self._g_cov_bl(x_vec)
+
+    def _g_cov_bl(self, x_vec):
+        """
+        Returns Covariant Kerr Metric Tensor \
+        in Boyer-Lindquist coordinates
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.array
+            Covariant Kerr Metric Tensor \
+            in Boyer-Lindquist coordinates
+            Numpy array of shape (4,4)
+
+        """
+        r, th = x_vec[1], x_vec[2]
+        r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
+        alpha = GenericMetric.alpha(M, a)
+        sg, dl = GenericMetric.sigma(r, th, M, a), GenericMetric.delta(r, M, a)
+
+        g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
+
+        g_cov_bl[0, 0] = 1 - (r_s * r / sg)
+        g_cov_bl[1, 1] = (sg / dl) * (-1 / c2)
+        g_cov_bl[2, 2] = -1 * sg / c2
+        g_cov_bl[3, 3] = (
+            (-1 / c2)
+            * (
+                (r ** 2)
+                + (alpha ** 2)
+                + (r_s * r * (np.sin(th) ** 2) * ((alpha ** 2) / sg))
+            )
+            * (np.sin(th) ** 2)
+        )
+        g_cov_bl[0, 3] = g_cov_bl[3, 0] = (
+            r_s * r * alpha * (np.sin(th) ** 2) / (sg * _c)
+        )
+
+        return g_cov_bl
+
+    def _g_cov_ks(self, x_vec):
+        """
+        Returns Covariant Kerr Metric Tensor \
+        in Kerr-Schild coordinates
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+
+        Returns
+        -------
+        NotImplementedError
+            To be implemented after KS Coordinates
+
+        """
+        # To be implemented after KS Coordinates
+        raise NotImplementedError
+
+    def _dg_dx_bl(self, x_vec):
+        """
+        Returns derivative of each Kerr Metric component \
+        w.r.t. coordinates in Boyer-Lindquist Coordinate System
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+                Position 4-Vector
+        
+        Returns
+        -------
+        dgdx : ~numpy.array
+            Array, containing derivative of each Kerr Metric \
+            component w.r.t. coordinates \
+            in Boyer-Lindquist Coordinate System
+            Numpy array of shape (4,4,4)
+            dgdx[0], dgdx[1], dgdx[2] & dgdx[3] contain \
+            derivatives of metric w.r.t. t, r, theta & phi respectively
+
+        """
+        r, th = x_vec[1], x_vec[2]
+        r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
+        alpha = GenericMetric.alpha(M, a)
+        sg, dl = GenericMetric.sigma(r, th, M, a), GenericMetric.delta(r, M, a)
+
+        dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
+
+        # Metric is invariant on t & phi
+        # Differentiation of metric wrt r
+        def due_to_r():
+            nonlocal dgdx
+            dsdr = 2 * r
+            dddr = 2 * r - r_s
+            tmp = (r_s * (sg - r * dsdr) / sg) * (1 / sg)
+            dgdx[1, 0, 0] = -1 * tmp
+            dgdx[1, 1, 1] = (-1 / c2) * (dsdr - (sg * (dddr / dl))) / dl
+            dgdx[1, 2, 2] = (-1 / c2) * dsdr
+            dgdx[1, 3, 3] = (
+                (-1 / c2)
+                * (2 * r + (alpha ** 2) * (np.sin(th) ** 2) * tmp)
+                * (np.sin(th) ** 2)
+            )
+            dgdx[1, 0, 3] = dgdx[1, 3, 0] = (1 / _c) * (alpha * (np.sin(th) ** 2) * tmp)
+
+        # Differentiation of metric wrt theta
+        def due_to_theta():
+            nonlocal dgdx
+            dsdth = -2 * (alpha ** 2) * np.cos(th) * np.sin(th)
+            tmp = (-1 / sg) * r_s * r * dsdth / sg
+            dgdx[2, 0, 0] = -1 * tmp
+            dgdx[2, 1, 1] = (-1 / c2) * (dsdth / dl)
+            dgdx[2, 2, 2] = (-1 / c2) * dsdth
+            dgdx[2, 3, 3] = (-1 / c2) * (
+                2 * np.sin(th) * np.cos(th) * ((r ** 2) + (alpha ** 2))
+                + tmp * (alpha ** 2) * (np.sin(th) ** 4)
+                + (4 * (np.sin(th) ** 3) * np.cos(th) * (alpha ** 2) * r * r_s / sg)
+            )
+            dgdx[2, 0, 3] = dgdx[2, 3, 0] = (alpha / _c) * (
+                (np.sin(th) ** 2) * tmp + (2 * np.sin(th) * np.cos(th) * r_s * r / sg)
+            )
+
+        due_to_r()
+        due_to_theta()
+
+        return dgdx
+
+    def _dg_dx_ks(self, x_vec):
+        """
+        Returns derivative of each Kerr Metric component \
+        w.r.t. coordinates in Kerr-Schild Coordinate System
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+                Position 4-Vector
+        
+        Returns
+        -------
+        NotImplementedError
+            To be implemented after KS Coordinates
+
+        """
+        # To be implemented after KS Coordinates
+        raise NotImplementedError
+
+    def _christoffels(self, x_vec):
+        """
+        Returns Christoffel Symbols for Kerr Metric in chosen Coordinates
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.array
+            Christoffel Symbols for Kerr Metric \
+            in chosen Coordinates
+            Numpy array of shape (4,4,4)
+        
+        """
+        if self.coords == "BL":
+            return self._ch_sym_bl(x_vec)
+
+        elif self.coords == "KS":
+            return self._ch_sym_ks(x_vec)
+
+        # Default choice
+        return self._ch_sym_bl(x_vec)
+
+    def _ch_sym_bl(self, x_vec):
+        """
+        Returns Christoffel Symbols for Kerr Metric \
+        in Boyer-Lindquist Coordinates
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.array
+            Christoffel Symbols for Kerr Metric \
+            in Boyer-Lindquist Coordinates
+            Numpy array of shape (4,4,4)
+        
+        """
+        g_contra = self.metric_contravariant(x_vec)
+        dgdx = self._dg_dx_bl(x_vec)
+
+        chl = np.zeros(shape=(4, 4, 4), dtype=float)
+
+        for _, k, l in self.nonzero_christoffels_list_bl[0:4]:
+            val1 = dgdx[l, 0, k] + dgdx[k, 0, l]
+            val2 = dgdx[l, 3, k] + dgdx[k, 3, l]
+            chl[0, k, l] = chl[0, l, k] = 0.5 * (
+                g_contra[0, 0] * (val1) + g_contra[0, 3] * (val2)
+            )
+            chl[3, k, l] = chl[3, l, k] = 0.5 * (
+                g_contra[3, 0] * (val1) + g_contra[3, 3] * (val2)
+            )
+        for i, k, l in self.nonzero_christoffels_list_bl[8:16]:
+            chl[i, k, l] = 0.5 * (
+                g_contra[i, i] * (dgdx[l, i, k] + dgdx[k, i, l] - dgdx[i, k, l])
+            )
+        for i, k, l in self.nonzero_christoffels_list_bl[16:20]:
+            chl[i, k, l] = chl[i, l, k] = 0.5 * (
+                g_contra[i, i] * (dgdx[l, i, k] + dgdx[k, i, l] - dgdx[i, k, l])
+            )
+
+        return chl
+
+    def _ch_sym_ks(self, x_vec):
+        """
+        Returns Christoffel Symbols for Kerr Metric \
+        in Kerr-Schild Coordinates
+
+        Parameters
+        ----------
+        x_vec : numpy.array
+            Position 4-Vector
+
+        Returns
+        -------
+        NotImplementedError
+            To be implemented after KS Coordinates
+
+        """
+        # To be implemented after KS Coordinates
+        raise NotImplementedError
+
+    def _f_vec(self, lambda_, x_vec):
+        """
+        Returns f_vec for Kerr Metric in chosen coordinates
+        To be used in solving for Geodesics
+
+        Parameters
+        ----------
+        lambda_ : float
+            Parameterizes current integration step
+            Used by ODE Solver
+
+        vec : numpy.array
+            Length-8 Vector, containing 4-Position & 4-Velocity
+
+        Returns
+        -------
+        ~numpy.array
+            f_vec for Kerr Metric in chosen coordinates
+            Numpy array of shape (8)
+        
+        """
+        if self.coords == "BL":
+            return self._f_vec_bl(lambda_, x_vec)
+
+        elif self.coords == "KS":
+            return self._f_vec_ks(lambda_, x_vec)
+
+        # Default choice
+        return self._f_vec_bl(lambda_, x_vec)
+
+    def _f_vec_bl(self, lambda_, vec):
+        """
+        Returns f_vec for Kerr Metric \
+        in Boyer-Lindquist Coordinates
+        To be used in solving for Geodesics
+
+        Parameters
+        ----------
+        lambda_ : float
+            Parameterizes current integration step
+            Used by ODE Solver
+
+        vec : numpy.array
+            Length-8 Vector, containing 4-Position & 4-Velocity
+
+        Returns
+        -------
+        ~numpy.array
+            f_vec for Kerr Metric in Boyer-Lindquist Coordinates
+            Numpy array of shape (8)
+        
+        """
+        chl = self.christoffels(vec[:4])
         vals = np.zeros(shape=(8,), dtype=float)
+
         for i in range(4):
             vals[i] = vec[i + 4]
+
         vals[4] = -2.0 * (
             chl[0, 0, 1] * vec[4] * vec[5]
             + chl[0, 0, 2] * vec[4] * vec[6]
@@ -93,126 +426,87 @@ class Kerr:
             + chl[3, 1, 3] * vec[5] * vec[7]
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
+
         return vals
 
-    def calculate_trajectory(
-        self,
-        start_lambda=0.0,
-        end_lambda=10.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        return_cartesian=False,
-    ):
+    def _f_vec_ks(self, lambda_, vec):
         """
-        Calculate trajectory in manifold according to geodesic equation
+        Returns f_vec for Kerr Metric \
+        in Kerr-Schild Coordinates
+        To be used in solving for Geodesics
+
         Parameters
         ----------
-        start_lambda : float
-            Starting lambda(proper time), defaults to 0, (lambda ~= t)
-        end_lamdba : float
-            Lambda(proper time) where iteartions will stop, defaults to 100000
-        stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity, defaults to True
-        OdeMethodKwargs : dict
-            Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
-            Dictionary with key 'stepsize' along with an float value is expected.
-        return_cartesian : bool
-            True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to False
+        lambda_ : float
+            Parameterizes current integration step
+            Used by ODE Solver
+
+        vec : numpy.array
+            Length-8 Vector, containing 4-Position & 4-Velocity
+
         Returns
         -------
-        ~numpy.ndarray
-            N-element array containing proper time.
-        ~numpy.ndarray
-            (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
+        NotImplementedError
+            To be implemented after KS Coordinates
+        
         """
-        vecs = list()
-        lambdas = list()
-        crossed_event_horizon = False
-        ODE = RK45(
-            fun=self.f_vec,
-            t0=start_lambda,
-            y0=self.initial_vec,
-            t_bound=end_lambda,
-            **OdeMethodKwargs
-        )
+        # To be implemented after KS Coordinates
+        raise NotImplementedError
 
-        _event_hor = kerr_utils.event_horizon(self.M.value, self.a.value)[0] * 1.001
-
-        while ODE.t < end_lambda:
-            vecs.append(ODE.y)
-            lambdas.append(ODE.t)
-            ODE.step()
-            if (not crossed_event_horizon) and (ODE.y[1] <= _event_hor):
-                warnings.warn("particle reached event horizon. ", RuntimeWarning)
-                if stop_on_singularity:
-                    break
-                else:
-                    crossed_event_horizon = True
-
-        vecs, lambdas = np.array(vecs), np.array(lambdas)
-
-        if not return_cartesian:
-            return lambdas, vecs
-        else:
-            cart_vecs = list()
-            for v in vecs:
-                si_vals = BoyerLindquistConversion(
-                    v[1], v[2], v[3], v[5], v[6], v[7], self.a.value
-                ).convert_cartesian()
-                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
-            return lambdas, np.array(cart_vecs)
-
-    def calculate_trajectory_iterator(
-        self,
-        start_lambda=0.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        return_cartesian=False,
-    ):
+    @staticmethod
+    def nonzero_christoffels():
         """
-        Calculate trajectory in manifold according to geodesic equation.
-        Yields an iterator.
-        Parameters
-        ----------
-        start_lambda : float
-            Starting lambda, defaults to 0.0, (lambda ~= t)
-        stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity, defaults to True
-        OdeMethodKwargs : dict
-            Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
-            Dictionary with key 'stepsize' along with an float value is expected.
-        return_cartesian : bool
-            True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to Falsed
-        Yields
-        ------
-        float
-            proper time
-        ~numpy.ndarray
-            array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
-        """
-        ODE = RK45(
-            fun=self.f_vec,
-            t0=start_lambda,
-            y0=self.initial_vec,
-            t_bound=1e300,
-            **OdeMethodKwargs
-        )
-        crossed_event_horizon = False
-        _event_hor = kerr_utils.event_horizon(self.M.value, self.a.value)[0] * 1.001
+        Returns a list of tuples consisting of indices \
+        of non-zero Christoffel Symbols in Kerr Metric, \
+        computed in real-time
 
-        while True:
-            if not return_cartesian:
-                yield ODE.t, ODE.y
-            else:
-                v = ODE.y
-                si_vals = BoyerLindquistConversion(
-                    v[1], v[2], v[3], v[5], v[6], v[7], self.a.value
-                ).convert_cartesian()
-                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
-            ODE.step()
-            if (not crossed_event_horizon) and (ODE.y[1] <= _event_hor):
-                warnings.warn("particle reached event horizon. ", RuntimeWarning)
-                if stop_on_singularity:
-                    break
-                else:
-                    crossed_event_horizon = True
+        Returns
+        -------
+        list
+            List of tuples
+            Each tuple (i,j,k) represents Christoffel Symbols, \
+            with i as upper index and j, k as lower indices.
+
+        """
+        # Below is the code for algorithmically calculating
+        # the indices of nonzero christoffel symbols in Kerr Metric.
+        g_contra = np.zeros(shape=(4, 4), dtype=bool)
+        dgdx = np.zeros(shape=(4, 4, 4), dtype=bool)
+
+        g_contra[3, 0] = g_contra[0, 3] = True
+        dgdx[1, 3, 0] = dgdx[1, 0, 3] = True
+        dgdx[2, 0, 3] = dgdx[2, 3, 0] = True
+        # Code Climate cyclomatic complexity hack ; Instead of "for i in range(4)"
+        g_contra[0, 0] = g_contra[1, 1] = g_contra[2, 2] = g_contra[3, 3] = True
+        dgdx[1, 0, 0] = dgdx[1, 1, 1] = dgdx[1, 2, 2] = dgdx[1, 3, 3] = True
+        dgdx[2, 0, 0] = dgdx[2, 1, 1] = dgdx[2, 2, 2] = dgdx[2, 3, 3] = True
+        # hack ends
+
+        chl = np.zeros(shape=(4, 4, 4), dtype=bool)
+        tmp = np.array([i for i in range(4 ** 3)])
+        vcl = list()
+
+        for t in tmp:
+            i = int(t / (4 ** 2)) % 4
+            j = int(t / 4) % 4
+            k = t % 4
+
+            for l in range(4):
+                chl[i, j, k] |= g_contra[i, l] & (
+                    dgdx[k, l, j] | dgdx[j, l, k] | dgdx[l, j, k]
+                )
+
+            if chl[i, j, k]:
+                vcl.append((i, j, k))
+
+        return vcl
+
+    # time_velocity moved to `coordinates`
+    # calculate_trajectory moved to `geodesic`
+
+    # Hiding unrelated methods
+    charge_geometrized = _private
+    em_potential_covariant = _private
+    em_potential_contravariant = _private
+    em_tensor_covariant = _private
+    em_tensor_contravariant = _private

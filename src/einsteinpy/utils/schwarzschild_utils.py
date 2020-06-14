@@ -24,7 +24,7 @@ def schwarzschild_radius(mass, c=constant.c, G=constant.G):
     """
     warnings.warn(
         "einteinpy.utils.schwarzschild_utils.schwarzschild_radius() \
-        will be removed in Version 0.5.0 \
+        will be deprecated in Version 0.5.0 \
         Please use einsteinpy.metric.Metric.schwarzschild_radius(M)!",
         PendingDeprecationWarning,
     )

@@ -69,7 +69,7 @@ def charge_length_scale(
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.charge_length_scale() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.charge_geometrized(Q)!",
+        Please use einsteinpy.metric.GenericMetric.charge_geometrized(Q)!",
         PendingDeprecationWarning,
     )
 
@@ -99,7 +99,7 @@ def rho(r, theta, a):
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.rho() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.rho(r, theta, a)!",
+        Please use einsteinpy.metric.GenericMetric.rho(r, theta, M, a)!",
         PendingDeprecationWarning,
     )
 
@@ -139,7 +139,7 @@ def delta(
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.delta() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.delta(r, M, a, Q)!",
+        Please use einsteinpy.metric.GenericMetric.delta(r, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
@@ -473,8 +473,8 @@ def em_potential(
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.em_potential() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.metric.em_potential_covariant(r, theta, M, a, Q) or \
-        einsteinpy.metric.Metric.em_potential_contravariant(r, theta, M, a, Q)!",
+        Please use einsteinpy.metric.GenericMetric.em_potential_covariant(r, theta, M, a, Q) or \
+        einsteinpy.metric.GenericMetric.em_potential_contravariant(r, theta, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
@@ -526,7 +526,7 @@ def maxwell_tensor_covariant(
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.maxwell_tensor_covariant() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.maxwell_tensor_covariant(r, theta, M, a, Q)!",
+        Please use einsteinpy.metric.GenericMetric.em_tensor_covariant(r, theta, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
@@ -589,7 +589,7 @@ def maxwell_tensor_contravariant(
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.maxwell_tensor_contravariant() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.maxwell_tensor_contravariant(r, theta, M, a, Q)!",
+        Please use einsteinpy.metric.GenericMetric.em_tensor_contravariant(r, theta, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
@@ -681,7 +681,7 @@ def event_horizon(
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.event_horizon() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
+        Please use einsteinpy.metric.GenericMetric.singularities(coords, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
@@ -740,7 +740,7 @@ def radius_ergosphere(
     warnings.warn(
         "einteinpy.utils.kerrnewman_utils.radius_ergosphere() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
+        Please use einsteinpy.metric.GenericMetric.singularities(M, a, Q, coords)!",
         PendingDeprecationWarning,
     )
 

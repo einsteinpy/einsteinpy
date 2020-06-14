@@ -72,7 +72,7 @@ def scaled_spin_factor(a, M, c=constant.c.value, G=constant.G.value):
     warnings.warn(
         "einteinpy.utils.kerr_utils.scaled_spin_factor() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.scaled_spin_parameter(a, M)!",
+        Please use einsteinpy.metric.GenericMetric.alpha(M, a)!",
         PendingDeprecationWarning,
     )
 
@@ -105,7 +105,7 @@ def sigma(r, theta, a):
     warnings.warn(
         "einteinpy.utils.kerr_utils.sigma() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.sigma(r, theta, a)!",
+        Please use einsteinpy.metric.GenericMetric.sigma(r, theta, M, a)!",
         PendingDeprecationWarning,
     )
     return (r ** 2) + ((a * np.cos(theta)) ** 2)
@@ -134,7 +134,7 @@ def delta(r, M, a, c=constant.c.value, G=constant.G.value):
     warnings.warn(
         "einteinpy.utils.kerr_utils.delta() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.delta(r, M, a, Q)!",
+        Please use einsteinpy.metric.GenericMetric.delta(r, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
@@ -447,9 +447,9 @@ def spin_factor(J, M, c):
     """
     warnings.warn(
         "einteinpy.utils.kerr_utils.spin_factor() \
-        will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.spin_parameter(J, M)!",
-        PendingDeprecationWarning,
+        will be removed in Version 0.5.0 \
+        A similar method is einsteinpy.metric.GenericMetric.alpha(M, a)!",
+        DeprecationWarning,
     )
 
     return J / (M * c)
@@ -485,7 +485,7 @@ def event_horizon(
     warnings.warn(
         "einteinpy.utils.kerr_utils.event_horizon() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
+        Please use einsteinpy.metric.GenericMetric.singularities(coords, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
@@ -532,7 +532,7 @@ def radius_ergosphere(
     warnings.warn(
         "einteinpy.utils.kerr_utils.radius_ergosphere() \
         will be deprecated in Version 0.5.0 \
-        Please use einsteinpy.metric.Metric.singularities(M, a, Q, coords)!",
+        Please use einsteinpy.metric.GenericMetric.singularities(coords, M, a, Q)!",
         PendingDeprecationWarning,
     )
 
