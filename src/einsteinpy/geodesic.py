@@ -4,6 +4,7 @@ import numpy as np
 
 from einsteinpy.integrators import RK45
 
+
 # Improvements:
 # Proper boundary conditions - not just sch_rad
 # Provide user choice of Solver
@@ -13,9 +14,8 @@ class Geodesic:
     Base Class for defining Geodesics
 
     """
-    def __init__(
-        self, metric, init_vec, end_lambda, step_size=1e-3
-    ):
+
+    def __init__(self, metric, init_vec, end_lambda, step_size=1e-3):
         """
         Parameters
         ----------
@@ -37,8 +37,7 @@ class Geodesic:
         # ????? - Show message in case calculation is lengthy
         print("Calculating geodesic...")
         self._trajectory = self.calculate_trajectory(
-            end_lambda=end_lambda,
-            OdeMethodKwargs={"stepsize": step_size},
+            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size},
         )[1]
         print("Done!")
 
@@ -87,10 +86,10 @@ class Geodesic:
         """
         ODE = RK45(
             fun=self.metric.f_vec,
-            t0=0.,
+            t0=0.0,
             y0=self.init_vec,
             t_bound=end_lambda,
-            **OdeMethodKwargs
+            **OdeMethodKwargs,
         )
 
         vecs = list()
@@ -103,7 +102,9 @@ class Geodesic:
             lambdas.append(ODE.t)
             ODE.step()
             if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
-                warnings.warn("Test particle has reached Schwarzchild Radius. ", RuntimeWarning)
+                warnings.warn(
+                    "Test particle has reached Schwarzchild Radius. ", RuntimeWarning
+                )
                 if stop_on_singularity:
                     break
                 else:
@@ -114,9 +115,7 @@ class Geodesic:
         return lambdas, vecs
 
     def calculate_trajectory_iterator(
-        self,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
+        self, stop_on_singularity=True, OdeMethodKwargs={"stepsize": 1e-3},
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
@@ -140,10 +139,10 @@ class Geodesic:
         """
         ODE = RK45(
             fun=self.metric.f_vec,
-            t0=0.,
+            t0=0.0,
             y0=self.init_vec,
             t_bound=1e300,
-            **OdeMethodKwargs
+            **OdeMethodKwargs,
         )
 
         crossed_event_horizon = False
@@ -153,7 +152,9 @@ class Geodesic:
             yield ODE.t, ODE.y
             ODE.step()
             if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
-                warnings.warn("Test particle has reached Schwarzchild Radius. ", RuntimeWarning)
+                warnings.warn(
+                    "Test particle has reached Schwarzchild Radius. ", RuntimeWarning
+                )
                 if stop_on_singularity:
                     break
                 else:

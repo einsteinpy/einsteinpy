@@ -4,7 +4,6 @@ import numpy as np
 
 from einsteinpy import constant
 
-
 _c = constant.c.value
 _G = constant.G.value
 _Cc = constant.coulombs_const.value
@@ -289,7 +288,7 @@ class GenericMetric:
 
         """
         coords, M, a, Q = self.coords, self.M, self.a, self.Q
-        
+
         r_s = 2 * M * _G / _c ** 2
         alpha = GenericMetric.alpha(M, a)
         # Square of Geometrized Charge

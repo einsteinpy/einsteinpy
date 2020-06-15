@@ -1,9 +1,8 @@
+import astropy.units as u
 import numpy as np
 
-import astropy.units as u
-
-from einsteinpy.ijit import jit
 from einsteinpy import constant
+from einsteinpy.ijit import jit
 
 _c = constant.c.value
 
@@ -203,7 +202,7 @@ def lorentz_factor(v_vec):
     """
     # Square of 3-Vector length
     v_norm2 = v_vec.dot(v_vec)
-    gamma = 1 / np.sqrt(1 - v_norm2 / _c**2)
+    gamma = 1 / np.sqrt(1 - v_norm2 / _c ** 2)
 
     return gamma
 
@@ -239,9 +238,12 @@ def v_t(g_cov_mat, v_vec, time_like=True):
     # Defining coefficients for quadratic equation
     A = g[0, 0]
     B = 2 * (g[0, 1] * u1 + g[0, 2] * u2 + g[0, 3] * u3)
-    C = (g[1, 1] * u1**2 + g[2, 2] * u2**2 + g[3, 3] * u3**2) + \
-        2 * u1 * (g[1, 2] * u2 + g[1, 3] * u3) + \
-        2 * u2 * g[2, 3] * u3 + fac
+    C = (
+        (g[1, 1] * u1 ** 2 + g[2, 2] * u2 ** 2 + g[3, 3] * u3 ** 2)
+        + 2 * u1 * (g[1, 2] * u2 + g[1, 3] * u3)
+        + 2 * u2 * g[2, 3] * u3
+        + fac
+    )
     D = (B ** 2) - (4 * A * C)
 
     v_t = (-B + np.sqrt(D)) / (2 * A)

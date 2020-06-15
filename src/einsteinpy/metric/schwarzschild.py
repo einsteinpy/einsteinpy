@@ -122,7 +122,7 @@ class Schwarzschild(GenericMetric):
         """
         chl = self.christoffels(vec)
         vals = np.zeros(shape=(8,), dtype=float)
-        vec = vec.flatten() # Fix for Broadcast error - ?????
+        vec = vec.flatten()  # Fix for Broadcast error - ?????
 
         vals[:4] = vec[4:8]
         vals[4] = -2 * chl[0, 0, 1] * vec[4] * vec[5]
