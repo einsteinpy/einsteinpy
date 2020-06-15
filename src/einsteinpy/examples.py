@@ -1,9 +1,6 @@
-# import astropy.units as u
 import numpy as np
 
 from einsteinpy.coordinates.utils import four_position, stacked_vec
-
-# from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.geodesic import Geodesic
 from einsteinpy.metric import Schwarzschild
 
