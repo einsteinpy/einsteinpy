@@ -79,9 +79,9 @@ def test_singularities_for_uncharged_nonrotating_case():
     ms = Schwarzschild(M=M)
     mk = Kerr(coords="BL", M=M, a=a)
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
-    mssing = ms.singularities(coords="S", M=M, a=a)
-    mksing = mk.singularities(coords="BL", M=M, a=a)
-    mknsing = mkn.singularities(coords="BL", M=M, a=a)
+    mssing = ms.singularities()
+    mksing = mk.singularities()
+    mknsing = mkn.singularities()
 
     mssinglist = [
                 mssing["inner_ergosphere"],
@@ -110,3 +110,25 @@ def test_singularities_for_uncharged_nonrotating_case():
     assert_allclose(mksinglist, mknsinglist, rtol=1e-4, atol=0.0)
     assert_allclose(mknsinglist, mssinglist, rtol=1e-4, atol=0.0)
     assert_allclose(mksinglist[2], scr, rtol=1e-4, atol=0.0)
+
+
+def test_deprecation_warning_for_calculate_trajectory():
+    """
+    Tests, if a Deprecation Warning is shown, when accessing calculate_trajectory \
+    for all metric classes
+    """
+    M, a, Q = 5e27, 0., 0.
+    ms = Schwarzschild(M=M)
+    mk = Kerr(coords="BL", M=M, a=a)
+    mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+   
+    
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+
+        ms.calculate_trajectory()
+        mk.calculate_trajectory()
+        mkn.calculate_trajectory()
+        
+        assert len(w) == 3 # 3 warnings to be shown
+        assert issubclass(w[-1].category, PendingDeprecationWarning)

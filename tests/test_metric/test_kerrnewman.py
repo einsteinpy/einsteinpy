@@ -13,6 +13,9 @@ _Cc = constant.coulombs_const.value
 
 @pytest.fixture()
 def test_input():
+    """
+    Test input for some functions below
+    """
     r = 0.1
     theta = 4 * np.pi / 5
     M = 1e23

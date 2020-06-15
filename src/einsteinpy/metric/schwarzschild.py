@@ -122,6 +122,7 @@ class Schwarzschild(GenericMetric):
         """
         chl = self.christoffels(vec)
         vals = np.zeros(shape=(8,), dtype=float)
+        vec = vec.flatten() # Fix for Broadcast error - ?????
 
         vals[:4] = vec[4:8]
         vals[4] = -2 * chl[0, 0, 1] * vec[4] * vec[5]
@@ -137,7 +138,7 @@ class Schwarzschild(GenericMetric):
 
         return vals
 
-    # time_velocity moved to `coordinates`
+    # time_velocity moved to `coordinates.utils` as v_t()
     # calculate_trajectory moved to `geodesic`
 
     # Hiding unrelated methods

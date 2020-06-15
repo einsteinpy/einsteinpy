@@ -394,6 +394,7 @@ class Kerr(GenericMetric):
         """
         chl = self.christoffels(vec[:4])
         vals = np.zeros(shape=(8,), dtype=float)
+        vec = vec.flatten() # Fix for Broadcast error - ?????
 
         for i in range(4):
             vals[i] = vec[i + 4]
@@ -501,7 +502,7 @@ class Kerr(GenericMetric):
 
         return vcl
 
-    # time_velocity moved to `coordinates`
+    # time_velocity moved to `coordinates.utils` as v_t()
     # calculate_trajectory moved to `geodesic`
 
     # Hiding unrelated methods

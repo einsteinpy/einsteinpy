@@ -1,6 +1,9 @@
+import warnings
+
 import numpy as np
 
 from einsteinpy import constant
+
 
 _c = constant.c.value
 _G = constant.G.value
@@ -267,26 +270,11 @@ class GenericMetric:
         # Can perhaps put in einsteinpy.units?
         return (Q / (_c ** 2)) * np.sqrt(_G * _Cc)
 
-    @staticmethod
-    def singularities(coords, M, a, Q=0):
+    def singularities(self):
         """
         Returns the Singularities of the Metric
         Depends on the choice of Coordinate Systems
         Applies to Kerr and Kerr-Newman Geometries
-
-        Parameters
-        ----------
-        coords : str
-            Coordinate System, in which singularities are calculated
-            "S" for Schwarzschild/Spherical Polar, \
-            "BL" for Boyer-Lindquist, "KS" for Kerr-Schild
-        M : float
-            Mass of gravitating body
-        a : float
-            Spin Parameter
-        Q : float
-            Charge on gravitating body in the Metric
-            Defaults to ``0 `(for Kerr Geometry)
 
         Returns
         -------
@@ -300,6 +288,8 @@ class GenericMetric:
             }``
 
         """
+        coords, M, a, Q = self.coords, self.M, self.a, self.Q
+        
         r_s = 2 * M * _G / _c ** 2
         alpha = GenericMetric.alpha(M, a)
         # Square of Geometrized Charge
@@ -340,7 +330,7 @@ class GenericMetric:
             }
 
         elif coords == "KS":  # Kerr & Kerr-Newman Geometries
-            # To be filled in, after refactoring `coordinates` - ?????
+            # To be filled in, after refactoring `coordinates`
             raise NotImplementedError
 
     # Derived classes should only define metric_covariant() function
@@ -506,12 +496,14 @@ class GenericMetric:
         F[1, 0] = -F[0, 1]
         F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2 ** 2)
         F[2, 0] = -F[0, 2]
-        # (_c ** 2 / _G * M) is extraneous - ????? (Issue #144, perhaps)
+        # (_c ** 2 / _G * M) is extraneous - ????? (Issue #144, perhaps) \
+        # Removed this factor
         F[1, 3] = (
             (1 / rho2 ** 2) * (alpha * r_Q * np.sin(theta) ** 2) * (rho2 - 2 * r ** 2)
         )
         F[3, 1] = -F[1, 3]
-        # (_c ** 2 / _G * M) is extraneous - ????? (Issue #144, perhaps)
+        # (_c ** 2 / _G * M) is extraneous - ????? (Issue #144, perhaps) \
+        # Removed this factor
         F[2, 3] = (
             (1 / rho2 ** 2)
             * (alpha * r_Q * r * np.sin(2 * theta))
@@ -553,3 +545,26 @@ class GenericMetric:
         F_contra = g_contra @ F_cov @ g_contra
 
         return F_contra
+
+    # Deprecated function
+    def calculate_trajectory(
+        self,
+        start_lambda=0.0,
+        end_lambda=10.0,
+        stop_on_singularity=True,
+        OdeMethodKwargs={"stepsize": 1e-3},
+        return_cartesian=False,
+    ):
+        """
+        Deprecated in 0.5.0.
+        Please use einsteinpy.Geodesic.
+
+        Calculate trajectory in manifold according to geodesic equation
+
+        """
+        warnings.warn(
+            "calculate_trajectory() \
+            will be deprecated in Version 0.5.0 \
+            Please use einsteinpy.Geodesic.calculate_trajectory()!",
+            PendingDeprecationWarning,
+        )

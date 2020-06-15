@@ -416,6 +416,7 @@ class KerrNewman(GenericMetric):
         F_contra = self.em_tensor_contravariant(vec[1], vec[2], self.M, self.a, self.Q)
         x_vec = np.array([0, vec[1], vec[2], 0])  # t & phi have no bearing on Metric
         g_cov = self.metric_covariant(x_vec)
+        vec = vec.flatten() # Fix for Broadcast error - ?????
 
         vals = np.zeros(shape=(8,), dtype=float)
 
@@ -478,5 +479,5 @@ class KerrNewman(GenericMetric):
         # To be implemented after KS Coordinates
         raise NotImplementedError
 
-    # time_velocity moved to `coordinates`
+    # time_velocity moved to `coordinates.utils` as v_t()
     # calculate_trajectory moved to `geodesic`
