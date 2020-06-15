@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------------------------------------------
+File for tracking changes in EinsteinPy from v0.3.0. This file should be dumped later into the main changelog.
+--------------------------------------------------------------------------------------------------------------
+
+
+0.4.0
+-----
+CONTRIBUTORS
+- shreyasbapat
+- bibek22
+
+CHANGES
+- #506: Tests moved outside of the package. 
+- #510: Added a utility function for Outer Product and Contraction of Tensors in the symbolic module.
+
+
+0.5.0
+-----
+CONTRIBUTORS
+CHANGES
+
+0.6.0
+-----
+CONTRIBUTORS
+CHANGES
