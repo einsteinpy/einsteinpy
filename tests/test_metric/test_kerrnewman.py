@@ -132,9 +132,11 @@ def test_em_tensor_covariant():
     D_r = (scale_Q * Q * (r2 - (alpha * np.cos(th)) ** 2)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
     D_th = ((alpha2) * (-(scale_Q * Q)) * np.sin(2 * th)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
     H_r = (2 * alpha * (scale_Q * Q) * (r2 + alpha2) * np.cos(th)) / (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
-    H_th = (alpha * (scale_Q * Q) * np.sin(th) * \
-        (r2 - (alpha * np.cos(th)) ** 2)) / \
+    H_th = (
+        (alpha * (scale_Q * Q) * np.sin(th) *
+        (r2 - (alpha * np.cos(th)) ** 2)) /
         (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+    )
 
     assert_allclose(D_r, mkn_em_cov[0, 1], rtol=1e-8)
     assert_allclose(r * D_th, mkn_em_cov[0, 2], rtol=1e-8)

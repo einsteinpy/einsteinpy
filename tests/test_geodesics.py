@@ -34,7 +34,12 @@ def dummy_data():
 
 def test_Geodesics_has_trajectory(dummy_data):
     metric, init_vec, end_lambda, step_size = dummy_data
-    geo = Geodesic(metric=metric, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size)
+    geo = Geodesic(
+        metric=metric,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size
+    )
 
     assert isinstance(geo.trajectory, np.ndarray)
 
@@ -76,7 +81,12 @@ def test_calculate_trajectory_schwarzschild(
     ms_cov_mat = ms_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size)
+    geod = Geodesic(
+        metric=ms_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size
+    )
 
     ans = geod.trajectory
 
@@ -85,9 +95,9 @@ def test_calculate_trajectory_schwarzschild(
         x = [0, i[1], i[2], 0]
         g = ms_cov.metric_covariant(x)
         testarray.append(
-            g[0][0] * (i[4] ** 2) + \
-            g[1][1] * (i[5] ** 2) + \
-            g[2][2] * (i[6] ** 2) + \
+            g[0][0] * (i[4] ** 2) +
+            g[1][1] * (i[5] ** 2) +
+            g[2][2] * (i[6] ** 2) +
             g[3][3] * (i[7] ** 2)
         )
     testarray = np.array(testarray, dtype=float)
@@ -115,11 +125,13 @@ def test_calculate_trajectory2_schwarzschild():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=ms_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=end_lambda / 2e3,\
-        return_cartesian=False)
+    geod = Geodesic(
+        metric=ms_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=end_lambda / 2e3,
+        return_cartesian=False
+    )
 
     ans = geod.trajectory
 
@@ -149,11 +161,13 @@ def test_calculate_trajectory3_schwarzschild():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=ms_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=end_lambda / 2e3,\
-        return_cartesian=False)
+    geod = Geodesic(
+        metric=ms_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=end_lambda / 2e3,
+        return_cartesian=False
+    )
 
     ans = geod.trajectory
 
@@ -202,11 +216,13 @@ def test_calculate_trajectory_iterator_schwarzschild(
     ms_cov_mat = ms_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=ms_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=step_size,\
-        return_cartesian=return_cartesian)
+    geod = Geodesic(
+        metric=ms_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size,
+        return_cartesian=return_cartesian
+    )
 
     traj = geod.trajectory
 
@@ -236,7 +252,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
     stepsize = 0.4e-6
     OdeMethodKwargs = {"stepsize": stepsize}
 
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=stepsize, return_cartesian=False)
+    geod = Geodesic(
+        metric=ms_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=stepsize,
+        return_cartesian=False
+    )
 
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
@@ -265,7 +287,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning2_schwarzschild():
     stepsize = 0.4e-6
     OdeMethodKwargs = {"stepsize": stepsize}
 
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=stepsize, return_cartesian=False)
+    geod = Geodesic(
+        metric=ms_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=stepsize,
+        return_cartesian=False
+    )
 
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
@@ -318,7 +346,12 @@ def test_calculate_trajectory_kerr(
     mk_cov_mat = mk_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mk_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=mk_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size)
+    geod = Geodesic(
+        metric=mk_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size
+    )
 
     ans = geod.trajectory
 
@@ -327,10 +360,10 @@ def test_calculate_trajectory_kerr(
         x = [0, i[1], i[2], 0]
         g = mk_cov.metric_covariant(x)
         testarray.append(
-            g[0][0] * (i[4] ** 2) + \
-            g[1][1] * (i[5] ** 2) + \
-            g[2][2] * (i[6] ** 2) + \
-            g[3][3] * (i[7] ** 2) + \
+            g[0][0] * (i[4] ** 2) +
+            g[1][1] * (i[5] ** 2) +
+            g[2][2] * (i[6] ** 2) +
+            g[3][3] * (i[7] ** 2) +
             2 * g[0][3] * i[4] * i[7]
         )
     testarray = np.array(testarray, dtype=float)
@@ -360,11 +393,13 @@ def test_calculate_trajectory3_kerr():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=mk_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=end_lambda / 2e3,\
-        return_cartesian=False)
+    geod = Geodesic(
+        metric=mk_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=end_lambda / 2e3,
+        return_cartesian=False
+    )
 
     ans = geod.trajectory
 
@@ -416,11 +451,13 @@ def test_calculate_trajectory_iterator_kerr(
     mk_cov_mat = mk_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mk_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=mk_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=step_size,\
-        return_cartesian=return_cartesian)
+    geod = Geodesic(
+        metric=mk_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size,
+        return_cartesian=return_cartesian
+    )
 
     traj = geod.trajectory
 
@@ -451,7 +488,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
     stepsize = 0.4e-6
     OdeMethodKwargs = {"stepsize": stepsize}
 
-    geod = Geodesic(metric=mk_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=stepsize, return_cartesian=False)
+    geod = Geodesic(
+        metric=mk_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=stepsize,
+        return_cartesian=False
+    )
 
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
@@ -486,11 +529,13 @@ def test_calculate_trajectory0_kerrnewman():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=mkn_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=end_lambda / 1.5e3,\
-        return_cartesian=True)
+    geod = Geodesic(
+        metric=mkn_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=end_lambda / 1.5e3,
+        return_cartesian=True
+    )
 
     ans = geod.trajectory
 
@@ -525,11 +570,13 @@ def test_calculate_trajectory1_kerrnewman():
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=mkn_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=end_lambda / 1.5e3,\
-        return_cartesian=True)
+    geod = Geodesic(
+        metric=mkn_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=end_lambda / 1.5e3,
+        return_cartesian=True
+    )
 
     ans = geod.trajectory
 
@@ -562,11 +609,13 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     OdeMethodKwargs={"stepsize": step_size}
     return_cartesian = False
 
-    geod = Geodesic(metric=mkn_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=step_size,\
-        return_cartesian=return_cartesian)
+    geod = Geodesic(
+        metric=mkn_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size,
+        return_cartesian=return_cartesian
+    )
 
     traj = geod.trajectory
 
@@ -595,11 +644,13 @@ def test_compare_calculate_trajectory_iterator_cartesians_kerrnewman(test_input)
     OdeMethodKwargs = {"stepsize": step_size}
     return_cartesian = True
 
-    geod = Geodesic(metric=mkn_cov,\
-        init_vec=init_vec,\
-        end_lambda=end_lambda,\
-        step_size=step_size,\
-        return_cartesian=return_cartesian)
+    geod = Geodesic(
+        metric=mkn_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size,
+        return_cartesian=return_cartesian
+    )
 
     traj = geod.trajectory
 

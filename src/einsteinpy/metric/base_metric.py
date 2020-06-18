@@ -281,14 +281,14 @@ class BaseMetric:
 
         def _in_ergo(theta):
             return (
-                r_s - \
-                np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
+                r_s
+                - np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
             ) / 2
 
         def _out_ergo(theta):
             return (
-                r_s + \
-                np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
+                r_s
+                + np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
             ) / 2
 
         if coords == "S":  # Schwarzschild Geometry
@@ -304,10 +304,12 @@ class BaseMetric:
                 "inner_ergosphere": _in_ergo,
                 "inner_horizon": (
                     r_s - np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
-                ) / 2,
+                )
+                / 2,
                 "outer_horizon": (
                     r_s + np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
-                ) / 2,
+                )
+                / 2,
                 "outer_ergosphere": _out_ergo,
             }
 
@@ -480,9 +482,9 @@ class BaseMetric:
         )
         F[3, 1] = -F[1, 3]
         F[2, 3] = (
-            (1 / rho2 ** 2) * \
-            (alpha * r_Q * r * np.sin(2 * theta)) * \
-            (rho2 + (alpha * np.sin(theta)) ** 2)
+            (1 / rho2 ** 2)
+            * (alpha * r_Q * r * np.sin(2 * theta))
+            * (rho2 + (alpha * np.sin(theta)) ** 2)
         )
         F[3, 2] = -F[2, 3]
 

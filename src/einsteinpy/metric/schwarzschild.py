@@ -126,10 +126,10 @@ class Schwarzschild(BaseMetric):
         vals[:4] = vec[4:]
         vals[4] = -2 * chl[0, 0, 1] * vec[4] * vec[5]
         vals[5] = -1 * (
-            chl[1, 0, 0] * (vec[4] ** 2) + \
-            chl[1, 1, 1] * (vec[5] ** 2) + \
-            chl[1, 2, 2] * (vec[6] ** 2) + \
-            chl[1, 3, 3] * (vec[7] ** 2)
+            chl[1, 0, 0] * (vec[4] ** 2)
+            + chl[1, 1, 1] * (vec[5] ** 2)
+            + chl[1, 2, 2] * (vec[6] ** 2)
+            + chl[1, 3, 3] * (vec[7] ** 2)
         )
         vals[6] = -2 * chl[2, 2, 1] * vec[6] * vec[5] - 1 * chl[2, 3, 3] * (vec[7] ** 2)
 

@@ -134,8 +134,9 @@ class KerrNewman(BaseMetric):
         g_cov_bl[1, 1] = -rho2 / (dl * c2)
         g_cov_bl[2, 2] = -rho2 / c2
         g_cov_bl[3, 3] = (
-            (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2)) * \
-            (np.sin(th) ** 2) / (rho2 * c2)
+            (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
+            * (np.sin(th) ** 2)
+            / (rho2 * c2)
         )
         g_cov_bl[0, 3] = g_cov_bl[3, 0] = (
             -alpha * (np.sin(th) ** 2) * (dl - (r ** 2) - (alpha ** 2)) / (rho2 * _c)
@@ -204,15 +205,15 @@ class KerrNewman(BaseMetric):
             dgdx[1, 3, 3] = ((np.sin(th) ** 2) / (c2 * (rho2 ** 2))) * (
                 (
                     (
-                        ((alpha * np.sin(th)) ** 2) * dddr - \
-                        4 * (r ** 3) - \
-                        4 * (r * (alpha ** 2))
+                        ((alpha * np.sin(th)) ** 2) * dddr
+                        - 4 * (r ** 3)
+                        - 4 * (r * (alpha ** 2))
                     )
                     * rho2
                 )
                 - (
-                    drh2dr * \
-                    (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
+                    drh2dr
+                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
                 )
             )
             dgdx[1, 0, 3] = dgdx[1, 3, 0] = (
@@ -224,22 +225,23 @@ class KerrNewman(BaseMetric):
             nonlocal dgdx
             drh2dth = -2 * (alpha ** 2) * np.cos(th) * np.sin(th)
             dgdx[2, 0, 0] = (
-                (-2 * (alpha ** 2) * np.sin(th) * np.cos(th)) * rho2 - \
-                drh2dth * (dl - ((alpha * np.sin(th)) ** 2))
+                (-2 * (alpha ** 2) * np.sin(th) * np.cos(th)) * rho2
+                - drh2dth * (dl - ((alpha * np.sin(th)) ** 2))
             ) / (rho2 ** 2)
             dgdx[2, 1, 1] = -drh2dth / (c2 * dl)
             dgdx[2, 2, 2] = -drh2dth / c2
             dgdx[2, 3, 3] = (1 / (c2 * (rho2 ** 2))) * (
                 (
                     (
-                        (4 * (alpha ** 2) * (np.sin(th) ** 3) * np.cos(th) * dl) - \
-                        (2 * np.sin(th) * np.cos(th) * ((r ** 2 + alpha ** 2) ** 2))
-                    ) * rho2
-                ) - \
-                (
-                    drh2dth * \
-                    (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2)) * \
-                    (np.sin(th) ** 2)
+                        (4 * (alpha ** 2) * (np.sin(th) ** 3) * np.cos(th) * dl)
+                        - (2 * np.sin(th) * np.cos(th) * ((r ** 2 + alpha ** 2) ** 2))
+                    )
+                    * rho2
+                )
+                - (
+                    drh2dth
+                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
+                    * (np.sin(th) ** 2)
                 )
             )
             dgdx[2, 0, 3] = dgdx[2, 3, 0] = (
