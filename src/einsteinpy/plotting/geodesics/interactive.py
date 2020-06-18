@@ -48,7 +48,7 @@ class InteractiveGeodesicPlotter:
             min_radius = minlen_plot / 12
             radius = min(min_radius, minrad_nooverlap)
         else:
-            radius = radius.value * self.attractor_radius_scale
+            radius = radius * self.attractor_radius_scale
 
         self.fig.add_trace(
             go.Scatter(

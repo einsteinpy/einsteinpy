@@ -69,7 +69,7 @@ class StaticGeodesicPlotter:
             radius = radius * self.attractor_radius_scale
             self.get_curr_plot_radius = radius
             self.ax.add_patch(
-                Circle((0, 0), radius.value, lw=0, color=self.attractor_color)
+                Circle((0, 0), radius, lw=0, color=self.attractor_color)
             )
 
     def _set_scaling(self, x_range, y_range, z_range, lim):

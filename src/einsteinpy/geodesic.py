@@ -12,7 +12,7 @@ class Geodesic:
 
     """
 
-    def __init__(self, metric, init_vec, end_lambda, step_size=1e-3):
+    def __init__(self, metric, init_vec, end_lambda, step_size=1e-3, return_cartesian=True):
         """
         Parameters
         ----------
@@ -27,6 +27,9 @@ class Geodesic:
         step_size : float, optional
             Size of each geodesic integration step
             Defaults to ``1e-3``
+        return_cartesian : bool
+            Whether to return calculated values in Cartesian Coordinates
+            Defaults to ``True``
 
         """
         self.metric = metric
@@ -34,7 +37,7 @@ class Geodesic:
         # Showing messages, mainly in cases, when calculation is lengthy
         print("Calculating geodesic...")
         self._trajectory = self.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
+            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}, return_cartesian=return_cartesian
         )[1]
         print("Done!")
 
@@ -138,7 +141,7 @@ class Geodesic:
         self,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
-        return_cartesian=False,
+        return_cartesian=True,
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
