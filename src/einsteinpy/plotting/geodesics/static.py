@@ -110,7 +110,7 @@ class StaticGeodesicPlotter:
             self.ax.plot(x[-1:], y[-1:], z[-1:], "o", mew=0, color=color)
 
         if not self.attractor_present:
-            self._draw_attractor(geodesic.metric.scr, x, y)
+            self._draw_attractor(geodesic.metric.sch_rad, x, y)
 
     def animate(
         self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF)), interval=50
@@ -141,7 +141,7 @@ class StaticGeodesicPlotter:
         plt.ylim(y_min - margin_y, y_max + margin_y)
 
         if not self.attractor_present:
-            self._draw_attractor(geodesic.metric.scr, x, y)
+            self._draw_attractor(geodesic.metric.sch_rad, x, y)
 
         def _update(frame):
             pic.set_xdata(x[: frame + 1])

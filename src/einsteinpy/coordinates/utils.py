@@ -223,7 +223,7 @@ def v_t(g_cov_mat, v_vec, time_like=True):
     time_like : bool
         To determine, if the 4-Velocity is for a Time-like or \
         a Null-like Geodesic
-        Defaults to ``True`` - ????? (switch to string?)
+        Defaults to ``True``
 
     Returns
     -------
@@ -288,7 +288,7 @@ def four_velocity(g_cov_mat, v_vec, time_like):
     time_like : bool
         To determine, if the 4-Velocity is for a Time-like or \
         a Null-like Geodesic
-        Defaults to ``True`` - ????? (switch to string?)
+        Defaults to ``True``
     
     Returns
     -------
@@ -302,7 +302,6 @@ def four_velocity(g_cov_mat, v_vec, time_like):
 
 
 def stacked_vec(g_cov_mat, t, x_vec, v_vec, time_like):
-    # - ????? Needs a better name
     """
     Packages 4-Position and 4-Velocity into a Length-8 vector
 
@@ -322,7 +321,7 @@ def stacked_vec(g_cov_mat, t, x_vec, v_vec, time_like):
     time_like : bool
         To determine, if the 4-Velocity is for a Time-like or \
         a Null-like Geodesic
-        Defaults to ``True`` - ????? (switch to string?)
+        Defaults to ``True``
     
     Returns
     -------

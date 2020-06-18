@@ -13,6 +13,9 @@ class InteractiveGeodesicPlotter:
 
         Parameters
         ----------
+        attractor_radius_scale : float, optional
+            Scales the attractor radius by the value given. Default is ``1``.
+            It is used to make plots look clearer, if needed.
         attractor_color : string, optional
             Color which is used to denote the attractor. Defaults to #ffcc00.
 
@@ -23,8 +26,8 @@ class InteractiveGeodesicPlotter:
         self.attractor_present = False
         self._layout = go.Layout(
             autosize=True,
-            xaxis=dict(title="x (m)", constrain="domain"),
-            yaxis=dict(title="y (m)", scaleanchor="x"),
+            xaxis=dict(title="X", constrain="domain"),
+            yaxis=dict(title="Y", scaleanchor="x"),
         )
 
     def _mindist(self, x, y, z=0):
@@ -86,7 +89,7 @@ class InteractiveGeodesicPlotter:
         y = np.array([coord[2] for coord in vals])
 
         if not self.attractor_present:
-            self._draw_attractor(geodesic.metric.scr, x, y)
+            self._draw_attractor(geodesic.metric.sch_rad, x, y)
         self.fig.add_trace(
             go.Scatter(
                 x=x,

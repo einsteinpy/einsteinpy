@@ -1,12 +1,12 @@
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.metric import GenericMetric
+from einsteinpy.metric import BaseMetric
 
 _c = constant.c.value
 
 
-class Schwarzschild(GenericMetric):
+class Schwarzschild(BaseMetric):
     """
     Class for defining Schwarzschild Geometry
 
@@ -31,7 +31,7 @@ class Schwarzschild(GenericMetric):
             f_vec=self._f_vec,
         )
 
-    # Overrides GenericMetric.metric_covariant()
+    # Overrides BaseMetric.metric_covariant()
     # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
@@ -120,11 +120,10 @@ class Schwarzschild(GenericMetric):
             Numpy array of shape (8)
         
         """
-        chl = self.christoffels(vec)
-        vals = np.zeros(shape=(8,), dtype=float)
-        vec = vec.flatten()  # Fix for Broadcast error - ?????
+        chl = self.christoffels(vec[:4])
+        vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
-        vals[:4] = vec[4:8]
+        vals[:4] = vec[4:]
         vals[4] = -2 * chl[0, 0, 1] * vec[4] * vec[5]
         vals[5] = -1 * (
             chl[1, 0, 0] * (vec[4] ** 2)
@@ -142,8 +141,7 @@ class Schwarzschild(GenericMetric):
     # calculate_trajectory moved to `geodesic`
 
     # Hiding unrelated methods
-    charge_geometrized = GenericMetric._private
-    em_potential_covariant = GenericMetric._private
-    em_potential_contravariant = GenericMetric._private
-    em_tensor_covariant = GenericMetric._private
-    em_tensor_contravariant = GenericMetric._private
+    em_potential_covariant = BaseMetric._private
+    em_potential_contravariant = BaseMetric._private
+    em_tensor_covariant = BaseMetric._private
+    em_tensor_contravariant = BaseMetric._private

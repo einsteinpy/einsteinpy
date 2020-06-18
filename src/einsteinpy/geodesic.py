@@ -2,13 +2,10 @@ import warnings
 
 import numpy as np
 
+from einsteinpy.coordinates import BoyerLindquistConversion, SphericalConversion
 from einsteinpy.integrators import RK45
 
 
-# Improvements:
-# Proper boundary conditions - not just sch_rad
-# Provide user choice of Solver
-# ?????
 class Geodesic:
     """
     Base Class for defining Geodesics
@@ -23,7 +20,7 @@ class Geodesic:
             Metric, in which Geodesics are to be calculated
         init_vec : numpy.array
             Length-8 Vector containing Initial 4-Position and 4-Velocity, \
-            in that order # ?????
+            in that order
         end_lambda : float
             Affine Parameter, Lambda, where iterations will stop
             Equivalent to Proper Time for Timelike Geodesics
@@ -34,20 +31,18 @@ class Geodesic:
         """
         self.metric = metric
         self.init_vec = init_vec
-        # ????? - Show message in case calculation is lengthy
+        # Showing messages, mainly in cases, when calculation is lengthy
         print("Calculating geodesic...")
         self._trajectory = self.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size},
+            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}
         )[1]
         print("Done!")
 
     def __repr__(self):
-        return f"Geodesic: metric = ({self.metric}), init_vec = ({self.init_vec}), \
-            trajectory = ({self.trajectory})"
+        return f"Geodesic:\n\nMetric = ({self.metric}),\n\ninit_vec = ({self.init_vec}),\n\nTrajectory = ({self.trajectory})"
 
     def __str__(self):
-        return f"Geodesic: metric = ({self.metric}), init_vec = ({self.init_vec}), \
-            trajectory = ({self.trajectory})"
+        return f"Geodesic:\n\nMetric = ({self.metric}),\n\ninit_vec = ({self.init_vec}),\n\nTrajectory = ({self.trajectory})"
 
     @property
     def trajectory(self):
@@ -58,8 +53,8 @@ class Geodesic:
         end_lambda=10.0,
         stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
+        return_cartesian=True,
     ):
-        # ToDo: Add ODE Solver as a parameter - ?????
         """
         Calculate trajectory in spacetime, according to Geodesic Equations
         
@@ -70,18 +65,22 @@ class Geodesic:
             Equivalent to Proper Time for Timelike Geodesics
             Defaults to ``10``
         stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity, defaults to True
+            Whether to stop further computation on reaching singularity
+            Defaults to ``True``
         OdeMethodKwargs : dict
             Kwargs to be supplied to the ODESolver
             Dictionary with key 'stepsize' along with a float value is expected
             Defaults to ``{'stepsize': 1e-3}``
+        return_cartesian : bool
+            Whether to return calculated values in Cartesian Coordinates
+            Defaults to ``True``
 
         Returns
         -------
         ~numpy.ndarray
             N-element array containing Lambda, where the geodesic equations were evaluated
         ~numpy.ndarray
-            (n,8) shape array of [x0, x1, x2, x3, v0, v1, v2, v3] for each Lambda
+            (n,8) shape array containing [x0, x1, x2, x3, v0, v1, v2, v3] for each Lambda
 
         """
         ODE = RK45(
@@ -112,10 +111,34 @@ class Geodesic:
 
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
-        return lambdas, vecs
+        if not return_cartesian:
+            return lambdas, vecs
+
+        elif self.metric.coords == "S":
+            cart_vecs = list()
+            for v in vecs:
+                si_vals = SphericalConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian()
+                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
+
+            return lambdas, np.array(cart_vecs)
+
+        elif self.metric.coords == "BL":
+            cart_vecs = list()
+            for v in vecs:
+                si_vals = BoyerLindquistConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian()
+                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
+
+            return lambdas, np.array(cart_vecs)
 
     def calculate_trajectory_iterator(
-        self, stop_on_singularity=True, OdeMethodKwargs={"stepsize": 1e-3},
+        self,
+        stop_on_singularity=True,
+        OdeMethodKwargs={"stepsize": 1e-3},
+        return_cartesian=False,
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
@@ -124,10 +147,14 @@ class Geodesic:
         Parameters
         ----------
         stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity, defaults to True
+            Whether to stop further computation on reaching singularity
+            Defaults to ``True``
         OdeMethodKwargs : dict
             Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
             Dictionary with key 'stepsize' along with an float value is expected.
+        return_cartesian : bool
+            Whether to return calculated values in Cartesian Coordinates
+            Defaults to ``True``
 
         Yields
         ------
@@ -149,7 +176,20 @@ class Geodesic:
         _scr = self.metric.sch_rad * 1.001
 
         while True:
-            yield ODE.t, ODE.y
+            if not return_cartesian:
+                yield ODE.t, ODE.y
+            elif self.metric.coords == "S":
+                v = ODE.y
+                si_vals = SphericalConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian()
+                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
+            elif self.metric.coords == "BL":
+                v = ODE.y
+                si_vals = BoyerLindquistConversion(
+                    v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian()
+                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
             ODE.step()
             if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
                 warnings.warn(

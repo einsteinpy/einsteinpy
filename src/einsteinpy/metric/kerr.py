@@ -1,12 +1,12 @@
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.metric import GenericMetric
+from einsteinpy.metric import BaseMetric
 
 _c = constant.c.value
 
 
-class Kerr(GenericMetric):
+class Kerr(BaseMetric):
     """
     Class for defining the Kerr Geometry
     
@@ -76,7 +76,7 @@ class Kerr(GenericMetric):
             f_vec=self._f_vec,
         )
 
-    # Overrides GenericMetric.metric_covariant()
+    # Overrides BaseMetric.metric_covariant()
     # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
@@ -124,8 +124,8 @@ class Kerr(GenericMetric):
         """
         r, th = x_vec[1], x_vec[2]
         r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
-        alpha = GenericMetric.alpha(M, a)
-        sg, dl = GenericMetric.sigma(r, th, M, a), GenericMetric.delta(r, M, a)
+        alpha = BaseMetric.alpha(M, a)
+        sg, dl = BaseMetric.sigma(r, th, M, a), BaseMetric.delta(r, M, a)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
@@ -189,8 +189,8 @@ class Kerr(GenericMetric):
         """
         r, th = x_vec[1], x_vec[2]
         r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
-        alpha = GenericMetric.alpha(M, a)
-        sg, dl = GenericMetric.sigma(r, th, M, a), GenericMetric.delta(r, M, a)
+        alpha = BaseMetric.alpha(M, a)
+        sg, dl = BaseMetric.sigma(r, th, M, a), BaseMetric.delta(r, M, a)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -393,11 +393,9 @@ class Kerr(GenericMetric):
         
         """
         chl = self.christoffels(vec[:4])
-        vals = np.zeros(shape=(8,), dtype=float)
-        vec = vec.flatten()  # Fix for Broadcast error - ?????
+        vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
-        for i in range(4):
-            vals[i] = vec[i + 4]
+        vals[:4] = vec[4:]
 
         vals[4] = -2.0 * (
             chl[0, 0, 1] * vec[4] * vec[5]
@@ -506,8 +504,7 @@ class Kerr(GenericMetric):
     # calculate_trajectory moved to `geodesic`
 
     # Hiding unrelated methods
-    charge_geometrized = GenericMetric._private
-    em_potential_covariant = GenericMetric._private
-    em_potential_contravariant = GenericMetric._private
-    em_tensor_covariant = GenericMetric._private
-    em_tensor_contravariant = GenericMetric._private
+    em_potential_covariant = BaseMetric._private
+    em_potential_contravariant = BaseMetric._private
+    em_tensor_covariant = BaseMetric._private
+    em_tensor_contravariant = BaseMetric._private

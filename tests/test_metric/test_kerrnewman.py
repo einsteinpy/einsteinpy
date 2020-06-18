@@ -4,7 +4,7 @@ import pytest
 from numpy.testing import assert_allclose
 
 from einsteinpy import constant
-from einsteinpy.metric import GenericMetric, Kerr, KerrNewman
+from einsteinpy.metric import BaseMetric, Kerr, KerrNewman
 
 _c = constant.c.value
 _G = constant.G.value
@@ -114,7 +114,7 @@ def test_em_tensor_covariant():
     """
     r, theta = 1.5, 3 * np.pi / 5
     M, a, Q = 2e22, 0.5, 10.0
-    alpha = GenericMetric.alpha(M, a)
+    alpha = BaseMetric.alpha(M, a)
 
     # Using function from module
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)

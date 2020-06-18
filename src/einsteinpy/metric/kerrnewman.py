@@ -1,12 +1,12 @@
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.metric import GenericMetric
+from einsteinpy.metric import BaseMetric
 
 _c = constant.c.value
 
 
-class KerrNewman(GenericMetric):
+class KerrNewman(BaseMetric):
     """
     Class for defining Kerr-Newman Goemetry
 
@@ -77,7 +77,7 @@ class KerrNewman(GenericMetric):
             f_vec=self._f_vec,
         )
 
-    # Overrides GenericMetric.metric_covariant()
+    # Overrides BaseMetric.metric_covariant()
     # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
@@ -125,8 +125,8 @@ class KerrNewman(GenericMetric):
         """
         r, th = x_vec[1], x_vec[2]
         M, a, c2 = self.M, self.a, _c ** 2
-        alpha = GenericMetric.alpha(M, a)
-        rho2, dl = GenericMetric.rho(r, th, M, a) ** 2, GenericMetric.delta(r, M, a)
+        alpha = BaseMetric.alpha(M, a)
+        rho2, dl = BaseMetric.rho(r, th, M, a) ** 2, BaseMetric.delta(r, M, a)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
@@ -186,8 +186,8 @@ class KerrNewman(GenericMetric):
         """
         r, th = x_vec[1], x_vec[2]
         M, a, c2 = self.M, self.a, _c ** 2
-        alpha = GenericMetric.alpha(M, a)
-        rho2, dl = GenericMetric.rho(r, th, M, a) ** 2, GenericMetric.delta(r, M, a)
+        alpha = BaseMetric.alpha(M, a)
+        rho2, dl = BaseMetric.rho(r, th, M, a) ** 2, BaseMetric.delta(r, M, a)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -416,12 +416,10 @@ class KerrNewman(GenericMetric):
         F_contra = self.em_tensor_contravariant(vec[1], vec[2], self.M, self.a, self.Q)
         x_vec = np.array([0, vec[1], vec[2], 0])  # t & phi have no bearing on Metric
         g_cov = self.metric_covariant(x_vec)
-        vec = vec.flatten()  # Fix for Broadcast error - ?????
 
-        vals = np.zeros(shape=(8,), dtype=float)
+        vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
-        for i in range(4):
-            vals[i] = vec[i + 4]
+        vals[:4] = vec[4:]
 
         vals[4] = -2.0 * (
             chl[0, 0, 1] * vec[4] * vec[5]

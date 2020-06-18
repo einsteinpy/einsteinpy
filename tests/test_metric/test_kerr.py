@@ -54,7 +54,6 @@ def test_kerr_private_attr():
     """
     Tries to invoke private methods of Kerr
 
-    charge_geometrized = _private
     em_potential_covariant = _private
     em_potential_contravariant = _private
     em_tensor_covariant = _private
@@ -64,7 +63,6 @@ def test_kerr_private_attr():
     obj = Kerr(coords="BL", M=6e24, a=0.8)
 
     try:
-        obj.charge_geometrized()
         obj.em_tensor_covariant()
         obj.em_tensor_contravariant()
         obj.em_potential_covariant()
