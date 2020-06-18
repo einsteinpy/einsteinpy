@@ -606,7 +606,7 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    OdeMethodKwargs={"stepsize": step_size}
+    OdeMethodKwargs = {"stepsize": step_size}
     return_cartesian = False
 
     geod = Geodesic(
