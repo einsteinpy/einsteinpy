@@ -85,10 +85,10 @@ def test_calculate_trajectory_schwarzschild(
         x = [0, i[1], i[2], 0]
         g = ms_cov.metric_covariant(x)
         testarray.append(
-            g[0][0] * (i[4] ** 2)
-            + g[1][1] * (i[5] ** 2)
-            + g[2][2] * (i[6] ** 2)
-            + g[3][3] * (i[7] ** 2)
+            g[0][0] * (i[4] ** 2) + \
+            g[1][1] * (i[5] ** 2) + \
+            g[2][2] * (i[6] ** 2) + \
+            g[3][3] * (i[7] ** 2)
         )
     testarray = np.array(testarray, dtype=float)
     comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
@@ -115,7 +115,11 @@ def test_calculate_trajectory2_schwarzschild():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=end_lambda / 2e3, return_cartesian=False)
+    geod = Geodesic(metric=ms_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=end_lambda / 2e3,\
+        return_cartesian=False)
 
     ans = geod.trajectory
 
@@ -145,10 +149,14 @@ def test_calculate_trajectory3_schwarzschild():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=end_lambda / 2e3, return_cartesian=False)
+    geod = Geodesic(metric=ms_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=end_lambda / 2e3,\
+        return_cartesian=False)
 
     ans = geod.trajectory
-    
+
     # velocity should be 29.29 km/s at apehelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
     i = np.argmax(R)  # index whre radial distance is max
@@ -194,7 +202,11 @@ def test_calculate_trajectory_iterator_schwarzschild(
     ms_cov_mat = ms_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size, return_cartesian=return_cartesian)
+    geod = Geodesic(metric=ms_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=step_size,\
+        return_cartesian=return_cartesian)
 
     traj = geod.trajectory
 
@@ -315,11 +327,11 @@ def test_calculate_trajectory_kerr(
         x = [0, i[1], i[2], 0]
         g = mk_cov.metric_covariant(x)
         testarray.append(
-            g[0][0] * (i[4] ** 2)
-            + g[1][1] * (i[5] ** 2)
-            + g[2][2] * (i[6] ** 2)
-            + g[3][3] * (i[7] ** 2)
-            + 2 * g[0][3] * i[4] * i[7]
+            g[0][0] * (i[4] ** 2) + \
+            g[1][1] * (i[5] ** 2) + \
+            g[2][2] * (i[6] ** 2) + \
+            g[3][3] * (i[7] ** 2) + \
+            2 * g[0][3] * i[4] * i[7]
         )
     testarray = np.array(testarray, dtype=float)
     comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
@@ -340,7 +352,7 @@ def test_calculate_trajectory3_kerr():
 
     x_vec = np.array([distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0.])
     v_vec = np.array([-1 * speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.])
-    
+
     mk_cov = Kerr(coords="BL", M=M, a=a)
     x_4vec = four_position(t, x_vec)
     mk_cov_mat = mk_cov.metric_covariant(x_4vec)
@@ -348,10 +360,14 @@ def test_calculate_trajectory3_kerr():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=mk_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=end_lambda / 2e3, return_cartesian=False)
+    geod = Geodesic(metric=mk_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=end_lambda / 2e3,\
+        return_cartesian=False)
 
     ans = geod.trajectory
-    
+
     # velocity should be 29.29 km/s at apehelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
     i = np.argmax(R)  # index whre radial distance is max
@@ -400,7 +416,11 @@ def test_calculate_trajectory_iterator_kerr(
     mk_cov_mat = mk_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mk_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=mk_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size, return_cartesian=return_cartesian)
+    geod = Geodesic(metric=mk_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=step_size,\
+        return_cartesian=return_cartesian)
 
     traj = geod.trajectory
 
@@ -410,7 +430,7 @@ def test_calculate_trajectory_iterator_kerr(
     for _, val in zip(range(50), traj_iter):
         traj_iter_list.append(val[1])
     traj_iter_arr = np.array(traj_iter_list)
-    
+
     assert_allclose(traj[:50, :], traj_iter_arr, rtol=1e-10)
 
 
@@ -458,7 +478,7 @@ def test_calculate_trajectory0_kerrnewman():
 
     x_vec = np.array([distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0.])
     v_vec = np.array([-1 * speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.])
-    
+
     mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
@@ -466,10 +486,14 @@ def test_calculate_trajectory0_kerrnewman():
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(metric=mkn_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=end_lambda / 1.5e3, return_cartesian=True)
+    geod = Geodesic(metric=mkn_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=end_lambda / 1.5e3,\
+        return_cartesian=True)
 
     ans = geod.trajectory
-    
+
     # velocity should be 29.29 km/s at apehelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
     i = np.argmax(R)  # index whre radial distance is max
@@ -487,21 +511,25 @@ def test_calculate_trajectory1_kerrnewman():
     t = 0.
     M = 0.5 * 5.972e24
     a = 0.
-    Q = 1. # - ?????
+    Q = 1.
 
     r = 1e6
     end_lambda = 1000.0
     stepsize = 0.5
-    
+
     x_vec = np.array([r, 0.5 * np.pi, 0.])
     v_vec = np.array([0., 0., 0.])
-    
+
     mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    geod = Geodesic(metric=mkn_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=end_lambda / 1.5e3, return_cartesian=True)
+    geod = Geodesic(metric=mkn_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=end_lambda / 1.5e3,\
+        return_cartesian=True)
 
     ans = geod.trajectory
 
@@ -515,7 +543,7 @@ def test_input():
     Q = 100
     end_lambda = 200.0
     step_size = 1.0
-    
+
     return t, a, Q, end_lambda, step_size
 
 
@@ -525,7 +553,7 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
 
     x_vec = np.array([1e6, 0.6 * np.pi, np.pi / 8])
     v_vec = np.array([1e4, -0.01, 0.])
-    
+
     mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
@@ -534,7 +562,11 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     OdeMethodKwargs={"stepsize": step_size}
     return_cartesian = False
 
-    geod = Geodesic(metric=mkn_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size, return_cartesian=return_cartesian)
+    geod = Geodesic(metric=mkn_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=step_size,\
+        return_cartesian=return_cartesian)
 
     traj = geod.trajectory
 
@@ -544,7 +576,7 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     for _, val in zip(range(20), traj_iter):
         traj_iter_list.append(val[1])
     traj_iter_arr = np.array(traj_iter_list)
-    
+
     assert_allclose(traj[:20], traj_iter_arr)
 
 
@@ -554,16 +586,20 @@ def test_compare_calculate_trajectory_iterator_cartesians_kerrnewman(test_input)
 
     x_vec = np.array([1e6, 1e6, 20.5])
     v_vec = np.array([1e4, 1e4, -30.])
-    
+
     mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
 
-    OdeMethodKwargs={"stepsize": step_size}
+    OdeMethodKwargs = {"stepsize": step_size}
     return_cartesian = True
 
-    geod = Geodesic(metric=mkn_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size, return_cartesian=return_cartesian)
+    geod = Geodesic(metric=mkn_cov,\
+        init_vec=init_vec,\
+        end_lambda=end_lambda,\
+        step_size=step_size,\
+        return_cartesian=return_cartesian)
 
     traj = geod.trajectory
 
@@ -573,7 +609,7 @@ def test_compare_calculate_trajectory_iterator_cartesians_kerrnewman(test_input)
     for _, val in zip(range(20), traj_iter):
         traj_iter_list.append(val[1])
     traj_iter_arr = np.array(traj_iter_list)
-    
+
     assert_allclose(traj[:20], traj_iter_arr)
 
 
@@ -585,7 +621,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
 
     x_vec = np.array([306, np.pi / 2, np.pi / 2])
     v_vec = np.array([0., 0.01, 10.])
-    
+
     mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
@@ -593,7 +629,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
 
     end_lambda = 200.
     step_size = 0.4e-6
-    OdeMethodKwargs={"stepsize": step_size}
+    OdeMethodKwargs = {"stepsize": step_size}
 
     geod = Geodesic(metric=mkn_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size)
 

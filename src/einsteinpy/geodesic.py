@@ -46,10 +46,14 @@ class Geodesic:
         print("Done!")
 
     def __repr__(self):
-        return f"Geodesic:\n\nMetric = ({self.metric}),\n\ninit_vec = ({self.init_vec}),\n\nTrajectory = ({self.trajectory})"
+        return f"Geodesic:\n\nMetric = ({self.metric}),\
+            \n\ninit_vec = ({self.init_vec}),\
+            \n\nTrajectory = ({self.trajectory})"
 
     def __str__(self):
-        return f"Geodesic:\n\nMetric = ({self.metric}),\n\ninit_vec = ({self.init_vec}),\n\nTrajectory = ({self.trajectory})"
+        return f"Geodesic:\n\nMetric = ({self.metric}),\
+            \n\ninit_vec = ({self.init_vec}),\
+            \n\nTrajectory = ({self.trajectory})"
 
     @property
     def trajectory(self):
@@ -64,7 +68,7 @@ class Geodesic:
     ):
         """
         Calculate trajectory in spacetime, according to Geodesic Equations
-        
+
         Parameters
         ----------
         end_lambda : float

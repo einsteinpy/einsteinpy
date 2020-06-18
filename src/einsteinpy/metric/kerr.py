@@ -9,7 +9,7 @@ _c = constant.c.value
 class Kerr(BaseMetric):
     """
     Class for defining the Kerr Geometry
-    
+
     """
 
     # Precomputed list of tuples, containing indices \
@@ -133,13 +133,12 @@ class Kerr(BaseMetric):
         g_cov_bl[1, 1] = (sg / dl) * (-1 / c2)
         g_cov_bl[2, 2] = -1 * sg / c2
         g_cov_bl[3, 3] = (
-            (-1 / c2)
-            * (
+            (-1 / c2) * \
+            (
                 (r ** 2)
                 + (alpha ** 2)
                 + (r_s * r * (np.sin(th) ** 2) * ((alpha ** 2) / sg))
-            )
-            * (np.sin(th) ** 2)
+            ) * (np.sin(th) ** 2)
         )
         g_cov_bl[0, 3] = g_cov_bl[3, 0] = (
             r_s * r * alpha * (np.sin(th) ** 2) / (sg * _c)
@@ -175,7 +174,7 @@ class Kerr(BaseMetric):
         ----------
         x_vec : numpy.array
                 Position 4-Vector
-        
+
         Returns
         -------
         dgdx : ~numpy.array
@@ -205,9 +204,9 @@ class Kerr(BaseMetric):
             dgdx[1, 1, 1] = (-1 / c2) * (dsdr - (sg * (dddr / dl))) / dl
             dgdx[1, 2, 2] = (-1 / c2) * dsdr
             dgdx[1, 3, 3] = (
-                (-1 / c2)
-                * (2 * r + (alpha ** 2) * (np.sin(th) ** 2) * tmp)
-                * (np.sin(th) ** 2)
+                (-1 / c2) * \
+                (2 * r + (alpha ** 2) * (np.sin(th) ** 2) * tmp) * \
+                (np.sin(th) ** 2)
             )
             dgdx[1, 0, 3] = dgdx[1, 3, 0] = (1 / _c) * (alpha * (np.sin(th) ** 2) * tmp)
 
@@ -220,9 +219,9 @@ class Kerr(BaseMetric):
             dgdx[2, 1, 1] = (-1 / c2) * (dsdth / dl)
             dgdx[2, 2, 2] = (-1 / c2) * dsdth
             dgdx[2, 3, 3] = (-1 / c2) * (
-                2 * np.sin(th) * np.cos(th) * ((r ** 2) + (alpha ** 2))
-                + tmp * (alpha ** 2) * (np.sin(th) ** 4)
-                + (4 * (np.sin(th) ** 3) * np.cos(th) * (alpha ** 2) * r * r_s / sg)
+                2 * np.sin(th) * np.cos(th) * ((r ** 2) + (alpha ** 2)) + \
+                tmp * (alpha ** 2) * (np.sin(th) ** 4) + \
+                (4 * (np.sin(th) ** 3) * np.cos(th) * (alpha ** 2) * r * r_s / sg)
             )
             dgdx[2, 0, 3] = dgdx[2, 3, 0] = (alpha / _c) * (
                 (np.sin(th) ** 2) * tmp + (2 * np.sin(th) * np.cos(th) * r_s * r / sg)
@@ -242,7 +241,7 @@ class Kerr(BaseMetric):
         ----------
         x_vec : numpy.array
                 Position 4-Vector
-        
+
         Returns
         -------
         NotImplementedError
@@ -267,7 +266,7 @@ class Kerr(BaseMetric):
             Christoffel Symbols for Kerr Metric \
             in chosen Coordinates
             Numpy array of shape (4,4,4)
-        
+
         """
         if self.coords == "BL":
             return self._ch_sym_bl(x_vec)
@@ -294,7 +293,7 @@ class Kerr(BaseMetric):
             Christoffel Symbols for Kerr Metric \
             in Boyer-Lindquist Coordinates
             Numpy array of shape (4,4,4)
-        
+
         """
         g_contra = self.metric_contravariant(x_vec)
         dgdx = self._dg_dx_bl(x_vec)
@@ -359,7 +358,7 @@ class Kerr(BaseMetric):
         ~numpy.array
             f_vec for Kerr Metric in chosen coordinates
             Numpy array of shape (8)
-        
+
         """
         if self.coords == "BL":
             return self._f_vec_bl(lambda_, x_vec)
@@ -390,7 +389,7 @@ class Kerr(BaseMetric):
         ~numpy.array
             f_vec for Kerr Metric in Boyer-Lindquist Coordinates
             Numpy array of shape (8)
-        
+
         """
         chl = self.christoffels(vec[:4])
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
@@ -447,7 +446,7 @@ class Kerr(BaseMetric):
         -------
         NotImplementedError
             To be implemented after KS Coordinates
-        
+
         """
         # To be implemented after KS Coordinates
         raise NotImplementedError
@@ -490,9 +489,9 @@ class Kerr(BaseMetric):
             j = int(t / 4) % 4
             k = t % 4
 
-            for l in range(4):
-                chl[i, j, k] |= g_contra[i, l] & (
-                    dgdx[k, l, j] | dgdx[j, l, k] | dgdx[l, j, k]
+            for index in range(4):
+                chl[i, j, k] |= g_contra[i, index] & (
+                    dgdx[k, index, j] | dgdx[j, index, k] | dgdx[index, j, k]
                 )
 
             if chl[i, j, k]:

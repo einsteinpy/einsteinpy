@@ -10,12 +10,12 @@ from einsteinpy.metric import Kerr
 def test_nonzero_christoffels():
     """
     Compares count of non-zero Christoffel Symbols List in BL coordinates \
-    with that generated algorithmically 
+    with that generated algorithmically
 
     """
     l1 = Kerr.nonzero_christoffels()
     l2 = Kerr.nonzero_christoffels_list_bl
-    
+
     assert collections.Counter(l1) == collections.Counter(l2)
 
 
@@ -40,13 +40,13 @@ def test_christoffels():
     for t in tmp:
         i = int(t / (4 ** 2)) % 4
         k = int(t / 4) % 4
-        l = t % 4
+        index = t % 4
         for m in range(4):
-            chl2[i, k, l] += g_contra[i, m] * (
-                dgdx[l, m, k] + dgdx[k, m, l] - dgdx[m, k, l]
+            chl2[i, k, index] += g_contra[i, m] * (
+                dgdx[index, m, k] + dgdx[k, m, index] - dgdx[m, k, index]
             )
     chl2 = np.multiply(chl2, 0.5)
-    
+
     assert_allclose(chl2, chl1, rtol=1e-8)
 
 
@@ -58,7 +58,7 @@ def test_kerr_private_attr():
     em_potential_contravariant = _private
     em_tensor_covariant = _private
     em_tensor_contravariant = _private
-    
+
     """
     obj = Kerr(coords="BL", M=6e24, a=0.8)
 

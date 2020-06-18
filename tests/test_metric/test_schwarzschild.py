@@ -11,7 +11,7 @@ def test_schwarzschild_private_attr():
     em_potential_contravariant = _private
     em_tensor_covariant = _private
     em_tensor_contravariant = _private
-    
+
     """
     obj = Schwarzschild(M=6e24)
 

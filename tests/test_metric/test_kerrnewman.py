@@ -61,13 +61,13 @@ def test_christoffels_kerr_newman(test_input):
     for t in tmp:
         i = int(t / (4 ** 2)) % 4
         k = int(t / 4) % 4
-        l = t % 4
+        index = t % 4
         for m in range(4):
-            chl2[i, k, l] += g_contra[i, m] * (
-                dgdx[l, m, k] + dgdx[k, m, l] - dgdx[m, k, l]
+            chl2[i, k, index] += g_contra[i, m] * (
+                dgdx[index, m, k] + dgdx[k, m, index] - dgdx[m, k, index]
             )
     chl2 = np.multiply(chl2, 0.5)
-    
+
     assert_allclose(chl2, chl1, rtol=1e-10)
 
 
@@ -122,18 +122,20 @@ def test_em_tensor_covariant():
 
     # Checking Skew-Symmetry of Covariant Maxwell Tensor
     assert_allclose(0., mkn_em_cov + np.transpose(mkn_em_cov), atol=1e-8)
-    
+
     th, r2, alpha2 = theta, r ** 2, alpha ** 2
-    
+
     # Unit Scaling factor for Charge
     scale_Q = np.sqrt(_G * _Cc) / _c ** 2
-    
+
     # Electric and Magnetic Fields
     D_r = (scale_Q * Q * (r2 - (alpha * np.cos(th)) ** 2)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
     D_th = ((alpha2) * (-(scale_Q * Q)) * np.sin(2 * th)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
     H_r = (2 * alpha * (scale_Q * Q) * (r2 + alpha2) * np.cos(th)) / (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
-    H_th = (alpha * (scale_Q * Q) * np.sin(th) * (r2 - (alpha * np.cos(th)) ** 2)) / (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
-    
+    H_th = (alpha * (scale_Q * Q) * np.sin(th) * \
+        (r2 - (alpha * np.cos(th)) ** 2)) / \
+        (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+
     assert_allclose(D_r, mkn_em_cov[0, 1], rtol=1e-8)
     assert_allclose(r * D_th, mkn_em_cov[0, 2], rtol=1e-8)
     assert_allclose(-r * np.sin(theta) * H_th, mkn_em_cov[1, 3], rtol=1e-8)
@@ -148,12 +150,11 @@ def test_em_tensor_contravariant():
     Right now only skew-symmetric property is being checked.
 
     """
-    #  
     r, theta = 5.5, 2 * np.pi / 5
     M, a, Q = 1e22, 0.7, 45.0
 
     # Using function from module
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
     mkn_em_contra = mkn.em_tensor_contravariant(r, theta, M, a, Q)
-    
+
     assert_allclose(0., mkn_em_contra + np.transpose(mkn_em_contra), atol=1e-8)

@@ -14,7 +14,7 @@ class BaseMetric:
     Class for defining general Metric Tensors
 
     To be used in perturbative treatment of EFE and its solutions
-   
+
     """
 
     def __init__(
@@ -31,7 +31,7 @@ class BaseMetric:
     ):
         """
         Constructor
-        
+
         Parameters
         ----------
         coords : string
@@ -69,7 +69,7 @@ class BaseMetric:
             It should return a real-valued tensor (2D Array), at supplied coordinates
             Defaults to ``None``
             Function definition similar to ``metric_cov``
-        
+
         """
         self.name = name
         self.coords = coords
@@ -81,15 +81,25 @@ class BaseMetric:
         self.f_vec = f_vec
         self.perturbation = perturbation
         # Need physical checks for `perturbation`
-        # Expert opinion needed
+        # Expert opinion needed - Gauge Fixing
 
         self.sch_rad = self.schwarzschild_radius(M)
 
     def __str__(self):
-        return f"(\nName: ({self.name}),\nCoordinates: ({self.coords}),\nMass: ({self.M}),\nSpin parameter: ({self.a}),\nCharge: ({self.Q}),\nSchwarzschild Radius: ({self.sch_rad})\n)"
+        return f"(\nName: ({self.name}),\
+            \nCoordinates: ({self.coords}),\
+            \nMass: ({self.M}),\
+            \nSpin parameter: ({self.a}),\
+            \nCharge: ({self.Q}),\
+            \nSchwarzschild Radius: ({self.sch_rad})\n)"
 
     def __repr__(self):
-        return f"(\nName: ({self.name}),\nCoordinates: ({self.coords}),\nMass: ({self.M}),\nSpin parameter: ({self.a}),\nCharge: ({self.Q}),\nSchwarzschild Radius: ({self.sch_rad})\n)"
+        return f"(\nName: ({self.name}),\
+            \nCoordinates: ({self.coords}),\
+            \nMass: ({self.M}),\
+            \nSpin parameter: ({self.a}),\
+            \nCharge: ({self.Q}),\
+            \nSchwarzschild Radius: ({self.sch_rad})\n)"
 
     @property
     def _private(self):
@@ -202,7 +212,7 @@ class BaseMetric:
         ----------
         M : float
             Mass of gravitating body
-        
+
         Returns
         -------
         r : float
@@ -226,7 +236,7 @@ class BaseMetric:
             Mass of gravitating body
         a : float
             Number between 0 and 1
-        
+
         Returns
         -------
         float
@@ -271,14 +281,14 @@ class BaseMetric:
 
         def _in_ergo(theta):
             return (
-                r_s
-                - np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
+                r_s - \
+                np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
             ) / 2
 
         def _out_ergo(theta):
             return (
-                r_s
-                + np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
+                r_s + \
+                np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
             ) / 2
 
         if coords == "S":  # Schwarzschild Geometry
@@ -294,12 +304,10 @@ class BaseMetric:
                 "inner_ergosphere": _in_ergo,
                 "inner_horizon": (
                     r_s - np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
-                )
-                / 2,
+                ) / 2,
                 "outer_horizon": (
                     r_s + np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
-                )
-                / 2,
+                ) / 2,
                 "outer_ergosphere": _out_ergo,
             }
 
@@ -341,12 +349,12 @@ class BaseMetric:
         Returns Contravariant Metric Tensor
         Adds Kerr-Schild (Linear) Perturbation to metric, \
         if ``perturbation`` is not None in Metric object
-        
+
         Parameters
         ----------
         x_vec : numpy.array
             Position 4-Vector
-        
+
         Returns
         -------
         ~numpy.array
@@ -378,7 +386,7 @@ class BaseMetric:
             Spin Parameter
         Q : float
             Charge on gravitating body
-        
+
         Returns
         -------
         ~numpy.array
@@ -414,7 +422,7 @@ class BaseMetric:
             Spin Parameter
         Q : float
             Charge on gravitating body
-        
+
         Returns
         -------
         ~numpy.array
@@ -446,7 +454,7 @@ class BaseMetric:
             Spin Parameter
         Q : float
             Charge on gravitating body
-        
+
         Returns
         -------
         ~numpy.array
@@ -472,9 +480,9 @@ class BaseMetric:
         )
         F[3, 1] = -F[1, 3]
         F[2, 3] = (
-            (1 / rho2 ** 2)
-            * (alpha * r_Q * r * np.sin(2 * theta))
-            * (rho2 + (alpha * np.sin(theta)) ** 2)
+            (1 / rho2 ** 2) * \
+            (alpha * r_Q * r * np.sin(2 * theta)) * \
+            (rho2 + (alpha * np.sin(theta)) ** 2)
         )
         F[3, 2] = -F[2, 3]
 
@@ -497,7 +505,7 @@ class BaseMetric:
             Spin Parameter
         Q : float
             Charge on gravitating body
-        
+
         Returns
         -------
         ~numpy.array

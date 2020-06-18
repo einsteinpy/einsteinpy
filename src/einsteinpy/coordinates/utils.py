@@ -193,7 +193,7 @@ def lorentz_factor(v_vec):
     ----------
     v_vec : ~numpy.array
         Velocity 3-Vector
-    
+
     Returns
     -------
     gamma : float
@@ -239,10 +239,10 @@ def v_t(g_cov_mat, v_vec, time_like=True):
     A = g[0, 0]
     B = 2 * (g[0, 1] * u1 + g[0, 2] * u2 + g[0, 3] * u3)
     C = (
-        (g[1, 1] * u1 ** 2 + g[2, 2] * u2 ** 2 + g[3, 3] * u3 ** 2)
-        + 2 * u1 * (g[1, 2] * u2 + g[1, 3] * u3)
-        + 2 * u2 * g[2, 3] * u3
-        + fac
+        (g[1, 1] * u1 ** 2 + g[2, 2] * u2 ** 2 + g[3, 3] * u3 ** 2) + \
+        2 * u1 * (g[1, 2] * u2 + g[1, 3] * u3) + \
+        2 * u2 * g[2, 3] * u3 + \
+        fac
     )
     D = (B ** 2) - (4 * A * C)
 
@@ -261,12 +261,12 @@ def four_position(t, x_vec):
         Coordinate Time
     x_vec : ~numpy.array
         Position 3-Vector
-    
+
     Returns
     -------
     x_4vec : ~numpy.array
         Position 4-Vector
-    
+
     """
     x_4vec = np.append([_c * t], x_vec)
 
@@ -289,12 +289,12 @@ def four_velocity(g_cov_mat, v_vec, time_like):
         To determine, if the 4-Velocity is for a Time-like or \
         a Null-like Geodesic
         Defaults to ``True``
-    
+
     Returns
     -------
     v_4vec : ~numpy.array
         Velocity 4-Vector
-    
+
     """
     v_4vec = np.append(v_t(g_cov_mat, v_vec, time_like), v_vec)
 
@@ -322,7 +322,7 @@ def stacked_vec(g_cov_mat, t, x_vec, v_vec, time_like):
         To determine, if the 4-Velocity is for a Time-like or \
         a Null-like Geodesic
         Defaults to ``True``
-    
+
     Returns
     -------
     stacked_vec : ~numpy.array

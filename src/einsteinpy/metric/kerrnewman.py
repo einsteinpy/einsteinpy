@@ -134,9 +134,8 @@ class KerrNewman(BaseMetric):
         g_cov_bl[1, 1] = -rho2 / (dl * c2)
         g_cov_bl[2, 2] = -rho2 / c2
         g_cov_bl[3, 3] = (
-            (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
-            * (np.sin(th) ** 2)
-            / (rho2 * c2)
+            (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2)) * \
+            (np.sin(th) ** 2) / (rho2 * c2)
         )
         g_cov_bl[0, 3] = g_cov_bl[3, 0] = (
             -alpha * (np.sin(th) ** 2) * (dl - (r ** 2) - (alpha ** 2)) / (rho2 * _c)
@@ -172,7 +171,7 @@ class KerrNewman(BaseMetric):
         ----------
         x_vec : numpy.array
                 Position 4-Vector
-        
+
         Returns
         -------
         dgdx : ~numpy.array
@@ -205,15 +204,15 @@ class KerrNewman(BaseMetric):
             dgdx[1, 3, 3] = ((np.sin(th) ** 2) / (c2 * (rho2 ** 2))) * (
                 (
                     (
-                        ((alpha * np.sin(th)) ** 2) * dddr
-                        - 4 * (r ** 3)
-                        - 4 * (r * (alpha ** 2))
+                        ((alpha * np.sin(th)) ** 2) * dddr - \
+                        4 * (r ** 3) - \
+                        4 * (r * (alpha ** 2))
                     )
                     * rho2
                 )
                 - (
-                    drh2dr
-                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
+                    drh2dr * \
+                    (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
                 )
             )
             dgdx[1, 0, 3] = dgdx[1, 3, 0] = (
@@ -225,23 +224,22 @@ class KerrNewman(BaseMetric):
             nonlocal dgdx
             drh2dth = -2 * (alpha ** 2) * np.cos(th) * np.sin(th)
             dgdx[2, 0, 0] = (
-                (-2 * (alpha ** 2) * np.sin(th) * np.cos(th)) * rho2
-                - drh2dth * (dl - ((alpha * np.sin(th)) ** 2))
+                (-2 * (alpha ** 2) * np.sin(th) * np.cos(th)) * rho2 - \
+                drh2dth * (dl - ((alpha * np.sin(th)) ** 2))
             ) / (rho2 ** 2)
             dgdx[2, 1, 1] = -drh2dth / (c2 * dl)
             dgdx[2, 2, 2] = -drh2dth / c2
             dgdx[2, 3, 3] = (1 / (c2 * (rho2 ** 2))) * (
                 (
                     (
-                        (4 * (alpha ** 2) * (np.sin(th) ** 3) * np.cos(th) * dl)
-                        - (2 * np.sin(th) * np.cos(th) * ((r ** 2 + alpha ** 2) ** 2))
-                    )
-                    * rho2
-                )
-                - (
-                    drh2dth
-                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
-                    * (np.sin(th) ** 2)
+                        (4 * (alpha ** 2) * (np.sin(th) ** 3) * np.cos(th) * dl) - \
+                        (2 * np.sin(th) * np.cos(th) * ((r ** 2 + alpha ** 2) ** 2))
+                    ) * rho2
+                ) - \
+                (
+                    drh2dth * \
+                    (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2)) * \
+                    (np.sin(th) ** 2)
                 )
             )
             dgdx[2, 0, 3] = dgdx[2, 3, 0] = (
@@ -262,7 +260,7 @@ class KerrNewman(BaseMetric):
         ----------
         x_vec : numpy.array
                 Position 4-Vector
-        
+
         Returns
         -------
         NotImplementedError
@@ -287,7 +285,7 @@ class KerrNewman(BaseMetric):
             Christoffel Symbols for Kerr-Newman \
             Metric in chosen Coordinates
             Numpy array of shape (4,4,4)
-        
+
         """
         if self.coords == "BL":
             return self._ch_sym_bl(x_vec)
@@ -314,7 +312,7 @@ class KerrNewman(BaseMetric):
             Christoffel Symbols for Kerr-Newman Metric \
             in Boyer-Lindquist Coordinates
             Numpy array of shape (4,4,4)
-        
+
         """
         g_contra = self.metric_contravariant(x_vec)
         dgdx = self._dg_dx_bl(x_vec)
@@ -379,7 +377,7 @@ class KerrNewman(BaseMetric):
         ~numpy.array
             f_vec for Kerr-Newman Metric in chosen coordinates
             Numpy array of shape (8)
-        
+
         """
         if self.coords == "BL":
             return self._f_vec_bl(lambda_, x_vec)
@@ -410,7 +408,7 @@ class KerrNewman(BaseMetric):
         ~numpy.array
             f_vec for Kerr-Newman Metric in Boyer-Lindquist Coordinates
             Numpy array of shape (8)
-        
+
         """
         chl = self.christoffels(vec[:4])
         F_contra = self.em_tensor_contravariant(vec[1], vec[2], self.M, self.a, self.Q)
@@ -472,7 +470,7 @@ class KerrNewman(BaseMetric):
         -------
         NotImplementedError
             To be implemented after KS Coordinates
-        
+
         """
         # To be implemented after KS Coordinates
         raise NotImplementedError
