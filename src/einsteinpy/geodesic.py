@@ -12,7 +12,9 @@ class Geodesic:
 
     """
 
-    def __init__(self, metric, init_vec, end_lambda, step_size=1e-3, return_cartesian=True):
+    def __init__(
+        self, metric, init_vec, end_lambda, step_size=1e-3, return_cartesian=True
+    ):
         """
         Parameters
         ----------
@@ -37,7 +39,9 @@ class Geodesic:
         # Showing messages, mainly in cases, when calculation is lengthy
         print("Calculating geodesic...")
         self._trajectory = self.calculate_trajectory(
-            end_lambda=end_lambda, OdeMethodKwargs={"stepsize": step_size}, return_cartesian=return_cartesian
+            end_lambda=end_lambda,
+            OdeMethodKwargs={"stepsize": step_size},
+            return_cartesian=return_cartesian,
         )[1]
         print("Done!")
 
