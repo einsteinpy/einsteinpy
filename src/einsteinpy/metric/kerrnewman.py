@@ -449,7 +449,8 @@ class KerrNewman(BaseMetric):
             + chl[3, 1, 3] * vec[5] * vec[7]
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
-        vals[4:] -= self.Q * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)
+
+        vals[4:] -= (self.Q * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)).reshape(4,1)
 
         return vals
 

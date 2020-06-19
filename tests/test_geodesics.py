@@ -136,7 +136,7 @@ def test_calculate_trajectory2_schwarzschild():
     ans = geod.trajectory
 
     # velocity should be 29.29 km/s at apehelion(where r is max)
-    i = np.argmax(ans[:, 1])  # index whre radial distance is max
+    i = np.argmax(ans[:, 1])  # index where radial distance is max
     v_apehelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
 
     assert_allclose(v_apehelion, 29.29, rtol=0.01)
@@ -144,7 +144,7 @@ def test_calculate_trajectory2_schwarzschild():
 
 def test_calculate_trajectory3_schwarzschild():
     # same test as with test_calculate_trajectory2(),
-    # but initialialized with cartesian coordinates
+    # but initialized with cartesian coordinates
     # and function returning cartesian coordinates
     t = 0.
     M = 1.989e30
@@ -166,14 +166,14 @@ def test_calculate_trajectory3_schwarzschild():
         init_vec=init_vec,
         end_lambda=end_lambda,
         step_size=end_lambda / 2e3,
-        return_cartesian=False
+        return_cartesian=True
     )
 
     ans = geod.trajectory
 
     # velocity should be 29.29 km/s at apehelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
-    i = np.argmax(R)  # index whre radial distance is max
+    i = np.argmax(R)  # index where radial distance is max
     v_apehelion = (
         (np.sqrt(ans[i, 5] ** 2 + ans[i, 6] ** 2 + ans[i, 7] ** 2) * (u.m / u.s)).to(
             u.km / u.s
@@ -375,7 +375,7 @@ def test_calculate_trajectory_kerr(
 def test_calculate_trajectory3_kerr():
     # Based on the revolution of earth around sun
     # Data from https://en.wikipedia.org/wiki/Earth%27s_orbit
-    # Initialialized with cartesian coordinates
+    # Initialized with cartesian coordinates
     # Function returning cartesian coordinates
     t = 0.
     M = 1.989e30
@@ -405,7 +405,7 @@ def test_calculate_trajectory3_kerr():
 
     # velocity should be 29.29 km/s at apehelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
-    i = np.argmax(R)  # index whre radial distance is max
+    i = np.argmax(R)  # index where radial distance is max
     v_apehelion = (
         (np.sqrt(ans[i, 5] ** 2 + ans[i, 6] ** 2 + ans[i, 7] ** 2) * (u.m / u.s)).to(
             u.km / u.s
@@ -510,7 +510,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
 def test_calculate_trajectory0_kerrnewman():
     # Based on the revolution of earth around sun
     # Data from https://en.wikipedia.org/wiki/Earth%27s_orbit
-    # Initialialized with cartesian coordinates
+    # Initialized with cartesian coordinates
     # Function returning cartesian coordinates
     t = 0.
     M = 1.989e30
@@ -541,7 +541,7 @@ def test_calculate_trajectory0_kerrnewman():
 
     # velocity should be 29.29 km/s at apehelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
-    i = np.argmax(R)  # index whre radial distance is max
+    i = np.argmax(R)  # index where radial distance is max
     v_apehelion = (
         (np.sqrt(ans[i, 5] ** 2 + ans[i, 6] ** 2 + ans[i, 7] ** 2) * (u.m / u.s)).to(
             u.km / u.s
@@ -629,7 +629,7 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     assert_allclose(traj[:20], traj_iter_arr)
 
 
-def test_compare_calculate_trajectory_iterator_cartesians_kerrnewman(test_input):
+def test_compare_calculate_trajectory_iterator_cartesian_kerrnewman(test_input):
     t, a, Q, end_lambda, step_size = test_input
     M = 2e24
 
