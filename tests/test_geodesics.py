@@ -154,7 +154,14 @@ def test_calculate_trajectory3_schwarzschild():
     distance_at_perihelion = 147.10e9
     speed_at_perihelion = 30290
 
-    x_sph = CartesianConversion(distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0., -speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.).convert_spherical()
+    x_sph = CartesianConversion(
+        distance_at_perihelion / np.sqrt(2),
+        distance_at_perihelion / np.sqrt(2),
+        0.,
+        -speed_at_perihelion / np.sqrt(2),
+        speed_at_perihelion / np.sqrt(2),
+        0.
+    ).convert_spherical()
 
     x_vec = x_sph[:3]
     v_vec = x_sph[3:]
@@ -387,7 +394,14 @@ def test_calculate_trajectory3_kerr():
     distance_at_perihelion = 147.10e9
     speed_at_perihelion = 30290
 
-    x_sph = CartesianConversion(distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0., -speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.).convert_spherical()
+    x_sph = CartesianConversion(
+        distance_at_perihelion / np.sqrt(2),
+        distance_at_perihelion / np.sqrt(2),
+        0.,
+        -speed_at_perihelion / np.sqrt(2),
+        speed_at_perihelion / np.sqrt(2),
+        0.
+    ).convert_spherical()
 
     x_vec = x_sph[:3]
     v_vec = x_sph[3:]
@@ -525,7 +539,14 @@ def test_calculate_trajectory0_kerrnewman():
     distance_at_perihelion = 147.10e9
     speed_at_perihelion = 30290
 
-    x_sph = CartesianConversion(distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0., -speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.).convert_spherical()
+    x_sph = CartesianConversion(
+        distance_at_perihelion / np.sqrt(2),
+        distance_at_perihelion / np.sqrt(2),
+        0.,
+        -speed_at_perihelion / np.sqrt(2),
+        speed_at_perihelion / np.sqrt(2),
+        0.
+    ).convert_spherical()
 
     x_vec = x_sph[:3]
     v_vec = x_sph[3:]
@@ -556,6 +577,7 @@ def test_calculate_trajectory0_kerrnewman():
     ).value
 
     assert_allclose(v_aphelion, 29.29, rtol=0.01)
+
 
 @pytest.mark.skip(reason="This needs more investigation, implementation seems incorrect.")
 def test_calculate_trajectory1_kerrnewman():

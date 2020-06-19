@@ -325,6 +325,9 @@ class BaseMetric:
         Returns Covariant Metric Tensor
         Adds Kerr-Schild (Linear) Perturbation to metric, \
         if ``perturbation`` is defined in Metric object
+        Currently, this does not consider Gauge Fixing or \
+        any physical checks for the ``perturbation`` matrix. \
+        Please exercise caution while using ``perturbation``.
 
         Parameters
         ----------
@@ -351,6 +354,9 @@ class BaseMetric:
         Returns Contravariant Metric Tensor
         Adds Kerr-Schild (Linear) Perturbation to metric, \
         if ``perturbation`` is not None in Metric object
+        Currently, this does not consider Gauge Fixing or \
+        any physical checks for the ``perturbation`` matrix. \
+        Please exercise caution while using ``perturbation``.
 
         Parameters
         ----------
