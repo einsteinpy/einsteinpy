@@ -85,14 +85,15 @@ def test_calculate_trajectory_schwarzschild(
         metric=ms_cov,
         init_vec=init_vec,
         end_lambda=end_lambda,
-        step_size=step_size
+        step_size=step_size,
+        return_cartesian=False
     )
 
     ans = geod.trajectory
 
     testarray = list()
     for i in ans:
-        x = [0, i[1], i[2], 0]
+        x = i[:4]
         g = ms_cov.metric_covariant(x)
         testarray.append(
             g[0][0] * (i[4] ** 2) +
@@ -101,9 +102,8 @@ def test_calculate_trajectory_schwarzschild(
             g[3][3] * (i[7] ** 2)
         )
     testarray = np.array(testarray, dtype=float)
-    comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
 
-    assert_allclose(testarray, comparearray, 1e-4)
+    assert_allclose(testarray, 1., 1e-4)
 
 
 def test_calculate_trajectory2_schwarzschild():
@@ -350,14 +350,15 @@ def test_calculate_trajectory_kerr(
         metric=mk_cov,
         init_vec=init_vec,
         end_lambda=end_lambda,
-        step_size=step_size
+        step_size=step_size,
+        return_cartesian=False
     )
 
     ans = geod.trajectory
 
     testarray = list()
     for i in ans:
-        x = [0, i[1], i[2], 0]
+        x = i[:4]
         g = mk_cov.metric_covariant(x)
         testarray.append(
             g[0][0] * (i[4] ** 2) +
@@ -367,9 +368,8 @@ def test_calculate_trajectory_kerr(
             2 * g[0][3] * i[4] * i[7]
         )
     testarray = np.array(testarray, dtype=float)
-    comparearray = np.ones(shape=ans[:, 4].shape, dtype=float)
 
-    assert_allclose(testarray, comparearray, 1e-4)
+    assert_allclose(testarray, 1., 1e-4)
 
 
 def test_calculate_trajectory3_kerr():
