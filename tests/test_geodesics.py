@@ -6,6 +6,7 @@ import pytest
 from numpy.testing import assert_allclose
 
 from einsteinpy.metric import Schwarzschild, Kerr, KerrNewman
+from einsteinpy.coordinates import CartesianConversion
 from einsteinpy.coordinates.utils import four_position, stacked_vec
 from einsteinpy.geodesic import Geodesic
 
@@ -135,11 +136,11 @@ def test_calculate_trajectory2_schwarzschild():
 
     ans = geod.trajectory
 
-    # velocity should be 29.29 km/s at apehelion(where r is max)
+    # velocity should be 29.29 km/s at aphelion(where r is max)
     i = np.argmax(ans[:, 1])  # index where radial distance is max
-    v_apehelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
+    v_aphelion = (((ans[i][1] * ans[i][7]) * (u.m / u.s)).to(u.km / u.s)).value
 
-    assert_allclose(v_apehelion, 29.29, rtol=0.01)
+    assert_allclose(v_aphelion, 29.29, rtol=0.01)
 
 
 def test_calculate_trajectory3_schwarzschild():
@@ -151,8 +152,10 @@ def test_calculate_trajectory3_schwarzschild():
     distance_at_perihelion = 147.10e9
     speed_at_perihelion = 30290
 
-    x_vec = np.array([distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0.])
-    v_vec = np.array([-1 * speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.])
+    x_sph = CartesianConversion(distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0., -speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.).convert_spherical()
+
+    x_vec = x_sph[:3]
+    v_vec = x_sph[3:]
 
     ms_cov = Schwarzschild(M=M)
     x_4vec = four_position(t, x_vec)
@@ -166,21 +169,20 @@ def test_calculate_trajectory3_schwarzschild():
         init_vec=init_vec,
         end_lambda=end_lambda,
         step_size=end_lambda / 2e3,
-        return_cartesian=True
     )
 
     ans = geod.trajectory
 
-    # velocity should be 29.29 km/s at apehelion(where r is max)
+    # velocity should be 29.29 km/s at aphelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
     i = np.argmax(R)  # index where radial distance is max
-    v_apehelion = (
+    v_aphelion = (
         (np.sqrt(ans[i, 5] ** 2 + ans[i, 6] ** 2 + ans[i, 7] ** 2) * (u.m / u.s)).to(
             u.km / u.s
         )
     ).value
 
-    assert_allclose(v_apehelion, 29.29, rtol=0.01)
+    assert_allclose(v_aphelion, 29.29, rtol=0.01)
 
 
 @pytest.mark.parametrize(
@@ -383,8 +385,10 @@ def test_calculate_trajectory3_kerr():
     distance_at_perihelion = 147.10e9
     speed_at_perihelion = 30290
 
-    x_vec = np.array([distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0.])
-    v_vec = np.array([-1 * speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.])
+    x_sph = CartesianConversion(distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0., -speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.).convert_spherical()
+
+    x_vec = x_sph[:3]
+    v_vec = x_sph[3:]
 
     mk_cov = Kerr(coords="BL", M=M, a=a)
     x_4vec = four_position(t, x_vec)
@@ -398,21 +402,20 @@ def test_calculate_trajectory3_kerr():
         init_vec=init_vec,
         end_lambda=end_lambda,
         step_size=end_lambda / 2e3,
-        return_cartesian=False
     )
 
     ans = geod.trajectory
 
-    # velocity should be 29.29 km/s at apehelion(where r is max)
+    # velocity should be 29.29 km/s at aphelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
     i = np.argmax(R)  # index where radial distance is max
-    v_apehelion = (
+    v_aphelion = (
         (np.sqrt(ans[i, 5] ** 2 + ans[i, 6] ** 2 + ans[i, 7] ** 2) * (u.m / u.s)).to(
             u.km / u.s
         )
     ).value
 
-    assert_allclose(v_apehelion, 29.29, rtol=0.01)
+    assert_allclose(v_aphelion, 29.29, rtol=0.01)
 
 
 @pytest.mark.parametrize(
@@ -516,13 +519,16 @@ def test_calculate_trajectory0_kerrnewman():
     M = 1.989e30
     a = 0.
     Q = 0.
+    q = 0.
     distance_at_perihelion = 147.10e9
     speed_at_perihelion = 30290
 
-    x_vec = np.array([distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0.])
-    v_vec = np.array([-1 * speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.])
+    x_sph = CartesianConversion(distance_at_perihelion / np.sqrt(2), distance_at_perihelion / np.sqrt(2), 0., -speed_at_perihelion / np.sqrt(2), speed_at_perihelion / np.sqrt(2), 0.).convert_spherical()
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    x_vec = x_sph[:3]
+    v_vec = x_sph[3:]
+
+    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
@@ -534,38 +540,38 @@ def test_calculate_trajectory0_kerrnewman():
         init_vec=init_vec,
         end_lambda=end_lambda,
         step_size=end_lambda / 1.5e3,
-        return_cartesian=True
     )
 
     ans = geod.trajectory
 
-    # velocity should be 29.29 km/s at apehelion(where r is max)
+    # velocity should be 29.29 km/s at aphelion(where r is max)
     R = np.sqrt(ans[:, 1] ** 2 + ans[:, 2] ** 2 + ans[:, 3] ** 2)
     i = np.argmax(R)  # index where radial distance is max
-    v_apehelion = (
+    v_aphelion = (
         (np.sqrt(ans[i, 5] ** 2 + ans[i, 6] ** 2 + ans[i, 7] ** 2) * (u.m / u.s)).to(
             u.km / u.s
         )
     ).value
 
-    assert_allclose(v_apehelion, 29.29, rtol=0.01)
-
+    assert_allclose(v_aphelion, 29.29, rtol=0.01)
 
 def test_calculate_trajectory1_kerrnewman():
+    # This needs more investigation
     # the test particle should not move as gravitational & electromagnetic forces are balanced
     t = 0.
     M = 0.5 * 5.972e24
     a = 0.
-    Q = 1.
+    Q = 11604461683.91822052001953125
+    q = _G * M / _Cc
 
     r = 1e6
     end_lambda = 1000.0
-    stepsize = 0.5
+    step_size = 0.5
 
     x_vec = np.array([r, 0.5 * np.pi, 0.])
     v_vec = np.array([0., 0., 0.])
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
@@ -574,8 +580,8 @@ def test_calculate_trajectory1_kerrnewman():
         metric=mkn_cov,
         init_vec=init_vec,
         end_lambda=end_lambda,
-        step_size=end_lambda / 1.5e3,
-        return_cartesian=True
+        step_size=step_size,
+        return_cartesian=False
     )
 
     ans = geod.trajectory
@@ -587,21 +593,22 @@ def test_calculate_trajectory1_kerrnewman():
 def test_input():
     t = 0.
     a = 1e-6
-    Q = 100
+    Q = 100.
+    q = 1.
     end_lambda = 200.0
     step_size = 1.0
 
-    return t, a, Q, end_lambda, step_size
+    return t, a, Q, q, end_lambda, step_size
 
 
 def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
-    t, a, Q, end_lambda, step_size = test_input
+    t, a, Q, q, end_lambda, step_size = test_input
     M = 0.5 * 5.972e24
 
     x_vec = np.array([1e6, 0.6 * np.pi, np.pi / 8])
     v_vec = np.array([1e4, -0.01, 0.])
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
@@ -630,13 +637,13 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
 
 
 def test_compare_calculate_trajectory_iterator_cartesian_kerrnewman(test_input):
-    t, a, Q, end_lambda, step_size = test_input
+    t, a, Q, q, end_lambda, step_size = test_input
     M = 2e24
 
     x_vec = np.array([1e6, 1e6, 20.5])
     v_vec = np.array([1e4, 1e4, -30.])
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
@@ -668,12 +675,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
     M = 0.5 * 5.972e24
     a = 0.
     Q = 0.
+    q = 0.
     t = 0.
 
     x_vec = np.array([306, np.pi / 2, np.pi / 2])
     v_vec = np.array([0., 0.01, 10.])
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
     x_4vec = four_position(t, x_vec)
     mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
     init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)

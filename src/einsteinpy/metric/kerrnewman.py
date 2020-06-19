@@ -50,7 +50,7 @@ class KerrNewman(BaseMetric):
         (3, 3, 2),
     ]
 
-    def __init__(self, coords, M, a, Q):
+    def __init__(self, coords, M, a, Q, q=0.0):
         """
         Constructor
 
@@ -64,8 +64,15 @@ class KerrNewman(BaseMetric):
             Mass of gravitating body, e.g. Black Hole
         a : float
             Spin Parameter
+        Q : float
+            Charge on gravitating body, e.g. Black Hole
+        q : float
+            Charge, per unit mass, of the test particle
+            Defaults to ``O``
 
         """
+        self.q = q
+
         super().__init__(
             coords=coords,
             M=M,
@@ -450,7 +457,7 @@ class KerrNewman(BaseMetric):
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
 
-        vals[4:] -= (self.Q * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)).reshape(
+        vals[4:] -= (self.q * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)).reshape(
             4, 1
         )
 
