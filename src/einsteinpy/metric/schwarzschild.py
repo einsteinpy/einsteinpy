@@ -31,8 +31,6 @@ class Schwarzschild(BaseMetric):
             f_vec=self._f_vec,
         )
 
-    # Overrides BaseMetric.metric_covariant()
-    # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Schwarzschild Metric Tensor \
@@ -40,19 +38,16 @@ class Schwarzschild(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Schwarzschild Metric Tensor
             Numpy array of shape (4,4)
 
         """
-        # Since, we only have Schwarzschild coordinates to define this Tensor
-        # this `metric_covariant()` function does not switch coordinates,
-        # like in `Kerr` or `KerrNewman`
         r, th = x_vec[1], x_vec[2]
         r_s = self.sch_rad
         g_cov = np.zeros(shape=(4, 4), dtype=float)
@@ -72,12 +67,12 @@ class Schwarzschild(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Christoffel Symbols for Schwarzschild Metric \
             in Schwarzschild Coordinates
             Numpy array of shape (4,4,4)
@@ -110,12 +105,12 @@ class Schwarzschild(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : numpy.array
+        vec : ~numpy.ndarray
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             f_vec for Schwarzschild Metric
             Numpy array of shape (8)
 
@@ -135,9 +130,6 @@ class Schwarzschild(BaseMetric):
         vals[7] = -2 * (chl[3, 3, 1] * vec[7] * vec[5] + chl[3, 3, 2] * vec[7] * vec[6])
 
         return vals
-
-    # time_velocity moved to `coordinates.utils` as v_t()
-    # calculate_trajectory moved to `geodesic`
 
     # Hiding unrelated methods
     em_potential_covariant = BaseMetric._private

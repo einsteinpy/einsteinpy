@@ -1,7 +1,6 @@
 import collections
 
 import numpy as np
-import pytest
 from numpy.testing import assert_allclose
 
 from einsteinpy.metric import Kerr
@@ -13,8 +12,9 @@ def test_nonzero_christoffels():
     with that generated algorithmically
 
     """
-    l1 = Kerr.nonzero_christoffels()
-    l2 = Kerr.nonzero_christoffels_list_bl
+    mk = Kerr(coords="BL", M=1., a=0.5)
+    l1 = mk.nonzero_christoffels()
+    l2 = mk.nonzero_christoffels_list_bl
 
     assert collections.Counter(l1) == collections.Counter(l2)
 

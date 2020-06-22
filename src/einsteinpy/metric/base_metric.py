@@ -1,3 +1,19 @@
+"""Docstring for base_metric.py module
+
+This module defines the ``BaseMetric`` class, which is the base class for all \
+metrics in EinsteinPy. This class contains several utilities, that are \
+used in ``einsteinpy.metric`` to define classes for vacuum solutions. Users are \
+advised to inherit this class, while defining their own metric classes. \
+Two parameters to note are briefly described below:
+
+- ``metric_cov``: User-supplied function, defining the covariant form of the metric tensor. Users need \
+    to supply just this to completely determine the metric tensor, as the contravariant form \
+    is calculated and accessed through a predefined method, ``metric_contravariant()``.
+- ``perturbation``: User-supplied function, defining a perturbation to the metric. Currently, no checks are \
+    performed to ascertain the physicality of the resulting perturbed metric. Read the documentation \
+    on ``metric_covariant()`` below, to learn more.
+
+"""
 import warnings
 
 import numpy as np
@@ -11,9 +27,7 @@ _Cc = constant.coulombs_const.value
 
 class BaseMetric:
     """
-    Class for defining general Metric Tensors
-
-    To be used in perturbative treatment of EFE and its solutions
+    For defining a general Metric
 
     """
 
@@ -47,24 +61,24 @@ class BaseMetric:
         Q : float
             Charge on gravitating body, e.g. Black Hole
             Defaults to ``0``
-        name : str
+        name : str, optional
             Name of the Metric Tensor. Defaults to ``"Base Metric"``
-        metric_cov : function
+        metric_cov : callable, optional
             Function, defining Covariant Metric Tensor
             It should return a real-valued tensor (2D Array), at supplied coordinates
             Defaults to ``None``
             Consult pre-defined classes for function definition
-        christoffels : function
+        christoffels : callable, optional
             Function, defining Christoffel Symbols
             It should return a real-valued (4,4,4) array, at supplied coordinates
             Defaults to ``None``
             Consult pre-defined classes for function definition
-        f_vec : function
+        f_vec : callable, optional
             Function, defining RHS of Geodesic Equation
             It should return a real-valued (8) vector, at supplied coordinates
             Defaults to ``None``
             Consult pre-defined classes for function definition
-        perturbation : function
+        perturbation : callable, optional
             Function, defining Covariant Perturbation Tensor
             It should return a real-valued tensor (2D Array), at supplied coordinates
             Defaults to ``None``
@@ -112,7 +126,7 @@ class BaseMetric:
     @staticmethod
     def sigma(r, theta, M, a):
         """
-        Returns the value r^2 + alpha^2 * cos^2(theta)
+        Returns the value of ``r**2 + alpha**2 * cos(theta)**2``
         Specific to Boyer-Lindquist coordinates
         Applies to Kerr Geometry
 
@@ -130,7 +144,8 @@ class BaseMetric:
         Returns
         -------
         float
-            The value of ``r^2 + alpha^2 * cos^2(theta)``
+            The value of ``r**2 + alpha**2 * cos(theta)**2``
+
         """
         alpha = BaseMetric.alpha(M, a)
         sigma = (r ** 2) + ((alpha * np.cos(theta)) ** 2)
@@ -139,7 +154,7 @@ class BaseMetric:
     @staticmethod
     def delta(r, M, a, Q=0):
         """
-        Returns the value of (r^2 - r_s * r + alpha^2 + r_Q^2)
+        Returns the value of ``r**2 - r_s * r + alpha**2 + r_Q**2``
         Specific to Boyer-Lindquist coordinates
         Applies to Kerr & Kerr-Newman Geometries
 
@@ -151,14 +166,14 @@ class BaseMetric:
             Mass of gravitating body
         a : float
             Spin Parameter
-        Q : float
+        Q : float, optional
             Charge on gravitating body
             Defaults to ``0`` (for Kerr Geometry)
 
         Returns
         -------
         float
-            The value of ``r^2 - r_s * r + alpha^2 + r_Q^2``
+            The value of ``r**2 - r_s * r + alpha**2 + r_Q**2``
 
         """
         r_s = 2 * M * _G / _c ** 2
@@ -171,7 +186,7 @@ class BaseMetric:
     @staticmethod
     def rho(r, theta, M, a):
         """
-        Returns the value of sqrt(r^2 + alpha^2 * cos^2(theta)) == sqrt(sigma)
+        Returns the value of ``sqrt(r**2 + alpha**2 * cos(theta)**2) == sqrt(sigma)``
         Specific to Boyer-Lindquist coordinates
         Applies to Kerr-Newman Geometry
 
@@ -189,7 +204,7 @@ class BaseMetric:
         Returns
         -------
         float
-            The value of ``sqrt(r^2 + alpha^2 * cos^2(theta))``
+            The value of ``sqrt(r**2 + alpha**2 * cos(theta)**2) == sqrt(sigma)``
 
         """
         return np.sqrt(BaseMetric.sigma(r, theta, M, a))
@@ -197,7 +212,8 @@ class BaseMetric:
     @staticmethod
     def r_ks(x, y, z, a):
         """
-        Returns the value of r, after solving (x^2 + y^2) / (r^2 + alpha^2) + z^2 / r^2 = 1
+        Returns the value of r, after solving \
+        ``(x**2 + y**2) / (r**2 + alpha**2) + z**2 / r**2 = 1``
         'r' is not the Radius Coordinate of Spherical Polar or BL Coordinates
         Specific to Cartesian form of Kerr-Schild Coordinates
         """
@@ -225,10 +241,14 @@ class BaseMetric:
         """
         Returns Rotational Length Parameter (alpha) that is used \
         in the Metric. Following equations are relevant:
-        alpha = J / Mc
-        a = Jc / GM^2
-        alpha = GMa / c^2
-        where, 'a' is the dimensionless Spin Parameter (0 <= a <= 1)
+        .. math:: 
+            \alpha = J / Mc
+
+            a = Jc / GM^2
+
+            \alpha = GMa / c^2
+
+        where, ':math:`a`' is the dimensionless Spin Parameter (:math:`0 \le a \le 1`)
 
         Parameters
         ----------
@@ -317,9 +337,6 @@ class BaseMetric:
             # To be filled in, after refactoring `coordinates`
             raise NotImplementedError
 
-    # Derived classes should only define metric_covariant() function
-    # Check Kerr or Kerr Newman for understanding this
-    # No need for metric_contravariant()
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Metric Tensor
@@ -331,12 +348,12 @@ class BaseMetric:
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Metric Tensor
             Numpy array of shape (4,4)
 
@@ -360,12 +377,12 @@ class BaseMetric:
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Contravariant Metric Tensor
 
         """
@@ -373,9 +390,6 @@ class BaseMetric:
         g_contra = np.linalg.inv(g_cov)
 
         return g_contra
-
-    # Christoffels to be supplied as a function
-    # f_vec to be supplied as a function
 
     def em_potential_covariant(self, r, theta, M, a, Q):
         """
@@ -397,7 +411,7 @@ class BaseMetric:
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Electromagnetic 4-Potential
             Numpy array of shape (4,)
 
@@ -433,7 +447,7 @@ class BaseMetric:
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Contravariant Electromagnetic 4-Potential
             Numpy array of shape (4,)
 
@@ -441,8 +455,7 @@ class BaseMetric:
         A_cov = self.em_potential_covariant(r, theta, M, a, Q)
         x_vec = [0.0, r, theta, 0.0]  # t & phi have no bearing on Metric
         g_contra = self.metric_contravariant(x_vec=x_vec)
-        # @ has similar perf to np.dot or np.matmul
-        # https://stackoverflow.com/a/58116209/11922029
+
         return g_contra @ A_cov
 
     def em_tensor_covariant(self, r, theta, M, a, Q):
@@ -465,7 +478,7 @@ class BaseMetric:
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Electromagnetic Tensor
             Numpy array of shape (4, 4)
 
@@ -516,7 +529,7 @@ class BaseMetric:
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Contravariant Electromagnetic Tensor
             Numpy array of shape (4, 4)
 
@@ -539,15 +552,15 @@ class BaseMetric:
         return_cartesian=False,
     ):
         """
-        Deprecated in 0.5.0.
-        Please use einsteinpy.Geodesic.
+        Deprecated in 0.4.0.
+        Please use ``einsteinpy.Geodesic``.
 
         Calculate trajectory in manifold according to geodesic equation
 
         """
         warnings.warn(
             "calculate_trajectory() \
-            will be deprecated in Version 0.5.0 \
+            has been deprecated in Version 0.4.0 \
             Please use einsteinpy.Geodesic.calculate_trajectory()!",
-            PendingDeprecationWarning,
+            DeprecationWarning,
         )

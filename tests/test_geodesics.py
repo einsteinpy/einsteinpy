@@ -146,7 +146,7 @@ def test_calculate_trajectory2_schwarzschild():
 
 
 def test_calculate_trajectory3_schwarzschild():
-    # same test as with test_calculate_trajectory2(),
+    # same test as with test_calculate_trajectory2_schwarzschild(),
     # but initialized with cartesian coordinates
     # and function returning cartesian coordinates
     t = 0.
@@ -274,42 +274,6 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
             OdeMethodKwargs=OdeMethodKwargs,
-            stop_on_singularity=True,
-        )
-        for _, _ in zip(range(1000), it):
-            pass
-
-        assert len(w) >= 1
-
-
-def test_calculate_trajectory_iterator_RuntimeWarning2_schwarzschild():
-    t = 0.
-    M = 1e25
-
-    x_vec = np.array([306., np.pi / 2, np.pi / 3])
-    v_vec = np.array([0., 0.01, 10.])
-
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
-
-    end_lambda = 1.
-    stepsize = 0.4e-6
-    OdeMethodKwargs = {"stepsize": stepsize}
-
-    geod = Geodesic(
-        metric=ms_cov,
-        init_vec=init_vec,
-        end_lambda=end_lambda,
-        step_size=stepsize,
-        return_cartesian=False
-    )
-
-    with warnings.catch_warnings(record=True) as w:
-        it = geod.calculate_trajectory_iterator(
-            OdeMethodKwargs=OdeMethodKwargs,
-            stop_on_singularity=False,
         )
         for _, _ in zip(range(1000), it):
             pass
@@ -518,7 +482,6 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
             OdeMethodKwargs=OdeMethodKwargs,
-            stop_on_singularity=True,
         )
         for _, _ in zip(range(1000), it):
             pass
@@ -720,7 +683,6 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
             OdeMethodKwargs=OdeMethodKwargs,
-            stop_on_singularity=True,
         )
         for _, _ in zip(range(1000), it):
             pass

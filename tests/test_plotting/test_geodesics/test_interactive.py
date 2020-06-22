@@ -1,13 +1,10 @@
 import os
 from unittest import mock
 
-# import astropy.units as u
 import numpy as np
 import pytest
 from plotly.graph_objects import Figure
 
-# from einsteinpy.bodies import Body
-# from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.metric import Schwarzschild
 from einsteinpy.coordinates.utils import four_position, stacked_vec
 from einsteinpy.geodesic import Geodesic
@@ -32,26 +29,6 @@ def dummy_data():
     geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size)
 
     return geod
-
-
-# @pytest.fixture()
-# def dummy_data():
-#     obj = SphericalDifferential(
-#         130 * u.m,
-#         np.pi / 2 * u.rad,
-#         -np.pi / 8 * u.rad,
-#         0 * u.m / u.s,
-#         0 * u.rad / u.s,
-#         1900 * u.rad / u.s,
-#     )
-#     att = Body(name="attractor", mass=6e24 * u.kg, parent=None)
-#     b1 = Body(name="obj", differential=obj, parent=att)
-#     t = 0 * u.s
-#     start_lambda = 0.0
-#     end_lambda = 0.002
-#     step_size = 5e-8
-#     geo = Geodesic(b1, time=t, end_lambda=end_lambda, step_size=step_size)
-#     return geo
 
 
 def test_interactive_plotter_has_figure(dummy_data):

@@ -1,5 +1,3 @@
-import pytest
-
 from einsteinpy.metric import Schwarzschild
 
 

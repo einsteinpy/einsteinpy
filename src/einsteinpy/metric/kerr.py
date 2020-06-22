@@ -12,44 +12,6 @@ class Kerr(BaseMetric):
 
     """
 
-    # Precomputed list of tuples, containing indices \
-    # of non-zero Christoffel Symbols for Kerr Metric \
-    # in Boyer-Lindquist Coordinates
-    nonzero_christoffels_list_bl = [
-        (0, 0, 1),
-        (0, 0, 2),
-        (0, 1, 3),
-        (0, 2, 3),
-        (0, 1, 0),
-        (0, 2, 0),
-        (0, 3, 1),
-        (0, 3, 2),
-        (1, 0, 0),
-        (1, 1, 1),
-        (1, 2, 2),
-        (1, 3, 3),
-        (2, 0, 0),
-        (2, 1, 1),
-        (2, 2, 2),
-        (2, 3, 3),
-        (1, 0, 3),
-        (1, 1, 2),
-        (2, 0, 3),
-        (2, 1, 2),
-        (1, 2, 1),
-        (1, 3, 0),
-        (2, 2, 1),
-        (2, 3, 0),
-        (3, 0, 1),
-        (3, 0, 2),
-        (3, 1, 0),
-        (3, 1, 3),
-        (3, 2, 0),
-        (3, 2, 3),
-        (3, 3, 1),
-        (3, 3, 2),
-    ]
-
     def __init__(self, coords, M, a):
         """
         Constructor
@@ -66,6 +28,44 @@ class Kerr(BaseMetric):
             Spin Parameter
 
         """
+        # Precomputed list of tuples, containing indices \
+        # of non-zero Christoffel Symbols for Kerr Metric \
+        # in Boyer-Lindquist Coordinates
+        self.nonzero_christoffels_list_bl = [
+            (0, 0, 1),
+            (0, 0, 2),
+            (0, 1, 3),
+            (0, 2, 3),
+            (0, 1, 0),
+            (0, 2, 0),
+            (0, 3, 1),
+            (0, 3, 2),
+            (1, 0, 0),
+            (1, 1, 1),
+            (1, 2, 2),
+            (1, 3, 3),
+            (2, 0, 0),
+            (2, 1, 1),
+            (2, 2, 2),
+            (2, 3, 3),
+            (1, 0, 3),
+            (1, 1, 2),
+            (2, 0, 3),
+            (2, 1, 2),
+            (1, 2, 1),
+            (1, 3, 0),
+            (2, 2, 1),
+            (2, 3, 0),
+            (3, 0, 1),
+            (3, 0, 2),
+            (3, 1, 0),
+            (3, 1, 3),
+            (3, 2, 0),
+            (3, 2, 3),
+            (3, 3, 1),
+            (3, 3, 2),
+        ]
+
         super().__init__(
             coords=coords,
             M=M,
@@ -76,8 +76,6 @@ class Kerr(BaseMetric):
             f_vec=self._f_vec,
         )
 
-    # Overrides BaseMetric.metric_covariant()
-    # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Kerr Metric Tensor \
@@ -85,23 +83,19 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Kerr Metric Tensor in chosen Coordinates
             Numpy array of shape (4,4)
 
         """
-        if self.coords == "BL":
-            return self._g_cov_bl(x_vec)
-
-        elif self.coords == "KS":
+        if self.coords == "KS":
             return self._g_cov_ks(x_vec)
 
-        # Default choice
         return self._g_cov_bl(x_vec)
 
     def _g_cov_bl(self, x_vec):
@@ -111,12 +105,12 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Kerr Metric Tensor \
             in Boyer-Lindquist coordinates
             Numpy array of shape (4,4)
@@ -124,8 +118,8 @@ class Kerr(BaseMetric):
         """
         r, th = x_vec[1], x_vec[2]
         r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
-        alpha = BaseMetric.alpha(M, a)
-        sg, dl = BaseMetric.sigma(r, th, M, a), BaseMetric.delta(r, M, a)
+        alpha = super().alpha(M, a)
+        sg, dl = super().sigma(r, th, M, a), super().delta(r, M, a)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
@@ -154,7 +148,7 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
@@ -173,12 +167,12 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
                 Position 4-Vector
 
         Returns
         -------
-        dgdx : ~numpy.array
+        dgdx : ~numpy.ndarray
             Array, containing derivative of each Kerr Metric \
             component w.r.t. coordinates \
             in Boyer-Lindquist Coordinate System
@@ -189,8 +183,8 @@ class Kerr(BaseMetric):
         """
         r, th = x_vec[1], x_vec[2]
         r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
-        alpha = BaseMetric.alpha(M, a)
-        sg, dl = BaseMetric.sigma(r, th, M, a), BaseMetric.delta(r, M, a)
+        alpha = super().alpha(M, a)
+        sg, dl = super().sigma(r, th, M, a), super().delta(r, M, a)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -240,7 +234,7 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
                 Position 4-Vector
 
         Returns
@@ -258,24 +252,20 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Christoffel Symbols for Kerr Metric \
             in chosen Coordinates
             Numpy array of shape (4,4,4)
 
         """
-        if self.coords == "BL":
-            return self._ch_sym_bl(x_vec)
-
-        elif self.coords == "KS":
+        if self.coords == "KS":
             return self._ch_sym_ks(x_vec)
 
-        # Default choice
         return self._ch_sym_bl(x_vec)
 
     def _ch_sym_bl(self, x_vec):
@@ -285,12 +275,12 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Christoffel Symbols for Kerr Metric \
             in Boyer-Lindquist Coordinates
             Numpy array of shape (4,4,4)
@@ -328,7 +318,7 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
@@ -351,23 +341,19 @@ class Kerr(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : numpy.array
+        vec : ~numpy.ndarray
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             f_vec for Kerr Metric in chosen coordinates
             Numpy array of shape (8)
 
         """
-        if self.coords == "BL":
-            return self._f_vec_bl(lambda_, x_vec)
-
-        elif self.coords == "KS":
+        if self.coords == "KS":
             return self._f_vec_ks(lambda_, x_vec)
 
-        # Default choice
         return self._f_vec_bl(lambda_, x_vec)
 
     def _f_vec_bl(self, lambda_, vec):
@@ -382,12 +368,12 @@ class Kerr(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : numpy.array
+        vec : ~numpy.ndarray
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             f_vec for Kerr Metric in Boyer-Lindquist Coordinates
             Numpy array of shape (8)
 
@@ -440,7 +426,7 @@ class Kerr(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : numpy.array
+        vec : ~numpy.ndarray
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
@@ -499,9 +485,6 @@ class Kerr(BaseMetric):
                 vcl.append((i, j, k))
 
         return vcl
-
-    # time_velocity moved to `coordinates.utils` as v_t()
-    # calculate_trajectory moved to `geodesic`
 
     # Hiding unrelated methods
     em_potential_covariant = BaseMetric._private

@@ -6,6 +6,17 @@ from einsteinpy.metric import Schwarzschild
 
 
 def perihelion():
+    """
+    An example to showcase the usage of the various modules in ``einsteinpy.metric``. \
+    Here, we assume a Schwarzschild spacetime and obtain & plot the apsidal precession of \
+    test particle orbit in it.
+
+    Returns
+    -------
+    geod: ~einsteinpy.geodesic.Geodesic
+        Geodesic defining test particle trajectory
+
+    """
     M = 6e24  # Mass
     t = 10000  # Coordinate Time (has no effect in this case - Schwarzschild)
     x_vec = np.array([130.0, np.pi / 2, -np.pi / 8])  # 3-Pos

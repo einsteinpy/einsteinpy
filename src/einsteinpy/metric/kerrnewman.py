@@ -12,44 +12,6 @@ class KerrNewman(BaseMetric):
 
     """
 
-    # Precomputed list of tuples, containing indices \
-    # of non-zero Christoffel Symbols for Kerr-Newman Metric \
-    # in Boyer-Lindquist Coordinates
-    nonzero_christoffels_list_bl = [
-        (0, 0, 1),
-        (0, 0, 2),
-        (0, 1, 3),
-        (0, 2, 3),
-        (0, 1, 0),
-        (0, 2, 0),
-        (0, 3, 1),
-        (0, 3, 2),
-        (1, 0, 0),
-        (1, 1, 1),
-        (1, 2, 2),
-        (1, 3, 3),
-        (2, 0, 0),
-        (2, 1, 1),
-        (2, 2, 2),
-        (2, 3, 3),
-        (1, 0, 3),
-        (1, 1, 2),
-        (2, 0, 3),
-        (2, 1, 2),
-        (1, 2, 1),
-        (1, 3, 0),
-        (2, 2, 1),
-        (2, 3, 0),
-        (3, 0, 1),
-        (3, 0, 2),
-        (3, 1, 0),
-        (3, 1, 3),
-        (3, 2, 0),
-        (3, 2, 3),
-        (3, 3, 1),
-        (3, 3, 2),
-    ]
-
     def __init__(self, coords, M, a, Q, q=0.0):
         """
         Constructor
@@ -66,12 +28,49 @@ class KerrNewman(BaseMetric):
             Spin Parameter
         Q : float
             Charge on gravitating body, e.g. Black Hole
-        q : float
+        q : float, optional
             Charge, per unit mass, of the test particle
             Defaults to ``O``
 
         """
         self.q = q
+        # Precomputed list of tuples, containing indices \
+        # of non-zero Christoffel Symbols for Kerr-Newman Metric \
+        # in Boyer-Lindquist Coordinates
+        self.nonzero_christoffels_list_bl = [
+            (0, 0, 1),
+            (0, 0, 2),
+            (0, 1, 3),
+            (0, 2, 3),
+            (0, 1, 0),
+            (0, 2, 0),
+            (0, 3, 1),
+            (0, 3, 2),
+            (1, 0, 0),
+            (1, 1, 1),
+            (1, 2, 2),
+            (1, 3, 3),
+            (2, 0, 0),
+            (2, 1, 1),
+            (2, 2, 2),
+            (2, 3, 3),
+            (1, 0, 3),
+            (1, 1, 2),
+            (2, 0, 3),
+            (2, 1, 2),
+            (1, 2, 1),
+            (1, 3, 0),
+            (2, 2, 1),
+            (2, 3, 0),
+            (3, 0, 1),
+            (3, 0, 2),
+            (3, 1, 0),
+            (3, 1, 3),
+            (3, 2, 0),
+            (3, 2, 3),
+            (3, 3, 1),
+            (3, 3, 2),
+        ]
 
         super().__init__(
             coords=coords,
@@ -84,8 +83,6 @@ class KerrNewman(BaseMetric):
             f_vec=self._f_vec,
         )
 
-    # Overrides BaseMetric.metric_covariant()
-    # Contravariant form returned by super class
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Kerr-Newman Metric Tensor \
@@ -93,23 +90,19 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Kerr-Newman Metric Tensor in chosen Coordinates
             Numpy array of shape (4,4)
 
         """
-        if self.coords == "BL":
-            return self._g_cov_bl(x_vec)
-
-        elif self.coords == "KS":
+        if self.coords == "KS":
             return self._g_cov_ks(x_vec)
 
-        # Default choice
         return self._g_cov_bl(x_vec)
 
     def _g_cov_bl(self, x_vec):
@@ -119,12 +112,12 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Covariant Kerr-Newman Metric Tensor \
             in Boyer-Lindquist coordinates
             Numpy array of shape (4,4)
@@ -132,8 +125,8 @@ class KerrNewman(BaseMetric):
         """
         r, th = x_vec[1], x_vec[2]
         M, a, c2 = self.M, self.a, _c ** 2
-        alpha = BaseMetric.alpha(M, a)
-        rho2, dl = BaseMetric.rho(r, th, M, a) ** 2, BaseMetric.delta(r, M, a)
+        alpha = super().alpha(M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
@@ -158,7 +151,7 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
@@ -177,12 +170,12 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
                 Position 4-Vector
 
         Returns
         -------
-        dgdx : ~numpy.array
+        dgdx : ~numpy.ndarray
             Array, containing derivative of each Kerr-Newman \
             Metric component w.r.t. coordinates \
             in Boyer-Lindquist Coordinate System
@@ -193,8 +186,8 @@ class KerrNewman(BaseMetric):
         """
         r, th = x_vec[1], x_vec[2]
         M, a, c2 = self.M, self.a, _c ** 2
-        alpha = BaseMetric.alpha(M, a)
-        rho2, dl = BaseMetric.rho(r, th, M, a) ** 2, BaseMetric.delta(r, M, a)
+        alpha = super().alpha(M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -267,7 +260,7 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
                 Position 4-Vector
 
         Returns
@@ -285,24 +278,20 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Christoffel Symbols for Kerr-Newman \
             Metric in chosen Coordinates
             Numpy array of shape (4,4,4)
 
         """
-        if self.coords == "BL":
-            return self._ch_sym_bl(x_vec)
-
-        elif self.coords == "KS":
+        if self.coords == "KS":
             return self._ch_sym_ks(x_vec)
 
-        # Default choice
         return self._ch_sym_bl(x_vec)
 
     def _ch_sym_bl(self, x_vec):
@@ -312,12 +301,12 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             Christoffel Symbols for Kerr-Newman Metric \
             in Boyer-Lindquist Coordinates
             Numpy array of shape (4,4,4)
@@ -355,7 +344,7 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : numpy.array
+        x_vec : ~numpy.ndarray
             Position 4-Vector
 
         Returns
@@ -378,23 +367,19 @@ class KerrNewman(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : numpy.array
+        vec : ~numpy.ndarray
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             f_vec for Kerr-Newman Metric in chosen coordinates
             Numpy array of shape (8)
 
         """
-        if self.coords == "BL":
-            return self._f_vec_bl(lambda_, x_vec)
-
-        elif self.coords == "KS":
+        if self.coords == "KS":
             return self._f_vec_ks(lambda_, x_vec)
 
-        # Default choice
         return self._f_vec_bl(lambda_, x_vec)
 
     def _f_vec_bl(self, lambda_, vec):
@@ -409,12 +394,12 @@ class KerrNewman(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : numpy.array
+        vec : ~numpy.ndarray
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
         -------
-        ~numpy.array
+        ~numpy.ndarray
             f_vec for Kerr-Newman Metric in Boyer-Lindquist Coordinates
             Numpy array of shape (8)
 
@@ -475,7 +460,7 @@ class KerrNewman(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : numpy.array
+        vec : ~numpy.ndarray
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
@@ -486,6 +471,3 @@ class KerrNewman(BaseMetric):
         """
         # To be implemented after KS Coordinates
         raise NotImplementedError
-
-    # time_velocity moved to `coordinates.utils` as v_t()
-    # calculate_trajectory moved to `geodesic`

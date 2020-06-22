@@ -20,7 +20,7 @@ class Geodesic:
         ----------
         metric : ~einsteinpy.metric.*
             Metric, in which Geodesics are to be calculated
-        init_vec : numpy.array
+        init_vec : ~numpy.ndarray
             Length-8 Vector containing Initial 4-Position and 4-Velocity, \
             in that order
         end_lambda : float
@@ -29,30 +29,28 @@ class Geodesic:
         step_size : float, optional
             Size of each geodesic integration step
             Defaults to ``1e-3``
-        return_cartesian : bool
+        return_cartesian : bool, optional
             Whether to return calculated values in Cartesian Coordinates
             Defaults to ``True``
 
         """
         self.metric = metric
         self.init_vec = init_vec
-        # Showing messages, mainly in cases, when calculation is lengthy
-        print("Calculating geodesic...")
+
         self._trajectory = self.calculate_trajectory(
             end_lambda=end_lambda,
             OdeMethodKwargs={"stepsize": step_size},
             return_cartesian=return_cartesian,
         )[1]
-        print("Done!")
 
     def __repr__(self):
-        return f"Geodesic:\n\nMetric = ({self.metric}),\
-            \n\ninit_vec = ({self.init_vec}),\
+        return f"Geodesic Object:\n\nMetric = ({self.metric}),\
+            \n\nInitial Vector = ({self.init_vec}),\
             \n\nTrajectory = ({self.trajectory})"
 
     def __str__(self):
-        return f"Geodesic:\n\nMetric = ({self.metric}),\
-            \n\ninit_vec = ({self.init_vec}),\
+        return f"Geodesic Object:\n\nMetric = ({self.metric}),\
+            \n\nInitial Vector = ({self.init_vec}),\
             \n\nTrajectory = ({self.trajectory})"
 
     @property
@@ -62,7 +60,6 @@ class Geodesic:
     def calculate_trajectory(
         self,
         end_lambda=10.0,
-        stop_on_singularity=True,
         OdeMethodKwargs={"stepsize": 1e-3},
         return_cartesian=True,
     ):
@@ -71,27 +68,24 @@ class Geodesic:
 
         Parameters
         ----------
-        end_lambda : float
+        end_lambda : float, optional
             Affine Parameter, Lambda, where iterations will stop
             Equivalent to Proper Time for Timelike Geodesics
             Defaults to ``10``
-        stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity
-            Defaults to ``True``
-        OdeMethodKwargs : dict
+        OdeMethodKwargs : dict, optional
             Kwargs to be supplied to the ODESolver
             Dictionary with key 'stepsize' along with a float value is expected
             Defaults to ``{'stepsize': 1e-3}``
-        return_cartesian : bool
+        return_cartesian : bool, optional
             Whether to return calculated values in Cartesian Coordinates
             Defaults to ``True``
 
         Returns
         -------
         ~numpy.ndarray
-            N-element array containing Lambda, where the geodesic equations were evaluated
+            N-element numpy array containing Lambda, where the geodesic equations were evaluated
         ~numpy.ndarray
-            (n,8) shape array containing [x0, x1, x2, x3, v0, v1, v2, v3] for each Lambda
+            (n,8) shape numpy array containing [x0, x1, x2, x3, v0, v1, v2, v3] for each Lambda
 
         """
         ODE = RK45(
@@ -104,52 +98,39 @@ class Geodesic:
 
         vecs = list()
         lambdas = list()
-        crossed_event_horizon = False
         _scr = self.metric.sch_rad * 1.001
 
         while ODE.t < end_lambda:
             vecs.append(ODE.y)
             lambdas.append(ODE.t)
             ODE.step()
-            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
+
+            if ODE.y[1] <= _scr:
                 warnings.warn(
                     "Test particle has reached Schwarzchild Radius. ", RuntimeWarning
                 )
-                if stop_on_singularity:
-                    break
-                else:
-                    crossed_event_horizon = True
+                break
 
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
         if not return_cartesian:
             return lambdas, vecs
 
-        elif self.metric.coords == "S":
-            cart_vecs = list()
-            for v in vecs:
-                si_vals = SphericalConversion(
-                    v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian()
-                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
+        conv_coords = {
+            "S": SphericalConversion,
+            "BL": BoyerLindquistConversion,
+        }
+        cart_vecs = list()
+        for v in vecs:
+            si_vals = conv_coords[self.metric.coords](
+                v[1], v[2], v[3], v[5], v[6], v[7]
+            ).convert_cartesian()
+            cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
 
-            return lambdas, np.array(cart_vecs)
-
-        elif self.metric.coords == "BL":
-            cart_vecs = list()
-            for v in vecs:
-                si_vals = BoyerLindquistConversion(
-                    v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian()
-                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
-
-            return lambdas, np.array(cart_vecs)
+        return lambdas, np.array(cart_vecs)
 
     def calculate_trajectory_iterator(
-        self,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        return_cartesian=True,
+        self, OdeMethodKwargs={"stepsize": 1e-3}, return_cartesian=True,
     ):
         """
         Calculate trajectory in manifold according to geodesic equation
@@ -157,22 +138,20 @@ class Geodesic:
 
         Parameters
         ----------
-        stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity
-            Defaults to ``True``
-        OdeMethodKwargs : dict
-            Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
-            Dictionary with key 'stepsize' along with an float value is expected.
-        return_cartesian : bool
+        OdeMethodKwargs : dict, optional
+            Kwargs to be supplied to the ODESolver
+            Dictionary with key 'stepsize' along with a float value is expected
+            Defaults to ``{'stepsize': 1e-3}``
+        return_cartesian : bool, optional
             Whether to return calculated values in Cartesian Coordinates
             Defaults to ``True``
 
         Yields
         ------
         float
-            proper time
+            Affine Parameter, Lambda, where the geodesic equations were evaluated
         ~numpy.ndarray
-            array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
+            Numpy array containing [x0, x1, x2, x3, v0, v1, v2, v3] for each Lambda
 
         """
         ODE = RK45(
@@ -183,30 +162,28 @@ class Geodesic:
             **OdeMethodKwargs,
         )
 
-        crossed_event_horizon = False
         _scr = self.metric.sch_rad * 1.001
 
         while True:
             if not return_cartesian:
                 yield ODE.t, ODE.y
-            elif self.metric.coords == "S":
+
+            else:
+                conv_coords = {
+                    "S": SphericalConversion,
+                    "BL": BoyerLindquistConversion,
+                }
                 v = ODE.y
-                si_vals = SphericalConversion(
+                si_vals = conv_coords[self.metric.coords](
                     v[1], v[2], v[3], v[5], v[6], v[7]
                 ).convert_cartesian()
+
                 yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
-            elif self.metric.coords == "BL":
-                v = ODE.y
-                si_vals = BoyerLindquistConversion(
-                    v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian()
-                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
+
             ODE.step()
-            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
+
+            if ODE.y[1] <= _scr:
                 warnings.warn(
                     "Test particle has reached Schwarzchild Radius. ", RuntimeWarning
                 )
-                if stop_on_singularity:
-                    break
-                else:
-                    crossed_event_horizon = True
+                break

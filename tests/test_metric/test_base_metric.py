@@ -133,4 +133,4 @@ def test_deprecation_warning_for_calculate_trajectory():
         mkn.calculate_trajectory()
 
         assert len(w) == 3  # 3 warnings to be shown
-        assert issubclass(w[-1].category, PendingDeprecationWarning)
+        assert issubclass(w[-1].category, DeprecationWarning)

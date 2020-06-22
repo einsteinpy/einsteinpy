@@ -18,10 +18,10 @@ Jupyter notebooks
    :caption: metric, bodies, geodesic, coordinates
    
    /examples/Analyzing Earth using EinsteinPy!.ipynb
-   /examples/Visualizing Precession in Schwarzschild Spacetime.ipynb
    /examples/Animations in EinsteinPy.ipynb
    /examples/Visualizing Event Horizon and Ergosphere (Singularities) of Kerr Metric or Black Hole.ipynb
    /examples/Visualizing Frame Dragging in Kerr Spacetime.ipynb
+   /examples/Visualizing Precession in Schwarzschild Spacetime.ipynb
    
 .. toctree::
    :maxdepth: 1
