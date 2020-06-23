@@ -13,6 +13,10 @@ Two parameters to note are briefly described below:
     performed to ascertain the physicality of the resulting perturbed metric. Read the documentation \
     on ``metric_covariant()`` below, to learn more.
 
+Also, note that, users should call ``metric_covariant`` to access the perturbed, covariant form of the metric. \
+For unperturbed underlying metric, users should call ``metric_cov``, which returns the metric, that they had \
+supplied.
+
 """
 import warnings
 
@@ -114,14 +118,6 @@ class BaseMetric:
             \nSpin parameter: ({self.a}),\
             \nCharge: ({self.Q}),\
             \nSchwarzschild Radius: ({self.sch_rad})\n)"
-
-    @property
-    def _private(self):
-        """
-        Used to hide unrelated methods, across metric classes
-
-        """
-        raise AttributeError("Object has no such attribute.")
 
     @staticmethod
     def sigma(r, theta, M, a):
@@ -241,14 +237,10 @@ class BaseMetric:
         """
         Returns Rotational Length Parameter (alpha) that is used \
         in the Metric. Following equations are relevant:
-        .. math:: 
-            \alpha = J / Mc
-
-            a = Jc / GM^2
-
-            \alpha = GMa / c^2
-
-        where, ':math:`a`' is the dimensionless Spin Parameter (:math:`0 \le a \le 1`)
+        alpha = J / Mc
+        a = Jc / GM^2
+        alpha = GMa / c^2
+        where, 'a' is the dimensionless Spin Parameter (0 <= a <= 1)
 
         Parameters
         ----------
@@ -358,10 +350,10 @@ class BaseMetric:
             Numpy array of shape (4,4)
 
         """
-        g_cov = self.metric_cov(x_vec, self.M, self.a, self.Q)
+        g_cov = self.metric_cov(x_vec)
 
         if self.perturbation:
-            p_cov = self.perturbation(x_vec, self.M, self.a, self.Q)
+            p_cov = self.perturbation(x_vec)
             return g_cov + p_cov
 
         return g_cov
@@ -453,7 +445,9 @@ class BaseMetric:
 
         """
         A_cov = self.em_potential_covariant(r, theta, M, a, Q)
-        x_vec = [0.0, r, theta, 0.0]  # t & phi have no bearing on Metric
+        x_vec = np.array(
+            [0.0, r, theta, 0.0], dtype=float
+        )  # t & phi have no bearing on Metric
         g_contra = self.metric_contravariant(x_vec=x_vec)
 
         return g_contra @ A_cov
@@ -535,7 +529,7 @@ class BaseMetric:
 
         """
         F_cov = self.em_tensor_covariant(r, theta, M, a, Q)
-        x_vec = [0, r, theta, 0]
+        x_vec = np.array([0, r, theta, 0], dtype=float)
         g_contra = self.metric_contravariant(x_vec=x_vec)
 
         F_contra = g_contra @ F_cov @ g_contra

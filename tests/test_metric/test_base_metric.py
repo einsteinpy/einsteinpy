@@ -11,6 +11,61 @@ from einsteinpy.metric import BaseMetric, Kerr, KerrNewman, Schwarzschild
 _c = constant.c.value
 
 
+def test_str_repr():
+    """
+    Tests, if the ``__str__`` and ``__repr__`` messages match
+
+    """
+    ms = Schwarzschild(M=1e22)
+    mk = Kerr(coords="BL", M=1e22, a=0.5)
+    mkn = KerrNewman(coords="BL", M=1e22, a=0.5, Q=0.)
+
+    assert str(ms) == repr(ms)
+    assert str(mk) == repr(mk)
+    assert str(mkn) == repr(mkn)
+
+
+def test_r_ks_raises_NotImplementedError():
+    """
+    Tests, if ``r_ks()`` raises a NotImplementedError, when invoked
+
+    """
+    try:
+        BaseMetric.r_ks(1., 1., 1., 0.8)
+        assert False
+
+    except NotImplementedError:
+        assert True
+
+
+def dummy_met(x_vec):
+    """
+    Dummy Metric function for ``test_perturbation()``
+
+    """
+    return 1.5 * np.ones((4, 4), dtype=float)
+
+
+def dummy_perturb(x_vec):
+    """
+    Dummy Perturbation function for ``test_perturbation()``
+
+    """
+    return 1.9 * np.ones((4, 4), dtype=float)
+
+
+def test_perturbation():
+    """
+    Tests, if the ``pertubation`` is added correctly
+
+    """
+    met = BaseMetric(coords="BL", M=1e22, a=0.75, Q=1., metric_cov=dummy_met, perturbation=dummy_perturb)
+
+    met_calc = 3.4 * np.ones((4, 4), dtype=float)
+
+    assert_allclose(met.metric_covariant(np.ones(4, dtype=float)), met_calc, rtol=1e-10)
+
+
 @pytest.mark.parametrize("a", [1.1, -0.1])
 def test_alpha_raises_error(a):
     """

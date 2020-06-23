@@ -1,5 +1,6 @@
 import collections
 
+import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 
@@ -14,7 +15,7 @@ def test_nonzero_christoffels():
     """
     mk = Kerr(coords="BL", M=1., a=0.5)
     l1 = mk.nonzero_christoffels()
-    l2 = mk.nonzero_christoffels_list_bl
+    l2 = mk._nonzero_christoffels_list_bl
 
     assert collections.Counter(l1) == collections.Counter(l2)
 
@@ -50,24 +51,64 @@ def test_christoffels():
     assert_allclose(chl2, chl1, rtol=1e-8)
 
 
-def test_kerr_private_attr():
+@pytest.mark.parametrize(
+    "func_ks",
+    [
+        (
+            Kerr(coords="KS", M=1e22, a=0.7).metric_covariant
+        ),
+        (
+            Kerr(coords="KS", M=1e22, a=0.7).metric_contravariant
+        ),
+        (
+            Kerr(coords="KS", M=1e22, a=0.7).christoffels
+        ),
+        (
+            Kerr(coords="KS", M=1e22, a=0.7)._dg_dx_ks
+        ),
+    ],
+)
+def test_ks_raises_NotImplementedError(func_ks):
     """
-    Tries to invoke private methods of Kerr
-
-    em_potential_covariant = _private
-    em_potential_contravariant = _private
-    em_tensor_covariant = _private
-    em_tensor_contravariant = _private
+    Tests, if NotImplementedError is raised, when Kerr-Schild coordinates are used
 
     """
-    obj = Kerr(coords="BL", M=6e24, a=0.8)
+    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
 
     try:
-        obj.em_tensor_covariant()
-        obj.em_tensor_contravariant()
-        obj.em_potential_covariant()
-        obj.em_potential_contravariant()
+        func_ks(x_vec)
         assert False
 
-    except AttributeError:
+    except NotImplementedError:
+        assert True
+
+
+def test_f_vec_ks_raises_NotImplementedError():
+    """
+    Tests, if NotImplementedError is raised by ``f_vec_ks()``, when Kerr-Schild coordinates are used
+
+    """
+    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
+
+    try:
+        Kerr(coords="KS", M=1e22, a=0.7).f_vec(0., x_vec)
+        assert False
+
+    except NotImplementedError:
+        assert True
+
+
+def test_singularities_ks_raises_NotImplementedError():
+    """
+    Tests, if a NotImplementedError is raised, when KerrSchild coordinates \
+    are used with ``singularities()``
+
+    """
+    mk = Kerr(coords="KS", M=1e22, a=0.5)
+
+    try:
+        mk_sing = mk.singularities()
+        assert False
+
+    except NotImplementedError:
         assert True

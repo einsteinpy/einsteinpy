@@ -130,9 +130,3 @@ class Schwarzschild(BaseMetric):
         vals[7] = -2 * (chl[3, 3, 1] * vec[7] * vec[5] + chl[3, 3, 2] * vec[7] * vec[6])
 
         return vals
-
-    # Hiding unrelated methods
-    em_potential_covariant = BaseMetric._private
-    em_potential_contravariant = BaseMetric._private
-    em_tensor_covariant = BaseMetric._private
-    em_tensor_contravariant = BaseMetric._private

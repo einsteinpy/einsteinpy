@@ -7,6 +7,7 @@ various space-time geometries including schwarzschild, kerr etc.
 .. toctree::
     :maxdepth: 2
 
+    base_metric
     schwarzschild
     kerr
     kerrnewman

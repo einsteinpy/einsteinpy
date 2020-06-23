@@ -37,7 +37,7 @@ class KerrNewman(BaseMetric):
         # Precomputed list of tuples, containing indices \
         # of non-zero Christoffel Symbols for Kerr-Newman Metric \
         # in Boyer-Lindquist Coordinates
-        self.nonzero_christoffels_list_bl = [
+        self._nonzero_christoffels_list_bl = [
             (0, 0, 1),
             (0, 0, 2),
             (0, 1, 3),
@@ -317,7 +317,7 @@ class KerrNewman(BaseMetric):
 
         chl = np.zeros(shape=(4, 4, 4), dtype=float)
 
-        for _, k, l in self.nonzero_christoffels_list_bl[0:4]:
+        for _, k, l in self._nonzero_christoffels_list_bl[0:4]:
             val1 = dgdx[l, 0, k] + dgdx[k, 0, l]
             val2 = dgdx[l, 3, k] + dgdx[k, 3, l]
             chl[0, k, l] = chl[0, l, k] = 0.5 * (
@@ -326,11 +326,11 @@ class KerrNewman(BaseMetric):
             chl[3, k, l] = chl[3, l, k] = 0.5 * (
                 g_contra[3, 0] * (val1) + g_contra[3, 3] * (val2)
             )
-        for i, k, l in self.nonzero_christoffels_list_bl[8:16]:
+        for i, k, l in self._nonzero_christoffels_list_bl[8:16]:
             chl[i, k, l] = 0.5 * (
                 g_contra[i, i] * (dgdx[l, i, k] + dgdx[k, i, l] - dgdx[i, k, l])
             )
-        for i, k, l in self.nonzero_christoffels_list_bl[16:20]:
+        for i, k, l in self._nonzero_christoffels_list_bl[16:20]:
             chl[i, k, l] = chl[i, l, k] = 0.5 * (
                 g_contra[i, i] * (dgdx[l, i, k] + dgdx[k, i, l] - dgdx[i, k, l])
             )
@@ -406,7 +406,9 @@ class KerrNewman(BaseMetric):
         """
         chl = self.christoffels(vec[:4])
         F_contra = self.em_tensor_contravariant(vec[1], vec[2], self.M, self.a, self.Q)
-        x_vec = np.array([0, vec[1], vec[2], 0])  # t & phi have no bearing on Metric
+        x_vec = np.array(
+            [0, vec[1], vec[2], 0], dtype=float
+        )  # t & phi have no bearing on Metric
         g_cov = self.metric_covariant(x_vec)
 
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)

@@ -1,7 +1,7 @@
 kerr-newman module
 ==================
 
-This module contains the basic class for calculating time-like geodesics in Kerr-Newman Space-Time:
+This module contains the class, defining Kerr-Newman Spacetime:
 
 .. automodule:: einsteinpy.metric.kerrnewman
     :members:

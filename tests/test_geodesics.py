@@ -17,6 +17,35 @@ _G = constant.G.value
 _Cc = constant.coulombs_const.value
 
 
+def test_str_repr():
+    """
+    Tests, if the ``__str__`` and ``__repr__`` messages match
+
+    """
+    t = 0.
+    M = 1e25
+
+    x_vec = np.array([306., np.pi / 2, np.pi / 2])
+    v_vec = np.array([0., 0.01, 10.])
+
+    ms_cov = Schwarzschild(M=M)
+    x_4vec = four_position(t, x_vec)
+    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
+    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+
+    end_lambda = 1.
+    step_size = 0.4e-6
+
+    geod = Geodesic(
+        metric=ms_cov,
+        init_vec=init_vec,
+        end_lambda=end_lambda,
+        step_size=step_size
+    )
+
+    assert str(geod) == repr(geod)
+
+
 @pytest.fixture()
 def dummy_data():
     M = 6e24

@@ -106,6 +106,33 @@ def test_electromagnetic_potential_from_em_potential_vector(test_input):
     assert_allclose(mkn_pot, calc_pot, rtol=1e-8)
 
 
+def test_electromagnetic_potential_contravariant(test_input):
+    """
+    Tests, if the calculated EM 4-Potential, in contravariant form, is the same as that \
+    calculated manually
+
+    """
+    r, theta, M, a = test_input
+    Q = 15.5
+    x_vec = np.array([0., r, theta, 0.], dtype=float)
+    mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    mkn_contra_mat = mkn.metric_contravariant(x_vec)
+
+    # Using function from module
+    mkn_pot_contra = mkn.em_potential_contravariant(r, theta, M=M, a=a, Q=Q)
+
+    # Calculated using formula
+    alpha = mkn.alpha(M, a)
+    rho2 = mkn.rho(r, theta, M, a) ** 2
+    r_Q = np.sqrt((Q ** 2 * _G * _Cc) / _c ** 4)
+    fac = r * r_Q / rho2
+    calc_pot_cov = np.array([fac, 0., 0., -alpha * np.sin(theta)**2 * fac], dtype=float)
+
+    calc_pot_contra = mkn_contra_mat @ calc_pot_cov
+
+    assert_allclose(mkn_pot_contra, calc_pot_contra, rtol=1e-8)
+
+
 def test_em_tensor_covariant():
     """
     Tests, if the calculated Maxwell Tensor is the same as that from the formula
@@ -159,3 +186,66 @@ def test_em_tensor_contravariant():
     mkn_em_contra = mkn.em_tensor_contravariant(r, theta, M, a, Q)
 
     assert_allclose(0., mkn_em_contra + np.transpose(mkn_em_contra), atol=1e-8)
+
+
+@pytest.mark.parametrize(
+    "func_ks",
+    [
+        (
+            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).metric_covariant
+        ),
+        (
+            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).metric_contravariant
+        ),
+        (
+            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).christoffels
+        ),
+        (
+            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0)._dg_dx_ks
+        ),
+    ],
+)
+def test_ks_raises_NotImplementedError(func_ks):
+    """
+    Tests, if NotImplementedError is raised, when Kerr-Schild coordinates are used
+
+    """
+    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
+
+    try:
+        func_ks(x_vec)
+        assert False
+
+    except NotImplementedError:
+        assert True
+
+
+def test_f_vec_ks_raises_NotImplementedError():
+    """
+    Tests, if NotImplementedError is raised by ``f_vec_ks()``, when Kerr-Schild coordinates are used
+
+    """
+    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
+
+    try:
+        KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).f_vec(0., x_vec)
+        assert False
+
+    except NotImplementedError:
+        assert True
+
+
+def test_singularities_ks_raises_NotImplementedError():
+    """
+    Tests, if a NotImplementedError is raised, when KerrSchild coordinates \
+    are used with ``singularities()``
+
+    """
+    mkn = KerrNewman(coords="KS", M=1e22, a=0.5, Q=0.)
+
+    try:
+        mkn_sing = mkn.singularities()
+        assert False
+
+    except NotImplementedError:
+        assert True
