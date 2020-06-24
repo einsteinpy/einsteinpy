@@ -1,5 +1,4 @@
-"""Docstring for test_utils.py module
-
+"""
 This is a test module, that tests the non-coordinate conversion utilities in ``einsteinpy.coordinates.utils``.
 
 """

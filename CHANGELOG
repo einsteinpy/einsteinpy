@@ -8,10 +8,19 @@ File for tracking changes in EinsteinPy from v0.3.0. This file should be dumped 
 CONTRIBUTORS
 - shreyasbapat
 - bibek22
+- JeS24
 
 CHANGES
 - #506: Tests moved outside of the package. 
 - #510: Added a utility function for Outer Product and Contraction of Tensors in the symbolic module.
+- #512: Refactored metric, utils and geodesic modules, added metric.BaseMetric class
+- [#512]: Fixed #113, Fixed cyclomatic complexity issue in metric.Schwarzschild and metric.Kerr classes
+- [#512]: Fixed #141, Refactored utils and merged most utilities into metric itself
+- [#512]: Fixed #410, Improved __str__ and __repr__ messages for Geodesic objects
+- [#512]: Fixed #507, Fixed a mathematical inaccuracy in metric.Schwarzschild class
+- [#512]: Fixed #508, Removed a stray scaling factor in metric.KerrNewman class
+- [#512]: Fixed #514, Replaced Spin Parameter with Length Parameter throughout metric module
+- [#512]: Fixed #515, Renamed "maxwell" to "em"
 
 
 0.5.0
