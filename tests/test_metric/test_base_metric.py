@@ -43,6 +43,8 @@ def dummy_met(x_vec):
     Dummy Metric function for ``test_perturbation()``
 
     """
+    # This isn't a physical metric
+    # Just checking the matrix addition
     return 1.5 * np.ones((4, 4), dtype=float)
 
 
@@ -51,6 +53,8 @@ def dummy_perturb(x_vec):
     Dummy Perturbation function for ``test_perturbation()``
 
     """
+    # This isn't a physical metric/perturbation
+    # Just checking the matrix addition
     return 1.9 * np.ones((4, 4), dtype=float)
 
 
@@ -62,6 +66,18 @@ def test_perturbation():
     met = BaseMetric(coords="BL", M=1e22, a=0.75, Q=1., metric_cov=dummy_met, perturbation=dummy_perturb)
 
     met_calc = 3.4 * np.ones((4, 4), dtype=float)
+
+    assert_allclose(met.metric_covariant(np.ones(4, dtype=float)), met_calc, rtol=1e-10)
+
+
+def test_unperturbed_metric_covariant():
+    """
+    Tests, if unperturbed metric is returned
+
+    """
+    met = BaseMetric(coords="BL", M=1e22, a=0.75, Q=1., metric_cov=dummy_met, perturbation=None)
+
+    met_calc = dummy_met(np.ones(4, dtype=float))
 
     assert_allclose(met.metric_covariant(np.ones(4, dtype=float)), met_calc, rtol=1e-10)
 
