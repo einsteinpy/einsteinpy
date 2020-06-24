@@ -4,81 +4,90 @@ User guide
 Defining the geometry: :py:class:`~einsteinpy.metric` objects
 *************************************************************
 
-EinsteinPy provides a way to define the background geometry on which the code would deal with the dynamics. These geometry has a central operating quantity known as metric tensor and encapsulate all the geometrical and topological information about the 4d spacetime in them.
+EinsteinPy provides a way to define the background geometry, on which the code would deal with the relativistic dynamics. This geometry has a central operating quantity, known as the Metric Tensor, that encapsulates all the geometrical and topological information about the 4D spacetime.
 
-* The central quantity required to simulate trajectory of a particle in a gravitational field is christoffel symbols.
+* EinsteinPy provides a :py:class:`~einsteinpy.metric.BaseMetric` class, that has various utility functions and a proper template, that can be used to define custom Metric classes. All pre-defined classes in :py:class:`~einsteinpy.metric` derive from this class.
+* The central quantity required to simulate trajectory of a particle in a gravitational field are the metric derivatives, that can be succinctly written using Christoffel Symbols.
 * EinsteinPy provides an easy to use interface to calculate these symbols.
+* BaseMetric also provides support for ``f_vec`` and ``perturbation``, where ``f_vec`` corresponds to the RHS of the geodesic equation and ``perturbation`` is a linear Kerr-Schild Perturbation, that can be defined on the underlying metric.
+* Note that, EinsteinPy does not perform physical checks on ``perturbation`` currently, and so, users should exercise caution while using it.
 
-Schwarzschild metric
+We provide an example below, showing how to calculate Time-like Geodesics in Schwarzschild spacetime.
+
+Schwarzschild Metric
 ====================
 
-EinsteinPy provides an easy interface for calculating time-like geodesics in Schwarzschild Geometry.
+EinsteinPy provides an intuitive interface for calculating time-like geodesics in Schwarzschild spacetime.
 
-First of all, we import all the relevant modules and classes :
+First of all, we import all the relevant modules and classes:
 
     .. code-block:: python
 
         import numpy as np
-        from astropy import units as u
-        from einsteinpy.coordinates import SphericalDifferential, CartesianDifferential
+
+        from einsteinpy.coordinates.utils import four_position, stacked_vec
+        from einsteinpy.geodesic import Geodesic
         from einsteinpy.metric import Schwarzschild
 
 
-From position and velocity in Spherical Coordinates
----------------------------------------------------
+Defining initial parameters and our Metric Object
+-------------------------------------------------
 
-There are several methods available to create :py:class:`~einsteinpy.metric.schwarzschild.Schwarzschild` objects. For example, if we have the position and velocity vectors we can use :py:meth:`~einsteinpy.metric.schwarzschild.Schwarzschild.from_spherical`:
-
-    .. code-block:: python
-
-        M = 5.972e24 * u.kg
-        sph_coord = SphericalDifferential(306.0 * u.m, np.pi/2 * u.rad, -np.pi/6*u.rad,
-                                  0*u.m/u.s, 0*u.rad/u.s, 1900*u.rad/u.s)
-        obj = Schwarzschild.from_coords(sph_coord, M , 0* u.s)
-
-From position and velocity in Cartesian Coordinates
----------------------------------------------------
-For initializing with Cartesian Coordinates, we can use :py:class:`~einsteinpy.metric.schwarzschild.Schwarzschild.from_cartesian`:
+Now, we define the initial parameters, that specify the Schwarzschild metric and our test particle.
 
     .. code-block:: python
 
-        cartsn_coord = CartesianDifferential(.265003774 * u.km, -153.000000e-03 * u.km,  0 * u.km,
-                          145.45557 * u.km/u.s, 251.93643748389 * u.km/u.s, 0 * u.km/u.s)
-        obj = Schwarzschild.from_coords(cartsn_coord, M , 0* u.s)
+        M = 6e24  # Mass
+        t = 0.  # Coordinate Time (has no effect in this case, as Schwarzschild metric is static)
+        x_vec = np.array([130.0, np.pi / 2, -np.pi / 8])  # 3-Position of test particle
+        v_vec = np.array([0.0, 0.0, 1900.0])  # 3-Velocity of test particle
 
-Calculating Trajectory/Time-like Geodesics
-------------------------------------------
-After creating the object we can call :py:class:`~einsteinpy.metric.schwarzschild.Schwarzschild.calculate_trajectory`
+        ms_cov = Schwarzschild(M=M) # Schwarzschild Metric Object
+        x_4vec = four_position(t, x_vec) # Getting Position 4-Vector
+        ms_cov_mat = ms_cov.metric_covariant(x_4vec) # Calculating Schwarzschild Metric at x_4vec
+        init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True) # Contains 4-Pos and 4-Vel
 
-    .. code-block:: python
 
-        end_tau = 0.01 # approximately equal to coordinate time
-        stepsize = 0.3e-6
-        ans = obj.calculate_trajectory(end_lambda=end_tau, OdeMethodKwargs={"stepsize":stepsize})
-        print(ans)
-
-    .. code-block:: python
-
-        (array([0.00000000e+00, 2.40000000e-07, 2.64000000e-06, ...,
-            9.99367909e-03, 9.99607909e-03, 9.99847909e-03]), array([[ 0.00000000e+00,  3.06000000e+02,  1.57079633e+00, ...,
-                0.00000000e+00,  0.00000000e+00,  9.50690000e+02],
-            [ 2.39996635e-07,  3.05999885e+02,  1.57079633e+00, ...,
-                -9.55164950e+02,  1.32822112e-17,  9.50690712e+02],
-            [ 2.63996298e-06,  3.05986131e+02,  1.57079633e+00, ...,
-                -1.05071184e+04,  1.46121838e-16,  9.50776184e+02],
-            ...,
-            [ 9.99381048e-03,  3.05156192e+02,  1.57079633e+00, ...,
-                8.30642520e+04, -1.99760372e-12,  9.55955926e+02],
-            [ 9.99621044e-03,  3.05344028e+02,  1.57079633e+00, ...,
-                7.34673728e+04, -2.01494258e-12,  9.54780155e+02],
-            [ 9.99861041e-03,  3.05508844e+02,  1.57079633e+00, ...,
-                6.38811856e+04, -2.03252073e-12,  9.53750261e+02]]))
-
-Return value can be obtained in Cartesian Coordinates by :
+Calculating Trajectory/Time-like Geodesic
+-----------------------------------------
+After creating the metric object and the initial vector, we can use :py:class:`~einsteinpy.geodesic.Geodesic` to create a Geodesic object, that automatically calculates the trajectory. 
 
     .. code-block:: python
 
-        ans = obj.calculate_trajectory(end_lambda=end_tau, OdeMethodKwargs={"stepsize":stepsize}, return_cartesian=True)
+        # Calculating Geodesic
+        geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=0.002, step_size=5e-8)
+        # Getting a descriptive summary on geod
+        print(geod)
+
+    .. code-block:: python
+
+        Geodesic Object:
+
+        Metric = ((
+        Name: (Schwarzschild Metric),            
+        Coordinates: (S),            
+        Mass: (6e+24),            
+        Spin parameter: (0),            
+        Charge: (0),            
+        Schwarzschild Radius: (0.008911392322942397)
+        )),            
+
+        Initial Vector = ([ 0.00000000e+00  1.30000000e+02  1.57079633e+00 -3.92699082e-01
+        1.00003462e+00  0.00000000e+00  0.00000000e+00  1.90000000e+03]),            
+
+        Trajectory = ([[ 0.00000000e+00  1.20104339e+02 -4.97488462e+01 ...  9.45228078e+04
+        2.28198245e+05  0.00000000e+00]
+        [ 4.00013846e-08  1.20108103e+02 -4.97397110e+01 ...  9.36471118e+04
+        2.28560931e+05 -5.80379473e-14]
+        [ 4.40015231e-07  1.20143810e+02 -4.96475618e+01 ...  8.48885265e+04
+        2.32184177e+05 -6.38424865e-13]
+        ...
+        [ 1.99928576e-03  1.29695466e+02 -6.52793459e-01 ...  1.20900076e+05
+        2.46971585e+05 -1.86135457e-10]
+        [ 1.99968577e-03  1.29741922e+02 -5.53995726e-01 ...  1.11380963e+05
+        2.47015864e+05 -1.74024168e-10]
+        [ 2.00008578e-03  1.29784572e+02 -4.55181739e-01 ...  1.01868292e+05
+        2.47052855e+05 -1.61922169e-10]])
 
 
 Bodies Module: :py:class:`~einsteinpy.bodies`

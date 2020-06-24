@@ -68,9 +68,7 @@ class StaticGeodesicPlotter:
         else:
             radius = radius * self.attractor_radius_scale
             self.get_curr_plot_radius = radius
-            self.ax.add_patch(
-                Circle((0, 0), radius.value, lw=0, color=self.attractor_color)
-            )
+            self.ax.add_patch(Circle((0, 0), radius, lw=0, color=self.attractor_color))
 
     def _set_scaling(self, x_range, y_range, z_range, lim):
         if x_range < lim and y_range < lim and z_range < lim:
@@ -110,7 +108,7 @@ class StaticGeodesicPlotter:
             self.ax.plot(x[-1:], y[-1:], z[-1:], "o", mew=0, color=color)
 
         if not self.attractor_present:
-            self._draw_attractor(geodesic.metric.scr, x, y)
+            self._draw_attractor(geodesic.metric.sch_rad, x, y)
 
     def animate(
         self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF)), interval=50
@@ -141,7 +139,7 @@ class StaticGeodesicPlotter:
         plt.ylim(y_min - margin_y, y_max + margin_y)
 
         if not self.attractor_present:
-            self._draw_attractor(geodesic.metric.scr, x, y)
+            self._draw_attractor(geodesic.metric.sch_rad, x, y)
 
         def _update(frame):
             pic.set_xdata(x[: frame + 1])

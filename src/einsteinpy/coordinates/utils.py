@@ -1,6 +1,10 @@
+import astropy.units as u
 import numpy as np
 
+from einsteinpy import constant
 from einsteinpy.ijit import jit
+
+_c = constant.c.value
 
 
 def cartesian_to_spherical_fast(
@@ -178,3 +182,155 @@ def bl_to_cartesian_novel(r, t, p, a):
     y = sin_norm * np.sin(p)
     z = r * np.cos(t)
     return x, y, z
+
+
+@jit
+def lorentz_factor(v_vec):
+    """
+    Returns the Lorentz Factor, ``gamma``
+
+    Parameters
+    ----------
+    v_vec : ~numpy.ndarray
+        Velocity 3-Vector
+
+    Returns
+    -------
+    gamma : float
+        Lorentz Factor
+
+    """
+    v_norm2 = v_vec.dot(v_vec)
+    gamma = 1 / np.sqrt(1 - v_norm2 / _c ** 2)
+
+    return gamma
+
+
+def v_t(g_cov_mat, v_vec, time_like=True):
+    """
+    Utility function to return Timelike component of 4-Velocity
+    Assumes a (+, -, -, -) Metric Signature
+
+    Parameters
+    ----------
+    g_cov_mat : ~numpy.ndarray
+        Matrix, containing Covariant Metric \
+        Tensor values, in same coordinates as ``v_vec``
+        Numpy array of shape (4,4)
+    v_vec : ~numpy.ndarray
+        Velocity 3-Vector
+    time_like : bool, optional
+        To determine, if the 4-Velocity is for a Time-like or \
+        a Null-like Geodesic
+        Defaults to ``True``
+
+    Returns
+    -------
+    v_t : float
+        Timelike component of 4-Velocity
+
+    """
+    u1, u2, u3 = v_vec
+    g = g_cov_mat
+    # Factor to add to coefficient, C
+    fac = -1 if time_like else 0
+    # Defining coefficients for quadratic equation
+    A = g[0, 0]
+    B = 2 * (g[0, 1] * u1 + g[0, 2] * u2 + g[0, 3] * u3)
+    C = (
+        (g[1, 1] * u1 ** 2 + g[2, 2] * u2 ** 2 + g[3, 3] * u3 ** 2)
+        + 2 * u1 * (g[1, 2] * u2 + g[1, 3] * u3)
+        + 2 * u2 * g[2, 3] * u3
+        + fac
+    )
+    D = (B ** 2) - (4 * A * C)
+
+    v_t = (-B + np.sqrt(D)) / (2 * A)
+
+    return v_t * u.one
+
+
+def four_position(t, x_vec):
+    """
+    Utility function to return 4-Position
+
+    Parameters
+    ----------
+    t : float
+        Coordinate Time
+    x_vec : ~numpy.ndarray
+        Position 3-Vector
+
+    Returns
+    -------
+    x_4vec : ~numpy.ndarray
+        Position 4-Vector
+
+    """
+    x_4vec = np.append([_c * t], x_vec)
+
+    return x_4vec
+
+
+def four_velocity(g_cov_mat, v_vec, time_like=True):
+    """
+    Utility function to return 4-Velocity
+
+    Parameters
+    ----------
+    g_cov_mat : ~numpy.ndarray
+        Matrix, containing Covariant Metric \
+        Tensor values, in same coordinates as ``v_vec``
+        Numpy array of shape (4,4)
+    v_vec : ~numpy.ndarray
+        Velocity 3-Vector
+    time_like : bool, optional
+        To determine, if the 4-Velocity is for a Time-like or \
+        a Null-like Geodesic
+        Defaults to ``True``
+
+    Returns
+    -------
+    v_4vec : ~numpy.ndarray
+        Velocity 4-Vector
+
+    """
+    v_4vec = np.append(v_t(g_cov_mat, v_vec, time_like), v_vec)
+
+    return v_4vec
+
+
+def stacked_vec(g_cov_mat, t, x_vec, v_vec, time_like=True):
+    """
+    Packages 4-Position and 4-Velocity into a Length-8 vector
+
+    Parameters
+    ----------
+    g_cov_mat : ~numpy.ndarray
+        Matrix, containing Covariant Metric \
+        Tensor values, in same coordinates as \
+        ``x_vec`` or ``v_vec``
+        Numpy array of shape (4,4)
+    t : float
+        Coordinate Time
+    x_vec : ~numpy.ndarray
+        Position 3-Vector
+    v_vec : ~numpy.ndarray
+        Velocity 3-Vector
+    time_like : bool, optional
+        To determine, if the 4-Velocity is for a Time-like or \
+        a Null-like Geodesic
+        Defaults to ``True``
+
+    Returns
+    -------
+    stacked_vec : ~numpy.ndarray
+        Length-8 Vector of form [x0, x1, x2, x3, v0, v1, v2, v3]
+
+    """
+    x_4vec = four_position(t, x_vec)
+    v_4vec = four_velocity(g_cov_mat, v_vec, time_like)
+
+    stacked_vec = np.hstack((x_4vec, v_4vec))
+
+    return stacked_vec

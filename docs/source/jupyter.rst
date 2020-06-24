@@ -12,21 +12,16 @@ Jupyter notebooks
    :caption: rays
    
    /examples/Shadow cast by an thin emission disk around a black hole.ipynb
-   
-.. toctree::
-   :maxdepth: 1
-   :caption: utils
-   
-   /examples/Visualizing event horizon and ergosphere of Kerr black hole.ipynb
 
 .. toctree::
    :maxdepth: 1
    :caption: metric, bodies, geodesic, coordinates
    
-   /examples/Visualizing frame dragging in Kerr spacetime.ipynb
-   /examples/Analysing Earth using EinsteinPy!.ipynb
+   /examples/Analyzing Earth using EinsteinPy!.ipynb
    /examples/Animations in EinsteinPy.ipynb
-   /examples/Visualizing advance of perihelion of a test particle in Schwarzschild space-time.ipynb
+   /examples/Visualizing Event Horizon and Ergosphere (Singularities) of Kerr Metric or Black Hole.ipynb
+   /examples/Visualizing Frame Dragging in Kerr Spacetime using EinsteinPy!.ipynb
+   /examples/Visualizing Precession in Schwarzschild Spacetime.ipynb
    
 .. toctree::
    :maxdepth: 1

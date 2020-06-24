@@ -39,8 +39,7 @@ def scalar_factor(t, era="md", tuning_param=1.0):
         hubble_const = (constant.Cosmo_Const / 3) ** 0.5
         val = np.e ** (hubble_const.value * T)
         return tuning_param * val
-    else:
-        raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")
+    raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")
 
 
 @u.quantity_input(t=u.s)
@@ -78,5 +77,4 @@ def scalar_factor_derivative(t, era="md", tuning_param=1.0):
         hubble_const = (constant.Cosmo_Const / 3) ** 0.5
         val = hubble_const.value * (np.e ** (hubble_const.value * T))
         return tuning_param * val
-    else:
-        raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")
+    raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")

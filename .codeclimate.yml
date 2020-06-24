@@ -18,4 +18,3 @@ checks:
       threshold: 1000
 exclude_patterns:
   - "docs/source"
-  - "src/einsteinpy/metric/schwarzschild.py"

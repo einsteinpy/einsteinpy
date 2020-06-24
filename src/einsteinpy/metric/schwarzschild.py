@@ -1,63 +1,124 @@
-import warnings
-
-import astropy.units as u
 import numpy as np
 
 from einsteinpy import constant
-from einsteinpy.coordinates import SphericalConversion
-from einsteinpy.integrators import RK45
-from einsteinpy.utils import schwarzschild_radius, schwarzschild_utils
+from einsteinpy.metric import BaseMetric
 
-_G = constant.G.value
 _c = constant.c.value
 
 
-class Schwarzschild:
+class Schwarzschild(BaseMetric):
     """
-    Class for defining a Schwarzschild Geometry methods
+    Class for defining Schwarzschild Geometry
+
     """
 
-    @u.quantity_input(time=u.s, M=u.kg)
-    def __init__(self, sph_coords, M, time):
-        self.name = "Schwarzschild"
-        self.M = M
-        self.input_coords = sph_coords
-        self.time = time
-        pos_vec, vel_vec = (
-            self.input_coords.si_values()[:3],
-            self.input_coords.si_values()[3:],
-        )
-        time_vel = schwarzschild_utils.time_velocity(pos_vec, vel_vec, M)
-        self.initial_vec = np.hstack(
-            (self.time.value, pos_vec, time_vel.value, vel_vec)
-        )
-        self.scr = schwarzschild_radius(M)
-
-    @classmethod
-    @u.quantity_input(time=u.s, M=u.kg, a=u.m)
-    def from_coords(cls, coords, M, q=None, Q=None, time=0 * u.s, a=0 * u.m):
+    def __init__(self, M):
         """
         Constructor
 
         Parameters
         ----------
-        coords : ~einsteinpy.coordinates.velocity.CartesianDifferential
-            Object having both initial positions and velocities of particle in Cartesian Coordinates
-        M : ~astropy.units.quantity.Quantity
-            Mass of the body
-        time : ~astropy.units.quantity.Quantity
-            Time of start, defaults to 0 seconds.
+        M : float
+            Mass of gravitating body, e.g. Black Hole
 
         """
-        if coords.system == "Spherical":
-            return cls(coords, M, time)
-        sph_coords = coords.spherical_differential()
-        return cls(sph_coords, M, time)
+        super().__init__(
+            coords="S",
+            M=M,
+            name="Schwarzschild Metric",
+            metric_cov=self.metric_covariant,
+            christoffels=self._christoffels,
+            f_vec=self._f_vec,
+        )
 
-    def f_vec(self, ld, vec):
+    def metric_covariant(self, x_vec):
+        """
+        Returns Covariant Schwarzschild Metric Tensor \
+        in Schwarschild Coordinates
+
+        Parameters
+        ----------
+        x_vec : ~numpy.ndarray
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Covariant Schwarzschild Metric Tensor
+            Numpy array of shape (4,4)
+
+        """
+        r, th = x_vec[1], x_vec[2]
+        r_s = self.sch_rad
+        g_cov = np.zeros(shape=(4, 4), dtype=float)
+
+        tmp, c2 = 1.0 - (r_s / r), _c ** 2
+        g_cov[0, 0] = tmp
+        g_cov[1, 1] = -1.0 / (tmp * c2)
+        g_cov[2, 2] = -1 * (r ** 2) / c2
+        g_cov[3, 3] = -1 * ((r * np.sin(th)) ** 2) / c2
+
+        return g_cov
+
+    def _christoffels(self, x_vec):
+        """
+        Returns the Christoffel Symbols for Schwarzschild Metric
+        in Schwarzschild Coordinates
+
+        Parameters
+        ----------
+        x_vec : ~numpy.ndarray
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Christoffel Symbols for Schwarzschild Metric \
+            in Schwarzschild Coordinates
+            Numpy array of shape (4,4,4)
+
+        """
+        r, th = x_vec[1], x_vec[2]
+        r_s = self.sch_rad
+        c2 = _c ** 2
+        chl = np.zeros(shape=(4, 4, 4), dtype=float)
+
+        chl[1, 0, 0] = 0.5 * r_s * (r - r_s) * c2 / (r ** 3)
+        chl[1, 1, 1] = 0.5 * r_s / (r_s * r - r ** 2)
+        chl[1, 2, 2] = r_s - r
+        chl[1, 3, 3] = (r_s - r) * (np.sin(th) ** 2)
+        chl[0, 0, 1] = chl[0, 1, 0] = -chl[1, 1, 1]
+        chl[2, 2, 1] = chl[2, 1, 2] = chl[3, 3, 1] = chl[3, 1, 3] = 1 / r
+        chl[2, 3, 3] = -np.cos(th) * np.sin(th)
+        chl[3, 3, 2] = chl[3, 2, 3] = 1 / np.tan(th)
+
+        return chl
+
+    def _f_vec(self, lambda_, vec):
+        """
+        Returns f_vec for Schwarzschild Metric
+        To be used in solving for Geodesics
+
+        Parameters
+        ----------
+        lambda_ : float
+            Parameterizes current integration step
+            Used by ODE Solver
+
+        vec : ~numpy.ndarray
+            Length-8 Vector, containing 4-Position & 4-Velocity
+
+        Returns
+        -------
+        ~numpy.ndarray
+            f_vec for Schwarzschild Metric
+            Numpy array of shape (8)
+
+        """
+        chl = self.christoffels(vec[:4])
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
-        chl = schwarzschild_utils.christoffels(vec[1], vec[2], self.M.value)
-        vals[:4] = vec[4:8]
+
+        vals[:4] = vec[4:]
         vals[4] = -2 * chl[0, 0, 1] * vec[4] * vec[5]
         vals[5] = -1 * (
             chl[1, 0, 0] * (vec[4] ** 2)
@@ -67,133 +128,5 @@ class Schwarzschild:
         )
         vals[6] = -2 * chl[2, 2, 1] * vec[6] * vec[5] - 1 * chl[2, 3, 3] * (vec[7] ** 2)
         vals[7] = -2 * (chl[3, 3, 1] * vec[7] * vec[5] + chl[3, 3, 2] * vec[7] * vec[6])
+
         return vals
-
-    def calculate_trajectory(
-        self,
-        start_lambda=0.0,
-        end_lambda=10.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        return_cartesian=False,
-    ):
-        """
-        Calculate trajectory in manifold according to geodesic equation
-
-        Parameters
-        ----------
-        start_lambda : float
-            Starting lambda(proper time), defaults to 0, (lambda ~= t)
-        end_lamdba : float
-            Lambda(proper time) where iteartions will stop, defaults to 100000
-        stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity, defaults to True
-        OdeMethodKwargs : dict
-            Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
-            Dictionary with key 'stepsize' along with an float value is expected.
-        return_cartesian : bool
-            True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to False
-
-        Returns
-        -------
-        ~numpy.ndarray
-            N-element array containing proper time.
-        ~numpy.ndarray
-            (n,8) shape array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
-
-        """
-        ODE = RK45(
-            fun=self.f_vec,
-            t0=start_lambda,
-            y0=self.initial_vec,
-            t_bound=end_lambda,
-            **OdeMethodKwargs
-        )
-
-        vecs = list()
-        lambdas = list()
-        crossed_event_horizon = False
-        _scr = self.scr.value * 1.001
-
-        while ODE.t < end_lambda:
-            vecs.append(ODE.y)
-            lambdas.append(ODE.t)
-            ODE.step()
-            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
-                warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
-                if stop_on_singularity:
-                    break
-                else:
-                    crossed_event_horizon = True
-
-        vecs, lambdas = np.array(vecs), np.array(lambdas)
-
-        if not return_cartesian:
-            return lambdas, vecs
-        else:
-            cart_vecs = list()
-            for v in vecs:
-                si_vals = SphericalConversion(
-                    v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian()
-                cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
-            return lambdas, np.array(cart_vecs)
-
-    def calculate_trajectory_iterator(
-        self,
-        start_lambda=0.0,
-        stop_on_singularity=True,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        return_cartesian=False,
-    ):
-        """
-        Calculate trajectory in manifold according to geodesic equation
-        Yields an iterator
-
-        Parameters
-        ----------
-        start_lambda : float
-            Starting lambda, defaults to 0.0, (lambda ~= t)
-        stop_on_singularity : bool
-            Whether to stop further computation on reaching singularity, defaults to True
-        OdeMethodKwargs : dict
-            Kwargs to be supplied to the ODESolver, defaults to {'stepsize': 1e-3}
-            Dictionary with key 'stepsize' along with an float value is expected.
-        return_cartesian : bool
-            True if coordinates and velocities are required in cartesian coordinates(SI units), defaults to Falsed
-
-        Yields
-        ------
-        float
-            proper time
-        ~numpy.ndarray
-            array of [t, x1, x2, x3, velocity_of_time, v1, v2, v3] for each proper time(lambda).
-
-        """
-        ODE = RK45(
-            fun=self.f_vec,
-            t0=start_lambda,
-            y0=self.initial_vec,
-            t_bound=1e300,
-            **OdeMethodKwargs
-        )
-
-        crossed_event_horizon = False
-        _scr = self.scr.value * 1.001
-
-        while True:
-            if not return_cartesian:
-                yield ODE.t, ODE.y
-            else:
-                v = ODE.y
-                si_vals = SphericalConversion(
-                    v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian()
-                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
-            ODE.step()
-            if (not crossed_event_horizon) and (ODE.y[1] <= _scr):
-                warnings.warn("particle reached Schwarzchild Radius. ", RuntimeWarning)
-                if stop_on_singularity:
-                    break
-                else:
-                    crossed_event_horizon = True
