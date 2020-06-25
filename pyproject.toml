@@ -1,6 +1,70 @@
 [build-system]
 requires = [
-    "setuptools",
+    "flit_core >=2.0,<3",
     "wheel",
     "numpy",
 ]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "einsteinpy"
+author = "Shreyas Bapat"
+author-email = "bapat.shreyas@gmail.com"
+description-file = "README.rst"
+home-page = "https://einsteinpy.org/"
+keywords = "general relativity, geodesics, relativity, black-hole, symbolic relativity"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+requires-python = ">=3.6,<3.9"
+requires = [
+    "astropy >=3.2,<5",
+    "matplotlib >=2.0,!=3.0.1",
+    "numba >=0.46 ; implementation_name=='cpython'",
+    "numpy",
+    "plotly ~=4.0",
+    "scipy >=1.4.0",
+    "sympy >=1.1",
+]
+
+[tool.flit.metadata.requires-extra]
+jupyter = ["notebook"]
+dev = [
+    "alabaster",
+    "black",
+    "coverage",
+    "ipykernel",
+    "ipython>=5.0",
+    "ipywidgets>=7.0",
+    "isort",
+    "jupyter-client",
+    "jupyter_sphinx",
+    "mypy>=0.740",
+    "nbsphinx>=0.5.0",
+    "nbconvert>=5.5",
+    "pycodestyle",
+    "pytest>=3.2",
+    "pytest-cov<2.6.0",  # https://github.com/pytest-dev/pytest-cov/issues/222
+    "pytest-doctestplus",
+    "pytest-mpl",
+    "pytest-mypy",
+    "sphinx",
+    "tox",
+]
+
+[tool.flit.metadata.urls]
+Source = "https://github.com/einsteinpy/einsteinpy"
+Tracker = "https://github.com/einsteinpy/einsteinpy/issues"
