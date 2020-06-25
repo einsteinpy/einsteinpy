@@ -8,5 +8,6 @@ pycodestyle:  # Same as scanner.linter value. Other option is flake8
         - W504  # line break after binary operator
         - E402  # module level import not at top of file
         - E731  # do not assign a lambda expression, use a def
+        - W503
  
 no_blank_comment: False  # If True, no comment is made on PR without any errors.
