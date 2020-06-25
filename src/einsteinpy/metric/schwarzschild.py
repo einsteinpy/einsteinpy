@@ -8,6 +8,10 @@ from einsteinpy.coordinates import SphericalConversion
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import schwarzschild_radius, schwarzschild_utils
 
+
+__all__ = ['Schwarzschild']
+
+
 _G = constant.G.value
 _c = constant.c.value
 

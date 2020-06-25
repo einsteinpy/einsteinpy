@@ -4,6 +4,9 @@ from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['JanisNewmanWinicour']
+
+
 def JanisNewmanWinicour(
     c=constants.c, G=constants.G, gam=symbols("gam"), M=symbols("M")
 ):

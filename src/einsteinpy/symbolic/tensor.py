@@ -11,6 +11,9 @@ from einsteinpy.symbolic.helpers import (
 )
 
 
+__all__ = ['BaseRelativityTensor', 'Tensor']
+
+
 def _config_checker(config):
     # check if the string for config contains 'u' and 'l' only
     if not isinstance(config, str):

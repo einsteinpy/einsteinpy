@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 
 
+__all__ = ['HypersurfacePlotter']
+
+
 class HypersurfacePlotter:
     """
     Class for plotting and visualising hypersurfaces

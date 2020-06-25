@@ -4,6 +4,9 @@ from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['BarriolaVilekin']
+
+
 def BarriolaVilekin(c=constants.c, k=symbols("k")):
     """
     Barriola-Vilekin monopol metric 

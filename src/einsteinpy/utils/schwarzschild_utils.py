@@ -4,6 +4,9 @@ import numpy as np
 from einsteinpy import constant
 
 
+__all__ = ['schwarzschild_radius', 'schwarzschild_radius_dimensionless', 'time_velocity']
+
+
 def schwarzschild_radius(mass, c=constant.c, G=constant.G):
     """
     Schwarzschild radius is the radius defining the event horizon of a

@@ -8,6 +8,10 @@ from einsteinpy.coordinates import BoyerLindquistConversion
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import kerr_utils, schwarzschild_radius
 
+
+__all__ = ['Kerr']
+
+
 _G = constant.G.value
 _c = constant.c.value
 

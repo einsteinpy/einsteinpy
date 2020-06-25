@@ -8,6 +8,10 @@ from einsteinpy.coordinates import BoyerLindquistConversion
 from einsteinpy.integrators import RK45
 from einsteinpy.utils import kerrnewman_utils, schwarzschild_radius
 
+
+__all__ = ['KerrNewman']
+
+
 _G = constant.G.value
 _c = constant.c.value
 _Cc = constant.coulombs_const.value

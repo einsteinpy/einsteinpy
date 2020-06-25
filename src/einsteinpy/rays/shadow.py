@@ -7,6 +7,9 @@ from scipy.interpolate import interp1d
 from scipy.optimize import newton
 
 
+__all__ = ['Shadow']
+
+
 class Shadow:
     """
     Class for plotting the shadow of Schwarzschild Black Hole surrounded by a 

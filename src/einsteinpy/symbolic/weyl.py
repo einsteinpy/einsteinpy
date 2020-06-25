@@ -7,6 +7,9 @@ from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
+__all__ = ['WeylTensor']
+
+
 class WeylTensor(BaseRelativityTensor):
     """
     Class for defining Weyl Tensor

@@ -1,6 +1,9 @@
 from sympy.core.symbol import Symbol
 
 
+__all__ = ['SymbolicConstant', 'get_constant']
+
+
 class SymbolicConstant(Symbol):
     """
     This class inherits from ~sympy.core.symbol.Symbol 

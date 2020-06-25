@@ -6,6 +6,9 @@ from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
+__all__ = ['RiemannCurvatureTensor']
+
+
 class RiemannCurvatureTensor(BaseRelativityTensor):
     """
     Class for defining Riemann Curvature Tensor

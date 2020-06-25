@@ -5,6 +5,9 @@ from einsteinpy.symbolic.ricci import RicciScalar, RicciTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
+__all__ = ['EinsteinTensor']
+
+
 class EinsteinTensor(BaseRelativityTensor):
     """
     Class for defining Einstein Tensor

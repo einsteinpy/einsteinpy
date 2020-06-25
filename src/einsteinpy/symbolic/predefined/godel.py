@@ -3,6 +3,9 @@ from sympy import Rational, diag, exp, sqrt, symbols
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['Godel']
+
+
 def Godel():
     """
     Godel metric

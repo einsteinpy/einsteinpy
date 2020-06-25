@@ -4,6 +4,9 @@ from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['BesselGravitationalWave']
+
+
 def BesselGravitationalWave(C=symbols("C")):
     """
     Exact gravitational wave solution without diffraction.

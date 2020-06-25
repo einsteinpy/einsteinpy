@@ -8,6 +8,9 @@ from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
+__all__ = ['RicciScalar', 'RicciTensor']
+
+
 class RicciTensor(BaseRelativityTensor):
     """
     Class for defining Ricci Tensor

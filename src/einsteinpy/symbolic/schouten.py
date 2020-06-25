@@ -4,6 +4,9 @@ from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
+__all__ = ['SchoutenTensor']
+
+
 class SchoutenTensor(BaseRelativityTensor):
     """
     Class for defining Schouten Tensor
