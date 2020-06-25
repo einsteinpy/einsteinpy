@@ -1,7 +1,7 @@
 Contributing
 ============
 
-Einsteinpy is a community project, hence all contributions are more than
+EinsteinPy is a community project, hence all contributions are more than
 welcome!
 
 Bug reporting
@@ -50,7 +50,7 @@ help us fixing bugs in einsteinpy and check out the `"easy" tag`_. Those
 should be easier to fix than the others and require less knowledge about the
 library.
 
-.. _`"easy" tag`: https://github.com/einsteinpy/einsteinpy/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy
+.. _`"easy" tag`: https://github.com/einsteinpy/einsteinpy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 
 If you are hesitant on what IDE or editor to use, just choose one that
 you find comfortable and stick to it while you are learning. People have
@@ -75,7 +75,7 @@ features then that's awesome! Before rushing out though please make sure it
 is within the scope of the library so you don't waste your time -
 `email`_ us or `chat`_ with us on Riot!.
 
-.. _`email`: einsteinpy.project@gmail.com
+.. _`email`: shreyas@einsteinpy.org
 .. _`chat`: https://riot.im/app/#/room/#einsteinpy:matrix.org
 
 If the feature you suggest happens to be useful and within scope, you will
@@ -103,12 +103,19 @@ These are some succint steps to set up a development environment:
 2. `Register to GitHub <https://github.com/>`_.
 3. `Fork einsteinpy <https://help.github.com/articles/fork-a-repo/>`_.
 4. `Clone your fork <https://help.github.com/articles/cloning-a-repository/>`_.
-5. Install it in development mode using
-   :code:`pip install --editable /path/to/einsteinpy/[dev]` (this means that the
+5. Install flit using :code:`pip install flit`.
+6. Install it in development mode using
+   :code:`flit install`, or alternatively :code:`flit install --symlink` (this means that the
    installed code will change as soon as you change it in the download
    location).
-6. Create a new branch.
-7. Make changes and commit.
-8. `Push to your fork <https://help.github.com/articles/pushing-to-a-remote/>`_.
-9. `Open a pull request! <https://help.github.com/articles/creating-a-pull-request/>`_
-10. Make sure that all the Pull Requests have `changelog entries. <https://github.com/einsteinpy/einsteinpy/blob/master/CHANGELOG>`_
+7. Run :code:`tox -e reformat` to make the format consistent.
+8. Run :code:`tox -e check` to check all the formatting is right.
+9. Create a new branch.
+10. Make changes and commit.
+11. `Push to your fork <https://help.github.com/articles/pushing-to-a-remote/>`_.
+12. `Open a pull request! <https://help.github.com/articles/creating-a-pull-request/>`_
+13. Make sure that all the Pull Requests have `changelog entries. <https://github.com/einsteinpy/einsteinpy/blob/master/CHANGELOG>`_
+
+For more detailed explanations, please check out the `Astropy development docs`__.
+
+.. __: http://docs.astropy.org/en/stable/development/workflow/development_workflow.html
