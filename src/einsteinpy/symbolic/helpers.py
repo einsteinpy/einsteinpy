@@ -5,6 +5,9 @@ import sympy
 from sympy import ImmutableDenseNDimArray, derive_by_array
 
 
+__all__ = ['TransformationMatrix', 'simplify_sympy_array']
+
+
 def raise_warning(WarningType, message):
     warnings.warn(message, WarningType)
 

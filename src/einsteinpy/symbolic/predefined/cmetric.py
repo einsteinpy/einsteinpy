@@ -3,6 +3,9 @@ from sympy import Function, diag, symbols
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['CMetric']
+
+
 def CMetric():
     """
     The C-metric

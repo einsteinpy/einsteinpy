@@ -7,6 +7,9 @@ from matplotlib.patches import Circle
 from mpl_toolkits import mplot3d
 
 
+__all__ = ['StaticGeodesicPlotter']
+
+
 class StaticGeodesicPlotter:
     def __init__(
         self,

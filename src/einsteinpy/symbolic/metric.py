@@ -4,6 +4,9 @@ from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor
 
 
+__all__ = ['MetricTensor']
+
+
 class MetricTensor(BaseRelativityTensor):
     """
     Class to define a metric tensor for a space-time

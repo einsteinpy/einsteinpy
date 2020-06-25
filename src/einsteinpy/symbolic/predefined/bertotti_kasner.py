@@ -4,6 +4,9 @@ from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['BertottiKasner']
+
+
 def BertottiKasner(c=constants.c, k=symbols("k"), lambd=symbols("l")):
     """
     Birkhoff’s theorem with Λ-term and Bertotti-Kasner space

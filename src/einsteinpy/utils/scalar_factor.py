@@ -4,6 +4,9 @@ import numpy as np
 from einsteinpy import constant
 
 
+__all__ = ['scalar_factor', 'scalar_factor_derivative']
+
+
 @u.quantity_input(t=u.s)
 def scalar_factor(t, era="md", tuning_param=1.0):
     """

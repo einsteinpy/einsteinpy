@@ -4,6 +4,9 @@ from einsteinpy.plotting.geodesics.interactive import InteractiveGeodesicPlotter
 from einsteinpy.plotting.geodesics.static import StaticGeodesicPlotter
 
 
+__all__ = ['GeodesicPlotter']
+
+
 def in_ipynb():
     try:
         shell = get_ipython().__class__.__name__  # type: ignore

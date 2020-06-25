@@ -10,6 +10,9 @@ import plotly.graph_objects as go
 from einsteinpy.ijit import jit
 
 
+__all__ = ['fractal']
+
+
 @jit
 def _julia(A, c, zabs_max, i, j, dims, x_range, y_range, iter_max):
     width, height = dims

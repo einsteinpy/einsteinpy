@@ -5,6 +5,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
+__all__ = ['SchwarzschildEmbedding']
+
+
 class SchwarzschildEmbedding:
     """
     Class for Utility functions for Schwarzschild Embedding surface to

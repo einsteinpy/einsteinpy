@@ -3,6 +3,10 @@ import numpy as np
 from einsteinpy import constant
 from einsteinpy.metric import BaseMetric
 
+
+__all__ = ['KerrNewman']
+
+
 _c = constant.c.value
 _G = constant.G.value
 _Cc = constant.coulombs_const.value

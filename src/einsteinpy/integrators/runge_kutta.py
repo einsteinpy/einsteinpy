@@ -4,6 +4,9 @@ import numpy as np
 from scipy import integrate
 
 
+__all__ = ['RK45', 'RK4naive']
+
+
 class RK4naive:
     """
     Class for Defining Runge-Kutta 4th Order ODE solving method

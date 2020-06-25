@@ -1,6 +1,9 @@
 import importlib
 
 
+__all__ = ['find']
+
+
 def find(search_string):
     """
     Performs a find operation on available functions.

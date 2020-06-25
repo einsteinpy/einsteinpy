@@ -4,6 +4,9 @@ from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['Kerr', 'KerrNewman', 'ReissnerNordstorm', 'Schwarzschild']
+
+
 def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     """
     Schwarzschild exterior metric in curvature coordinates

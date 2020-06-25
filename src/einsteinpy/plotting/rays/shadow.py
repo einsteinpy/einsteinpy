@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+__all__ = ['ShadowPlotter']
+
+
 class ShadowPlotter:
     """
     Class for plotting and visualising shadows

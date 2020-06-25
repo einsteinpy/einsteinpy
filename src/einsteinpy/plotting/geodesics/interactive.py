@@ -6,6 +6,9 @@ import plotly.graph_objects as go
 from plotly.offline import plot as saveplot
 
 
+__all__ = ['InteractiveGeodesicPlotter']
+
+
 class InteractiveGeodesicPlotter:
     def __init__(self, attractor_radius_scale=-1.0, attractor_color="#ffcc00"):
         """

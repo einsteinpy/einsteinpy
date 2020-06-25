@@ -3,6 +3,10 @@ import numpy as np
 from einsteinpy import constant
 from einsteinpy.metric import BaseMetric
 
+
+__all__ = ['Kerr']
+
+
 _c = constant.c.value
 
 

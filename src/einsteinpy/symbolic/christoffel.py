@@ -5,6 +5,9 @@ from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
+__all__ = ['ChristoffelSymbols']
+
+
 class ChristoffelSymbols(BaseRelativityTensor):
     """
     Class for defining christoffel symbols.

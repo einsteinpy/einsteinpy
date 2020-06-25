@@ -4,6 +4,9 @@ from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
 
 
+__all__ = ['Ernst']
+
+
 def Ernst(B=symbols("B"), M=symbols("M")):
     """
     Black holes in a magnetic universe.

@@ -6,6 +6,9 @@ from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
+__all__ = ['StressEnergyMomentumTensor']
+
+
 class StressEnergyMomentumTensor(BaseRelativityTensor):
     """
     Class for defining Stress-Energy Coefficient Tensor
