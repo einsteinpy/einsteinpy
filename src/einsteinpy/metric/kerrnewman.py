@@ -126,22 +126,21 @@ class KerrNewman(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        M, a, c2 = self.M, self.a, _c ** 2
+        M, a = self.M, self.a
         alpha = super().alpha(M, a)
-        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, del_ = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
-        g_cov_bl[0, 0] = (dl - ((alpha * np.sin(th)) ** 2)) / (rho2)
-        g_cov_bl[1, 1] = -rho2 / (dl * c2)
-        g_cov_bl[2, 2] = -rho2 / c2
-        g_cov_bl[3, 3] = (
-            (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
-            * (np.sin(th) ** 2)
-            / (rho2 * c2)
+        g_cov_bl[0, 0] = (_c ** 2) * ((del_ - ((alpha * np.sin(th)) ** 2)) / (rho2))
+        g_cov_bl[1, 1] = -rho2 / del_
+        g_cov_bl[2, 2] = -rho2
+        g_cov_bl[3, 3] = -(
+            (np.sin(th) ** 2)
+            * (((r ** 2 + alpha ** 2) ** 2 - del_ * (alpha * np.sin(th)) ** 2) / rho2)
         )
-        g_cov_bl[0, 3] = g_cov_bl[3, 0] = (
-            -alpha * (np.sin(th) ** 2) * (dl - (r ** 2) - (alpha ** 2)) / (rho2 * _c)
+        g_cov_bl[0, 3] = g_cov_bl[3, 0] = _c * (
+            (-alpha * (np.sin(th) ** 2) * (del_ - (r ** 2) - (alpha ** 2))) / rho2
         )
 
         return g_cov_bl
@@ -189,7 +188,7 @@ class KerrNewman(BaseMetric):
         r, th = x_vec[1], x_vec[2]
         M, a, c2 = self.M, self.a, _c ** 2
         alpha = super().alpha(M, a)
-        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, del_ = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -200,9 +199,9 @@ class KerrNewman(BaseMetric):
             drh2dr = 2 * r
             dddr = 2 * r - self.sch_rad
             dgdx[1, 0, 0] = (
-                dddr * rho2 - drh2dr * (dl - (alpha * np.sin(th)) ** 2)
+                dddr * rho2 - drh2dr * (del_ - (alpha * np.sin(th)) ** 2)
             ) / (rho2 ** 2)
-            dgdx[1, 1, 1] = (-1 / (c2 * (dl ** 2))) * (drh2dr * dl - dddr * rho2)
+            dgdx[1, 1, 1] = (-1 / (c2 * (del_ ** 2))) * (drh2dr * del_ - dddr * rho2)
             dgdx[1, 2, 2] = -drh2dr / c2
             dgdx[1, 3, 3] = ((np.sin(th) ** 2) / (c2 * (rho2 ** 2))) * (
                 (
@@ -215,12 +214,15 @@ class KerrNewman(BaseMetric):
                 )
                 - (
                     drh2dr
-                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
+                    * (
+                        ((alpha * np.sin(th)) ** 2) * del_
+                        - ((r ** 2 + alpha ** 2) ** 2)
+                    )
                 )
             )
             dgdx[1, 0, 3] = dgdx[1, 3, 0] = (
                 (-alpha) * (np.sin(th) ** 2) / (_c * (rho2 ** 2))
-            ) * ((dddr - 2 * r) * rho2 - drh2dr * (dl - r ** 2 - alpha ** 2))
+            ) * ((dddr - 2 * r) * rho2 - drh2dr * (del_ - r ** 2 - alpha ** 2))
 
         # Differentiation of metric wrt theta
         def due_to_theta():
@@ -228,26 +230,29 @@ class KerrNewman(BaseMetric):
             drh2dth = -2 * (alpha ** 2) * np.cos(th) * np.sin(th)
             dgdx[2, 0, 0] = (
                 (-2 * (alpha ** 2) * np.sin(th) * np.cos(th)) * rho2
-                - drh2dth * (dl - ((alpha * np.sin(th)) ** 2))
+                - drh2dth * (del_ - ((alpha * np.sin(th)) ** 2))
             ) / (rho2 ** 2)
-            dgdx[2, 1, 1] = -drh2dth / (c2 * dl)
+            dgdx[2, 1, 1] = -drh2dth / (c2 * del_)
             dgdx[2, 2, 2] = -drh2dth / c2
             dgdx[2, 3, 3] = (1 / (c2 * (rho2 ** 2))) * (
                 (
                     (
-                        (4 * (alpha ** 2) * (np.sin(th) ** 3) * np.cos(th) * dl)
+                        (4 * (alpha ** 2) * (np.sin(th) ** 3) * np.cos(th) * del_)
                         - (2 * np.sin(th) * np.cos(th) * ((r ** 2 + alpha ** 2) ** 2))
                     )
                     * rho2
                 )
                 - (
                     drh2dth
-                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
+                    * (
+                        ((alpha * np.sin(th)) ** 2) * del_
+                        - ((r ** 2 + alpha ** 2) ** 2)
+                    )
                     * (np.sin(th) ** 2)
                 )
             )
             dgdx[2, 0, 3] = dgdx[2, 3, 0] = (
-                (-alpha * (dl - r ** 2 - alpha ** 2)) / (_c * (rho2 ** 2))
+                (-alpha * (del_ - r ** 2 - alpha ** 2)) / (_c * (rho2 ** 2))
             ) * ((2 * np.sin(th) * np.cos(th) * rho2) - (drh2dth * (np.sin(th) ** 2)))
 
         due_to_r()

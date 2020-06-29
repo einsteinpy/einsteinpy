@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from matplotlib.axes import Axes
 
+from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.metric import Schwarzschild
-from einsteinpy.coordinates.utils import four_position, stacked_vec
 from einsteinpy.geodesic import Geodesic
 from einsteinpy.plotting import StaticGeodesicPlotter
 
@@ -13,19 +13,24 @@ from einsteinpy.plotting import StaticGeodesicPlotter
 @pytest.fixture()
 def dummy_data():
     M = 6e24
-    t = 0.
-    x_vec = np.array([130.0, np.pi / 2, -np.pi / 8])
-    v_vec = np.array([0.0, 0.0, 1900.0])
 
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+    sph = SphericalDifferential(
+        t=0.0,
+        r=130.0,
+        theta=np.pi / 2,
+        phi=-np.pi / 8,
+        v_r=0.0,
+        v_th=0.0,
+        v_p=1900.0,
+    )
+
+    ms = Schwarzschild(M=M)
+    state = sph.state(metric=ms, time_like=True)
 
     end_lambda = 0.002
     step_size = 5e-8
 
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size)
+    geod = Geodesic(metric=ms, state=state, end_lambda=end_lambda, step_size=step_size)
 
     return geod
 

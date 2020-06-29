@@ -61,19 +61,19 @@ def test_predefined_bodies_extra(obj, name, q):
     assert obj.q == q
 
 
-def test_state_vecs():
+def test_initial_states():
     parent = Sun
     name = "Earth"
     R = 6731 * u.km
     mass = 5.97219e24 * u.kg
-    state_vec1 = CartesianDifferential(
-        0 * u.km, 0 * u.km, 0 * u.km, 0 * u.km / u.s, 0 * u.km / u.s, 0 * u.km / u.s
+    differential1 = CartesianDifferential(
+        0., 0., 0., 0., 0., 0., 0.
     )
-    state_vec2 = SphericalDifferential(
-        0 * u.km, 0 * u.rad, 0 * u.rad, 0 * u.km / u.s, 0 * u.rad / u.s, 0 * u.rad / u.s
+    differential2 = SphericalDifferential(
+        0., 0., 0., 0., 0., 0., 0.
     )
-    a = Body(name=name, mass=mass, R=R, state_vec=state_vec1, parent=parent)
-    b = Body(name=name, mass=mass, R=R, state_vec=state_vec2, parent=parent)
+    a = Body(name=name, mass=mass, R=R, differential=differential1, parent=parent)
+    b = Body(name=name, mass=mass, R=R, differential=differential2, parent=parent)
 
     assert isinstance(a.pos_vec, list)
     assert isinstance(a.vel_vec, list)
@@ -85,7 +85,8 @@ def test_body_str_return():
     body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
 
     assert (
-        body.__repr__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), Initial State: (None), Parent Body: (None) )"
+        body.__str__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
+            Initial Coordinates: (None), Parent Body: (None) )"
     )
 
 
@@ -93,5 +94,6 @@ def test_body_repr_return():
     body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
 
     assert (
-        body.__repr__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), Initial State: (None), Parent Body: (None) )"
+        body.__repr__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
+            Initial Coordinates: (None), Parent Body: (None) )"
     )

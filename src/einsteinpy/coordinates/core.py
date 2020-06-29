@@ -1,4 +1,3 @@
-import astropy.units as u
 import numpy as np
 
 from einsteinpy.coordinates.conversion import (
@@ -6,327 +5,409 @@ from einsteinpy.coordinates.conversion import (
     CartesianConversion,
     SphericalConversion,
 )
+from einsteinpy.coordinates.utils import four_position
 
 
 class Cartesian(CartesianConversion):
     """
-    Class for Cartesian Coordinates and related transformations.
+    Class for defining 3-Position & 4-Position in Cartesian Coordinates \
+    using SI units
+
     """
 
-    @u.quantity_input(x=u.km, y=u.km, z=u.km)
-    def __init__(self, x, y, z):
+    def __init__(self, t, x, y, z):
         """
-        Constructor.
+        Constructor
 
         Parameters
         ----------
-        x : ~astropy.units.quantity.Quantity
-        y : ~astropy.units.quantity.Quantity
-        z : ~astropy.units.quantity.Qauntity
+        t : float
+            Time
+        x : float
+            x-Component of 3-Position
+        y : float
+            y-Component of 3-Position
+        z : float
+            z-Component of 3-Position
 
         """
+        self.t = t
         self.x = x
         self.y = y
         self.z = z
-        super().__init__(x.si.value, y.si.value, z.si.value)
+        super().__init__(t, x, y, z)
         self.system = "Cartesian"
-        self._dimension = {"x": self.x, "y": self.y, "z": self.z, "system": self.system}
-        self._dimension_order = ("x", "y", "z")
-
-    def __repr__(self):
-        return "Cartesian x: {}, y: {}, z: {}".format(self.x, self.y, self.z)
+        self._dimension = {
+            "t": self.t,
+            "x": self.x,
+            "y": self.y,
+            "z": self.z,
+            "system": self.system,
+        }
+        self._dimension_order = ("t", "x", "y", "z")
 
     def __str__(self):
-        return self.__repr__()
+        return f"Cartesian Coordinates: \n \
+            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})"
+
+    def __repr__(self):
+        return f"Cartesian Coordinates: \n \
+            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})"
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
-        Objects are subsctiptable with both explicit names of parameters
-        and integer indices.
+        Method to return coordinates
+        Objects are subscriptable with both explicit names of \
+        parameters and integer indices
 
         Parameters
         ----------
         item : str or int
-                Name of the parameter or its index.
-                If ``'system'``, Name of coordinate is returned.
+            Name of the parameter or its index
+            If ``system`` is provided, while initializing, \
+            name of the coordinate is returned
+
         """
         if isinstance(item, (int, np.integer)):
             return self._dimension[self._dimension_order[item]]
         return self._dimension[item]
 
-    def si_values(self):
+    def position(self):
         """
-        Function for returning values in SI units.
+        Returns Position 4-Vector in SI units
 
         Returns
         -------
-        ~numpy.ndarray
-            Array containing values in SI units (m, m, m)
+        ~numpy.ndarray :
+            Array, containing Position 4-Vector in SI units
 
         """
-        element_list = [self.x.to(u.m), self.y.to(u.m), self.z.to(u.m)]
-        return np.array([e.value for e in element_list], dtype=float)
+        x4 = four_position(self.t, self.x, self.y, self.z)
 
-    def norm(self):
+        return x4
+
+    def to_spherical(self, **kwargs):
         """
-        Function for finding euclidean norm of a vector.
+        Method for conversion to Spherical Polar Coordinates
 
-        Returns
-        -------
-        ~astropy.units.quantity.Quantity
-            Euclidean norm with units.
-
-        """
-        return np.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
-
-    def dot(self, target):
-        """
-        Dot product of two vectors.
-
-        Parameters
-        ----------
-        target: ~einsteipy.coordinates.core.Cartesian
-
-        Returns
-        -------
-        ~astropy.units.quantity.Quantity
-            Dot product with units
-
-        """
-
-        x = self.x * target.x
-        y = self.y * target.y
-        z = self.z * target.z
-
-        return x + y + z
-
-    def to_spherical(self):
-        """
-        Method for conversion to spherical coordinates.
+        Other Parameters
+        ----------------
+        **kwargs : dict
+            Keyword Arguments
 
         Returns
         -------
         ~einsteinpy.coordinates.core.Spherical
-            Spherical representation of the Cartesian Coordinates.
+            Spherical representation of the Cartesian Coordinates
 
         """
-        r, theta, phi = self.convert_spherical()
-        return Spherical(r * u.m, theta * u.rad, phi * u.rad)
+        t, r, theta, phi = self.convert_spherical()
 
-    @u.quantity_input(a=u.km)
-    def to_bl(self, a):
+        return Spherical(t, r, theta, phi)
+
+    def to_bl(self, **kwargs):
         """
-        Method for conversion to boyer-lindquist coordinates.
+        Method for conversion to Boyer-Lindquist (BL) Coordinates
 
         Parameters
         ----------
-        a : ~astropy.units.quantity.Quantity
-            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
+        **kwargs : dict
+            Keyword Arguments
+            Expects two arguments, ``M and ``a``, as described below
+
+        Other Parameters
+        ----------------
+        M : float
+            Mass of gravitating body
+            Required to calculate ``alpha``, the rotational length \
+            parameter
+        a : float
+            Spin Parameter of gravitating body
+            0 <= a <= 1
+            Required to calculate ``alpha``, the rotational length \
+            parameter
 
         Returns
         -------
         ~einsteinpy.coordinates.core.BoyerLindquist
-            BL representation of the Cartesian Coordinates.
+            Boyer-Lindquist representation of the Cartesian Coordinates
 
         """
-        r, theta, phi, a = self.convert_bl(a.si.value)
-        return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
+        M, a = kwargs["M"], kwargs["a"]
+        t, r, theta, phi = self.convert_bl(M=M, a=a)
+
+        return BoyerLindquist(t, r, theta, phi)
 
 
 class Spherical(SphericalConversion):
     """
-    Class for Spherical Coordinates and related transformations.
+    Class for defining 3-Position & 4-Position in Spherical Polar Coordinates \
+    using SI units
+
     """
 
-    @u.quantity_input(r=u.km, theta=u.rad, phi=u.rad)
-    def __init__(self, r, theta, phi):
+    def __init__(self, t, r, theta, phi):
         """
-        Constructor.
+        Constructor
 
         Parameters
         ----------
-        r : ~astropy.units.quantity.Quantity
-        theta : ~astropy.units.quantity.Quantity
-        phi : ~astropy.units.quantity.Quantity
+        t : float
+            Time
+        r : float
+            r-Component of 3-Position
+        theta : float
+            theta-Component of 3-Position
+        phi : float
+            phi-Component of 3-Position
 
         """
+        self.t = t
         self.r = r
         self.theta = theta
         self.phi = phi
-        super().__init__(r.si.value, theta.si.value, phi.si.value)
+        super().__init__(t, r, theta, phi)
         self.system = "Spherical"
         self._dimension = {
+            "t": self.t,
             "r": self.r,
             "theta": self.theta,
             "phi": self.phi,
             "system": self.system,
         }
-        self._dimension_order = ("r", "theta", "phi")
-
-    def __repr__(self):
-        return "Spherical r: {}, theta: {}, phi: {}".format(
-            self.r, self.theta, self.phi
-        )
+        self._dimension_order = ("t", "r", "theta", "phi")
 
     def __str__(self):
-        return self.__repr__()
+        return f"Spherical Polar Coordinates: \n \
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
+
+    def __repr__(self):
+        return f"Spherical Polar Coordinates: \n \
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
-        Objects are subsctiptable with both explicit names of parameters
-        and integer indices.
+        Method to return coordinates
+        Objects are subscriptable with both explicit names of \
+        parameters and integer indices
 
         Parameters
         ----------
         item : str or int
-                Name of the parameter or its index.
-                If ``'system'``, Name of coordinate is returned.
+            Name of the parameter or its index
+            If ``system`` is provided, while initializing, \
+            name of the coordinate is returned
+
         """
         if isinstance(item, (int, np.integer)):
             return self._dimension[self._dimension_order[item]]
         return self._dimension[item]
 
-    def si_values(self):
+    def position(self):
         """
-        Function for returning values in SI units.
+        Returns Position 4-Vector in SI units
 
         Returns
         -------
-        ~numpy.ndarray
-            Array containing values in SI units (m, rad, rad)
+        ~numpy.ndarray :
+            Array, containing Position 4-Vector in SI units
 
         """
-        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
-        return np.array([e.value for e in element_list], dtype=float)
+        x4 = four_position(self.t, self.r, self.theta, self.phi)
 
-    def to_cartesian(self):
+        return x4
+
+    def to_cartesian(self, **kwargs):
         """
-        Method for conversion to cartesian coordinates.
+        Method for conversion to Cartesian Coordinates
+
+        Other Parameters
+        ----------------
+        **kwargs : dict
+            Keyword Arguments
 
         Returns
         -------
         ~einsteinpy.coordinates.core.Cartesian
-            Cartesian representation of the Spherical Coordinates.
+            Cartesian representation of the Spherical Polar Coordinates
 
         """
-        x, y, z = self.convert_cartesian()
-        return Cartesian(x * u.m, y * u.m, z * u.m)
+        t, x, y, z = self.convert_cartesian()
+        return Cartesian(t, x, y, z)
 
-    @u.quantity_input(a=u.km)
-    def to_bl(self, a):
+    def to_bl(self, **kwargs):
         """
-        Method for conversion to boyer-lindquist coordinates.
+        Method for conversion to Boyer-Lindquist (BL) Coordinates
 
         Parameters
         ----------
-        a : ~astropy.units.quantity.Quantity
-            a = J/Mc , the angular momentum per unit mass of the black hole per speed of light.
+        **kwargs : dict
+            Keyword Arguments
+            Expects two arguments, ``M and ``a``, as described below
+
+        Other Parameters
+        ----------------
+        M : float
+            Mass of gravitating body
+            Required to calculate ``alpha``, the rotational length \
+            parameter
+        a : float
+            Spin Parameter of gravitating body
+            0 <= a <= 1
+            Required to calculate ``alpha``, the rotational length \
+            parameter
 
         Returns
         -------
         ~einsteinpy.coordinates.core.BoyerLindquist
-            BL representation of the Spherical Coordinates.
+            Boyer-Lindquist representation of the Spherical \
+            Polar Coordinates
 
         """
-        r, theta, phi, a = self.convert_bl(a.si.value)
-        return BoyerLindquist(r * u.m, theta * u.rad, phi * u.rad, a * u.m)
+        M, a = kwargs["M"], kwargs["a"]
+        t, r, theta, phi = self.convert_bl(M=M, a=a)
+        return BoyerLindquist(t, r, theta, phi)
 
 
 class BoyerLindquist(BoyerLindquistConversion):
     """
-    Class for Spherical Coordinates and related transformations.
+    Class for defining 3-Position & 4-Position in Boyer-Lindquist Coordinates \
+    using SI units
+
     """
 
-    @u.quantity_input(r=u.km, theta=u.rad, phi=u.rad, a=u.km)
-    def __init__(self, r, theta, phi, a):
+    def __init__(self, t, r, theta, phi):
         """
-        Constructor.
+        Constructor
 
         Parameters
         ----------
-        r : ~astropy.units.quantity.Quantity
-        theta : ~astropy.units.quantity.Quantity
-        phi : ~astropy.units.quantity.Quantity
-        a : ~astropy.units.quantity.Quantity
+        t : float
+            Time
+        r : float
+            r-Component of 3-Position
+        theta : float
+            theta-Component of 3-Position
+        phi : float
+            phi-Component of 3-Position
 
         """
+        self.t = t
         self.r = r
         self.theta = theta
         self.phi = phi
-        self.a = a
-        super().__init__(r.si.value, theta.si.value, phi.si.value, a=a.si.value)
+        super().__init__(t, r, theta, phi)
         self.system = "BoyerLindquist"
         self._dimension = {
+            "t": self.t,
             "r": self.r,
             "theta": self.theta,
             "phi": self.phi,
-            "a": self.a,
             "system": self.system,
         }
-        self._dimension_order = ("r", "theta", "phi")
-
-    def __repr__(self):
-        return "Boyer-Lindquist r: {}, theta: {}, phi: {} | a: {}".format(
-            self.r, self.theta, self.phi, self.a
-        )
+        self._dimension_order = ("t", "r", "theta", "phi")
 
     def __str__(self):
-        return self.__repr__()
+        return f"Boyer-Lindquist Coordinates: \n \
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
+
+    def __repr__(self):
+        return f"Boyer-Lindquist Coordinates: \n \
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
-        Objects are subsctiptable with both explicit names of parameters
-        and integer indices.
+        Method to return coordinates
+        Objects are subscriptable with both explicit names of \
+        parameters and integer indices
 
         Parameters
         ----------
         item : str or int
-                Name of the parameter or its index.
-                If ``'system'``, Name of coordinate is returned.
-                If ``'a'``, spin factor of the body, ``self.a`` is returned.
+            Name of the parameter or its index
+            If ``system`` is provided, while initializing, \
+            name of the coordinate is returned
+
         """
         if isinstance(item, (int, np.integer)):
             return self._dimension[self._dimension_order[item]]
         return self._dimension[item]
 
-    def si_values(self):
+    def position(self):
         """
-        Function for returning values in SI units.
+        Returns Position 4-Vector in SI units
 
         Returns
         -------
-        ~numpy.ndarray
-            Array containing values in SI units (m, rad, rad)
+        ~numpy.ndarray :
+            Array, containing Position 4-Vector in SI units
 
         """
-        element_list = [self.r.to(u.m), self.theta.to(u.rad), self.phi.to(u.rad)]
-        return np.array([e.value for e in element_list], dtype=float)
+        x4 = four_position(self.t, self.r, self.theta, self.phi)
 
-    def to_cartesian(self):
+        return x4
+
+    def to_cartesian(self, **kwargs):
         """
-        Method for conversion to cartesian coordinates.
+        Method for conversion to Cartesian Coordinates
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword Arguments
+            Expects two arguments, ``M and ``a``, as described below
+
+        Other Parameters
+        ----------------
+        M : float
+            Mass of gravitating body
+            Required to calculate ``alpha``, the rotational length \
+            parameter
+        a : float
+            Spin Parameter of gravitating body
+            0 <= a <= 1
+            Required to calculate ``alpha``, the rotational length \
+            parameter
 
         Returns
         -------
         ~einsteinpy.coordinates.core.Cartesian
-            Cartesian representation of the BL Coordinates.
+            Cartesian representation of the Boyer-Lindquist Coordinates
 
         """
-        x, y, z = self.convert_cartesian()
-        return Cartesian(x * u.m, y * u.m, z * u.m)
+        M, a = kwargs["M"], kwargs["a"]
+        t, x, y, z = self.convert_cartesian(M=M, a=a)
+        return Cartesian(t, x, y, z)
 
-    def to_spherical(self):
+    def to_spherical(self, **kwargs):
         """
-        Method for conversion to spherical coordinates.
+        Method for conversion to Spherical Polar Coordinates
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword Arguments
+            Expects two arguments, ``M and ``a``, as described below
+
+        Other Parameters
+        ----------------
+        M : float
+            Mass of gravitating body
+            Required to calculate ``alpha``, the rotational length \
+            parameter
+        a : float
+            Spin Parameter of gravitating body
+            0 <= a <= 1
+            Required to calculate ``alpha``, the rotational length \
+            parameter
 
         Returns
         -------
         ~einsteinpy.coordinates.core.Spherical
-            Spherical representation of the BL Coordinates.
+            Spherical Polar representation of the \
+            Boyer-Lindquist Coordinates
 
         """
-        r, theta, phi = self.convert_spherical()
-        return Spherical(r * u.m, theta * u.rad, phi * u.rad)
+        M, a = kwargs["M"], kwargs["a"]
+        t, r, theta, phi = self.convert_spherical(M=M, a=a)
+        return Spherical(t, r, theta, phi)

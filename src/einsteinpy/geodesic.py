@@ -1,4 +1,5 @@
 import warnings
+from typing import Any, Dict
 
 import numpy as np
 
@@ -13,14 +14,14 @@ class Geodesic:
     """
 
     def __init__(
-        self, metric, init_vec, end_lambda, step_size=1e-3, return_cartesian=True
+        self, metric, state, end_lambda, step_size=1e-3, return_cartesian=True
     ):
         """
         Parameters
         ----------
         metric : ~einsteinpy.metric.*
             Metric, in which Geodesics are to be calculated
-        init_vec : ~numpy.ndarray
+        state : ~numpy.ndarray
             Length-8 Vector containing Initial 4-Position and 4-Velocity, \
             in that order
         end_lambda : float
@@ -35,7 +36,7 @@ class Geodesic:
 
         """
         self.metric = metric
-        self.init_vec = init_vec
+        self.state = state
 
         self._trajectory = self.calculate_trajectory(
             end_lambda=end_lambda,
@@ -45,12 +46,12 @@ class Geodesic:
 
     def __repr__(self):
         return f"Geodesic Object:\n\nMetric = ({self.metric}),\
-            \n\nInitial Vector = ({self.init_vec}),\
+            \n\nInitial State = ({self.state}),\
             \n\nTrajectory = ({self.trajectory})"
 
     def __str__(self):
         return f"Geodesic Object:\n\nMetric = ({self.metric}),\
-            \n\nInitial Vector = ({self.init_vec}),\
+            \n\nInitial State = ({self.state}),\
             \n\nTrajectory = ({self.trajectory})"
 
     @property
@@ -91,14 +92,16 @@ class Geodesic:
         ODE = RK45(
             fun=self.metric.f_vec,
             t0=0.0,
-            y0=self.init_vec,
+            y0=self.state,
             t_bound=end_lambda,
             **OdeMethodKwargs,
         )
 
+        g = self.metric
+
         vecs = list()
         lambdas = list()
-        _scr = self.metric.sch_rad * 1.001
+        _scr = g.sch_rad * 1.001
 
         while ODE.t < end_lambda:
             vecs.append(ODE.y)
@@ -113,21 +116,21 @@ class Geodesic:
 
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
-        if not return_cartesian:
-            return lambdas, vecs
+        if return_cartesian:
+            conv_coords: Dict[str, Any] = {
+                "S": SphericalConversion,
+                "BL": BoyerLindquistConversion,
+            }
+            cart_vecs = list()
+            for v in vecs:
+                vals = conv_coords[g.coords](
+                    v[0], v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian(M=g.M, a=g.a)
+                cart_vecs.append(np.hstack((vals[:4], v[4], vals[4:])))
 
-        conv_coords = {
-            "S": SphericalConversion,
-            "BL": BoyerLindquistConversion,
-        }
-        cart_vecs = list()
-        for v in vecs:
-            si_vals = conv_coords[self.metric.coords](
-                v[1], v[2], v[3], v[5], v[6], v[7]
-            ).convert_cartesian()
-            cart_vecs.append(np.hstack((v[0], si_vals[:3], v[4], si_vals[3:])))
+            return lambdas, np.array(cart_vecs)
 
-        return lambdas, np.array(cart_vecs)
+        return lambdas, vecs
 
     def calculate_trajectory_iterator(
         self, OdeMethodKwargs={"stepsize": 1e-3}, return_cartesian=True,
@@ -157,28 +160,31 @@ class Geodesic:
         ODE = RK45(
             fun=self.metric.f_vec,
             t0=0.0,
-            y0=self.init_vec,
+            y0=self.state,
             t_bound=1e300,
             **OdeMethodKwargs,
         )
 
-        _scr = self.metric.sch_rad * 1.001
+        g = self.metric
+
+        _scr = g.sch_rad * 1.001
 
         while True:
-            if not return_cartesian:
-                yield ODE.t, ODE.y
-
-            else:
-                conv_coords = {
+            if return_cartesian:
+                conv_coords: Dict[str, Any] = {
                     "S": SphericalConversion,
                     "BL": BoyerLindquistConversion,
                 }
-                v = ODE.y
-                si_vals = conv_coords[self.metric.coords](
-                    v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian()
 
-                yield ODE.t, np.hstack((v[0], si_vals[:3], v[4], si_vals[3:]))
+                v = ODE.y
+                vals = conv_coords[g.coords](
+                    v[0], v[1], v[2], v[3], v[5], v[6], v[7]
+                ).convert_cartesian(M=g.M, a=g.a)
+
+                yield ODE.t, np.hstack((vals[:4], v[4], vals[4:]))
+
+            else:
+                yield ODE.t, ODE.y
 
             ODE.step()
 

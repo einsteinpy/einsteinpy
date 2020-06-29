@@ -18,7 +18,6 @@ Data references can be found in :py:mod:`~einsteinpy.constant`
 import astropy.units as u
 
 from einsteinpy import constant
-from einsteinpy.coordinates import CartesianDifferential
 
 
 class Body:
@@ -33,7 +32,7 @@ class Body:
         mass=0 * u.kg,
         q=0 * u.C,
         R=0 * u.km,
-        state_vec=None,
+        differential=None,
         parent=None,
     ):
         """
@@ -47,33 +46,33 @@ class Body:
             Charge on the body
         R : ~astropy.units
             Radius of the body
-        state_vec : ~einsteinpy.coordinates, optional
-            Initial state of the body
-            Length-8 Vector, storing the initial 4-Position and 4-Velocity \
-            of the body
+        differential : ~einsteinpy.coordinates.differential.*, optional
+            Complete coordinates of the body
         parent : Body, optional
             The parent object of the body
             Useful in case of multibody systems
         """
-        if state_vec:
-            if state_vec.system == "Cartesian":
-                self.pos_vec = [state_vec.x, state_vec.y, state_vec.z]
-                self.vel_vec = [state_vec.v_x, state_vec.v_y, state_vec.v_z]
+        if differential:
+            if differential.system == "Cartesian":
+                self.pos_vec = [differential.x, differential.y, differential.z]
+                self.vel_vec = [differential.v_x, differential.v_y, differential.v_z]
             else:
-                self.pos_vec = [state_vec.r, state_vec.theta, state_vec.phi]
-                self.vel_vec = [state_vec.v_r, state_vec.v_t, state_vec.v_p]
+                self.pos_vec = [differential.r, differential.theta, differential.phi]
+                self.vel_vec = [differential.v_r, differential.v_th, differential.v_p]
         self.name = name
         self.mass = mass
         self.q = q
         self.R = R
-        self.state_vec = state_vec
+        self.coords = differential
         self.parent = parent
 
     def __str__(self):
-        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), Initial State: ({self.state_vec}), Parent Body: ({self.parent}) )"
+        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
+            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
 
     def __repr__(self):
-        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), Initial State: ({self.state_vec}), Parent Body: ({self.parent}) )"
+        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
+            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
 
 
 class _Sun(Body):

@@ -52,11 +52,11 @@ class Schwarzschild(BaseMetric):
         r_s = self.sch_rad
         g_cov = np.zeros(shape=(4, 4), dtype=float)
 
-        tmp, c2 = 1.0 - (r_s / r), _c ** 2
-        g_cov[0, 0] = tmp
-        g_cov[1, 1] = -1.0 / (tmp * c2)
-        g_cov[2, 2] = -1 * (r ** 2) / c2
-        g_cov[3, 3] = -1 * ((r * np.sin(th)) ** 2) / c2
+        tmp = 1.0 - (r_s / r)
+        g_cov[0, 0] = tmp * _c ** 2
+        g_cov[1, 1] = -1.0 / tmp
+        g_cov[2, 2] = -(r ** 2)
+        g_cov[3, 3] = -((r * np.sin(th)) ** 2)
 
         return g_cov
 

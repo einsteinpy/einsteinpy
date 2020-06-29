@@ -20,7 +20,6 @@ Jupyter notebooks
    /examples/Analyzing Earth using EinsteinPy!.ipynb
    /examples/Animations in EinsteinPy.ipynb
    /examples/Visualizing Event Horizon and Ergosphere (Singularities) of Kerr Metric or Black Hole.ipynb
-   /examples/Visualizing Frame Dragging in Kerr Spacetime using EinsteinPy!.ipynb
    /examples/Visualizing Precession in Schwarzschild Spacetime.ipynb
    
 .. toctree::

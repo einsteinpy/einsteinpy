@@ -8,4 +8,4 @@ systems and their position and velocity transformations.
     :maxdepth: 2
 
     core
-    velocity
+    differential

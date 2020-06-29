@@ -4,7 +4,7 @@ from .conversion import (
     SphericalConversion,
 )
 from .core import BoyerLindquist, Cartesian, Spherical
-from .velocity import (
+from .differential import (
     BoyerLindquistDifferential,
     CartesianDifferential,
     SphericalDifferential,

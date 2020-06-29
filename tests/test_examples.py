@@ -10,6 +10,6 @@ def test_perihelion_attr():
     """
     p = perihelion()
     assert isinstance(p, Geodesic)
-    assert p.init_vec.shape[0] == 8
+    assert p.state.shape[0] == 8
     assert p.trajectory.shape[1] == 8
     assert isinstance(p.metric, Schwarzschild)

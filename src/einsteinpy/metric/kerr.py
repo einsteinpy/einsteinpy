@@ -117,26 +117,21 @@ class Kerr(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
+        r_s, M, a = self.sch_rad, self.M, self.a
         alpha = super().alpha(M, a)
         sg, dl = super().sigma(r, th, M, a), super().delta(r, M, a)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
-        g_cov_bl[0, 0] = 1 - (r_s * r / sg)
-        g_cov_bl[1, 1] = (sg / dl) * (-1 / c2)
-        g_cov_bl[2, 2] = -1 * sg / c2
-        g_cov_bl[3, 3] = (
-            (-1 / c2)
-            * (
-                (r ** 2)
-                + (alpha ** 2)
-                + (r_s * r * (np.sin(th) ** 2) * ((alpha ** 2) / sg))
-            )
+        g_cov_bl[0, 0] = (1 - (r_s * r / sg)) * _c ** 2
+        g_cov_bl[1, 1] = -(sg / dl)
+        g_cov_bl[2, 2] = -sg
+        g_cov_bl[3, 3] = -(
+            ((r ** 2) + (alpha ** 2) + ((r_s * r * (alpha * np.sin(th)) ** 2) / sg))
             * (np.sin(th) ** 2)
         )
-        g_cov_bl[0, 3] = g_cov_bl[3, 0] = (
-            r_s * r * alpha * (np.sin(th) ** 2) / (sg * _c)
+        g_cov_bl[0, 3] = g_cov_bl[3, 0] = (_c * r_s * r * alpha * (np.sin(th) ** 2)) / (
+            sg
         )
 
         return g_cov_bl
