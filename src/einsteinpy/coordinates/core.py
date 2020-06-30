@@ -1,3 +1,4 @@
+import astropy.units as u
 import numpy as np
 
 from einsteinpy.coordinates.conversion import (
@@ -15,6 +16,7 @@ class Cartesian(CartesianConversion):
 
     """
 
+    @u.quantity_input(t=u.s, x=u.m, y=u.m, z=u.m)
     def __init__(self, t, x, y, z):
         """
         Constructor
@@ -35,7 +37,7 @@ class Cartesian(CartesianConversion):
         self.x = x
         self.y = y
         self.z = z
-        super().__init__(t, x, y, z)
+        super().__init__(t.value, x.value, y.value, z.value)
         self.system = "Cartesian"
         self._dimension = {
             "t": self.t,
@@ -82,7 +84,7 @@ class Cartesian(CartesianConversion):
             Array, containing Position 4-Vector in SI units
 
         """
-        x4 = four_position(self.t, self.x, self.y, self.z)
+        x4 = four_position(self.t.value, self.x.value, self.y.value, self.z.value)
 
         return x4
 
@@ -103,7 +105,7 @@ class Cartesian(CartesianConversion):
         """
         t, r, theta, phi = self.convert_spherical()
 
-        return Spherical(t, r, theta, phi)
+        return Spherical(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
 
     def to_bl(self, **kwargs):
         """
@@ -136,7 +138,7 @@ class Cartesian(CartesianConversion):
         M, a = kwargs["M"], kwargs["a"]
         t, r, theta, phi = self.convert_bl(M=M, a=a)
 
-        return BoyerLindquist(t, r, theta, phi)
+        return BoyerLindquist(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
 
 
 class Spherical(SphericalConversion):
@@ -146,6 +148,7 @@ class Spherical(SphericalConversion):
 
     """
 
+    @u.quantity_input(t=u.s, r=u.m, theta=u.rad, phi=u.rad)
     def __init__(self, t, r, theta, phi):
         """
         Constructor
@@ -166,7 +169,7 @@ class Spherical(SphericalConversion):
         self.r = r
         self.theta = theta
         self.phi = phi
-        super().__init__(t, r, theta, phi)
+        super().__init__(t.value, r.value, theta.value, phi.value)
         self.system = "Spherical"
         self._dimension = {
             "t": self.t,
@@ -213,7 +216,7 @@ class Spherical(SphericalConversion):
             Array, containing Position 4-Vector in SI units
 
         """
-        x4 = four_position(self.t, self.r, self.theta, self.phi)
+        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
 
         return x4
 
@@ -233,7 +236,8 @@ class Spherical(SphericalConversion):
 
         """
         t, x, y, z = self.convert_cartesian()
-        return Cartesian(t, x, y, z)
+
+        return Cartesian(t * u.s, x * u.m, y * u.m, z * u.m)
 
     def to_bl(self, **kwargs):
         """
@@ -266,7 +270,8 @@ class Spherical(SphericalConversion):
         """
         M, a = kwargs["M"], kwargs["a"]
         t, r, theta, phi = self.convert_bl(M=M, a=a)
-        return BoyerLindquist(t, r, theta, phi)
+
+        return BoyerLindquist(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
 
 
 class BoyerLindquist(BoyerLindquistConversion):
@@ -276,6 +281,7 @@ class BoyerLindquist(BoyerLindquistConversion):
 
     """
 
+    @u.quantity_input(t=u.s, r=u.m, theta=u.rad, phi=u.rad)
     def __init__(self, t, r, theta, phi):
         """
         Constructor
@@ -296,7 +302,7 @@ class BoyerLindquist(BoyerLindquistConversion):
         self.r = r
         self.theta = theta
         self.phi = phi
-        super().__init__(t, r, theta, phi)
+        super().__init__(t.value, r.value, theta.value, phi.value)
         self.system = "BoyerLindquist"
         self._dimension = {
             "t": self.t,
@@ -343,7 +349,7 @@ class BoyerLindquist(BoyerLindquistConversion):
             Array, containing Position 4-Vector in SI units
 
         """
-        x4 = four_position(self.t, self.r, self.theta, self.phi)
+        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
 
         return x4
 
@@ -377,7 +383,8 @@ class BoyerLindquist(BoyerLindquistConversion):
         """
         M, a = kwargs["M"], kwargs["a"]
         t, x, y, z = self.convert_cartesian(M=M, a=a)
-        return Cartesian(t, x, y, z)
+
+        return Cartesian(t * u.s, x * u.m, y * u.m, z * u.m)
 
     def to_spherical(self, **kwargs):
         """
@@ -410,4 +417,5 @@ class BoyerLindquist(BoyerLindquistConversion):
         """
         M, a = kwargs["M"], kwargs["a"]
         t, r, theta, phi = self.convert_spherical(M=M, a=a)
-        return Spherical(t, r, theta, phi)
+
+        return Spherical(t * u.s, r * u.m, theta * u.rad, phi * u.rad)

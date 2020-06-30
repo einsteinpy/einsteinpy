@@ -24,13 +24,13 @@ def test_str_repr():
     """
     M = 1e25
     sph = SphericalDifferential(
-        t=0.0,
-        r=306.0,
-        theta=np.pi / 2,
-        phi=-np.pi / 2,
-        v_r=0.0,
-        v_th=0.01,
-        v_p=10.0,
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
     )
     ms = Schwarzschild(M=M)
     state = sph.state(metric=ms, time_like=True)
@@ -46,13 +46,13 @@ def test_str_repr():
 @pytest.fixture()
 def dummy_data():
     sph = SphericalDifferential(
-        t=0.0,
-        r=130.0,
-        theta=np.pi / 2,
-        phi=-np.pi / 8,
-        v_r=0.0,
-        v_th=0.0,
-        v_p=1900.0,
+        t=0.0 * u.s,
+        r=130.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 8 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=1900.0 * u.rad / u.s,
     )
     metric = Schwarzschild(M=6e24)
 
@@ -81,13 +81,13 @@ def test_Geodesics_has_trajectory(dummy_data):
     [
         (
             SphericalDifferential(
-                t=0.0,
-                r=306.0,
-                theta=np.pi / 2,
-                phi=np.pi / 2,
-                v_r=0.0,
-                v_th=0.0,
-                v_p=951.0,
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.0 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
             ),
             4e24,
             0.002,
@@ -95,13 +95,13 @@ def test_Geodesics_has_trajectory(dummy_data):
         ),
         (
             SphericalDifferential(
-                t=0.0,
-                r=1e3,
-                theta=0.15,
-                phi=np.pi / 2,
-                v_r=0.1 * _c,
-                v_th=0.5e-5,
-                v_p=0.5e-4 * _c,
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=0.5e-5 * u.rad / u.s,
+                v_p=0.5e-4 * _c * u.rad / u.s,
             ),
             5.972e24,
             0.0001,
@@ -109,13 +109,13 @@ def test_Geodesics_has_trajectory(dummy_data):
         ),
         (
             SphericalDifferential(
-                t=0.0,
-                r=50e3,
-                theta=np.pi / 2,
-                phi=np.pi / 2,
-                v_r=0.1 * _c,
-                v_th=2e-7 * _c,
-                v_p=1e-5,
+                t=0.0 * u.s,
+                r=50e3 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=2e-7 * _c * u.rad / u.s,
+                v_p=1e-5 * u.rad / u.s,
             ),
             5.972e24,
             0.001,
@@ -160,13 +160,13 @@ def test_calculate_trajectory2_schwarzschild():
     angular_vel = (speed_at_perihelion / distance_at_perihelion)
 
     sph = SphericalDifferential(
-        t=0.0,
-        r=distance_at_perihelion,
-        theta=np.pi / 2,
-        phi=0.0,
-        v_r=0.0,
-        v_th=0.0,
-        v_p=angular_vel,
+        t=0.0 * u.s,
+        r=distance_at_perihelion * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=0.0 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=angular_vel * u.rad / u.s,
     )
     metric = Schwarzschild(M=1.989e30)
 
@@ -199,13 +199,13 @@ def test_calculate_trajectory3_schwarzschild():
     speed_at_perihelion = 29290
 
     x_sph = CartesianDifferential(
-        t=0.0,
-        x=distance_at_perihelion / np.sqrt(2),
-        y=distance_at_perihelion / np.sqrt(2),
-        z=0.,
-        v_x=-speed_at_perihelion / np.sqrt(2),
-        v_y=speed_at_perihelion / np.sqrt(2),
-        v_z=0.
+        t=0.0 * u.s,
+        x=distance_at_perihelion / np.sqrt(2) * u.m,
+        y=distance_at_perihelion / np.sqrt(2) * u.m,
+        z=0. * u.m,
+        v_x=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_y=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_z=0 * u.m / u.s
     ).spherical_differential()
 
     metric = Schwarzschild(M=1.989e30)
@@ -240,13 +240,13 @@ def test_calculate_trajectory3_schwarzschild():
     [
         (
             SphericalDifferential(
-                t=0.0,
-                r=306.0,
-                theta=np.pi / 2,
-                phi=np.pi / 2,
-                v_r=0.0,
-                v_th=0.1,
-                v_p=951.0,
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.1 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
             ),
             4e24,
             0.0002,
@@ -256,13 +256,13 @@ def test_calculate_trajectory3_schwarzschild():
         ),
         (
             SphericalDifferential(
-                t=0.0,
-                r=1e3,
-                theta=0.15,
-                phi=np.pi / 2,
-                v_r=_c,
-                v_th=1e-4 * _c,
-                v_p=951.0,
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=_c * u.m / u.s,
+                v_th=1e-4 * _c * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
             ),
             5.972e24,
             0.0002,
@@ -302,13 +302,13 @@ def test_calculate_trajectory_iterator_schwarzschild(
 def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
     M = 1e25
     sph = SphericalDifferential(
-        t=0.0,
-        r=306.0,
-        theta=np.pi / 2,
-        phi=-np.pi / 2,
-        v_r=0.0,
-        v_th=0.01,
-        v_p=10.0,
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
     )
     ms = Schwarzschild(M=M)
     state = sph.state(metric=ms, time_like=True)
@@ -340,13 +340,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
     [
         (
             BoyerLindquistDifferential(
-                t=0.0,
-                r=306.0,
-                theta=np.pi / 2.05,
-                phi=np.pi / 2,
-                v_r=0.0,
-                v_th=0.0,
-                v_p=951.0
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2.05 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.0 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
             ),
             4e24,
             2e-3,
@@ -355,13 +355,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0,
-                r=1e3,
-                theta=0.15,
-                phi=np.pi / 2,
-                v_r=0.1 * _c,
-                v_th=0.5e-5 * _c,
-                v_p=0.5e-4 * _c
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=0.5e-5 * _c * u.rad / u.s,
+                v_p=0.5e-4 * _c * u.rad / u.s,
             ),
             5.972e24,
             2e-3,
@@ -370,13 +370,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0,
-                r=50e3,
-                theta=np.pi / 2,
-                phi=np.pi / 2,
-                v_r=0.1 * _c,
-                v_th=2e-7 * _c,
-                v_p=1e-5
+                t=0.0 * u.s,
+                r=50e3 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=2e-7 * _c * u.rad / u.s,
+                v_p=1e-5 * u.rad / u.s,
             ),
             5.972e24,
             0.,
@@ -471,13 +471,13 @@ def test_calculate_trajectory3_kerr():
     [
         (
             BoyerLindquistDifferential(
-                t=0.0,
-                r=306.0,
-                theta=np.pi / 2,
-                phi=np.pi / 2,
-                v_r=0.0,
-                v_th=0.1,
-                v_p=951.0
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.1 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
             ),
             4e24,
             2e-3,
@@ -488,13 +488,13 @@ def test_calculate_trajectory3_kerr():
         ),
         (
             BoyerLindquistDifferential(
-                t=0.0,
-                r=1e3,
-                theta=0.15,
-                phi=np.pi / 2,
-                v_r=0.2 * _c,
-                v_th=0.5e-5 * _c,
-                v_p=1e-4 * _c
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.2 * _c * u.m / u.s,
+                v_th=0.5e-5 * _c * u.rad / u.s,
+                v_p=1e-4 * _c * u.rad / u.s,
             ),
             5.972e24,
             0.,
@@ -538,13 +538,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
     a = 0.
 
     bl = BoyerLindquistDifferential(
-        t=0.0,
-        r=306.0,
-        theta=np.pi / 2,
-        phi=np.pi / 2,
-        v_r=0.0,
-        v_th=0.01,
-        v_p=10.0
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
     )
 
     mk = Kerr(coords="BL", M=M, a=a)
@@ -586,13 +586,13 @@ def test_calculate_trajectory0_kerrnewman():
     speed_at_perihelion = 29290
 
     x_bl = CartesianDifferential(
-        t=0.0,
-        x=distance_at_perihelion / np.sqrt(2),
-        y=distance_at_perihelion / np.sqrt(2),
-        z=0.0,
-        v_x=-speed_at_perihelion / np.sqrt(2),
-        v_y=speed_at_perihelion / np.sqrt(2),
-        v_z=0.0
+        t=0.0 * u.s,
+        x=distance_at_perihelion / np.sqrt(2) * u.m,
+        y=distance_at_perihelion / np.sqrt(2) * u.m,
+        z=0.0 * u.m,
+        v_x=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_y=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_z=0.0 * u.m / u.s
     ).bl_differential(M=M, a=a)
 
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
@@ -635,13 +635,13 @@ def test_calculate_trajectory1_kerrnewman():
     step_size = 0.5
 
     bl = BoyerLindquistDifferential(
-        t=0.0,
-        r=r,
-        theta=np.pi / 2,
-        phi=0.0,
-        v_r=0.0,
-        v_th=0.0,
-        v_p=0.0
+        t=0.0 * u.s,
+        r=r * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=0.0 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=0.0 * u.rad / u.s,
     )
 
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
@@ -676,13 +676,13 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     M = 0.5 * 5.972e24
 
     bl = BoyerLindquistDifferential(
-        t=0.0,
-        r=1e6,
-        theta=0.6 * np.pi,
-        phi=np.pi / 8,
-        v_r=1e4,
-        v_th=-0.01,
-        v_p=0.0
+        t=0.0 * u.s,
+        r=1e6 * u.m,
+        theta=0.6 * np.pi * u.rad,
+        phi=np.pi / 8 * u.rad,
+        v_r=1e4 * u.m / u.s,
+        v_th=-0.01 * u.rad / u.s,
+        v_p=0.0 * u.rad / u.s,
     )
 
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
@@ -716,13 +716,13 @@ def test_compare_calculate_trajectory_iterator_cartesian_kerrnewman(test_input):
     M = 2e24
 
     x_bl = CartesianDifferential(
-        t=0.0,
-        x=1e6,
-        y=1e6,
-        z=20.5,
-        v_x=1e4,
-        v_y=1e4,
-        v_z=-30.0
+        t=0.0 * u.s,
+        x=1e6 * u.m,
+        y=1e6 * u.m,
+        z=20.5 * u.m,
+        v_x=1e4 * u.m / u.s,
+        v_y=1e4 * u.m / u.s,
+        v_z=-30.0 * u.m / u.s
     ).bl_differential(M=M, a=a)
 
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
@@ -760,13 +760,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
     q = 0.
 
     bl = BoyerLindquistDifferential(
-        t=0.0,
-        r=306.0,
-        theta=np.pi / 2,
-        phi=np.pi / 2,
-        v_r=0.0,
-        v_th=-0.01,
-        v_p=10.0
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=-0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
     )
 
     mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)

@@ -67,10 +67,22 @@ def test_initial_states():
     R = 6731 * u.km
     mass = 5.97219e24 * u.kg
     differential1 = CartesianDifferential(
-        0., 0., 0., 0., 0., 0., 0.
+        0. * u.s,
+        0. * u.m,
+        0. * u.m,
+        0. * u.m,
+        0. * u.m / u.s,
+        0. * u.m / u.s,
+        0. * u.m / u.s
     )
     differential2 = SphericalDifferential(
-        0., 0., 0., 0., 0., 0., 0.
+        0. * u.s,
+        0. * u.m,
+        0. * u.rad,
+        0. * u.rad,
+        0. * u.m / u.s,
+        0. * u.rad / u.s,
+        0. * u.rad / u.s
     )
     a = Body(name=name, mass=mass, R=R, differential=differential1, parent=parent)
     b = Body(name=name, mass=mass, R=R, differential=differential2, parent=parent)

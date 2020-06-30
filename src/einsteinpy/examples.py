@@ -1,3 +1,4 @@
+import astropy.units as u
 import numpy as np
 
 from einsteinpy.coordinates import SphericalDifferential
@@ -23,13 +24,13 @@ def perihelion():
     # Defining the initial coordinates of the test particle
     # in SI
     sph = SphericalDifferential(
-        t=10000.0,
-        r=130.0,
-        theta=np.pi / 2,
-        phi=-np.pi / 8,
-        v_r=0.0,
-        v_th=0.0,
-        v_p=1900.0,
+        t=10000.0 * u.s,
+        r=130.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 8 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=1900.0 * u.rad / u.s,
     )
 
     # Schwarzschild Metric Object

@@ -1,3 +1,4 @@
+import astropy.units as u
 import numpy as np
 
 from einsteinpy.coordinates.conversion import (
@@ -15,25 +16,28 @@ class CartesianDifferential(CartesianConversion):
 
     """
 
+    @u.quantity_input(
+        t=u.s, x=u.m, y=u.m, z=u.m, v_x=u.m / u.s, v_y=u.m / u.s, v_z=u.m / u.s
+    )
     def __init__(self, t, x, y, z, v_x, v_y, v_z):
         """
         Constructor
 
         Parameters
         ----------
-        t : float
+        t : ~astropy.units.quantity.Quantity
             Time
-        x : float
+        x : ~astropy.units.quantity.Quantity
             x-Component of 3-Position
-        y : float
+        y : ~astropy.units.quantity.Quantity
             y-Component of 3-Position
-        z : float
+        z : ~astropy.units.quantity.Quantity
             z-Component of 3-Position
-        v_x : float, optional
+        v_x : ~astropy.units.quantity.Quantity, optional
             x-Component of 3-Velocity
-        v_y : float, optional
+        v_y : ~astropy.units.quantity.Quantity, optional
             y-Component of 3-Velocity
-        v_z : float, optional
+        v_z : ~astropy.units.quantity.Quantity, optional
             z-Component of 3-Velocity
 
         """
@@ -44,7 +48,7 @@ class CartesianDifferential(CartesianConversion):
         self.v_x = v_x
         self.v_y = v_y
         self.v_z = v_z
-        super().__init__(t, x, y, z, v_x, v_y, v_z)
+        super().__init__(t, x.value, y.value, z.value, v_x.value, v_y.value, v_z.value)
         self.system = "Cartesian"
 
     def __str__(self):
@@ -76,9 +80,11 @@ class CartesianDifferential(CartesianConversion):
             Array, containing Velocity 4-Vector in SI units
 
         """
-        x4 = four_position(self.t, self.x, self.y, self.z)
+        x4 = four_position(self.t.value, self.x.value, self.y.value, self.z.value)
         g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(g_cov_mat, self.v_x, self.v_y, self.v_z, time_like)
+        v4 = four_velocity(
+            g_cov_mat, self.v_x.value, self.v_y.value, self.v_z.value, time_like
+        )
 
         return v4
 
@@ -103,9 +109,11 @@ class CartesianDifferential(CartesianConversion):
             Length-8 Array
 
         """
-        x4 = four_position(self.t, self.x, self.y, self.z)
+        x4 = four_position(self.t.value, self.x.value, self.y.value, self.z.value)
         g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(g_cov_mat, self.v_x, self.v_y, self.v_z, time_like)
+        v4 = four_velocity(
+            g_cov_mat, self.v_x.value, self.v_y.value, self.v_z.value, time_like
+        )
 
         state = np.hstack((x4, v4))
 
@@ -127,7 +135,15 @@ class CartesianDifferential(CartesianConversion):
 
         """
         t, r, theta, phi, v_r, v_th, v_p = self.convert_spherical()
-        return SphericalDifferential(t, r, theta, phi, v_r, v_th, v_p)
+        return SphericalDifferential(
+            t * u.s,
+            r * u.m,
+            theta * u.rad,
+            phi * u.rad,
+            v_r * u.m / u.s,
+            v_th * u.rad / u.s,
+            v_p * u.rad / u.s,
+        )
 
     def bl_differential(self, **kwargs):
         """
@@ -156,7 +172,15 @@ class CartesianDifferential(CartesianConversion):
         """
         M, a = kwargs["M"], kwargs["a"]
         t, r, theta, phi, v_r, v_th, v_p = self.convert_bl(M=M, a=a)
-        return BoyerLindquistDifferential(t, r, theta, phi, v_r, v_th, v_p)
+        return BoyerLindquistDifferential(
+            t * u.s,
+            r * u.m,
+            theta * u.rad,
+            phi * u.rad,
+            v_r * u.m / u.s,
+            v_th * u.rad / u.s,
+            v_p * u.rad / u.s,
+        )
 
 
 class SphericalDifferential(SphericalConversion):
@@ -166,6 +190,15 @@ class SphericalDifferential(SphericalConversion):
 
     """
 
+    @u.quantity_input(
+        t=u.s,
+        r=u.m,
+        theta=u.rad,
+        phi=u.rad,
+        v_r=u.m / u.s,
+        v_th=u.rad / u.s,
+        v_p=u.rad / u.s,
+    )
     def __init__(self, t, r, theta, phi, v_r, v_th, v_p):
         """
         Constructor
@@ -196,7 +229,7 @@ class SphericalDifferential(SphericalConversion):
         self.v_th = v_th
         self.v_p = v_p
         super().__init__(
-            t, r, theta, phi, v_r, v_th, v_p,
+            t.value, r.value, theta.value, phi.value, v_r.value, v_th.value, v_p.value
         )
         self.system = "Spherical"
 
@@ -229,9 +262,12 @@ class SphericalDifferential(SphericalConversion):
             Array, containing Velocity 4-Vector in SI units
 
         """
-        x4 = four_position(self.t, self.r, self.theta, self.phi)
+        print(self.t, self.r, self.theta, self.phi)
+        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
         g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(g_cov_mat, self.v_r, self.v_th, self.v_p, time_like)
+        v4 = four_velocity(
+            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
+        )
 
         return v4
 
@@ -256,9 +292,12 @@ class SphericalDifferential(SphericalConversion):
             Length-8 Array
 
         """
-        x4 = four_position(self.t, self.r, self.theta, self.phi)
+        print(self.t, self.r, self.theta, self.phi)
+        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
         g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(g_cov_mat, self.v_r, self.v_th, self.v_p, time_like)
+        v4 = four_velocity(
+            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
+        )
 
         state = np.hstack((x4, v4))
 
@@ -280,7 +319,15 @@ class SphericalDifferential(SphericalConversion):
 
         """
         t, x, y, z, v_x, v_y, v_z = self.convert_cartesian()
-        return CartesianDifferential(t, x, y, z, v_x, v_y, v_z)
+        return CartesianDifferential(
+            t * u.s,
+            x * u.m,
+            y * u.m,
+            z * u.m,
+            v_x * u.m / u.s,
+            v_y * u.m / u.s,
+            v_z * u.m / u.s,
+        )
 
     def bl_differential(self, **kwargs):
         """
@@ -309,7 +356,15 @@ class SphericalDifferential(SphericalConversion):
         """
         M, a = kwargs["M"], kwargs["a"]
         t, r, theta, phi, v_r, v_th, v_p = self.convert_bl(M=M, a=a)
-        return BoyerLindquistDifferential(t, r, theta, phi, v_r, v_th, v_p)
+        return BoyerLindquistDifferential(
+            t * u.s,
+            r * u.m,
+            theta * u.rad,
+            phi * u.rad,
+            v_r * u.m / u.s,
+            v_th * u.rad / u.s,
+            v_p * u.rad / u.s,
+        )
 
 
 class BoyerLindquistDifferential(BoyerLindquistConversion):
@@ -319,6 +374,15 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
 
     """
 
+    @u.quantity_input(
+        t=u.s,
+        r=u.m,
+        theta=u.rad,
+        phi=u.rad,
+        v_r=u.m / u.s,
+        v_th=u.rad / u.s,
+        v_p=u.rad / u.s,
+    )
     def __init__(self, t, r, theta, phi, v_r, v_th, v_p):
         """
         Constructor.
@@ -348,7 +412,9 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         self.v_r = v_r
         self.v_th = v_th
         self.v_p = v_p
-        super().__init__(t, r, theta, phi, v_r, v_th, v_p)
+        super().__init__(
+            t.value, r.value, theta.value, phi.value, v_r.value, v_th.value, v_p.value
+        )
         self.system = "BoyerLindquist"
 
     def __str__(self):
@@ -380,9 +446,11 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
             Array, containing Velocity 4-Vector in SI units
 
         """
-        x4 = four_position(self.t, self.r, self.theta, self.phi)
+        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
         g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(g_cov_mat, self.v_r, self.v_th, self.v_p, time_like)
+        v4 = four_velocity(
+            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
+        )
 
         return v4
 
@@ -407,9 +475,11 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
             Length-8 Array
 
         """
-        x4 = four_position(self.t, self.r, self.theta, self.phi)
+        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
         g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(g_cov_mat, self.v_r, self.v_th, self.v_p, time_like)
+        v4 = four_velocity(
+            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
+        )
 
         state = np.hstack((x4, v4))
 
@@ -442,7 +512,15 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         """
         M, a = kwargs["M"], kwargs["a"]
         t, x, y, z, v_x, v_y, v_z = self.convert_cartesian(M=M, a=a)
-        return CartesianDifferential(t, x, y, z, v_x, v_y, v_z)
+        return CartesianDifferential(
+            t * u.s,
+            x * u.m,
+            y * u.m,
+            z * u.m,
+            v_x * u.m / u.s,
+            v_y * u.m / u.s,
+            v_z * u.m / u.s,
+        )
 
     def spherical_differential(self, **kwargs):
         """
@@ -471,4 +549,12 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         """
         M, a = kwargs["M"], kwargs["a"]
         t, r, theta, phi, v_r, v_th, v_p = self.convert_spherical(M=M, a=a)
-        return SphericalDifferential(t, r, theta, phi, v_r, v_th, v_p)
+        return SphericalDifferential(
+            t * u.s,
+            r * u.m,
+            theta * u.rad,
+            phi * u.rad,
+            v_r * u.m / u.s,
+            v_th * u.rad / u.s,
+            v_p * u.rad / u.s,
+        )

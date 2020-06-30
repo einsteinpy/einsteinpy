@@ -2,6 +2,7 @@ import sys
 from io import StringIO
 from unittest import mock
 
+import astropy.units as u
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
@@ -14,17 +15,32 @@ _c = constant.c.value
 
 @pytest.fixture()
 def cartesian():
-    return Cartesian(0.0, 2e4, 311e3, 210e3)
+    return Cartesian(
+        0.0 * u.s,
+        2e4 * u.m,
+        311e3 * u.m,
+        210e3 * u.m
+    )
 
 
 @pytest.fixture()
 def spherical():
-    return Spherical(0.0, 375793.82645275, 0.9778376650369, 1.5065760775947)
+    return Spherical(
+        0.0 * u.s,
+        375793.82645275 * u.m,
+        0.9778376650369 * u.rad,
+        1.5065760775947 * u.rad
+    )
 
 
 @pytest.fixture()
 def boyerlindquist():
-    return BoyerLindquist(0.0, 375793.82645275, 0.9778376650369, 1.5065760775947)
+    return BoyerLindquist(
+        0.0 * u.s,
+        375793.82645275 * u.m,
+        0.9778376650369 * u.rad,
+        1.5065760775947 * u.rad
+    )
 
 
 def test_CartesianToSpherical(cartesian, spherical):
@@ -80,10 +96,26 @@ def test_BoyerLindquistToSpherical(boyerlindquist, spherical):
 @pytest.mark.parametrize(
     "cart, M, a",
     [
-        (Cartesian(1e0, 10, 10, 0), 1e24, 0.7),
-        (Cartesian(1e1, -732.0e2, 456e2, -90e2), 3e10, 0.9),
-        (Cartesian(1e2, -0.732e2, -1.456e2, 90), 55e20, 0.3),
-        (Cartesian(1e3, 2, -1, 0), 7e10, 0),
+        (
+            Cartesian(1e0 * u.s, 10 * u.m, 10 * u.m, 0 * u.m),
+            1e24,
+            0.7
+        ),
+        (
+            Cartesian(1e1 * u.s, -732.0e2 * u.m, 456e2 * u.m, -90e2 * u.m),
+            3e10,
+            0.9
+        ),
+        (
+            Cartesian(1e2 * u.s, -0.732e2 * u.m, -1.456e2 * u.m, 90 * u.m),
+            55e20,
+            0.3
+        ),
+        (
+            Cartesian(1e3 * u.s, 2 * u.m, -1 * u.m, 0 * u.m),
+            7e10,
+            0
+        ),
     ],
 )
 def test_cycle_CartesianBL(cart, M, a):
@@ -96,12 +128,12 @@ def test_cycle_CartesianBL(cart, M, a):
     "bl, M, a",
     [
         (
-            BoyerLindquist(1e2, 3, 2 * np.pi / 3, 3.0543261909900767),
+            BoyerLindquist(1e2 * u.s, 3 * u.m, 2 * np.pi / 3 * u.rad, 3.0543261909900767 * u.rad),
             1e24,
             0.3
         ),
         (
-            BoyerLindquist(1e3, 100, 1e-3, 0),
+            BoyerLindquist(1e3 * u.s, 100 * u.m, 1e-3 * u.rad, 0 * u.rad),
             4e20,
             0.9
         )

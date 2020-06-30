@@ -2,6 +2,7 @@ import sys
 from io import StringIO
 from unittest import mock
 
+import astropy.units as u
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
@@ -13,52 +14,52 @@ from einsteinpy.metric import Schwarzschild, Kerr
 @pytest.fixture()
 def cartesian_differential():
     return coordinates.CartesianDifferential(
-        1e3,
-        10e3 / np.sqrt(2),
-        10e3 / np.sqrt(2),
-        0,
-        -190e3 / np.sqrt(2),
-        210e3 / np.sqrt(2),
-        200.0e3
+        1e3 * u.s,
+        10e3 / np.sqrt(2) * u.m,
+        10e3 / np.sqrt(2) * u.m,
+        0 * u.m,
+        -190e3 / np.sqrt(2) * u.m / u.s,
+        210e3 / np.sqrt(2) * u.m / u.s,
+        200.0e3 * u.m / u.s
     )
 
 
 @pytest.fixture()
 def spherical_differential():
     return coordinates.SphericalDifferential(
-        1e3,
-        10e3,
-        1.5707963267948966,
-        0.7853981633974483,
-        10e3,
-        -20.0,
-        20.0
+        1e3 * u.s,
+        10e3 * u.m,
+        1.5707963267948966 * u.rad,
+        0.7853981633974483 * u.rad,
+        10e3 * u.m / u.s,
+        -20.0 * u.rad / u.s,
+        20.0 * u.rad / u.s
     )
 
 
 @pytest.fixture()
 def bl_differential():
     return coordinates.BoyerLindquistDifferential(
-        1e3,
-        10e3,
-        1.5707963267948966,
-        0.7853981633974483,
-        10e3,
-        -20.0,
-        20.0
+        1e3 * u.s,
+        10e3 * u.m,
+        1.5707963267948966 * u.rad,
+        0.7853981633974483 * u.rad,
+        10e3 * u.m / u.s,
+        -20.0 * u.rad / u.s,
+        20.0 * u.rad / u.s
     )
 
 
 @pytest.fixture()
 def bl_differential2():
     return coordinates.BoyerLindquistDifferential(
-        1e3,
-        4e3,
-        2,
-        1,
-        -100,
-        -1,
-        0.17453292519943295
+        1e3 * u.s,
+        4e3 * u.m,
+        2 * u.rad,
+        1 * u.rad,
+        -100 * u.m / u.s,
+        -1 * u.rad / u.s,
+        0.17453292519943295 * u.rad / u.s
     )
 
 
