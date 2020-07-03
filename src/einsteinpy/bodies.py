@@ -15,7 +15,7 @@ and a way to define new bodies (:py:class:`~Body` class).
 Data references can be found in :py:mod:`~einsteinpy.constant`
 """
 
-import astropy.units as u
+from astropy import units as u
 
 from einsteinpy import constant
 

@@ -1,9 +1,11 @@
+import astropy.units as u
 import numpy as np
 import pytest
 
 from numpy.testing import assert_allclose
 
 from einsteinpy import constant
+from einsteinpy.coordinates import BoyerLindquistDifferential
 from einsteinpy.metric import BaseMetric, Kerr, KerrNewman
 
 _c = constant.c.value
@@ -16,12 +18,20 @@ def test_input():
     """
     Test input for some functions below
     """
-    r = 0.1
-    theta = 4 * np.pi / 5
-    M = 1e23
-    a = 0.99
+    bl = BoyerLindquistDifferential(
+        t=0. * u.s,
+        r=0.1 * u.m,
+        theta=4 * np.pi / 5 * u.rad,
+        phi=0. * u.rad,
+        v_r=0. * u.m / u.s,
+        v_th=0. * u.rad / u.s,
+        v_p=0. * u.rad / u.s
+    )
 
-    return r, theta, M, a
+    M = 1e23 * u.kg
+    a = 0.99 * u.one
+
+    return bl, M, a
 
 
 def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
@@ -29,28 +39,28 @@ def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
     Tests, if the metric derivatives for Kerr & Kerr-Newman metrics match, when Q -> 0
 
     """
-    r, theta, M, a = test_input
-    x_vec = np.array([0., r, theta, 0.])
+    bl, M, a = test_input
+    x_vec = bl.position()
 
-    mk = Kerr(coords="BL", M=M, a=a)
-    mkn = KerrNewman(coords="BL", M=M, a=a, Q=0.)
+    mk = Kerr(coords=bl, M=M, a=a)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=0. * u.C)
     mkdx = mk._dg_dx_bl(x_vec)
     mkndx = mkn._dg_dx_bl(x_vec)
 
     assert_allclose(mkdx, mkndx, rtol=1e-10)
 
 
-def test_christoffels_kerr_newman(test_input):
+def test_christoffels_kerrnewman(test_input):
     """
     Compares output produced by optimized function, with that, produced via general method (formula)
 
     """
-    r, theta, M, a = test_input
-    Q = 1.0
-    x_vec = np.array([0., r, theta, 0.])
+    bl, M, a = test_input
+    Q = 1.0 * u.C
+    x_vec = bl.position()
 
     # Output produced by the optimized function
-    mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q)
     chl1 = mkn.christoffels(x_vec)
 
     # Calculated using formula
@@ -76,11 +86,11 @@ def test_compare_kerr_kerrnewman_christoffels(test_input):
     Compares KerrNewman Christoffel Symbols, with that of Kerr metric, when Q -> 0
 
     """
-    r, theta, M, a = test_input
-    x_vec = np.array([0., r, theta, 0.])
+    bl, M, a = test_input
+    x_vec = bl.position()
 
-    mk = Kerr(coords="BL", M=M, a=a)
-    mkn = KerrNewman(coords="BL", M=M, a=a, Q=0.)
+    mk = Kerr(coords=bl, M=M, a=a)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=0. * u.C)
     mk_chl = mk.christoffels(x_vec)
     mkn_chl = mkn.christoffels(x_vec)
 
@@ -92,16 +102,19 @@ def test_electromagnetic_potential_from_em_potential_vector(test_input):
     Tests, if the calculated EM 4-Potential is the same as that from the formula
 
     """
-    r, theta, M, a = test_input
-    Q = 15.5
+    bl, M, a = test_input
+    Q = 15.5 * u.C
 
-    # Using function from module
-    mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
-    mkn_pot = mkn.em_potential_covariant(r, theta, M=M, a=0., Q=Q)
+    x_vec = bl.position()
+    r = x_vec[1]
 
-    # Calculated using formula
+    # Using function from module (for a = 0)
+    mkn = KerrNewman(coords=bl, M=M, a=0. * u.one, Q=Q)
+    mkn_pot = mkn.em_potential_covariant(x_vec)
+
+    # Calculated using formula (for a = 0)
     calc_pot = np.zeros((4,), dtype=float)
-    calc_pot[0] = (Q / ((_c ** 2) * r)) * np.sqrt(_G * _Cc)
+    calc_pot[0] = (Q.value / ((_c ** 2) * r)) * np.sqrt(_G * _Cc)
 
     assert_allclose(mkn_pot, calc_pot, rtol=1e-8)
 
@@ -112,19 +125,21 @@ def test_electromagnetic_potential_contravariant(test_input):
     calculated manually
 
     """
-    r, theta, M, a = test_input
-    Q = 15.5
-    x_vec = np.array([0., r, theta, 0.], dtype=float)
-    mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
+    bl, M, a = test_input
+    Q = 15.5 * u.C
+    x_vec = bl.position()
+    r, theta = x_vec[1], x_vec[2]
+
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q)
     mkn_contra_mat = mkn.metric_contravariant(x_vec)
 
     # Using function from module
-    mkn_pot_contra = mkn.em_potential_contravariant(r, theta, M=M, a=a, Q=Q)
+    mkn_pot_contra = mkn.em_potential_contravariant(x_vec)
 
     # Calculated using formula
     alpha = mkn.alpha(M, a)
     rho2 = mkn.rho(r, theta, M, a) ** 2
-    r_Q = np.sqrt((Q ** 2 * _G * _Cc) / _c ** 4)
+    r_Q = np.sqrt((Q.value ** 2 * _G * _Cc) / _c ** 4)
     fac = r * r_Q / rho2
     calc_pot_cov = np.array([fac, 0., 0., -alpha * np.sin(theta)**2 * fac], dtype=float)
 
@@ -139,13 +154,26 @@ def test_em_tensor_covariant():
     Formula for testing from https://arxiv.org/abs/gr-qc/0409025
 
     """
-    r, theta = 1.5, 3 * np.pi / 5
-    M, a, Q = 2e22, 0.5, 10.0
+    M, a, Q = 2e22 * u.kg, 0.5 * u.one, 10.0 * u.C
+
+    bl = BoyerLindquistDifferential(
+        t=0. * u.s,
+        r=1.5 * u.m,
+        theta=3 * np.pi / 5 * u.rad,
+        phi=0. * u.rad,
+        v_r=0. * u.m / u.s,
+        v_th=0. * u.rad / u.s,
+        v_p=0. * u.rad / u.s
+    )
+
+    x_vec = bl.position()
+    r, theta = x_vec[1], x_vec[2]
+
     alpha = BaseMetric.alpha(M, a)
 
     # Using function from module
-    mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
-    mkn_em_cov = mkn.em_tensor_covariant(r, theta, M, a, Q)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q)
+    mkn_em_cov = mkn.em_tensor_covariant(x_vec)
 
     # Checking Skew-Symmetry of Covariant Maxwell Tensor
     assert_allclose(0., mkn_em_cov + np.transpose(mkn_em_cov), atol=1e-8)
@@ -156,11 +184,11 @@ def test_em_tensor_covariant():
     scale_Q = np.sqrt(_G * _Cc) / _c ** 2
 
     # Electric and Magnetic Fields
-    D_r = (scale_Q * Q * (r2 - (alpha * np.cos(th)) ** 2)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
-    D_th = ((alpha2) * (-(scale_Q * Q)) * np.sin(2 * th)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
-    H_r = (2 * alpha * (scale_Q * Q) * (r2 + alpha2) * np.cos(th)) / (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+    D_r = (scale_Q * Q.value * (r2 - (alpha * np.cos(th)) ** 2)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
+    D_th = ((alpha2) * (-(scale_Q * Q.value)) * np.sin(2 * th)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
+    H_r = (2 * alpha * (scale_Q * Q.value) * (r2 + alpha2) * np.cos(th)) / (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
     H_th = (
-        (alpha * (scale_Q * Q) * np.sin(th) * (r2 - (alpha * np.cos(th)) ** 2)) /
+        (alpha * (scale_Q * Q.value) * np.sin(th) * (r2 - (alpha * np.cos(th)) ** 2)) /
         (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
     )
 
@@ -178,74 +206,22 @@ def test_em_tensor_contravariant():
     Right now only skew-symmetric property is being checked.
 
     """
-    r, theta = 5.5, 2 * np.pi / 5
-    M, a, Q = 1e22, 0.7, 45.0
+    M, a, Q = 1e22 * u.kg, 0.7 * u.one, 45.0 * u.C
+
+    bl = BoyerLindquistDifferential(
+        t=0. * u.s,
+        r=5.5 * u.m,
+        theta=2 * np.pi / 5 * u.rad,
+        phi=0. * u.rad,
+        v_r=200. * u.m / u.s,
+        v_th=9. * u.rad / u.s,
+        v_p=10. * u.rad / u.s
+    )
+
+    x_vec = bl.position()
 
     # Using function from module
-    mkn = KerrNewman(coords="BL", M=M, a=a, Q=Q)
-    mkn_em_contra = mkn.em_tensor_contravariant(r, theta, M, a, Q)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q)
+    mkn_em_contra = mkn.em_tensor_contravariant(x_vec)
 
     assert_allclose(0., mkn_em_contra + np.transpose(mkn_em_contra), atol=1e-8)
-
-
-@pytest.mark.parametrize(
-    "func_ks",
-    [
-        (
-            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).metric_covariant
-        ),
-        (
-            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).metric_contravariant
-        ),
-        (
-            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).christoffels
-        ),
-        (
-            KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0)._dg_dx_ks
-        ),
-    ],
-)
-def test_ks_raises_NotImplementedError(func_ks):
-    """
-    Tests, if NotImplementedError is raised, when Kerr-Schild coordinates are used
-
-    """
-    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
-
-    try:
-        func_ks(x_vec)
-        assert False
-
-    except NotImplementedError:
-        assert True
-
-
-def test_f_vec_ks_raises_NotImplementedError():
-    """
-    Tests, if NotImplementedError is raised by ``f_vec_ks()``, when Kerr-Schild coordinates are used
-
-    """
-    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
-
-    try:
-        KerrNewman(coords="KS", M=1e22, a=0.7, Q=45.0).f_vec(0., x_vec)
-        assert False
-
-    except NotImplementedError:
-        assert True
-
-
-def test_singularities_ks_raises_NotImplementedError():
-    """
-    Tests, if a NotImplementedError is raised, when KerrSchild coordinates \
-    are used with ``singularities()``
-
-    """
-    mkn = KerrNewman(coords="KS", M=1e22, a=0.5, Q=0.)
-
-    try:
-        mkn_sing = mkn.singularities()
-        assert False
-
-    except NotImplementedError:
-        assert True

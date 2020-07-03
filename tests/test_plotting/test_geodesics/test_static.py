@@ -1,36 +1,36 @@
 from unittest import mock
 
+import astropy.units as u
 import numpy as np
 import pytest
 from matplotlib.axes import Axes
 
 from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.metric import Schwarzschild
-from einsteinpy.geodesic import Geodesic
+from einsteinpy.geodesic import TimelikeGeodesic
 from einsteinpy.plotting import StaticGeodesicPlotter
 
 
 @pytest.fixture()
 def dummy_data():
-    M = 6e24
+    M = 6e24 * u.kg
 
     sph = SphericalDifferential(
-        t=0.0,
-        r=130.0,
-        theta=np.pi / 2,
-        phi=-np.pi / 8,
-        v_r=0.0,
-        v_th=0.0,
-        v_p=1900.0,
+        t=0.0 * u.s,
+        r=130.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 8 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=1900.0 * u.rad / u.s,
     )
 
-    ms = Schwarzschild(M=M)
-    state = sph.state(metric=ms, time_like=True)
+    ms = Schwarzschild(coords=sph, M=M)
 
     end_lambda = 0.002
     step_size = 5e-8
 
-    geod = Geodesic(metric=ms, state=state, end_lambda=end_lambda, step_size=step_size)
+    geod = TimelikeGeodesic(metric=ms, coords=sph, end_lambda=end_lambda, step_size=step_size)
 
     return geod
 

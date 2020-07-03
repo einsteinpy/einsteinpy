@@ -1,4 +1,5 @@
 import numpy as np
+from astropy import units as u
 
 from einsteinpy import constant
 from einsteinpy.metric import BaseMetric
@@ -14,27 +15,36 @@ class KerrNewman(BaseMetric):
 
     """
 
-    def __init__(self, coords, M, a, Q, q=0.0):
+    @u.quantity_input(M=u.kg, a=u.one, Q=u.C, q=u.C)
+    def __init__(self, coords, M, a, Q, q=0.0 * u.C):
         """
         Constructor
 
         Parameters
         ----------
-        coords : string
+        coords : ~einsteinpy.coordinates.differential.*
             Coordinate system, in which Metric is to be represented
-            "BL" - Boyer-Lindquist: Applicable to Kerr-Newman solutions
-            "KS" - Kerr-Schild: Useful for adding perturbations to Kerr-Newman solutions
-        M : float
+        M : ~astropy.units.quantity.Quantity
             Mass of gravitating body, e.g. Black Hole
-        a : float
+        a : ~astropy.units.quantity.Quantity
             Spin Parameter
-        Q : float
+        Q : ~astropy.units.quantity.Quantity
             Charge on gravitating body, e.g. Black Hole
-        q : float, optional
+        q : ~astropy.units.quantity.Quantity, optional
             Charge, per unit mass, of the test particle
-            Defaults to ``O``
+            Defaults to ``0 C``
 
         """
+        super().__init__(
+            coords=coords,
+            M=M,
+            a=a,
+            Q=Q,
+            name="Kerr-Newman Metric",
+            metric_cov=self.metric_covariant,
+            christoffels=self._christoffels,
+            f_vec=self._f_vec,
+        )
         self.q = q
         # Precomputed list of tuples, containing indices \
         # of non-zero Christoffel Symbols for Kerr-Newman Metric \
@@ -74,17 +84,6 @@ class KerrNewman(BaseMetric):
             (3, 3, 2),
         ]
 
-        super().__init__(
-            coords=coords,
-            M=M,
-            a=a,
-            Q=Q,
-            name="Kerr-Newman Metric",
-            metric_cov=self.metric_covariant,
-            christoffels=self._christoffels,
-            f_vec=self._f_vec,
-        )
-
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Kerr-Newman Metric Tensor \
@@ -92,7 +91,7 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -101,11 +100,19 @@ class KerrNewman(BaseMetric):
             Covariant Kerr-Newman Metric Tensor in chosen Coordinates
             Numpy array of shape (4,4)
 
-        """
-        if self.coords == "KS":
-            return self._g_cov_ks(x_vec)
+        Raises
+        ------
+        NotImplementedError
+            In case of the metric is not available in \
+            the supplied Coordinate System
 
-        return self._g_cov_bl(x_vec)
+        """
+        if self.coords.system == "BoyerLindquist":
+            return self._g_cov_bl(x_vec)
+
+        raise NotImplementedError(
+            "Kerr-Newman Metric is available only in Boyer-Lindquist Coordinates."
+        )
 
     def _g_cov_bl(self, x_vec):
         """
@@ -114,7 +121,7 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -126,7 +133,7 @@ class KerrNewman(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        M, a = self.M, self.a
+        M, a = self.M.value, self.a.value
         alpha = super().alpha(M, a)
         rho2, del_ = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
@@ -145,25 +152,6 @@ class KerrNewman(BaseMetric):
 
         return g_cov_bl
 
-    def _g_cov_ks(self, x_vec):
-        """
-        Returns Covariant Kerr-Newman Metric Tensor \
-        in Kerr-Schild coordinates
-
-        Parameters
-        ----------
-        x_vec : ~numpy.ndarray
-            Position 4-Vector
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
-
     def _dg_dx_bl(self, x_vec):
         """
         Returns derivative of each Kerr-Newman Metric component \
@@ -171,8 +159,8 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
-                Position 4-Vector
+        x_vec : array_like
+            Position 4-Vector
 
         Returns
         -------
@@ -186,7 +174,7 @@ class KerrNewman(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        M, a, c2 = self.M, self.a, _c ** 2
+        M, a, c2 = self.M.value, self.a.value, _c ** 2
         alpha = super().alpha(M, a)
         rho2, del_ = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
@@ -260,32 +248,13 @@ class KerrNewman(BaseMetric):
 
         return dgdx
 
-    def _dg_dx_ks(self, x_vec):
-        """
-        Returns derivative of each Kerr-Newman Metric component \
-        w.r.t. coordinates in Kerr-Schild Coordinate System
-
-        Parameters
-        ----------
-        x_vec : ~numpy.ndarray
-                Position 4-Vector
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
-
     def _christoffels(self, x_vec):
         """
         Returns Christoffel Symbols for Kerr-Newman Metric in chosen Coordinates
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -295,11 +264,19 @@ class KerrNewman(BaseMetric):
             Metric in chosen Coordinates
             Numpy array of shape (4,4,4)
 
-        """
-        if self.coords == "KS":
-            return self._ch_sym_ks(x_vec)
+        Raises
+        ------
+        NotImplementedError
+            In case of the Christoffel Symbols are not \
+            available in the supplied Coordinate System
 
-        return self._ch_sym_bl(x_vec)
+        """
+        if self.coords.system == "BoyerLindquist":
+            return self._ch_sym_bl(x_vec)
+
+        raise NotImplementedError(
+            "Christoffel Symbols for Kerr-Newman Metric are available only in Boyer-Lindquist Coordinates."
+        )
 
     def _ch_sym_bl(self, x_vec):
         """
@@ -308,7 +285,7 @@ class KerrNewman(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -344,29 +321,10 @@ class KerrNewman(BaseMetric):
 
         return chl
 
-    def _ch_sym_ks(self, x_vec):
-        """
-        Returns Christoffel Symbols for Kerr-Newman Metric \
-        in Kerr-Schild Coordinates
-
-        Parameters
-        ----------
-        x_vec : ~numpy.ndarray
-            Position 4-Vector
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
-
-    def _f_vec(self, lambda_, x_vec):
+    def _f_vec(self, lambda_, vec):
         """
         Returns f_vec for Kerr-Newman Metric in chosen coordinates
-        To be used in solving for Geodesics
+        To be used for solving Geodesics ODE
 
         Parameters
         ----------
@@ -383,17 +341,25 @@ class KerrNewman(BaseMetric):
             f_vec for Kerr-Newman Metric in chosen coordinates
             Numpy array of shape (8)
 
-        """
-        if self.coords == "KS":
-            return self._f_vec_ks(lambda_, x_vec)
+        Raises
+        ------
+        NotImplementedError
+            In case of ``f_vec`` is not available in \
+            the supplied Coordinate System
 
-        return self._f_vec_bl(lambda_, x_vec)
+        """
+        if self.coords.system == "BoyerLindquist":
+            return self._f_vec_bl(lambda_, vec)
+
+        raise NotImplementedError(
+            "'f_vec' for Kerr-Newman Metric is available only in Boyer-Lindquist Coordinates."
+        )
 
     def _f_vec_bl(self, lambda_, vec):
         """
         Returns f_vec for Kerr-Newman Metric \
         in Boyer-Lindquist Coordinates
-        To be used in solving for Geodesics
+        To be used for solving Geodesics ODE
 
         Parameters
         ----------
@@ -412,7 +378,7 @@ class KerrNewman(BaseMetric):
 
         """
         chl = self.christoffels(vec[:4])
-        F_contra = self.em_tensor_contravariant(vec[1], vec[2], self.M, self.a, self.Q)
+        F_contra = self.em_tensor_contravariant(vec[:4])
         x_vec = np.array(
             [0, vec[1], vec[2], 0], dtype=float
         )  # t & phi have no bearing on Metric
@@ -451,53 +417,21 @@ class KerrNewman(BaseMetric):
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
 
-        vals[4:] -= (self.q * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)).reshape(
-            4, 1
-        )
+        vals[4:] -= (
+            self.q.value * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)
+        ).reshape(4, 1)
 
         return vals
 
-    def _f_vec_ks(self, lambda_, vec):
-        """
-        Returns f_vec for Kerr-Newman Metric \
-        in Kerr-Schild Coordinates
-        To be used in solving for Geodesics
-
-        Parameters
-        ----------
-        lambda_ : float
-            Parameterizes current integration step
-            Used by ODE Solver
-
-        vec : ~numpy.ndarray
-            Length-8 Vector, containing 4-Position & 4-Velocity
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
-
-    def em_potential_covariant(self, r, theta, M, a, Q):
+    def em_potential_covariant(self, x_vec):
         """
         Returns Covariant Electromagnetic 4-Potential
         Specific to Kerr-Newman Geometries
 
         Parameters
         ----------
-        r : float
-            r-component of 4-Position
-        theta : float
-            theta-component of 4-Position
-        M : float
-            Mass of gravitating body
-        a : float
-            Spin Parameter
-        Q : float
-            Charge on gravitating body
+        x_vec : array_like
+            Position 4-Vector
 
         Returns
         -------
@@ -506,34 +440,29 @@ class KerrNewman(BaseMetric):
             Numpy array of shape (4,)
 
         """
+        _, r, th, _ = x_vec
+        M, a, Q = self.M.value, self.a.value, self.Q.value
+
         alpha = super().alpha(M, a)
         # Geometrized Charge
         r_Q = np.sqrt((Q ** 2 * _G * _Cc) / _c ** 4)
-        rho2 = super().rho(r, theta, M, a) ** 2
+        rho2 = super().rho(r, th, M, a) ** 2
 
         A = np.zeros((4,), dtype=float)
         A[0] = r * r_Q / rho2
-        A[3] = -r * alpha * r_Q * np.sin(theta) ** 2 / rho2
+        A[3] = -r * alpha * r_Q * np.sin(th) ** 2 / rho2
 
         return A
 
-    def em_potential_contravariant(self, r, theta, M, a, Q):
+    def em_potential_contravariant(self, x_vec):
         """
         Returns Contravariant Electromagnetic 4-Potential
         Specific to Kerr-Newman Geometries
 
         Parameters
         ----------
-        r : float
-            r-component of 4-Position
-        theta : float
-            theta-component of 4-Position
-        M : float
-            Mass of gravitating body
-        a : float
-            Spin Parameter
-        Q : float
-            Charge on gravitating body
+        x_vec : array_like
+            Position 4-Vector
 
         Returns
         -------
@@ -542,31 +471,20 @@ class KerrNewman(BaseMetric):
             Numpy array of shape (4,)
 
         """
-        A_cov = self.em_potential_covariant(r, theta, M, a, Q)
-        x_vec = np.array(
-            [0.0, r, theta, 0.0], dtype=float
-        )  # t & phi have no bearing on Metric
-        g_contra = self.metric_contravariant(x_vec=x_vec)
+        A_cov = self.em_potential_covariant(x_vec)
+        g_contra = self.metric_contravariant(x_vec)
 
         return g_contra @ A_cov
 
-    def em_tensor_covariant(self, r, theta, M, a, Q):
+    def em_tensor_covariant(self, x_vec):
         """
         Returns Covariant Electromagnetic Tensor
         Specific to Kerr-Newman Geometries
 
         Parameters
         ----------
-        r : float
-            r-component of 4-Position
-        theta : float
-            theta-component of 4-Position
-        M : float
-            Mass of gravitating body
-        a : float
-            Spin Parameter
-        Q : float
-            Charge on gravitating body
+        x_vec : array_like
+            Position 4-Vector
 
         Returns
         -------
@@ -575,12 +493,15 @@ class KerrNewman(BaseMetric):
             Numpy array of shape (4, 4)
 
         """
+        _, r, th, _ = x_vec
+        M, a, Q = self.M.value, self.a.value, self.Q.value
+
         alpha = super().alpha(M, a)
         r_Q = np.sqrt((Q ** 2 * _G * _Cc) / _c ** 4)
-        rho2 = super().rho(r, theta, M, a) ** 2
+        rho2 = super().rho(r, th, M, a) ** 2
         # Partial derivatives of rho2
         drho2_dr = 2 * r
-        drho2_dtheta = -(alpha ** 2 * np.sin(2 * theta))
+        drho2_dtheta = -(alpha ** 2 * np.sin(2 * th))
 
         F = np.zeros((4, 4), dtype=float)
 
@@ -589,35 +510,27 @@ class KerrNewman(BaseMetric):
         F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2 ** 2)
         F[2, 0] = -F[0, 2]
         F[1, 3] = (
-            (1 / rho2 ** 2) * (alpha * r_Q * np.sin(theta) ** 2) * (rho2 - 2 * r ** 2)
+            (1 / rho2 ** 2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r ** 2)
         )
         F[3, 1] = -F[1, 3]
         F[2, 3] = (
             (1 / rho2 ** 2)
-            * (alpha * r_Q * r * np.sin(2 * theta))
-            * (rho2 + (alpha * np.sin(theta)) ** 2)
+            * (alpha * r_Q * r * np.sin(2 * th))
+            * (rho2 + (alpha * np.sin(th)) ** 2)
         )
         F[3, 2] = -F[2, 3]
 
         return F
 
-    def em_tensor_contravariant(self, r, theta, M, a, Q):
+    def em_tensor_contravariant(self, x_vec):
         """
         Returns Contravariant Electromagnetic Tensor
         Specific to Kerr-Newman Geometries
 
         Parameters
         ----------
-        r : float
-            r-component of 4-Position
-        theta : float
-            theta-component of 4-Position
-        M : float
-            Mass of gravitating body
-        a : float
-            Spin Parameter
-        Q : float
-            Charge on gravitating body
+        x_vec : array_like
+            Position 4-Vector
 
         Returns
         -------
@@ -626,9 +539,8 @@ class KerrNewman(BaseMetric):
             Numpy array of shape (4, 4)
 
         """
-        F_cov = self.em_tensor_covariant(r, theta, M, a, Q)
-        x_vec = np.array([0, r, theta, 0], dtype=float)
-        g_contra = self.metric_contravariant(x_vec=x_vec)
+        F_cov = self.em_tensor_covariant(x_vec)
+        g_contra = self.metric_contravariant(x_vec)
 
         F_contra = g_contra @ F_cov @ g_contra
 

@@ -1,12 +1,14 @@
-import astropy.units as u
 import numpy as np
+from astropy import units as u
 
+from einsteinpy import constant
 from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
     SphericalConversion,
 )
-from einsteinpy.coordinates.utils import four_position
+
+_c = constant.c.value
 
 
 class Cartesian(CartesianConversion):
@@ -33,11 +35,11 @@ class Cartesian(CartesianConversion):
             z-Component of 3-Position
 
         """
+        super().__init__(t.si.value, x.si.value, y.si.value, z.si.value)
         self.t = t
         self.x = x
         self.y = y
         self.z = z
-        super().__init__(t.value, x.value, y.value, z.value)
         self.system = "Cartesian"
         self._dimension = {
             "t": self.t,
@@ -80,13 +82,11 @@ class Cartesian(CartesianConversion):
 
         Returns
         -------
-        ~numpy.ndarray :
-            Array, containing Position 4-Vector in SI units
+        tuple
+            4-Tuple, containing Position 4-Vector in SI units
 
         """
-        x4 = four_position(self.t.value, self.x.value, self.y.value, self.z.value)
-
-        return x4
+        return (_c * self.t.si.value, self.x.si.value, self.y.si.value, self.z.si.value)
 
     def to_spherical(self, **kwargs):
         """
@@ -165,11 +165,11 @@ class Spherical(SphericalConversion):
             phi-Component of 3-Position
 
         """
+        super().__init__(t.si.value, r.si.value, theta.si.value, phi.si.value)
         self.t = t
         self.r = r
         self.theta = theta
         self.phi = phi
-        super().__init__(t.value, r.value, theta.value, phi.value)
         self.system = "Spherical"
         self._dimension = {
             "t": self.t,
@@ -212,13 +212,16 @@ class Spherical(SphericalConversion):
 
         Returns
         -------
-        ~numpy.ndarray :
-            Array, containing Position 4-Vector in SI units
+        tuple :
+            4-Tuple, containing Position 4-Vector in SI units
 
         """
-        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
-
-        return x4
+        return (
+            _c * self.t.si.value,
+            self.r.si.value,
+            self.theta.si.value,
+            self.phi.si.value,
+        )
 
     def to_cartesian(self, **kwargs):
         """
@@ -298,11 +301,11 @@ class BoyerLindquist(BoyerLindquistConversion):
             phi-Component of 3-Position
 
         """
+        super().__init__(t.si.value, r.si.value, theta.si.value, phi.si.value)
         self.t = t
         self.r = r
         self.theta = theta
         self.phi = phi
-        super().__init__(t.value, r.value, theta.value, phi.value)
         self.system = "BoyerLindquist"
         self._dimension = {
             "t": self.t,
@@ -345,13 +348,16 @@ class BoyerLindquist(BoyerLindquistConversion):
 
         Returns
         -------
-        ~numpy.ndarray :
-            Array, containing Position 4-Vector in SI units
+        tuple :
+            4-Tuple, containing Position 4-Vector in SI units
 
         """
-        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
-
-        return x4
+        return (
+            _c * self.t.si.value,
+            self.r.si.value,
+            self.theta.si.value,
+            self.phi.si.value,
+        )
 
     def to_cartesian(self, **kwargs):
         """

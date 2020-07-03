@@ -2,13 +2,15 @@
 This is a test module, that tests the non-coordinate conversion utilities in ``einsteinpy.coordinates.utils``.
 
 """
-
+import astropy.units as u
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
+from einsteinpy.coordinates import BoyerLindquistDifferential, SphericalDifferential
+from einsteinpy.coordinates.utils import lorentz_factor, v0
 from einsteinpy.metric import Schwarzschild, Kerr, KerrNewman
-from einsteinpy.coordinates.utils import lorentz_factor, four_position, four_velocity, v0
+
 from einsteinpy import constant
 
 _c = constant.c.value
@@ -32,73 +34,52 @@ def test_lorentz_factor():
     assert_allclose(gamma, gamma_b, rtol=1e-8)
 
 
-@pytest.mark.parametrize(
-    "t, x_vec",
-    [
-        (
-            0.,
-            np.array([306., np.pi / 2, np.pi / 2]),
-        ),
-        (
-            100.,
-            np.array([1e3, 0.15, np.pi / 2]),
-        ),
-    ],
-)
-def test_four_position(t, x_vec):
-    """
-    Tests, if the 4-Position, returned by ``einsteinpy.coordindates.utils.four_position()`` \
-    is the same as, that calculated manually
-
-    """
-    x_4vec = four_position(t, *x_vec)
-    x_4vec_b = np.append([_c * t], x_vec)
-
-    assert_allclose(x_4vec, x_4vec_b)
+@pytest.fixture
+def sph():
+    return SphericalDifferential(
+        0. * u.s,
+        1. * u.m,
+        np.pi / 2 * u.rad,
+        0.1 * u.rad,
+        0. * u.m / u.s,
+        0.1 * u.rad / u.s,
+        951 * u.rad / u.s
+    )
 
 
-@pytest.mark.parametrize(
-    "v_vec, time_like",
-    [
-        (
-            np.array([0., 0.1, 951.]),
-            True,
-        ),
-        (
-            np.array([0.2 * _c, 0.5e-5 * _c, 1e-4 * _c]),
-            False,
-        ),
-    ],
-)
-def test_four_velocity(v_vec, time_like):
+@pytest.fixture
+def bl():
+    return BoyerLindquistDifferential(
+        0. * u.s,
+        1. * u.m,
+        np.pi / 2 * u.rad,
+        0.1 * u.rad,
+        0. * u.m / u.s,
+        0.1 * u.rad / u.s,
+        951 * u.rad / u.s
+    )
+
+
+def test_v0(sph, bl):
     """
     Tests, if the 4-Velocity in KerrNewman Metric is the same as that in Kerr Metric, \
     in the limit Q -> 0 and if it becomes the same as that in Schwarzschild \
     Metric, in the limits, a -> 0 & Q -> 0
 
     """
-    M = 1e24
-    x_vec = np.array([1.0, np.pi / 2, 0.1])
+    M = 1e24 * u.kg
 
-    x_vec = np.array([1.0, np.pi / 2, 0.1])
+    ms = Schwarzschild(coords=sph, M=M)
+    mk = Kerr(coords=bl, M=M, a=0.5 * u.one)
+    mk0 = Kerr(coords=bl, M=M, a=0. * u.one)
+    mkn = KerrNewman(coords=bl, M=M, a=0.5 * u.one, Q=0. * u.C)
+    mkn0 = KerrNewman(coords=bl, M=M, a=0. * u.one, Q=0. * u.C)
 
-    ms = Schwarzschild(M=M)
-    mk = Kerr(coords="BL", M=M, a=0.5)
-    mk0 = Kerr(coords="BL", M=M, a=0.)
-    mkn = KerrNewman(coords="BL", M=M, a=0.5, Q=0.)
-    mkn0 = KerrNewman(coords="BL", M=M, a=0., Q=0.)
-
-    ms_mat = ms.metric_covariant(x_vec)
-    mk_mat = mk.metric_covariant(x_vec)
-    mk0_mat = mk0.metric_covariant(x_vec)
-    mkn_mat = mkn.metric_covariant(x_vec)
-    mkn0_mat = mkn0.metric_covariant(x_vec)
-
-    v4vec_s = four_velocity(ms_mat, *v_vec, time_like)
-    v4vec_k = four_velocity(mk_mat, *v_vec, time_like)
-    v4vec_k0 = four_velocity(mk0_mat, *v_vec, time_like)
-    v4vec_kn = four_velocity(mkn_mat, *v_vec, time_like)
-    v4vec_kn0 = four_velocity(mkn0_mat, *v_vec, time_like)
+    v4vec_s = sph.velocity(ms)
+    v4vec_k = bl.velocity(mk)
+    v4vec_k0 = bl.velocity(mk0)
+    v4vec_kn = bl.velocity(mkn)
+    v4vec_kn0 = bl.velocity(mkn0)
 
     assert_allclose(v4vec_s, v4vec_k0, rtol=1e-8)
     assert_allclose(v4vec_k, v4vec_kn, rtol=1e-8)
@@ -113,53 +94,81 @@ def test_compare_vt_schwarzschild():
 
     """
     # Calculated using v0()
-    M = 1e24
-    x_vec = np.array([1.0, np.pi / 2, 0.1])
-    v_vec = np.array([-0.1, -0.01, 0.05])
+    M = 1e24 * u.kg
+    sph = SphericalDifferential(
+        0. * u.s,
+        1. * u.m,
+        np.pi / 2 * u.rad,
+        0.1 * u.rad,
+        -0.1 * u.m / u.s,
+        -0.01 * u.rad / u.s,
+        0.05 * u.rad / u.s
+    )
 
-    ms = Schwarzschild(M=M)
+    ms = Schwarzschild(coords=sph, M=M)
+    x_vec = sph.position()
     ms_mat = ms.metric_covariant(x_vec)
+    v_vec = sph.velocity(ms)
 
-    vt_s = v0(ms_mat, *v_vec)
+    sph.v_t = (ms,)  # Setting v_t
+    vt_s = sph.v_t  # Getting v_t
 
     # Calculated by brute force
     A = ms_mat[0, 0]
-    C = ms_mat[1, 1] * v_vec[0]**2 + ms_mat[2, 2] * v_vec[1]**2 + ms_mat[3, 3] * v_vec[2]**2 - _c ** 2
+    C = ms_mat[1, 1] * v_vec[1]**2 + ms_mat[2, 2] * v_vec[2]**2 + ms_mat[3, 3] * v_vec[3]**2 - _c ** 2
     D = - 4 * A * C
     vt_sb = np.sqrt(D) / (2 * A)
 
-    assert_allclose(vt_s, vt_sb, rtol=1e-8)
+    assert_allclose(vt_s.value, vt_sb, rtol=1e-8)
 
 
-def test_compare_vt_schwarzschild_kerr_kerrnewman():
+@pytest.fixture
+def sph2():
+    return SphericalDifferential(
+        0. * u.s,
+        1. * u.m,
+        np.pi / 2 * u.rad,
+        0.1 * u.rad,
+        -0.1 * u.m / u.s,
+        -0.01 * u.rad / u.s,
+        0.05 * u.rad / u.s
+    )
+
+
+@pytest.fixture
+def bl2():
+    return BoyerLindquistDifferential(
+        0. * u.s,
+        1. * u.m,
+        np.pi / 2 * u.rad,
+        0.1 * u.rad,
+        -0.1 * u.m / u.s,
+        -0.01 * u.rad / u.s,
+        0.05 * u.rad / u.s
+    )
+
+
+def test_compare_vt_schwarzschild_kerr_kerrnewman(sph2, bl2):
     """
     Tests, whether the timelike component of 4-Velocity in KerrNewman Metric is the same as that \
     in Kerr Metric, in the limit Q -> 0 and if it becomes the same as that in Schwarzschild \
     Metric, in the limits, a -> 0 & Q -> 0
 
     """
-    M = 1e24
-    x_vec = np.array([1.0, np.pi / 2, 0.1])
-    v_vec = np.array([-0.1, -0.01, 0.05])
+    M = 1e24 * u.kg
 
-    ms = Schwarzschild(M=M)
-    mk = Kerr(coords="BL", M=M, a=0.5)
-    mk0 = Kerr(coords="BL", M=M, a=0.)
-    mkn = KerrNewman(coords="BL", M=M, a=0.5, Q=0.)
-    mkn0 = KerrNewman(coords="BL", M=M, a=0., Q=0.)
+    ms = Schwarzschild(coords=sph2, M=M)
+    mk = Kerr(coords=bl2, M=M, a=0.5 * u.one)
+    mk0 = Kerr(coords=bl2, M=M, a=0. * u.one)
+    mkn = KerrNewman(coords=bl2, M=M, a=0.5 * u.one, Q=0. * u.C)
+    mkn0 = KerrNewman(coords=bl2, M=M, a=0. * u.one, Q=0. * u.C)
 
-    ms_mat = ms.metric_covariant(x_vec)
-    mk_mat = mk.metric_covariant(x_vec)
-    mk0_mat = mk0.metric_covariant(x_vec)
-    mkn_mat = mkn.metric_covariant(x_vec)
-    mkn0_mat = mkn0.metric_covariant(x_vec)
+    v_vec_ms = sph2.velocity(ms)
+    v_vec_mk = bl2.velocity(mk)
+    v_vec_mk0 = bl2.velocity(mk0)
+    v_vec_mkn = bl2.velocity(mkn)
+    v_vec_mkn0 = bl2.velocity(mkn0)
 
-    vt_s = v0(ms_mat, *v_vec)
-    vt_k = v0(mk_mat, *v_vec)
-    vt_k0 = v0(mk0_mat, *v_vec)
-    vt_kn = v0(mkn_mat, *v_vec)
-    vt_kn0 = v0(mkn0_mat, *v_vec)
-
-    assert_allclose(vt_s, vt_k0, rtol=1e-8)
-    assert_allclose(vt_k, vt_kn, rtol=1e-8)
-    assert_allclose(vt_kn0, vt_s, rtol=1e-8)
+    assert_allclose(v_vec_ms, v_vec_mk0, rtol=1e-8)
+    assert_allclose(v_vec_mk, v_vec_mkn, rtol=1e-8)
+    assert_allclose(v_vec_mkn0, v_vec_ms, rtol=1e-8)

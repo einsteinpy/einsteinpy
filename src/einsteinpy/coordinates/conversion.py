@@ -1,13 +1,8 @@
-import numpy as np
-
 from einsteinpy.coordinates.utils import (
     bl_to_cartesian_fast,
     cartesian_to_bl_fast,
     cartesian_to_spherical_fast,
-    four_position,
-    four_velocity,
     spherical_to_cartesian_fast,
-    v0,
 )
 from einsteinpy.metric import BaseMetric
 
@@ -40,30 +35,41 @@ class CartesianConversion:
             z-Component of 3-Velocity
 
         """
-        self.t = t
-        self.x = x
-        self.y = y
-        self.z = z
-        self.v_x = v_x
-        self.v_y = v_y
-        self.v_z = v_z
+        self.t_si = t
+        self.x_si = x
+        self.y_si = y
+        self.z_si = z
+        self.v_x_si = v_x
+        self.v_y_si = v_y
+        self.v_z_si = v_z
         self._velocities_provided = not (
             (v_x is None) or (v_y is None) or (v_z is None)
         )
 
     def values(self):
         """
-        Returns components of the coordinates
+        Returns components of the coordinates in SI units
 
         Returns
         -------
         tuple
-            4-Tuple containing ``t, x, y, z``
+            4-Tuple, containing ``t, x, y, z`` in SI units
+            or 7-tuple, containing ``t, x, y, z, v_x, v_y, v_z`` \
+            in SI units
 
         """
         if self._velocities_provided:
-            return self.t, self.x, self.y, self.z, self.v_x, self.v_y, self.v_z
-        return self.t, self.x, self.y, self.z
+            return (
+                self.t_si,
+                self.x_si,
+                self.y_si,
+                self.z_si,
+                self.v_x_si,
+                self.v_y_si,
+                self.v_z_si,
+            )
+
+        return self.t_si, self.x_si, self.y_si, self.z_si
 
     def convert_spherical(self, **kwargs):
         """
@@ -81,17 +87,16 @@ class CartesianConversion:
             components in Spherical Polar Coordinates
 
         """
-        converted = cartesian_to_spherical_fast(
-            self.x,
-            self.y,
-            self.z,
-            self.v_x,
-            self.v_y,
-            self.v_z,
+        return cartesian_to_spherical_fast(
+            self.t_si,
+            self.x_si,
+            self.y_si,
+            self.z_si,
+            self.v_x_si,
+            self.v_y_si,
+            self.v_z_si,
             self._velocities_provided,
         )
-
-        return np.hstack((self.t, converted))
 
     def convert_bl(self, **kwargs):
         """
@@ -118,21 +123,33 @@ class CartesianConversion:
             A Length-7 Numpy array, containing the \
             components in Boyer-Lindquist Coordinates
 
+        Raises
+        ------
+        KeyError
+            If ``kwargs`` does not contain both ``M`` \
+            and ``a`` as keyword arguments
+
         """
-        M, a = kwargs["M"], kwargs["a"]
+        try:
+            M, a = kwargs["M"], kwargs["a"]
+        except KeyError:
+            raise KeyError(
+                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
+            )
+
         alpha = BaseMetric.alpha(M=M, a=a)
-        converted = cartesian_to_bl_fast(
-            self.x,
-            self.y,
-            self.z,
+
+        return cartesian_to_bl_fast(
+            self.t_si,
+            self.x_si,
+            self.y_si,
+            self.z_si,
             alpha,
-            self.v_x,
-            self.v_y,
-            self.v_z,
+            self.v_x_si,
+            self.v_y_si,
+            self.v_z_si,
             self._velocities_provided,
         )
-
-        return np.hstack((self.t, converted))
 
 
 class SphericalConversion:
@@ -163,13 +180,13 @@ class SphericalConversion:
             phi-Component of 3-Velocity
 
         """
-        self.t = t
-        self.r = r
-        self.th = theta
-        self.p = phi
-        self.v_r = v_r
-        self.v_th = v_th
-        self.v_p = v_p
+        self.t_si = t
+        self.r_si = r
+        self.th_si = theta
+        self.p_si = phi
+        self.v_r_si = v_r
+        self.v_th_si = v_th
+        self.v_p_si = v_p
         self._velocities_provided = not (
             (v_r is None) or (v_th is None) or (v_p is None)
         )
@@ -181,12 +198,23 @@ class SphericalConversion:
         Returns
         -------
         tuple
-            4-Tuple containing ``t, r, theta, phi``
+            4-Tuple containing ``t, r, theta, phi`` in SI units
+            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
+            in SI units
 
         """
         if self._velocities_provided:
-            return self.t, self.r, self.th, self.p, self.v_r, self.v_th, self.v_p
-        return self.t, self.r, self.th, self.p
+            return (
+                self.t_si,
+                self.r_si,
+                self.th_si,
+                self.p_si,
+                self.v_r_si,
+                self.v_th_si,
+                self.v_p_si,
+            )
+
+        return self.t_si, self.r_si, self.th_si, self.p_si
 
     def convert_cartesian(self, **kwargs):
         """
@@ -204,17 +232,16 @@ class SphericalConversion:
             components in Cartesian Coordinates
 
         """
-        converted = spherical_to_cartesian_fast(
-            self.r,
-            self.th,
-            self.p,
-            self.v_r,
-            self.v_th,
-            self.v_p,
+        return spherical_to_cartesian_fast(
+            self.t_si,
+            self.r_si,
+            self.th_si,
+            self.p_si,
+            self.v_r_si,
+            self.v_th_si,
+            self.v_p_si,
             self._velocities_provided,
         )
-
-        return np.hstack((self.t, converted))
 
     def convert_bl(self, **kwargs):
         """
@@ -241,10 +268,23 @@ class SphericalConversion:
             A Length-7 Numpy array, containing the \
             components in Boyer-Lindquist Coordinates
 
+        Raises
+        ------
+        KeyError
+            If ``kwargs`` does not contain both ``M`` \
+            and ``a`` as keyword arguments
+
         """
-        M, a = kwargs["M"], kwargs["a"]
+        try:
+            M, a = kwargs["M"], kwargs["a"]
+        except KeyError:
+            raise KeyError(
+                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
+            )
+
         transformed_cartesian = self.convert_cartesian()
         cart = CartesianConversion(*transformed_cartesian)
+
         return cart.convert_bl(M=M, a=a)
 
 
@@ -276,13 +316,13 @@ class BoyerLindquistConversion:
             phi-Component of 3-Velocity
 
         """
-        self.t = t
-        self.r = r
-        self.th = theta
-        self.p = phi
-        self.v_r = v_r
-        self.v_th = v_th
-        self.v_p = v_p
+        self.t_si = t
+        self.r_si = r
+        self.th_si = theta
+        self.p_si = phi
+        self.v_r_si = v_r
+        self.v_th_si = v_th
+        self.v_p_si = v_p
         self._velocities_provided = not (
             (v_r is None) or (v_th is None) or (v_p is None)
         )
@@ -294,12 +334,23 @@ class BoyerLindquistConversion:
         Returns
         -------
         tuple
-            4-Tuple containing ``t, r, theta, phi``
+            4-Tuple containing ``t, r, theta, phi`` in SI units
+            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
+            in SI units
 
         """
         if self._velocities_provided:
-            return self.t, self.r, self.th, self.p, self.v_r, self.v_th, self.v_p
-        return self.t, self.r, self.th, self.p
+            return (
+                self.t_si,
+                self.r_si,
+                self.th_si,
+                self.p_si,
+                self.v_r_si,
+                self.v_th_si,
+                self.v_p_si,
+            )
+
+        return self.t_si, self.r_si, self.th_si, self.p_si
 
     def convert_cartesian(self, **kwargs):
         """
@@ -326,21 +377,33 @@ class BoyerLindquistConversion:
             A Length-7 Numpy array, containing the \
             components in Cartesian Coordinates
 
+        Raises
+        ------
+        KeyError
+            If ``kwargs`` does not contain both ``M`` \
+            and ``a`` as keyword arguments
+
         """
-        M, a = kwargs["M"], kwargs["a"]
+        try:
+            M, a = kwargs["M"], kwargs["a"]
+        except KeyError:
+            raise KeyError(
+                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
+            )
+
         alpha = BaseMetric.alpha(M=M, a=a)
-        converted = bl_to_cartesian_fast(
-            self.r,
-            self.th,
-            self.p,
+
+        return bl_to_cartesian_fast(
+            self.t_si,
+            self.r_si,
+            self.th_si,
+            self.p_si,
             alpha,
-            self.v_r,
-            self.v_th,
-            self.v_p,
+            self.v_r_si,
+            self.v_th_si,
+            self.v_p_si,
             self._velocities_provided,
         )
-
-        return np.hstack((self.t, converted))
 
     def convert_spherical(self, **kwargs):
         """
@@ -367,8 +430,21 @@ class BoyerLindquistConversion:
             A Length-7 Numpy array, containing the \
             components in Spherical Polar Coordinates
 
+        Raises
+        ------
+        KeyError
+            If ``kwargs`` does not contain both ``M`` \
+            and ``a`` as keyword arguments
+
         """
-        M, a = kwargs["M"], kwargs["a"]
+        try:
+            M, a = kwargs["M"], kwargs["a"]
+        except KeyError:
+            raise KeyError(
+                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
+            )
+
         transformed_cartesian = self.convert_cartesian(M=M, a=a)
         cart = CartesianConversion(*transformed_cartesian)
+
         return cart.convert_spherical()

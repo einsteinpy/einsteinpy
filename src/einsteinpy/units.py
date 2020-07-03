@@ -1,21 +1,29 @@
-import astropy.units as u
+from astropy import units as u
 
 from einsteinpy.constant import G, c
 
 
-def astro_dist(mass):
+def primitive(*args):
     """
-    Function for turning distance into astronomical perspective.
-    """
-    value = (G.value * mass) / (c.value ** 2)
-    astro_dist = u.def_unit("astro-m(GM/c2)", u.m / value)
-    return astro_dist
+    Strips out units and returns numpy.float64 values \
+    out of ``astropy.units.quantity.Quantity``
 
+    Parameters
+    ----------
+    *args : iterable
+        ``astropy.units.quantity.Quantity`` objects, who ``value`` is required
 
-def astro_sec(mass):
+    Returns
+    -------
+    primitive_args : list
+        List of ``numpy.float64`` values, obtained from ``Quantity`` objects
+
     """
-    Function for turning time into astronomical perspective.
-    """
-    value = (G.value * mass) / (c.value ** 3)
-    astro_sec = u.def_unit("astro-sec(GM/c3)", u.s / value)
-    return astro_sec
+    primitive_args = []
+    for item in args:
+        if isinstance(item, u.Quantity):
+            primitive_args.append(item.value)
+        else:
+            primitive_args.append(item)
+
+    return primitive_args

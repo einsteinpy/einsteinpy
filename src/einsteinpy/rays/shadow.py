@@ -1,7 +1,7 @@
 import warnings
 
-import astropy.units as u
 import numpy as np
+from astropy import units as u
 from scipy.integrate import fixed_quad
 from scipy.interpolate import interp1d
 from scipy.optimize import newton

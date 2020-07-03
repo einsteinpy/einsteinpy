@@ -1,6 +1,5 @@
-import astropy.units as u
 import numpy as np
-from astropy import constants
+from astropy import constants, units as u
 
 c = constants.c
 G = constants.G

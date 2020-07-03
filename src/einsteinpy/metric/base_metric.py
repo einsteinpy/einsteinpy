@@ -21,8 +21,10 @@ supplied.
 import warnings
 
 import numpy as np
+from astropy import units as u
 
 from einsteinpy import constant
+from einsteinpy.units import primitive
 
 _c = constant.c.value
 _G = constant.G.value
@@ -35,12 +37,13 @@ class BaseMetric:
 
     """
 
+    @u.quantity_input(M=u.kg, a=u.one, Q=u.C)
     def __init__(
         self,
         coords,
         M,
-        a=0,
-        Q=0,
+        a=0 * u.one,
+        Q=0 * u.C,
         name="Base Metric",
         metric_cov=None,
         christoffels=None,
@@ -52,19 +55,16 @@ class BaseMetric:
 
         Parameters
         ----------
-        coords : string
+        coords : ~einsteinpy.coordinates.differential.*
             Coordinate system, in which Metric is to be represented
-            "S" - Schwarzschild: Only applicable to Schwarzschild solutions
-            "BL" - Boyer-Lindquist: Applicable to Kerr-Newman solutions
-            "KS" - Kerr-Schild: Useful for adding perturbations to Kerr-Newman solutions
-        M : float
+        M : ~astropy.units.quantity.Quantity
             Mass of gravitating body, e.g. Black Hole
-        a : float
-            Spin Parameter
+        a : ~astropy.units.quantity.Quantity
+            Dimensionless Spin Parameter
             Defaults to ``0``
-        Q : float
+        Q : ~astropy.units.quantity.Quantity
             Charge on gravitating body, e.g. Black Hole
-            Defaults to ``0``
+            Defaults to ``0 C``
         name : str, optional
             Name of the Metric Tensor. Defaults to ``"Base Metric"``
         metric_cov : callable, optional
@@ -104,20 +104,22 @@ class BaseMetric:
         self.sch_rad = self.schwarzschild_radius(M)
 
     def __str__(self):
-        return f"(\nName: ({self.name}),\
-            \nCoordinates: ({self.coords}),\
-            \nMass: ({self.M}),\
-            \nSpin parameter: ({self.a}),\
-            \nCharge: ({self.Q}),\
-            \nSchwarzschild Radius: ({self.sch_rad})\n)"
+        return f"(\n\
+            Name: ({self.name}),\n\
+            Coordinates: ({self.coords}),\n\
+            Mass: ({self.M}),\n\
+            Spin parameter: ({self.a}),\n\
+            Charge: ({self.Q}),\n\
+            Schwarzschild Radius: ({self.sch_rad})\n)"
 
     def __repr__(self):
-        return f"(\nName: ({self.name}),\
-            \nCoordinates: ({self.coords}),\
-            \nMass: ({self.M}),\
-            \nSpin parameter: ({self.a}),\
-            \nCharge: ({self.Q}),\
-            \nSchwarzschild Radius: ({self.sch_rad})\n)"
+        return f"(\n\
+            Name: ({self.name}),\n\
+            Coordinates: ({self.coords}),\n\
+            Mass: ({self.M}),\n\
+            Spin parameter: ({self.a}),\n\
+            Charge: ({self.Q}),\n\
+            Schwarzschild Radius: ({self.sch_rad})\n)"
 
     @staticmethod
     def sigma(r, theta, M, a):
@@ -128,13 +130,13 @@ class BaseMetric:
 
         Parameters
         ----------
-        r : float
+        r : float or ~astropy.units.quantity.Quantity
             r-component of 4-Position
-        theta : float
+        theta : float or ~astropy.units.quantity.Quantity
             theta-component of 4-Position
-        M : float
+        M : float or ~astropy.units.quantity.Quantity
             Mass of gravitating body
-        a : float
+        a : float or ~astropy.units.quantity.Quantity
             Spin Parameter
 
         Returns
@@ -143,6 +145,7 @@ class BaseMetric:
             The value of ``r**2 + alpha**2 * cos(theta)**2``
 
         """
+        r, theta, M, a = primitive(r, theta, M, a)
         alpha = BaseMetric.alpha(M, a)
         sigma = (r ** 2) + ((alpha * np.cos(theta)) ** 2)
         return sigma
@@ -156,13 +159,13 @@ class BaseMetric:
 
         Parameters
         ----------
-        r : float
+        r : float or ~astropy.units.quantity.Quantity
             r-component of 4-Position
-        M : float
+        M : float or ~astropy.units.quantity.Quantity
             Mass of gravitating body
-        a : float
+        a : float or ~astropy.units.quantity.Quantity
             Spin Parameter
-        Q : float, optional
+        Q : float or ~astropy.units.quantity.Quantity, optional
             Charge on gravitating body
             Defaults to ``0`` (for Kerr Geometry)
 
@@ -172,11 +175,13 @@ class BaseMetric:
             The value of ``r**2 - r_s * r + alpha**2 + r_Q**2``
 
         """
+        r, M, a, Q = primitive(r, M, a, Q)
         r_s = 2 * M * _G / _c ** 2
         alpha = BaseMetric.alpha(M, a)
         # Square of Geometrized Charge
         r_Q2 = (Q ** 2) * _G * _Cc / _c ** 4
         delta = (r ** 2) - (r_s * r) + (alpha ** 2) + r_Q2
+
         return delta
 
     @staticmethod
@@ -188,13 +193,13 @@ class BaseMetric:
 
         Parameters
         ----------
-        r : float
+        r : float or ~astropy.units.quantity.Quantity
             r-component of 4-Position
-        theta : float
+        theta : float or ~astropy.units.quantity.Quantity
             theta-component of 4-Position
-        M : float
+        M : float or ~astropy.units.quantity.Quantity
             Mass of gravitating body
-        a : float
+        a : float or ~astropy.units.quantity.Quantity
             Spin Parameter
 
         Returns
@@ -206,30 +211,22 @@ class BaseMetric:
         return np.sqrt(BaseMetric.sigma(r, theta, M, a))
 
     @staticmethod
-    def r_ks(x, y, z, a):
-        """
-        Returns the value of r, after solving \
-        ``(x**2 + y**2) / (r**2 + alpha**2) + z**2 / r**2 = 1``
-        'r' is not the Radius Coordinate of Spherical Polar or BL Coordinates
-        Specific to Cartesian form of Kerr-Schild Coordinates
-        """
-        raise NotImplementedError
-
-    @staticmethod
     def schwarzschild_radius(M):
         """
         Returns Schwarzschild Radius
 
         Parameters
         ----------
-        M : float
+        M : float or ~astropy.units.quantity.Quantity
             Mass of gravitating body
 
         Returns
         -------
-        r : float
+        float
             Schwarzschild Radius for a given mass
         """
+        (M,) = primitive(M)
+
         return 2 * _G * M / _c ** 2
 
     @staticmethod
@@ -244,9 +241,9 @@ class BaseMetric:
 
         Parameters
         ----------
-        M : float
+        M : float or ~astropy.units.quantity.Quantity
             Mass of gravitating body
-        a : float
+        a : float or ~astropy.units.quantity.Quantity
             Number between 0 and 1
 
         Returns
@@ -260,6 +257,7 @@ class BaseMetric:
             If a is not between 0 and 1
 
         """
+        M, a = primitive(M, a)
         if a < 0 or a > 1:
             raise ValueError("Spin Parameter, a, should be between 0 and 1.")
         half_rs = _G * M / _c ** 2
@@ -284,7 +282,7 @@ class BaseMetric:
             }``
 
         """
-        coords, M, a, Q = self.coords, self.M, self.a, self.Q
+        system, M, a, Q = self.coords.system, self.M.value, self.a.value, self.Q.value
 
         r_s = 2 * M * _G / _c ** 2
         alpha = BaseMetric.alpha(M, a)
@@ -303,7 +301,27 @@ class BaseMetric:
                 + np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
             ) / 2
 
-        if coords == "S":  # Schwarzschild Geometry
+        if self.name in ("Kerr Metric", "Kerr-Newman Metric"):
+            if system == "BoyerLindquist":  # Kerr & Kerr-Newman Geometries
+                return {
+                    "inner_ergosphere": _in_ergo,
+                    "inner_horizon": (
+                        r_s - np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
+                    )
+                    / 2,
+                    "outer_horizon": (
+                        r_s + np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
+                    )
+                    / 2,
+                    "outer_ergosphere": _out_ergo,
+                }
+
+            raise NotImplementedError(
+                "Singularities for Kerr solutions are only available in"
+                "Boyer-Lindquist Coordinates."
+            )
+
+        if system == "Spherical":  # Schwarzschild Geometry
             return {
                 "inner_ergosphere": 0,
                 "inner_horizon": 0,
@@ -311,23 +329,10 @@ class BaseMetric:
                 "outer_ergosphere": r_s,
             }
 
-        elif coords == "BL":  # Kerr & Kerr-Newman Geometries
-            return {
-                "inner_ergosphere": _in_ergo,
-                "inner_horizon": (
-                    r_s - np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
-                )
-                / 2,
-                "outer_horizon": (
-                    r_s + np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
-                )
-                / 2,
-                "outer_ergosphere": _out_ergo,
-            }
-
-        elif coords == "KS":  # Kerr & Kerr-Newman Geometries
-            # To be filled in, after refactoring `coordinates`
-            raise NotImplementedError
+        raise NotImplementedError(
+            "Singularities for Schwarzschild Metric are only available in"
+            "Spherical Polar Coordinates."
+        )
 
     def metric_covariant(self, x_vec):
         """
@@ -340,7 +345,7 @@ class BaseMetric:
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -369,7 +374,7 @@ class BaseMetric:
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns

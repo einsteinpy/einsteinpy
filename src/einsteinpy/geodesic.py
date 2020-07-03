@@ -1,9 +1,7 @@
 import warnings
-from typing import Any, Dict
 
 import numpy as np
 
-from einsteinpy.coordinates import BoyerLindquistConversion, SphericalConversion
 from einsteinpy.integrators import RK45
 
 
@@ -14,16 +12,25 @@ class Geodesic:
     """
 
     def __init__(
-        self, metric, state, end_lambda, step_size=1e-3, return_cartesian=True
+        self,
+        time_like,
+        metric,
+        coords,
+        end_lambda,
+        step_size=1e-3,
+        return_cartesian=True,
     ):
         """
         Parameters
         ----------
+        time_like : bool
+            Determines type of Geodesic
+            ``True`` for Time-like geodesics
+            ``False`` for Null-like geodesics
         metric : ~einsteinpy.metric.*
             Metric, in which Geodesics are to be calculated
-        state : ~numpy.ndarray
-            Length-8 Vector containing Initial 4-Position and 4-Velocity, \
-            in that order
+        coords : ~einsteinpy.coordinates.differential.*
+            Coordinate system, in which Metric is to be represented
         end_lambda : float
             Affine Parameter, Lambda, where iterations will stop
             Equivalent to Proper Time for Timelike Geodesics
@@ -35,9 +42,11 @@ class Geodesic:
             Defaults to ``True``
 
         """
+        self.time_like = time_like
         self.metric = metric
-        self.state = state
+        self.coords = coords
 
+        self._state = self._calculate_state()
         self._trajectory = self.calculate_trajectory(
             end_lambda=end_lambda,
             OdeMethodKwargs={"stepsize": step_size},
@@ -45,18 +54,71 @@ class Geodesic:
         )[1]
 
     def __repr__(self):
-        return f"Geodesic Object:\n\nMetric = ({self.metric}),\
-            \n\nInitial State = ({self.state}),\
-            \n\nTrajectory = ({self.trajectory})"
+        kind = "Null-like"
+        if self.time_like:
+            kind = "Time-like"
+
+        return f"Geodesic Object:\n\
+            Type = ({kind})\n\
+            Metric = ({self.metric}),\n\
+            Initial State = ({self.state}),\n\
+            Trajectory = ({self.trajectory})"
 
     def __str__(self):
-        return f"Geodesic Object:\n\nMetric = ({self.metric}),\
-            \n\nInitial State = ({self.state}),\
-            \n\nTrajectory = ({self.trajectory})"
+        kind = "Null-like"
+        if self.time_like:
+            kind = "Time-like"
+
+        return f"Geodesic Object:\n\
+            Type = ({kind})\n\
+            Metric = ({self.metric}),\n\
+            Initial State = ({self.state}),\n\
+            Trajectory = ({self.trajectory})"
+
+    @property
+    def state(self):
+        """
+        Returns the Initial State Vector of the Geodesic
+
+        """
+        return self._state
 
     @property
     def trajectory(self):
+        """
+        Returns the "Trajectory" of the Geodesic
+
+        """
         return self._trajectory
+
+    def _calculate_state(self):
+        """
+        Prepares and returns the Initial State Vector of the test particle
+
+        Returns
+        -------
+        state : ~numpy.ndarray
+            Initial State Vector of the test particle
+            Length-8 Array
+
+        Raises
+        ------
+        TypeError
+            If there is a mismatch between the coordinates class of ``self.coords`` and \
+            coordinate class, with which ``self.metric`` object has been instantiated
+
+        """
+        if self.coords.system != self.metric.coords.system:
+            raise TypeError(
+                "Coordinate System Mismatch between Metric object and supplied initial coordinates."
+            )
+
+        x4 = self.coords.position()
+        v4 = self.coords.velocity(self.metric)
+
+        state = np.hstack((x4, v4))
+
+        return state
 
     def calculate_trajectory(
         self,
@@ -72,7 +134,7 @@ class Geodesic:
         end_lambda : float, optional
             Affine Parameter, Lambda, where iterations will stop
             Equivalent to Proper Time for Timelike Geodesics
-            Defaults to ``10``
+            Defaults to ``10.0``
         OdeMethodKwargs : dict, optional
             Kwargs to be supplied to the ODESolver
             Dictionary with key 'stepsize' along with a float value is expected
@@ -117,13 +179,11 @@ class Geodesic:
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
         if return_cartesian:
-            conv_coords: Dict[str, Any] = {
-                "S": SphericalConversion,
-                "BL": BoyerLindquistConversion,
-            }
+            # Getting the corresponding Conversion class
+            type_coords_conv = type(self.coords).__mro__[1]
             cart_vecs = list()
             for v in vecs:
-                vals = conv_coords[g.coords](
+                vals = type_coords_conv(
                     v[0], v[1], v[2], v[3], v[5], v[6], v[7]
                 ).convert_cartesian(M=g.M, a=g.a)
                 cart_vecs.append(np.hstack((vals[:4], v[4], vals[4:])))
@@ -171,13 +231,10 @@ class Geodesic:
 
         while True:
             if return_cartesian:
-                conv_coords: Dict[str, Any] = {
-                    "S": SphericalConversion,
-                    "BL": BoyerLindquistConversion,
-                }
-
+                # Getting the corresponding Conversion class
+                type_coords_conv = type(self.coords).__mro__[1]
                 v = ODE.y
-                vals = conv_coords[g.coords](
+                vals = type_coords_conv(
                     v[0], v[1], v[2], v[3], v[5], v[6], v[7]
                 ).convert_cartesian(M=g.M, a=g.a)
 
@@ -193,3 +250,40 @@ class Geodesic:
                     "Test particle has reached Schwarzchild Radius. ", RuntimeWarning
                 )
                 break
+
+
+class TimelikeGeodesic(Geodesic):
+    """
+    Class for defining Time-like Geodesics
+
+    """
+
+    def __init__(
+        self, metric, coords, end_lambda, step_size=1e-3, return_cartesian=True
+    ):
+        """
+        Parameters
+        ----------
+        metric : ~einsteinpy.metric.*
+            Metric, in which Geodesics are to be calculated
+        coords : ~einsteinpy.coordinates.differential.*
+            Coordinate system, in which Metric is to be represented
+        end_lambda : float
+            Affine Parameter, Lambda, where iterations will stop
+            Equivalent to Proper Time for Timelike Geodesics
+        step_size : float, optional
+            Size of each geodesic integration step
+            Defaults to ``1e-3``
+        return_cartesian : bool, optional
+            Whether to return calculated values in Cartesian Coordinates
+            Defaults to ``True``
+
+        """
+        super().__init__(
+            time_like=True,
+            metric=metric,
+            coords=coords,
+            end_lambda=end_lambda,
+            step_size=step_size,
+            return_cartesian=return_cartesian,
+        )

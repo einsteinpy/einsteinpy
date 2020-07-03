@@ -1,8 +1,8 @@
-import astropy.units as u
 import numpy as np
+from astropy import units as u
 
 from einsteinpy.coordinates import SphericalDifferential
-from einsteinpy.geodesic import Geodesic
+from einsteinpy.geodesic import TimelikeGeodesic
 from einsteinpy.metric import Schwarzschild
 
 
@@ -19,7 +19,7 @@ def perihelion():
 
     """
     # Mass of the black hole in SI
-    M = 6e24
+    M = 6e24 * u.kg
 
     # Defining the initial coordinates of the test particle
     # in SI
@@ -34,12 +34,9 @@ def perihelion():
     )
 
     # Schwarzschild Metric Object
-    ms = Schwarzschild(M=M)
-
-    # Getting the initial state of the test particle
-    state = sph.state(metric=ms, time_like=True)
+    ms = Schwarzschild(coords=sph, M=M)
 
     # Calculating Geodesic
-    geod = Geodesic(metric=ms, state=state, end_lambda=0.002, step_size=5e-8)
+    geod = TimelikeGeodesic(metric=ms, coords=sph, end_lambda=0.002, step_size=5e-8)
 
     return geod

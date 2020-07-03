@@ -7,15 +7,15 @@ _c = constant.c.value
 
 
 def cartesian_to_spherical_fast(
-    x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
+    t, x, y, z, v_x=None, v_y=None, v_z=None, velocities_provided=False
 ):
     if velocities_provided:
-        return cartesian_to_spherical(x, y, z, v_x, v_y, v_z)
-    return cartesian_to_spherical_novel(x, y, z)
+        return cartesian_to_spherical(t, x, y, z, v_x, v_y, v_z)
+    return cartesian_to_spherical_novel(t, x, y, z)
 
 
 @jit
-def cartesian_to_spherical(x, y, z, v_x, v_y, v_z):
+def cartesian_to_spherical(t, x, y, z, v_x, v_y, v_z):
     """
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
@@ -31,11 +31,11 @@ def cartesian_to_spherical(x, y, z, v_x, v_y, v_z):
     v_th = (z * (x * v_x + y * v_y) - n1 * v_z) / (n2 * np.sqrt(n1))
     v_p = -1 * (v_x * y - x * v_y) / n1
 
-    return r, theta, phi, v_r, v_th, v_p
+    return t, r, theta, phi, v_r, v_th, v_p
 
 
 @jit
-def cartesian_to_spherical_novel(x, y, z):
+def cartesian_to_spherical_novel(t, x, y, z):
     """
     Utility function (jitted) to convert cartesian to spherical.
     This function should eventually result in Coordinate Transformation Graph!
@@ -46,19 +46,19 @@ def cartesian_to_spherical_novel(x, y, z):
     theta = np.arctan2(hxy, z)
     phi = np.arctan2(y, x)
 
-    return r, theta, phi
+    return t, r, theta, phi
 
 
 def cartesian_to_bl_fast(
-    x, y, z, alpha, v_x=None, v_y=None, v_z=None, velocities_provided=False
+    t, x, y, z, alpha, v_x=None, v_y=None, v_z=None, velocities_provided=False
 ):
     if velocities_provided:
-        return cartesian_to_bl(x, y, z, alpha, v_x, v_y, v_z)
-    return cartesian_to_bl_novel(x, y, z, alpha)
+        return cartesian_to_bl(t, x, y, z, alpha, v_x, v_y, v_z)
+    return cartesian_to_bl_novel(t, x, y, z, alpha)
 
 
 @jit
-def cartesian_to_bl(x, y, z, alpha, v_x, v_y, v_z):
+def cartesian_to_bl(t, x, y, z, alpha, v_x, v_y, v_z):
     """
     Utility function (jitted) to convert cartesian to boyer lindquist.
     This function should eventually result in Coordinate Transformation Graph!
@@ -79,11 +79,11 @@ def cartesian_to_bl(x, y, z, alpha, v_x, v_y, v_z):
     v_th = (-1 / np.sqrt(1 - np.square(z / r))) * ((v_z * r - v_r * z) / (r ** 2))
     v_p = (1 / (1 + np.square(y / x))) * ((v_y * x - v_x * y) / (x ** 2))
 
-    return r, theta, phi, v_r, v_th, v_p
+    return t, r, theta, phi, v_r, v_th, v_p
 
 
 @jit
-def cartesian_to_bl_novel(x, y, z, alpha):
+def cartesian_to_bl_novel(t, x, y, z, alpha):
     """
     Utility function (jitted) to convert cartesian to boyer lindquist.
     This function should eventually result in Coordinate Transformation Graph!
@@ -94,19 +94,19 @@ def cartesian_to_bl_novel(x, y, z, alpha):
     theta = np.arccos(z / r)
     phi = np.arctan2(y, x)
 
-    return r, theta, phi
+    return t, r, theta, phi
 
 
 def spherical_to_cartesian_fast(
-    r, th, p, v_r=None, v_th=None, v_p=None, velocities_provided=False
+    t, r, th, p, v_r=None, v_th=None, v_p=None, velocities_provided=False
 ):
     if velocities_provided:
-        return spherical_to_cartesian(r, th, p, v_r, v_th, v_p)
-    return spherical_to_cartesian_novel(r, th, p)
+        return spherical_to_cartesian(t, r, th, p, v_r, v_th, v_p)
+    return spherical_to_cartesian_novel(t, r, th, p)
 
 
 @jit
-def spherical_to_cartesian(r, th, p, v_r, v_th, v_p):
+def spherical_to_cartesian(t, r, th, p, v_r, v_th, v_p):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -127,11 +127,11 @@ def spherical_to_cartesian(r, th, p, v_r, v_th, v_p):
     )
     v_z = np.cos(th) * v_r - r * np.sin(th) * v_th
 
-    return x, y, z, v_x, v_y, v_z
+    return t, x, y, z, v_x, v_y, v_z
 
 
 @jit
-def spherical_to_cartesian_novel(r, th, p):
+def spherical_to_cartesian_novel(t, r, th, p):
     """
     Utility function (jitted) to convert spherical to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -141,19 +141,19 @@ def spherical_to_cartesian_novel(r, th, p):
     y = r * np.sin(p) * np.sin(th)
     z = r * np.cos(th)
 
-    return x, y, z
+    return t, x, y, z
 
 
 def bl_to_cartesian_fast(
-    r, th, p, alpha, v_r=None, v_th=None, v_p=None, velocities_provided=False
+    t, r, th, p, alpha, v_r=None, v_th=None, v_p=None, velocities_provided=False
 ):
     if velocities_provided:
-        return bl_to_cartesian(r, th, p, alpha, v_r, v_th, v_p)
-    return bl_to_cartesian_novel(r, th, p, alpha)
+        return bl_to_cartesian(t, r, th, p, alpha, v_r, v_th, v_p)
+    return bl_to_cartesian_novel(t, r, th, p, alpha)
 
 
 @jit
-def bl_to_cartesian(r, th, p, alpha, v_r, v_th, v_p):
+def bl_to_cartesian(t, r, th, p, alpha, v_r, v_th, v_p):
     """
     Utility function (jitted) to convert bl to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -176,11 +176,11 @@ def bl_to_cartesian(r, th, p, alpha, v_r, v_th, v_p):
     )
     v_z = (v_r * np.cos(th)) - (r * np.sin(th) * v_th)
 
-    return x, y, z, v_x, v_y, v_z
+    return t, x, y, z, v_x, v_y, v_z
 
 
 @jit
-def bl_to_cartesian_novel(r, th, p, alpha):
+def bl_to_cartesian_novel(t, r, th, p, alpha):
     """
     Utility function (jitted) to convert bl to cartesian.
     This function should eventually result in Coordinate Transformation Graph!
@@ -192,7 +192,7 @@ def bl_to_cartesian_novel(r, th, p, alpha):
     y = sin_norm * np.sin(p)
     z = r * np.cos(th)
 
-    return x, y, z
+    return t, x, y, z
 
 
 def lorentz_factor(v1, v2, v3):
@@ -214,7 +214,7 @@ def lorentz_factor(v1, v2, v3):
         Lorentz Factor
 
     """
-    v_vec = np.array([v1, v2, v3], dtype=float)
+    v_vec = np.array([v1, v2, v3])
     v_norm2 = v_vec.dot(v_vec)
     gamma = 1 / np.sqrt(1 - v_norm2 / _c ** 2)
 
@@ -222,7 +222,7 @@ def lorentz_factor(v1, v2, v3):
 
 
 @jit
-def v0(g_cov_mat, v1, v2, v3, time_like=True):
+def v0(g_cov_mat, v1, v2, v3):
     """
     Utility function to return Timelike component (v0) of 4-Velocity
     Assumes a (+, -, -, -) Metric Signature
@@ -239,20 +239,15 @@ def v0(g_cov_mat, v1, v2, v3, time_like=True):
         Second component of 3-Velocity
     v3 : float
         Third component of 3-Velocity
-    time_like : bool, optional
-        To determine, if the 4-Velocity is for a Time-like or \
-        a Null-like Geodesic
-        Defaults to ``True``
-
     Returns
     -------
-    ~astropy.units.dimensionless unscaled
+    float
         Timelike component of 4-Velocity
 
     """
     g = g_cov_mat
     # Factor to add to coefficient, C
-    fac = -1 * _c ** 2 if time_like else 0
+    fac = -1 * _c ** 2
     # Defining coefficients for quadratic equation
     A = g[0, 0]
     B = 2 * (g[0, 1] * v1 + g[0, 2] * v2 + g[0, 3] * v3)
@@ -267,62 +262,3 @@ def v0(g_cov_mat, v1, v2, v3, time_like=True):
     v_t = (-B + np.sqrt(D)) / (2 * A)
 
     return v_t
-
-
-def four_position(t, x1, x2, x3):
-    """
-    Utility function to return 4-Position
-
-    Parameters
-    ----------
-    t : float
-        Coordinate Time
-    x1 : float
-        First component of 3-Position
-    x2 : float
-        Second component of 3-Position
-    x3 : float
-        Third component of 3-Position
-
-    Returns
-    -------
-    ~numpy.ndarray
-        Position 4-Vector
-
-    """
-    x_4vec = np.array([_c * t, x1, x2, x3], dtype=float)
-
-    return x_4vec
-
-
-def four_velocity(g_cov_mat, v1, v2, v3, time_like=True):
-    """
-    Utility function to return 4-Velocity
-
-    Parameters
-    ----------
-    g_cov_mat : ~numpy.ndarray
-        Matrix, containing Covariant Metric \
-        Tensor values, in same coordinates as ``v_vec``
-        Numpy array of shape (4,4)
-    v1 : float
-        First component of 3-Velocity
-    v2 : float
-        Second component of 3-Velocity
-    v3 : float
-        Third component of 3-Velocity
-    time_like : bool, optional
-        To determine, if the 4-Velocity is for a Time-like or \
-        a Null-like Geodesic
-        Defaults to ``True``
-
-    Returns
-    -------
-    ~numpy.ndarray
-        Velocity 4-Vector
-
-    """
-    v_vec = np.array([v1, v2, v3], dtype=float)
-    v_4vec = np.hstack((v0(g_cov_mat, v1, v2, v3, time_like), v_vec))
-
-    return v_4vec

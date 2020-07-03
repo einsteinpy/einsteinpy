@@ -2,7 +2,7 @@ import os
 import random
 
 import numpy as np
-import plotly.graph_objects as go
+from plotly import graph_objects as go
 from plotly.offline import plot as saveplot
 
 

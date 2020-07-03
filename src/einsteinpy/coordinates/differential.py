@@ -1,12 +1,15 @@
-import astropy.units as u
 import numpy as np
+from astropy import units as u
 
+from einsteinpy import constant, metric
 from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
     SphericalConversion,
 )
-from einsteinpy.coordinates.utils import four_position, four_velocity
+from einsteinpy.coordinates.utils import v0
+
+_c = constant.c.value
 
 
 class CartesianDifferential(CartesianConversion):
@@ -41,27 +44,87 @@ class CartesianDifferential(CartesianConversion):
             z-Component of 3-Velocity
 
         """
+        super().__init__(
+            t.si.value,
+            x.si.value,
+            y.si.value,
+            z.si.value,
+            v_x.si.value,
+            v_y.si.value,
+            v_z.si.value,
+        )
         self.t = t
         self.x = x
         self.y = y
         self.z = z
+        self._v_t = None
         self.v_x = v_x
         self.v_y = v_y
         self.v_z = v_z
-        super().__init__(t, x.value, y.value, z.value, v_x.value, v_y.value, v_z.value)
         self.system = "Cartesian"
 
     def __str__(self):
-        return f"Cartesian Coordinates: \n \
-            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n \
-            v_x: {self.v_x}, v_y: {self.v_y}, v_z: {self.v_z}"
+        return f"Cartesian Coordinates: \n\
+            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n\
+            v_t: {self.v_t}, v_x: {self.v_x}, v_y: {self.v_y}, v_z: {self.v_z}"
 
     def __repr__(self):
-        return f"Cartesian Coordinates: \n \
-            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n \
-            v_x: {self.v_x}, v_y: {self.v_y}, v_z: {self.v_z}"
+        return f"Cartesian Coordinates: \n\
+            t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n\
+            v_t: {self.v_t}, v_x: {self.v_x}, v_y: {self.v_y}, v_z: {self.v_z}"
 
-    def velocity(self, metric, time_like=True):
+    def position(self):
+        """
+        Returns Position 4-Vector in SI units
+
+        Returns
+        -------
+        tuple
+            4-Tuple, containing Position 4-Vector in SI units
+
+        """
+        return (_c * self.t.si.value, self.x.si.value, self.y.si.value, self.z.si.value)
+
+    @property
+    def v_t(self):
+        """
+        Returns the Timelike component of 4-Velocity
+
+        """
+        return self._v_t
+
+    @v_t.setter
+    def v_t(self, args):
+        """
+        Sets the value of the Time-like component of 4-Velocity
+
+        Parameters
+        ----------
+        args : tuple
+            1-tuple containing the ~einsteinpy.metric.* object, \
+            in which the coordinates are defined
+
+        Raises
+        ------
+        TypeError
+            If ``metric`` object has been instantiated with a coordinate system, \
+            other than Cartesian Coordinates.
+
+        """
+        g = args[0]
+        if self.system != g.coords.system:
+            raise TypeError(
+                "Metric object has been instantiated with a coordinate system,"
+                " other than Cartesian Coordinates."
+            )
+
+        g_cov_mat = g.metric_covariant(self.position())
+
+        v_t = v0(g_cov_mat, self.v_x.si.value, self.v_y.si.value, self.v_z.si.value)
+
+        self._v_t = v_t * u.m / u.s
+
+    def velocity(self, metric):
         """
         Returns Velocity 4-Vector in SI units
 
@@ -69,55 +132,17 @@ class CartesianDifferential(CartesianConversion):
         ----------
         metric : ~einsteinpy.metric.*
             Metric object, in which the coordinates are defined
-        time_like : bool, optional
-            To determine, if the coordinates are for a Time-like or \
-            a Null-like Geodesic
-            Defaults to ``True``
 
         Returns
         -------
-        ~numpy.ndarray :
-            Array, containing Velocity 4-Vector in SI units
+        tuple
+            4-Tuple, containing Velocity 4-Vector in SI units
 
         """
-        x4 = four_position(self.t.value, self.x.value, self.y.value, self.z.value)
-        g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(
-            g_cov_mat, self.v_x.value, self.v_y.value, self.v_z.value, time_like
-        )
+        # Setting _v_t
+        self.v_t = (metric,)
 
-        return v4
-
-    def state(self, metric, time_like=True):
-        """
-        Returns the State Vector, pertaining to the test particle, \
-        whose coordinates have been provided
-
-        Parameters
-        ----------
-        metric : ~einsteinpy.metric.*
-            Metric object, in which the coordinates are defined
-        time_like : bool, optional
-            To determine, if the coordinates are for a Time-like or \
-            a Null-like Geodesic
-            Defaults to ``True``
-
-        Returns
-        -------
-        state : ~numpy.ndarray
-            The State Vector of the test particle
-            Length-8 Array
-
-        """
-        x4 = four_position(self.t.value, self.x.value, self.y.value, self.z.value)
-        g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(
-            g_cov_mat, self.v_x.value, self.v_y.value, self.v_z.value, time_like
-        )
-
-        state = np.hstack((x4, v4))
-
-        return state
+        return (self._v_t.value, self.x.si.value, self.y.si.value, self.z.si.value)
 
     def spherical_differential(self, **kwargs):
         """
@@ -221,29 +246,92 @@ class SphericalDifferential(SphericalConversion):
             phi-Component of 3-Velocity
 
         """
+        super().__init__(
+            t.si.value,
+            r.si.value,
+            theta.si.value,
+            phi.si.value,
+            v_r.si.value,
+            v_th.si.value,
+            v_p.si.value,
+        )
         self.t = t
         self.r = r
         self.theta = theta
         self.phi = phi
+        self._v_t = None
         self.v_r = v_r
         self.v_th = v_th
         self.v_p = v_p
-        super().__init__(
-            t.value, r.value, theta.value, phi.value, v_r.value, v_th.value, v_p.value
-        )
         self.system = "Spherical"
 
     def __str__(self):
-        return f"Spherical Polar Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n \
-            v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
+        return f"Spherical Polar Coordinates: \n\
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
+            v_t: {self.v_t}, v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
 
     def __repr__(self):
-        return f"Spherical Polar Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n \
-            v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
+        return f"Spherical Polar Coordinates: \n\
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
+            v_t: {self.v_t}, v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
 
-    def velocity(self, metric, time_like=True):
+    def position(self):
+        """
+        Returns Position 4-Vector in SI units
+
+        Returns
+        -------
+        tuple
+            4-Tuple, containing Position 4-Vector in SI units
+
+        """
+        return (
+            _c * self.t.si.value,
+            self.r.si.value,
+            self.theta.si.value,
+            self.phi.si.value,
+        )
+
+    @property
+    def v_t(self):
+        """
+        Returns the Timelike component of 4-Velocity
+
+        """
+        return self._v_t
+
+    @v_t.setter
+    def v_t(self, args):
+        """
+        Sets the value of the Time-like component of 4-Velocity
+
+        Parameters
+        ----------
+        args : tuple
+            1-tuple containing the ~einsteinpy.metric.* object, \
+            in which the coordinates are defined
+
+        Raises
+        ------
+        TypeError
+            If ``metric`` object has been instantiated with a coordinate system, \
+            other than Cartesian Coordinates.
+
+        """
+        g = args[0]
+        if self.system != g.coords.system:
+            raise TypeError(
+                "Metric object has been instantiated with a coordinate system,"
+                " other than Spherical Polar Coordinates."
+            )
+
+        g_cov_mat = g.metric_covariant(self.position())
+
+        v_t = v0(g_cov_mat, self.v_r.si.value, self.v_th.si.value, self.v_p.si.value)
+
+        self._v_t = v_t * u.m / u.s
+
+    def velocity(self, metric):
         """
         Returns Velocity 4-Vector in SI units
 
@@ -251,57 +339,22 @@ class SphericalDifferential(SphericalConversion):
         ----------
         metric : ~einsteinpy.metric.*
             Metric object, in which the coordinates are defined
-        time_like : bool, optional
-            To determine, if the coordinates are for a Time-like or \
-            a Null-like Geodesic
-            Defaults to ``True``
 
         Returns
         -------
-        ~numpy.ndarray :
-            Array, containing Velocity 4-Vector in SI units
+        tuple
+            4-Tuple, containing Velocity 4-Vector in SI units
 
         """
-        print(self.t, self.r, self.theta, self.phi)
-        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
-        g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(
-            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
+        # Setting _v_t
+        self.v_t = (metric,)
+
+        return (
+            self._v_t.value,
+            self.v_r.si.value,
+            self.v_th.si.value,
+            self.v_p.si.value,
         )
-
-        return v4
-
-    def state(self, metric, time_like=True):
-        """
-        Returns the State Vector, pertaining to the test particle, \
-        whose coordinates have been provided
-
-        Parameters
-        ----------
-        metric : ~einsteinpy.metric.*
-            Metric object, in which the coordinates are defined
-        time_like : bool, optional
-            To determine, if the coordinates are for a Time-like or \
-            a Null-like Geodesic
-            Defaults to ``True``
-
-        Returns
-        -------
-        state : ~numpy.ndarray
-            The State Vector of the test particle
-            Length-8 Array
-
-        """
-        print(self.t, self.r, self.theta, self.phi)
-        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
-        g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(
-            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
-        )
-
-        state = np.hstack((x4, v4))
-
-        return state
 
     def cartesian_differential(self, **kwargs):
         """
@@ -405,29 +458,92 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
             phi-Component of 3-Velocity
 
         """
+        super().__init__(
+            t.si.value,
+            r.si.value,
+            theta.si.value,
+            phi.si.value,
+            v_r.si.value,
+            v_th.si.value,
+            v_p.si.value,
+        )
         self.t = t
         self.r = r
         self.theta = theta
         self.phi = phi
+        self._v_t = None
         self.v_r = v_r
         self.v_th = v_th
         self.v_p = v_p
-        super().__init__(
-            t.value, r.value, theta.value, phi.value, v_r.value, v_th.value, v_p.value
-        )
         self.system = "BoyerLindquist"
 
     def __str__(self):
-        return f"Boyer-Lindquist Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n \
-            v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
+        return f"Boyer-Lindquist Coordinates: \n\
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
+            v_t: {self.v_t}, v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
 
     def __repr__(self):
-        return f"Boyer-Lindquist Coordinates: \n \
-            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n \
-            v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
+        return f"Boyer-Lindquist Coordinates: \n\
+            t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
+            v_t: {self.v_t}, v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
 
-    def velocity(self, metric, time_like=True):
+    def position(self):
+        """
+        Returns Position 4-Vector in SI units
+
+        Returns
+        -------
+        tuple
+            4-Tuple, containing Position 4-Vector in SI units
+
+        """
+        return (
+            _c * self.t.si.value,
+            self.r.si.value,
+            self.theta.si.value,
+            self.phi.si.value,
+        )
+
+    @property
+    def v_t(self):
+        """
+        Returns the Timelike component of 4-Velocity
+
+        """
+        return self._v_t
+
+    @v_t.setter
+    def v_t(self, args):
+        """
+        Sets the value of the Time-like component of 4-Velocity
+
+        Parameters
+        ----------
+        args : tuple
+            1-tuple containing the ~einsteinpy.metric.* object, \
+            in which the coordinates are defined
+
+        Raises
+        ------
+        TypeError
+            If ``metric`` object has been instantiated with a coordinate system, \
+            other than Cartesian Coordinates.
+
+        """
+        g = args[0]
+        if self.system != g.coords.system:
+            raise TypeError(
+                "Metric object has been instantiated with a coordinate system,"
+                " other than Boyer-Lindquist Coordinates."
+            )
+
+        g_cov_mat = g.metric_covariant(self.position())
+
+        v_t = v0(g_cov_mat, self.v_r.si.value, self.v_th.si.value, self.v_p.si.value)
+
+        self._v_t = v_t * u.m / u.s
+
+    def velocity(self, metric):
         """
         Returns Velocity 4-Vector in SI units
 
@@ -435,55 +551,22 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         ----------
         metric : ~einsteinpy.metric.*
             Metric object, in which the coordinates are defined
-        time_like : bool, optional
-            To determine, if the coordinates are for a Time-like or \
-            a Null-like Geodesic
-            Defaults to ``True``
 
         Returns
         -------
-        ~numpy.ndarray :
-            Array, containing Velocity 4-Vector in SI units
+        tuple
+            4-Tuple, containing Velocity 4-Vector in SI units
 
         """
-        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
-        g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(
-            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
+        # Setting _v_t
+        self.v_t = (metric,)
+
+        return (
+            self._v_t.value,
+            self.v_r.si.value,
+            self.v_th.si.value,
+            self.v_p.si.value,
         )
-
-        return v4
-
-    def state(self, metric, time_like=True):
-        """
-        Returns the State Vector, pertaining to the test particle, \
-        whose coordinates have been provided
-
-        Parameters
-        ----------
-        metric : ~einsteinpy.metric.*
-            Metric object, in which the coordinates are defined
-        time_like : bool, optional
-            To determine, if the coordinates are for a Time-like or \
-            a Null-like Geodesic
-            Defaults to ``True``
-
-        Returns
-        -------
-        state : ~numpy.ndarray
-            The State Vector of the test particle
-            Length-8 Array
-
-        """
-        x4 = four_position(self.t.value, self.r.value, self.theta.value, self.phi.value)
-        g_cov_mat = metric.metric_covariant(x4)
-        v4 = four_velocity(
-            g_cov_mat, self.v_r.value, self.v_th.value, self.v_p.value, time_like
-        )
-
-        state = np.hstack((x4, v4))
-
-        return state
 
     def cartesian_differential(self, **kwargs):
         """

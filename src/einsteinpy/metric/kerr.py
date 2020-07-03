@@ -1,4 +1,5 @@
 import numpy as np
+from astropy import units as u
 
 from einsteinpy import constant
 from einsteinpy.metric import BaseMetric
@@ -12,22 +13,30 @@ class Kerr(BaseMetric):
 
     """
 
+    @u.quantity_input(M=u.kg, a=u.one)
     def __init__(self, coords, M, a):
         """
         Constructor
 
         Parameters
         ----------
-        coords : string
+        coords : ~einsteinpy.coordinates.differential.*
             Coordinate system, in which Metric is to be represented
-            "BL" - Boyer-Lindquist: Applicable to Kerr-Newman solutions
-            "KS" - Kerr-Schild: Useful for adding perturbations to Kerr-Newman solutions
-        M : float
+        M : ~astropy.units.quantity.Quantity
             Mass of gravitating body, e.g. Black Hole
-        a : float
+        a : ~astropy.units.quantity.Quantity
             Spin Parameter
 
         """
+        super().__init__(
+            coords=coords,
+            M=M,
+            a=a,
+            name="Kerr Metric",
+            metric_cov=self.metric_covariant,
+            christoffels=self._christoffels,
+            f_vec=self._f_vec,
+        )
         # Precomputed list of tuples, containing indices \
         # of non-zero Christoffel Symbols for Kerr Metric \
         # in Boyer-Lindquist Coordinates
@@ -66,16 +75,6 @@ class Kerr(BaseMetric):
             (3, 3, 2),
         ]
 
-        super().__init__(
-            coords=coords,
-            M=M,
-            a=a,
-            name="Kerr Metric",
-            metric_cov=self.metric_covariant,
-            christoffels=self._christoffels,
-            f_vec=self._f_vec,
-        )
-
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Kerr Metric Tensor \
@@ -83,7 +82,7 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -92,11 +91,19 @@ class Kerr(BaseMetric):
             Covariant Kerr Metric Tensor in chosen Coordinates
             Numpy array of shape (4,4)
 
-        """
-        if self.coords == "KS":
-            return self._g_cov_ks(x_vec)
+        Raises
+        ------
+        NotImplementedError
+            In case of the metric is not available in \
+            the supplied Coordinate System
 
-        return self._g_cov_bl(x_vec)
+        """
+        if self.coords.system == "BoyerLindquist":
+            return self._g_cov_bl(x_vec)
+
+        raise NotImplementedError(
+            "Kerr Metric is available only in Boyer-Lindquist Coordinates."
+        )
 
     def _g_cov_bl(self, x_vec):
         """
@@ -105,7 +112,7 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -117,7 +124,7 @@ class Kerr(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        r_s, M, a = self.sch_rad, self.M, self.a
+        r_s, M, a = self.sch_rad, self.M.value, self.a.value
         alpha = super().alpha(M, a)
         sg, dl = super().sigma(r, th, M, a), super().delta(r, M, a)
 
@@ -136,25 +143,6 @@ class Kerr(BaseMetric):
 
         return g_cov_bl
 
-    def _g_cov_ks(self, x_vec):
-        """
-        Returns Covariant Kerr Metric Tensor \
-        in Kerr-Schild coordinates
-
-        Parameters
-        ----------
-        x_vec : ~numpy.ndarray
-            Position 4-Vector
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
-
     def _dg_dx_bl(self, x_vec):
         """
         Returns derivative of each Kerr Metric component \
@@ -162,8 +150,8 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
-                Position 4-Vector
+        x_vec : array_like
+            Position 4-Vector
 
         Returns
         -------
@@ -177,7 +165,7 @@ class Kerr(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        r_s, M, a, c2 = self.sch_rad, self.M, self.a, _c ** 2
+        r_s, M, a, c2 = self.sch_rad, self.M.value, self.a.value, _c ** 2
         alpha = super().alpha(M, a)
         sg, dl = super().sigma(r, th, M, a), super().delta(r, M, a)
 
@@ -222,32 +210,13 @@ class Kerr(BaseMetric):
 
         return dgdx
 
-    def _dg_dx_ks(self, x_vec):
-        """
-        Returns derivative of each Kerr Metric component \
-        w.r.t. coordinates in Kerr-Schild Coordinate System
-
-        Parameters
-        ----------
-        x_vec : ~numpy.ndarray
-                Position 4-Vector
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
-
     def _christoffels(self, x_vec):
         """
         Returns Christoffel Symbols for Kerr Metric in chosen Coordinates
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -257,11 +226,19 @@ class Kerr(BaseMetric):
             in chosen Coordinates
             Numpy array of shape (4,4,4)
 
-        """
-        if self.coords == "KS":
-            return self._ch_sym_ks(x_vec)
+        Raises
+        ------
+        NotImplementedError
+            In case of the Christoffel Symbols are not \
+            available in the supplied Coordinate System
 
-        return self._ch_sym_bl(x_vec)
+        """
+        if self.coords.system == "BoyerLindquist":
+            return self._ch_sym_bl(x_vec)
+
+        raise NotImplementedError(
+            "Christoffel Symbols for Kerr Metric are available only in Boyer-Lindquist Coordinates."
+        )
 
     def _ch_sym_bl(self, x_vec):
         """
@@ -270,7 +247,7 @@ class Kerr(BaseMetric):
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -306,29 +283,10 @@ class Kerr(BaseMetric):
 
         return chl
 
-    def _ch_sym_ks(self, x_vec):
-        """
-        Returns Christoffel Symbols for Kerr Metric \
-        in Kerr-Schild Coordinates
-
-        Parameters
-        ----------
-        x_vec : ~numpy.ndarray
-            Position 4-Vector
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
-
-    def _f_vec(self, lambda_, x_vec):
+    def _f_vec(self, lambda_, vec):
         """
         Returns f_vec for Kerr Metric in chosen coordinates
-        To be used in solving for Geodesics
+        To be used for solving Geodesics ODE
 
         Parameters
         ----------
@@ -345,17 +303,25 @@ class Kerr(BaseMetric):
             f_vec for Kerr Metric in chosen coordinates
             Numpy array of shape (8)
 
-        """
-        if self.coords == "KS":
-            return self._f_vec_ks(lambda_, x_vec)
+        Raises
+        ------
+        NotImplementedError
+            In case of ``f_vec`` is not available in \
+            the supplied Coordinate System
 
-        return self._f_vec_bl(lambda_, x_vec)
+        """
+        if self.coords.system == "BoyerLindquist":
+            return self._f_vec_bl(lambda_, vec)
+
+        raise NotImplementedError(
+            "'f_vec' for Kerr Metric is available only in Boyer-Lindquist Coordinates."
+        )
 
     def _f_vec_bl(self, lambda_, vec):
         """
         Returns f_vec for Kerr Metric \
         in Boyer-Lindquist Coordinates
-        To be used in solving for Geodesics
+        To be used for solving Geodesics ODE
 
         Parameters
         ----------
@@ -408,30 +374,6 @@ class Kerr(BaseMetric):
         )
 
         return vals
-
-    def _f_vec_ks(self, lambda_, vec):
-        """
-        Returns f_vec for Kerr Metric \
-        in Kerr-Schild Coordinates
-        To be used in solving for Geodesics
-
-        Parameters
-        ----------
-        lambda_ : float
-            Parameterizes current integration step
-            Used by ODE Solver
-
-        vec : ~numpy.ndarray
-            Length-8 Vector, containing 4-Position & 4-Velocity
-
-        Returns
-        -------
-        NotImplementedError
-            To be implemented after KS Coordinates
-
-        """
-        # To be implemented after KS Coordinates
-        raise NotImplementedError
 
     @staticmethod
     def nonzero_christoffels():

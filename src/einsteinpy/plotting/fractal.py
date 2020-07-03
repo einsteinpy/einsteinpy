@@ -5,7 +5,7 @@ Contains a simple implementation of fractal.
 
 """
 import numpy as np
-import plotly.graph_objects as go
+from plotly import graph_objects as go
 
 from einsteinpy.ijit import jit
 
