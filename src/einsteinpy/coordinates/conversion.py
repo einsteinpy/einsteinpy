@@ -82,9 +82,9 @@ class CartesianConversion:
 
         Returns
         -------
-        ~numpy.ndarray
-            A Length-7 Numpy array, containing the \
-            components in Spherical Polar Coordinates
+        tuple
+            4-Tuple or 7-Tuple, containing the components in \
+            Spherical Polar Coordinates
 
         """
         return cartesian_to_spherical_fast(
@@ -119,9 +119,9 @@ class CartesianConversion:
 
         Returns
         -------
-        ~numpy.ndarray
-            A Length-7 Numpy array, containing the \
-            components in Boyer-Lindquist Coordinates
+        tuple
+            4-Tuple or 7-Tuple, containing the components in \
+            Boyer-Lindquist Coordinates
 
         Raises
         ------
@@ -227,9 +227,9 @@ class SphericalConversion:
 
         Returns
         -------
-        ~numpy.ndarray
-            A Length-7 Numpy array, containing the \
-            components in Cartesian Coordinates
+        tuple
+            4-Tuple or 7-Tuple, containing the components in \
+            Cartesian Coordinates
 
         """
         return spherical_to_cartesian_fast(
@@ -264,9 +264,9 @@ class SphericalConversion:
 
         Returns
         -------
-        ~numpy.ndarray
-            A Length-7 Numpy array, containing the \
-            components in Boyer-Lindquist Coordinates
+        tuple
+            4-Tuple or 7-Tuple, containing the components in \
+            Boyer-Lindquist Coordinates
 
         Raises
         ------
@@ -373,9 +373,9 @@ class BoyerLindquistConversion:
 
         Returns
         -------
-        ~numpy.ndarray
-            A Length-7 Numpy array, containing the \
-            components in Cartesian Coordinates
+        tuple
+            4-Tuple or 7-Tuple, containing the components in \
+            Cartesian Coordinates
 
         Raises
         ------
@@ -426,9 +426,9 @@ class BoyerLindquistConversion:
 
         Returns
         -------
-        ~numpy.ndarray
-            A Length-7 Numpy array, containing the \
-            components in Spherical Polar Coordinates
+        tuple
+            4-Tuple or 7-Tuple, containing the components in \
+            Spherical Polar Coordinates
 
         Raises
         ------

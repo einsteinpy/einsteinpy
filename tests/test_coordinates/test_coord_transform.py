@@ -102,7 +102,7 @@ def test_BoyerLindquistToSpherical(boyerlindquist, spherical):
             0.7 * u.one
         ),
         (
-            Cartesian(1e1 * u.s, -732.0e2 * u.m, 456e2 * u.m, -90e2 * u.m),
+            Cartesian(1e1 * u.s, -732e2 * u.m, 456e2 * u.m, -90e2 * u.m),
             3e10 * u.kg,
             0.9 * u.one
         ),

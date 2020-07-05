@@ -165,7 +165,7 @@ class Kerr(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        r_s, M, a, c2 = self.sch_rad, self.M.value, self.a.value, _c ** 2
+        r_s, M, a = self.sch_rad, self.M.value, self.a.value
         alpha = super().alpha(M, a)
         sg, dl = super().sigma(r, th, M, a), super().delta(r, M, a)
 
@@ -177,32 +177,32 @@ class Kerr(BaseMetric):
             nonlocal dgdx
             dsdr = 2 * r
             dddr = 2 * r - r_s
-            tmp = (r_s * (sg - r * dsdr) / sg) * (1 / sg)
-            dgdx[1, 0, 0] = -1 * tmp
-            dgdx[1, 1, 1] = (-1 / c2) * (dsdr - (sg * (dddr / dl))) / dl
-            dgdx[1, 2, 2] = (-1 / c2) * dsdr
-            dgdx[1, 3, 3] = (
-                (-1 / c2)
-                * (2 * r + (alpha ** 2) * (np.sin(th) ** 2) * tmp)
-                * (np.sin(th) ** 2)
+            tmp = r_s * (sg - r * dsdr) / (sg ** 2)  # r_s * d (r/sg) / dr
+            dgdx[1, 0, 0] = -tmp * _c ** 2
+            dgdx[1, 1, 1] = -(dsdr - (sg * (dddr / dl))) / dl
+            dgdx[1, 2, 2] = -dsdr
+            dgdx[1, 3, 3] = (-2 * r + ((alpha * np.sin(th)) ** 2) * tmp) * (
+                np.sin(th) ** 2
             )
-            dgdx[1, 0, 3] = dgdx[1, 3, 0] = (1 / _c) * (alpha * (np.sin(th) ** 2) * tmp)
+            dgdx[1, 0, 3] = dgdx[1, 3, 0] = _c * alpha * (np.sin(th) ** 2) * tmp
 
         # Differentiation of metric wrt theta
         def due_to_theta():
             nonlocal dgdx
-            dsdth = -2 * (alpha ** 2) * np.cos(th) * np.sin(th)
-            tmp = (-1 / sg) * r_s * r * dsdth / sg
-            dgdx[2, 0, 0] = -1 * tmp
-            dgdx[2, 1, 1] = (-1 / c2) * (dsdth / dl)
-            dgdx[2, 2, 2] = (-1 / c2) * dsdth
-            dgdx[2, 3, 3] = (-1 / c2) * (
-                2 * np.sin(th) * np.cos(th) * ((r ** 2) + (alpha ** 2))
-                + tmp * (alpha ** 2) * (np.sin(th) ** 4)
-                + (4 * (np.sin(th) ** 3) * np.cos(th) * (alpha ** 2) * r * r_s / sg)
+            dsdth = -(alpha ** 2) * np.sin(2 * th)
+            tmp = (
+                ((_c / sg) ** 2) * r_s * r * dsdth
+            )  # (- _c**2 * r_s * r) * d (1/sg) / dth
+            dgdx[2, 0, 0] = tmp
+            dgdx[2, 1, 1] = -(dsdth / dl)
+            dgdx[2, 2, 2] = -dsdth
+            dgdx[2, 3, 3] = -np.sin(2 * th) * ((r ** 2) + (alpha ** 2)) - (
+                r_s * r * alpha ** 2
+            ) * ((np.sin(th) / sg) ** 2) * (
+                2 * sg * np.sin(2 * th) - (np.sin(th) ** 2) * dsdth
             )
-            dgdx[2, 0, 3] = dgdx[2, 3, 0] = (alpha / _c) * (
-                (np.sin(th) ** 2) * tmp + (2 * np.sin(th) * np.cos(th) * r_s * r / sg)
+            dgdx[2, 0, 3] = dgdx[2, 3, 0] = ((_c * alpha * r_s * r) / (sg ** 2)) * (
+                sg * np.sin(2 * th) - dsdth * np.sin(th) ** 2
             )
 
         due_to_r()
@@ -294,7 +294,7 @@ class Kerr(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : ~numpy.ndarray
+        vec : array_like
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
@@ -329,7 +329,7 @@ class Kerr(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : ~numpy.ndarray
+        vec : array_like
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns

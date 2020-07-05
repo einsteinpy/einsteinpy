@@ -138,10 +138,9 @@ class Schwarzschild(BaseMetric):
         """
         r, th = x_vec[1], x_vec[2]
         r_s = self.sch_rad
-        c2 = _c ** 2
         chl = np.zeros(shape=(4, 4, 4), dtype=float)
 
-        chl[1, 0, 0] = 0.5 * r_s * (r - r_s) * c2 / (r ** 3)
+        chl[1, 0, 0] = 0.5 * r_s * (r - r_s) * (_c ** 2) / (r ** 3)
         chl[1, 1, 1] = 0.5 * r_s / (r_s * r - r ** 2)
         chl[1, 2, 2] = r_s - r
         chl[1, 3, 3] = (r_s - r) * (np.sin(th) ** 2)
@@ -163,7 +162,7 @@ class Schwarzschild(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : ~numpy.ndarray
+        vec : array_like
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
@@ -197,7 +196,7 @@ class Schwarzschild(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : ~numpy.ndarray
+        vec : array_like
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns

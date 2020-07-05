@@ -402,9 +402,7 @@ def test_calculate_trajectory_kerr(
         )
     testarray = np.array(testarray)
 
-    # rtol < 1e-2, causes test to fail
-    # Error accumulation perhaps.
-    assert_allclose(testarray, _c ** 2, 1e-2)
+    assert_allclose(testarray, _c ** 2, 1e-8)
 
 
 # Picking a test randomly and testing with Geodesic
@@ -459,7 +457,7 @@ def test_calculate_trajectory_kerr(
         ),
     ],
 )
-def test_calculate_trajectory_kerr(
+def test_calculate_trajectory_kerr_Geodesic(
     bl, M, a, end_lambda, step_size
 ):
     mk = Kerr(coords=bl, M=M, a=a)
@@ -488,9 +486,7 @@ def test_calculate_trajectory_kerr(
         )
     testarray = np.array(testarray)
 
-    # rtol < 1e-2, causes test to fail
-    # Error accumulation perhaps.
-    assert_allclose(testarray, _c ** 2, 1e-2)
+    assert_allclose(testarray, _c ** 2, 1e-8)
 
 
 def test_calculate_trajectory3_kerr():
@@ -603,8 +599,6 @@ def test_calculate_trajectory_iterator_kerr(
     assert_allclose(traj[:50, :], traj_iter_arr, rtol=1e-10)
 
 
-# Fails, due to math issues in f_vec / christoffels / dg_dx
-@pytest.mark.skip(reason="Expected failure")
 def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
     M = 1e25 * u.kg
     a = 0. * u.one
@@ -651,7 +645,7 @@ def test_calculate_trajectory0_kerrnewman():
     M = 1.989e30 * u.kg
     a = 0. * u.one
     Q = 0. * u.C
-    q = 0. * u.C
+    q = 0. * u.C / u.kg
     distance_at_perihelion = 147.10e9
     speed_at_perihelion = 29290
 
@@ -697,7 +691,7 @@ def test_calculate_trajectory1_kerrnewman():
     M = 0.5 * 5.972e24 * u.kg
     a = 0. * u.one
     Q = 11604461683.91822052001953125 * u.C
-    q = _G * M / _Cc * u.C
+    q = _G * M.value / _Cc * u.C / u.kg
 
     r = 1e6
     end_lambda = 1000.0
@@ -732,7 +726,7 @@ def test_calculate_trajectory1_kerrnewman():
 def test_input():
     a = 1e-6 * u.one
     Q = 100. * u.C
-    q = 1. * u.C
+    q = 1. * u.C / u.kg
     end_lambda = 200.0
     step_size = 1.0
 
@@ -817,13 +811,11 @@ def test_compare_calculate_trajectory_iterator_cartesian_kerrnewman(test_input):
     assert_allclose(traj[:20], traj_iter_arr)
 
 
-# Fails, due to math issues in f_vec / christoffels / dg_dx
-@pytest.mark.skip(reason="Expected failure")
 def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
     M = 0.5 * 5.972e24 * u.kg
     a = 0. * u.one
     Q = 0. * u.C
-    q = 0. * u.C
+    q = 0. * u.C / u.kg
 
     bl = BoyerLindquistDifferential(
         t=0.0 * u.s,

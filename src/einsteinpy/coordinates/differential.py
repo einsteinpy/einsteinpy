@@ -142,7 +142,12 @@ class CartesianDifferential(CartesianConversion):
         # Setting _v_t
         self.v_t = (metric,)
 
-        return (self._v_t.value, self.x.si.value, self.y.si.value, self.z.si.value)
+        return (
+            self._v_t.value,
+            self.v_x.si.value,
+            self.v_y.si.value,
+            self.v_z.si.value,
+        )
 
     def spherical_differential(self, **kwargs):
         """

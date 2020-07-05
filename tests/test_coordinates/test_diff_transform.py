@@ -12,7 +12,7 @@ from einsteinpy.coordinates import (
     CartesianDifferential,
     SphericalDifferential
 )
-from einsteinpy.metric import Schwarzschild, Kerr
+from einsteinpy.metric import BaseMetric, Kerr, Schwarzschild
 from einsteinpy import constant
 
 _c = constant.c.value
@@ -27,7 +27,7 @@ def cartesian_differential():
         0 * u.m,
         -190e3 / np.sqrt(2) * u.m / u.s,
         210e3 / np.sqrt(2) * u.m / u.s,
-        200.0e3 * u.m / u.s
+        200e3 * u.m / u.s
     )
 
 
@@ -300,3 +300,30 @@ def test_v_t_getter_setter1(cartesian_differential, spherical_differential, bl_d
     # This should raise TypeError
     with pytest.raises(TypeError):
         bd_vt(bl_differential, ms)
+
+
+def test_cartesian_differential_v_t(cartesian_differential):
+    """
+    Tests v_t for CartesianDifferential specifically
+
+    """
+    # Defining Minkowski Metric
+    def metric_covariant(x_vec):
+        g = np.zeros((4, 4))
+        g[0, 0] = 1
+        g[1, 1] = g[2, 2] = g[3, 3] = -1
+
+        return g
+
+    mink = BaseMetric(
+        coords=cartesian_differential,
+        M=1e24 * u.kg,
+        a=0 * u.one,
+        Q=0 * u.C,
+        name="Minkowski Metric",
+        metric_cov=metric_covariant
+    )
+
+    v4 = cartesian_differential.velocity(mink)
+
+    assert_allclose(v4 @ mink.metric_covariant(np.ones(4)) @ v4, _c ** 2, rtol=1e-8)

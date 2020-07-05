@@ -47,7 +47,7 @@ def test_compare_kerr_kerrnewman_dmetric_dx(test_input):
     mkdx = mk._dg_dx_bl(x_vec)
     mkndx = mkn._dg_dx_bl(x_vec)
 
-    assert_allclose(mkdx, mkndx, rtol=1e-10)
+    assert_allclose(mkdx, mkndx, rtol=1e-8)
 
 
 def test_christoffels_kerrnewman(test_input):

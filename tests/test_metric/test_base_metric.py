@@ -60,7 +60,7 @@ def test_str_repr(sph, bl):
 @pytest.mark.parametrize(
     "M, a, Q, q",
     [
-        (1e22 * u.m, 0.3 * u.m, 90, 200),
+        (1e22 * u.m, 0.3 * u.m, 90, 200 * u.C),
         (1e22, 0.3, 78 * u.C, 20)
     ],
 )
@@ -99,6 +99,7 @@ def test_wrong_or_no_units_in_init(M, a, Q, q):
 
     except (u.UnitsError, TypeError):
         assert True
+
 
 @pytest.fixture
 def dummy_input(sph, bl):
@@ -405,9 +406,14 @@ def test_singularities_raises_NotImplementedError(sph, bl):
     def mknsing(mkn):
         mknsing = mkn.singularities()
 
-    pytest.raises(NotImplementedError, mssing, ms)
-    pytest.raises(NotImplementedError, mksing, mk)
-    pytest.raises(NotImplementedError, mknsing, mkn)
+    with pytest.raises(NotImplementedError):
+        mssing(ms)
+
+    with pytest.raises(NotImplementedError):
+        mksing(mk)
+
+    with pytest.raises(NotImplementedError):
+        mknsing(mkn)
 
 
 def test_deprecation_warning_for_calculate_trajectory(sph, bl):

@@ -235,8 +235,8 @@ class BaseMetric:
         Returns Rotational Length Parameter (alpha) that is used \
         in the Metric. Following equations are relevant:
         alpha = J / Mc
-        a = Jc / GM^2
-        alpha = GMa / c^2
+        a = Jc / GM**2
+        alpha = GMa / c**2
         where, 'a' is the dimensionless Spin Parameter (0 <= a <= 1)
 
         Parameters
@@ -280,6 +280,12 @@ class BaseMetric:
             "outer_horizon": float,
             "outer_ergosphere": function(theta)
             }``
+
+        Raises
+        ------
+        NotImplementedError
+            If ``einsteinpy.metric.*`` does not have the metric in the \
+            coordinate system, the metric object has been instantiated with
 
         """
         system, M, a, Q = self.coords.system, self.M.value, self.a.value, self.Q.value

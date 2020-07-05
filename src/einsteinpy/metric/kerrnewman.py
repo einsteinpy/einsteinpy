@@ -15,8 +15,8 @@ class KerrNewman(BaseMetric):
 
     """
 
-    @u.quantity_input(M=u.kg, a=u.one, Q=u.C, q=u.C)
-    def __init__(self, coords, M, a, Q, q=0.0 * u.C):
+    @u.quantity_input(M=u.kg, a=u.one, Q=u.C, q=u.C / u.kg)
+    def __init__(self, coords, M, a, Q, q=0.0 * u.C / u.kg):
         """
         Constructor
 
@@ -32,7 +32,7 @@ class KerrNewman(BaseMetric):
             Charge on gravitating body, e.g. Black Hole
         q : ~astropy.units.quantity.Quantity, optional
             Charge, per unit mass, of the test particle
-            Defaults to ``0 C``
+            Defaults to ``0 C / kg``
 
         """
         super().__init__(
@@ -135,19 +135,19 @@ class KerrNewman(BaseMetric):
         r, th = x_vec[1], x_vec[2]
         M, a = self.M.value, self.a.value
         alpha = super().alpha(M, a)
-        rho2, del_ = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
-        g_cov_bl[0, 0] = (_c ** 2) * ((del_ - ((alpha * np.sin(th)) ** 2)) / (rho2))
-        g_cov_bl[1, 1] = -rho2 / del_
+        g_cov_bl[0, 0] = (_c ** 2) * ((dl - ((alpha * np.sin(th)) ** 2)) / (rho2))
+        g_cov_bl[1, 1] = -rho2 / dl
         g_cov_bl[2, 2] = -rho2
         g_cov_bl[3, 3] = -(
             (np.sin(th) ** 2)
-            * (((r ** 2 + alpha ** 2) ** 2 - del_ * (alpha * np.sin(th)) ** 2) / rho2)
+            * (((r ** 2 + alpha ** 2) ** 2 - dl * (alpha * np.sin(th)) ** 2) / rho2)
         )
         g_cov_bl[0, 3] = g_cov_bl[3, 0] = _c * (
-            (-alpha * (np.sin(th) ** 2) * (del_ - (r ** 2) - (alpha ** 2))) / rho2
+            (-alpha * (np.sin(th) ** 2) * (dl - (r ** 2) - (alpha ** 2))) / rho2
         )
 
         return g_cov_bl
@@ -174,9 +174,9 @@ class KerrNewman(BaseMetric):
 
         """
         r, th = x_vec[1], x_vec[2]
-        M, a, c2 = self.M.value, self.a.value, _c ** 2
+        M, a = self.M.value, self.a.value
         alpha = super().alpha(M, a)
-        rho2, del_ = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -187,11 +187,13 @@ class KerrNewman(BaseMetric):
             drh2dr = 2 * r
             dddr = 2 * r - self.sch_rad
             dgdx[1, 0, 0] = (
-                dddr * rho2 - drh2dr * (del_ - (alpha * np.sin(th)) ** 2)
-            ) / (rho2 ** 2)
-            dgdx[1, 1, 1] = (-1 / (c2 * (del_ ** 2))) * (drh2dr * del_ - dddr * rho2)
-            dgdx[1, 2, 2] = -drh2dr / c2
-            dgdx[1, 3, 3] = ((np.sin(th) ** 2) / (c2 * (rho2 ** 2))) * (
+                (_c ** 2)
+                * (dddr * rho2 - drh2dr * (dl - (alpha * np.sin(th)) ** 2))
+                / (rho2 ** 2)
+            )
+            dgdx[1, 1, 1] = (-1 / (dl ** 2)) * (drh2dr * dl - dddr * rho2)
+            dgdx[1, 2, 2] = -drh2dr
+            dgdx[1, 3, 3] = ((np.sin(th) / rho2) ** 2) * (
                 (
                     (
                         ((alpha * np.sin(th)) ** 2) * dddr
@@ -202,46 +204,34 @@ class KerrNewman(BaseMetric):
                 )
                 - (
                     drh2dr
-                    * (
-                        ((alpha * np.sin(th)) ** 2) * del_
-                        - ((r ** 2 + alpha ** 2) ** 2)
-                    )
+                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
                 )
             )
             dgdx[1, 0, 3] = dgdx[1, 3, 0] = (
-                (-alpha) * (np.sin(th) ** 2) / (_c * (rho2 ** 2))
-            ) * ((dddr - 2 * r) * rho2 - drh2dr * (del_ - r ** 2 - alpha ** 2))
+                _c * (-alpha) * (np.sin(th) ** 2) / (rho2 ** 2)
+            ) * ((dddr - 2 * r) * rho2 - drh2dr * (dl - r ** 2 - alpha ** 2))
 
         # Differentiation of metric wrt theta
         def due_to_theta():
             nonlocal dgdx
-            drh2dth = -2 * (alpha ** 2) * np.cos(th) * np.sin(th)
-            dgdx[2, 0, 0] = (
-                (-2 * (alpha ** 2) * np.sin(th) * np.cos(th)) * rho2
-                - drh2dth * (del_ - ((alpha * np.sin(th)) ** 2))
-            ) / (rho2 ** 2)
-            dgdx[2, 1, 1] = -drh2dth / (c2 * del_)
-            dgdx[2, 2, 2] = -drh2dth / c2
-            dgdx[2, 3, 3] = (1 / (c2 * (rho2 ** 2))) * (
-                (
-                    (
-                        (4 * (alpha ** 2) * (np.sin(th) ** 3) * np.cos(th) * del_)
-                        - (2 * np.sin(th) * np.cos(th) * ((r ** 2 + alpha ** 2) ** 2))
-                    )
-                    * rho2
-                )
+            drh2dth = -(alpha ** 2) * np.sin(2 * th)
+            dgdx[2, 0, 0] = (-((_c / rho2) ** 2)) * (
+                (drh2dth * (dl - ((alpha * np.sin(th)) ** 2)))
+                + ((alpha ** 2) * rho2 * np.sin(2 * th))
+            )
+            dgdx[2, 1, 1] = -drh2dth / dl
+            dgdx[2, 2, 2] = -drh2dth
+            dgdx[2, 3, 3] = (1 / (rho2 ** 2)) * (
+                (dl * (alpha * np.sin(th)) ** 2)
+                * (2 * rho2 * np.sin(2 * th) - drh2dth * (np.sin(th)) ** 2)
                 - (
-                    drh2dth
-                    * (
-                        ((alpha * np.sin(th)) ** 2) * del_
-                        - ((r ** 2 + alpha ** 2) ** 2)
-                    )
-                    * (np.sin(th) ** 2)
+                    ((r ** 2 + alpha ** 2) ** 2)
+                    * (rho2 * np.sin(2 * th) - drh2dth * (np.sin(th)) ** 2)
                 )
             )
             dgdx[2, 0, 3] = dgdx[2, 3, 0] = (
-                (-alpha * (del_ - r ** 2 - alpha ** 2)) / (_c * (rho2 ** 2))
-            ) * ((2 * np.sin(th) * np.cos(th) * rho2) - (drh2dth * (np.sin(th) ** 2)))
+                (-alpha * _c * (dl - r ** 2 - alpha ** 2)) / (rho2 ** 2)
+            ) * ((np.sin(2 * th) * rho2) - (drh2dth * (np.sin(th) ** 2)))
 
         due_to_r()
         due_to_theta()
@@ -332,7 +322,7 @@ class KerrNewman(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : ~numpy.ndarray
+        vec : array_like
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
@@ -367,7 +357,7 @@ class KerrNewman(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : ~numpy.ndarray
+        vec : array_like
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns
@@ -378,11 +368,7 @@ class KerrNewman(BaseMetric):
 
         """
         chl = self.christoffels(vec[:4])
-        F_contra = self.em_tensor_contravariant(vec[:4])
-        x_vec = np.array(
-            [0, vec[1], vec[2], 0], dtype=float
-        )  # t & phi have no bearing on Metric
-        g_cov = self.metric_covariant(x_vec)
+        F_cov = self.em_tensor_covariant(vec[:4])
 
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
@@ -417,9 +403,7 @@ class KerrNewman(BaseMetric):
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
 
-        vals[4:] -= (
-            self.q.value * np.dot(vec[4:].reshape((4,)), g_cov @ F_contra)
-        ).reshape(4, 1)
+        vals[4:] -= (self.q.value * (F_cov @ vec[4:])).reshape(4, 1)
 
         return vals
 
