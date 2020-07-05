@@ -100,13 +100,8 @@ def test_wrong_or_no_units_in_init(M, a, Q, q):
     except (u.UnitsError, TypeError):
         assert True
 
-
-def test_coordinate_mismatch0(sph, bl):
-    """
-    Tests, if NotImplementedError is raised, in case of coordinate system mismatch, \
-    between metric coordinates and supplied coordinates
-
-    """
+@pytest.fixture
+def dummy_input(sph, bl):
     M = 5e27 * u.kg
     a = 0. * u.one
     Q = 0. * u.C
@@ -117,6 +112,17 @@ def test_coordinate_mismatch0(sph, bl):
 
     x_vec_sph = sph.position()
     x_vec_bl = bl.position()
+
+    return ms, mk, mkn, x_vec_sph, x_vec_bl
+
+
+def test_coordinate_mismatch0(dummy_input):
+    """
+    Tests, if NotImplementedError is raised, in case of coordinate system mismatch, \
+    between metric coordinates and supplied coordinates
+
+    """
+    ms, mk, mkn, x_vec_sph, x_vec_bl = dummy_input
 
     def test_ms_cov(ms):
         ms_cov = ms.metric_covariant(x_vec_sph)
@@ -130,36 +136,26 @@ def test_coordinate_mismatch0(sph, bl):
     def test_ms_con(ms):
         ms_cov = ms.metric_contravariant(x_vec_sph)
 
-    def test_mk_con(mk):
-        mk_cov = mk.metric_contravariant(x_vec_bl)
+    with pytest.raises(NotImplementedError):
+        test_ms_cov(ms)
 
-    def test_mkn_con(mkn):
-        mkn_cov = mkn.metric_contravariant(x_vec_bl)
+    with pytest.raises(NotImplementedError):
+        test_mk_cov(mk)
 
-    pytest.raises(NotImplementedError, test_ms_cov, ms)
-    pytest.raises(NotImplementedError, test_mk_cov, mk)
-    pytest.raises(NotImplementedError, test_mkn_cov, mkn)
-    pytest.raises(NotImplementedError, test_ms_con, ms)
-    pytest.raises(NotImplementedError, test_mk_con, mk)
-    pytest.raises(NotImplementedError, test_mkn_con, mkn)
+    with pytest.raises(NotImplementedError):
+        test_mkn_cov(mkn)
+
+    with pytest.raises(NotImplementedError):
+        test_ms_con(ms)
 
 
-def test_coordinate_mismatch1(sph, bl):
+def test_coordinate_mismatch1(dummy_input):
     """
     Tests, if NotImplementedError is raised, in case of coordinate system mismatch, \
     between metric coordinates and supplied coordinates
 
     """
-    M = 5e27 * u.kg
-    a = 0. * u.one
-    Q = 0. * u.C
-
-    ms = Schwarzschild(coords=bl, M=M)
-    mk = Kerr(coords=sph, M=M, a=a)
-    mkn = KerrNewman(coords=sph, M=M, a=a, Q=Q)
-
-    x_vec_sph = sph.position()
-    x_vec_bl = bl.position()
+    ms, mk, mkn, x_vec_sph, x_vec_bl = dummy_input
 
     def test_ms_chl(ms):
         ms_chl = ms.christoffels(x_vec_sph)
@@ -173,18 +169,50 @@ def test_coordinate_mismatch1(sph, bl):
     def test_ms_fvec(ms):
         ms_fvec = ms.f_vec(0., x_vec_sph)
 
+    with pytest.raises(NotImplementedError):
+        test_ms_chl(ms)
+
+    with pytest.raises(NotImplementedError):
+        test_mk_chl(mk)
+
+    with pytest.raises(NotImplementedError):
+        test_mkn_chl(mkn)
+
+    with pytest.raises(NotImplementedError):
+        test_ms_fvec(ms)
+
+
+def test_coordinate_mismatch2(dummy_input):
+    """
+    Tests, if NotImplementedError is raised, in case of coordinate system mismatch, \
+    between metric coordinates and supplied coordinates
+
+    """
+    ms, mk, mkn, x_vec_sph, x_vec_bl = dummy_input
+
+    def test_mk_con(mk):
+        mk_cov = mk.metric_contravariant(x_vec_bl)
+
+    def test_mkn_con(mkn):
+        mkn_cov = mkn.metric_contravariant(x_vec_bl)
+
     def test_mk_fvec(mk):
         ms_fvec = mk.f_vec(0., x_vec_bl)
 
     def test_mkn_fvec(mkn):
         ms_fvec = mkn.f_vec(0., x_vec_bl)
 
-    pytest.raises(NotImplementedError, test_ms_chl, ms)
-    pytest.raises(NotImplementedError, test_mk_chl, mk)
-    pytest.raises(NotImplementedError, test_mkn_chl, mkn)
-    pytest.raises(NotImplementedError, test_ms_fvec, ms)
-    pytest.raises(NotImplementedError, test_mk_fvec, mk)
-    pytest.raises(NotImplementedError, test_mkn_fvec, mkn)
+    with pytest.raises(NotImplementedError):
+        test_mk_con(mk)
+
+    with pytest.raises(NotImplementedError):
+        test_mkn_con(mkn)
+
+    with pytest.raises(NotImplementedError):
+        test_mk_fvec(mk)
+
+    with pytest.raises(NotImplementedError):
+        test_mkn_fvec(mkn)
 
 
 def dummy_met(x_vec):

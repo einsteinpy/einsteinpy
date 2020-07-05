@@ -243,13 +243,20 @@ def test_v_t_raises_TypeError(cartesian_differential, spherical_differential, bl
     def sd_k(sd, mk):
         return sd.velocity(metric=mk)
 
-    pytest.raises(TypeError, cd_s, (cd, ms))
-    pytest.raises(TypeError, bd_s, (bd, ms))
-    pytest.raises(TypeError, cd_k, (cd, mk))
-    pytest.raises(TypeError, sd_k, (sd, mk))
+    with pytest.raises(TypeError):
+        cd_s(cd, ms)
+
+    with pytest.raises(TypeError):
+        bd_s(bd, ms)
+
+    with pytest.raises(TypeError):
+        cd_k(cd, mk)
+
+    with pytest.raises(TypeError):
+        sd_k(sd, mk)
 
 
-def test_v_t_getter_setter(cartesian_differential, spherical_differential, bl_differential):
+def test_v_t_getter_setter0(cartesian_differential, spherical_differential, bl_differential):
     M = 1e24 * u.kg
     a = 0. * u.one
     ms = Schwarzschild(coords=spherical_differential, M=M)
@@ -261,21 +268,35 @@ def test_v_t_getter_setter(cartesian_differential, spherical_differential, bl_di
     def sd_vt(spherical_differential, mk):
         spherical_differential.v_t = (mk,)
 
-    def bd_vt(bl_differential, ms):
-        bl_differential.v_t = (ms,)
-
-    # These 2 should not raise TypeError
+    # This should not raise TypeError
     try:
         spherical_differential.v_t = (ms,)
     except TypeError:
         pytest.fail("Unexpected TypeError!")
 
+    # These 2 should raise TypeError
+    with pytest.raises(TypeError):
+        cd_vt(cartesian_differential, ms)
+
+    with pytest.raises(TypeError):
+        sd_vt(spherical_differential, mk)
+
+
+def test_v_t_getter_setter1(cartesian_differential, spherical_differential, bl_differential):
+    M = 1e24 * u.kg
+    a = 0. * u.one
+    ms = Schwarzschild(coords=spherical_differential, M=M)
+    mk = Kerr(coords=bl_differential, M=M, a=a)
+
+    def bd_vt(bl_differential, ms):
+        bl_differential.v_t = (ms,)
+
+    # This should not raise TypeError
     try:
         bl_differential.v_t = (mk,)
     except TypeError:
         pytest.fail("Unexpected TypeError!")
 
-    # These 3 should raise TypeError
-    pytest.raises(TypeError, cd_vt, (cartesian_differential, ms))
-    pytest.raises(TypeError, sd_vt, (spherical_differential, mk))
-    pytest.raises(TypeError, bd_vt, (bl_differential, ms))
+    # This should raise TypeError
+    with pytest.raises(TypeError):
+        bd_vt(bl_differential, ms)

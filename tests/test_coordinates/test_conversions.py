@@ -145,7 +145,7 @@ def test_cycle_BLCartesianDifferential(bl_coords):
     assert_allclose(bl_diff2, bl_diff.values(), rtol=0.0, atol=1e-6)
 
 
-def test_convert_kwargs_raises_KeyError(
+def test_convert_kwargs_raises_KeyError0(
     cartesian_coords, spherical_coords, bl_coords
 ):
     def c_s(cartesian_coords):
@@ -154,11 +154,28 @@ def test_convert_kwargs_raises_KeyError(
     def c_b(cartesian_coords):
         return cartesian_coords.convert_bl()
 
-    def s_c(spherical_coords):
-        return spherical_coords.convert_cartesian()
-
     def s_b(spherical_coords):
         return spherical_coords.convert_bl()
+
+    # This should not raise KeyError
+    try:
+        c_s(cartesian_coords)
+    except KeyError:
+        pytest.fail("Unexpected KeyError!")
+
+    # These 2 should raise KeyError
+    with pytest.raises(KeyError):
+        c_b(cartesian_coords)
+
+    with pytest.raises(KeyError):
+        s_b(spherical_coords)
+
+
+def test_convert_kwargs_raises_KeyError1(
+    cartesian_coords, spherical_coords, bl_coords
+):
+    def s_c(spherical_coords):
+        return spherical_coords.convert_cartesian()
 
     def b_c(bl_coords):
         return bl_coords.convert_cartesian()
@@ -166,19 +183,15 @@ def test_convert_kwargs_raises_KeyError(
     def b_s(bl_coords):
         return bl_coords.convert_spherical()
 
-    # These 2 should not raise KeyError
-    try:
-        c_s(cartesian_coords)
-    except KeyError:
-        pytest.fail("Unexpected KeyError!")
-
+    # This should not raise KeyError
     try:
         s_c(spherical_coords)
     except KeyError:
         pytest.fail("Unexpected KeyError!")
 
-    # These 4 should raise KeyError
-    pytest.raises(KeyError, c_b, cartesian_coords)
-    pytest.raises(KeyError, s_b, spherical_coords)
-    pytest.raises(KeyError, b_c, bl_coords)
-    pytest.raises(KeyError, b_s, bl_coords)
+    # These 2 should raise KeyError
+    with pytest.raises(KeyError):
+        b_c(bl_coords)
+
+    with pytest.raises(KeyError):
+        b_s(bl_coords)
