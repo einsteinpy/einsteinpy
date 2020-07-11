@@ -8,7 +8,7 @@ from numpy.testing import assert_allclose
 from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential
 
 from einsteinpy.metric import Schwarzschild, Kerr, KerrNewman
-from einsteinpy.geodesic import Geodesic, TimelikeGeodesic
+from einsteinpy.geodesic import Geodesic, Timelike
 
 from einsteinpy import constant
 
@@ -37,7 +37,7 @@ def test_str_repr():
     end_lambda = 1.
     step_size = 0.4e-6
 
-    geod = TimelikeGeodesic(metric=ms, coords=sph, end_lambda=end_lambda, step_size=step_size)
+    geod = Timelike(metric=ms, coords=sph, end_lambda=end_lambda, step_size=step_size)
 
     assert str(geod) == repr(geod)
 
@@ -63,7 +63,7 @@ def dummy_data():
 
 def test_Geodesics_has_trajectory(dummy_data):
     sph, metric, end_lambda, step_size = dummy_data
-    geo = TimelikeGeodesic(
+    geo = Timelike(
         metric=metric,
         coords=sph,
         end_lambda=end_lambda,
@@ -123,7 +123,7 @@ def test_Geodesics_has_trajectory(dummy_data):
 def test_calculate_trajectory_schwarzschild(sph, M, end_lambda, step_size):
     ms = Schwarzschild(coords=sph, M=M)
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=ms,
         coords=sph,
         end_lambda=end_lambda,
@@ -168,7 +168,7 @@ def test_calculate_trajectory2_schwarzschild():
 
     end_lambda = 3.154e7
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=metric,
         coords=sph,
         end_lambda=end_lambda,
@@ -206,7 +206,7 @@ def test_calculate_trajectory3_schwarzschild():
 
     end_lambda = 3.154e7
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=metric,
         coords=x_sph,
         end_lambda=end_lambda,
@@ -269,7 +269,7 @@ def test_calculate_trajectory_iterator_schwarzschild(
 ):
     metric = Schwarzschild(coords=sph, M=M)
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=metric,
         coords=sph,
         end_lambda=end_lambda,
@@ -306,7 +306,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
     stepsize = 0.4e-6
     OdeMethodKwargs = {"stepsize": stepsize}
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=ms,
         coords=sph,
         end_lambda=end_lambda,
@@ -379,7 +379,7 @@ def test_calculate_trajectory_kerr(
 ):
     mk = Kerr(coords=bl, M=M, a=a)
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mk,
         coords=bl,
         end_lambda=end_lambda,
@@ -406,7 +406,7 @@ def test_calculate_trajectory_kerr(
 
 
 # Picking a test randomly and testing with Geodesic
-# instead of TimelikeGeodesic
+# instead of Timelike
 @pytest.mark.parametrize(
     "bl, M, a, end_lambda, step_size",
     [
@@ -514,7 +514,7 @@ def test_calculate_trajectory3_kerr():
 
     end_lambda = 3.154e7
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mk,
         coords=x_bl,
         end_lambda=end_lambda,
@@ -579,7 +579,7 @@ def test_calculate_trajectory_iterator_kerr(
 ):
     mk = Kerr(coords=bl, M=M, a=a)
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mk,
         coords=bl,
         end_lambda=end_lambda,
@@ -619,7 +619,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
     stepsize = 0.4e-6
     OdeMethodKwargs = {"stepsize": stepsize}
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mk,
         coords=bl,
         end_lambda=end_lambda,
@@ -663,7 +663,7 @@ def test_calculate_trajectory0_kerrnewman():
 
     end_lambda = 3.154e7
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mkn,
         coords=x_bl,
         end_lambda=end_lambda,
@@ -709,7 +709,7 @@ def test_calculate_trajectory1_kerrnewman():
 
     mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mkn,
         coords=bl,
         end_lambda=end_lambda,
@@ -752,7 +752,7 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
     OdeMethodKwargs = {"stepsize": step_size}
     return_cartesian = False
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mkn,
         coords=bl,
         end_lambda=end_lambda,
@@ -791,7 +791,7 @@ def test_compare_calculate_trajectory_iterator_cartesian_kerrnewman(test_input):
     OdeMethodKwargs = {"stepsize": step_size}
     return_cartesian = True
 
-    geod = TimelikeGeodesic(
+    geod = Timelike(
         metric=mkn,
         coords=x_bl,
         end_lambda=end_lambda,
@@ -833,7 +833,7 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
     step_size = 0.4e-6
     OdeMethodKwargs = {"stepsize": step_size}
 
-    geod = TimelikeGeodesic(metric=mkn, coords=bl, end_lambda=end_lambda, step_size=step_size)
+    geod = Timelike(metric=mkn, coords=bl, end_lambda=end_lambda, step_size=step_size)
 
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
@@ -868,7 +868,7 @@ def test_calculate_state_raises_TypeError():
     end_lambda = 3.154e7
 
     with pytest.raises(TypeError):
-        geod = TimelikeGeodesic(
+        geod = Timelike(
             metric=metric,
             coords=x_sph,
             end_lambda=end_lambda,

@@ -7,7 +7,7 @@ from matplotlib.axes import Axes
 
 from einsteinpy.coordinates import SphericalDifferential
 from einsteinpy.metric import Schwarzschild
-from einsteinpy.geodesic import TimelikeGeodesic
+from einsteinpy.geodesic import Timelike
 from einsteinpy.plotting import StaticGeodesicPlotter
 
 
@@ -30,7 +30,7 @@ def dummy_data():
     end_lambda = 0.002
     step_size = 5e-8
 
-    geod = TimelikeGeodesic(metric=ms, coords=sph, end_lambda=end_lambda, step_size=step_size)
+    geod = Timelike(metric=ms, coords=sph, end_lambda=end_lambda, step_size=step_size)
 
     return geod
 

@@ -179,13 +179,14 @@ class Geodesic:
         vecs, lambdas = np.array(vecs), np.array(lambdas)
 
         if return_cartesian:
-            # Getting the corresponding Conversion class
-            type_coords_conv = type(self.coords).__mro__[1]
+            # Getting the corresponding Conversion superclass
+            # of the differential object
+            conv = type(self.coords).__bases__[0]
             cart_vecs = list()
             for v in vecs:
-                vals = type_coords_conv(
-                    v[0], v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian(M=g.M, a=g.a)
+                vals = conv(v[0], v[1], v[2], v[3], v[5], v[6], v[7]).convert_cartesian(
+                    M=g.M, a=g.a
+                )
                 cart_vecs.append(np.hstack((vals[:4], v[4], vals[4:])))
 
             return lambdas, np.array(cart_vecs)
@@ -231,12 +232,13 @@ class Geodesic:
 
         while True:
             if return_cartesian:
-                # Getting the corresponding Conversion class
-                type_coords_conv = type(self.coords).__mro__[1]
+                # Getting the corresponding Conversion superclass
+                # of the differential object
+                conv = type(self.coords).__bases__[0]
                 v = ODE.y
-                vals = type_coords_conv(
-                    v[0], v[1], v[2], v[3], v[5], v[6], v[7]
-                ).convert_cartesian(M=g.M, a=g.a)
+                vals = conv(v[0], v[1], v[2], v[3], v[5], v[6], v[7]).convert_cartesian(
+                    M=g.M, a=g.a
+                )
 
                 yield ODE.t, np.hstack((vals[:4], v[4], vals[4:]))
 
@@ -252,7 +254,7 @@ class Geodesic:
                 break
 
 
-class TimelikeGeodesic(Geodesic):
+class Timelike(Geodesic):
     """
     Class for defining Time-like Geodesics
 

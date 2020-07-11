@@ -2,7 +2,7 @@ import numpy as np
 from astropy import units as u
 
 from einsteinpy.coordinates import SphericalDifferential
-from einsteinpy.geodesic import TimelikeGeodesic
+from einsteinpy.geodesic import Timelike
 from einsteinpy.metric import Schwarzschild
 
 
@@ -37,6 +37,6 @@ def perihelion():
     ms = Schwarzschild(coords=sph, M=M)
 
     # Calculating Geodesic
-    geod = TimelikeGeodesic(metric=ms, coords=sph, end_lambda=0.002, step_size=5e-8)
+    geod = Timelike(metric=ms, coords=sph, end_lambda=0.002, step_size=5e-8)
 
     return geod
