@@ -41,40 +41,52 @@ def test_predefined_bodies_base_properties(obj, parent, R, mass):
 
 
 @pytest.mark.parametrize(
-    "obj, a, name, q",
+    "obj, name, q",
     [
-        (Mercury, 0, "Mercury", 0 * u.C),
-        (Venus, 0, "Venus", 0 * u.C),
-        (Sun, 0, "Sun", 0 * u.C),
-        (Earth, 0, "Earth", 0 * u.C),
-        (Moon, 0, "Moon", 0 * u.C),
-        (Mars, 0, "Mars", 0 * u.C),
-        (Jupiter, 0, "Jupiter", 0 * u.C),
-        (Saturn, 0, "Saturn", 0 * u.C),
-        (Uranus, 0, "Uranus", 0 * u.C),
-        (Neptune, 0, "Neptune", 0 * u.C),
-        (Pluto, 0, "Pluto", 0 * u.C),
+        (Mercury, "Mercury", 0 * u.C),
+        (Venus, "Venus", 0 * u.C),
+        (Sun, "Sun", 0 * u.C),
+        (Earth, "Earth", 0 * u.C),
+        (Moon, "Moon", 0 * u.C),
+        (Mars, "Mars", 0 * u.C),
+        (Jupiter, "Jupiter", 0 * u.C),
+        (Saturn, "Saturn", 0 * u.C),
+        (Uranus, "Uranus", 0 * u.C),
+        (Neptune, "Neptune", 0 * u.C),
+        (Pluto, "Pluto", 0 * u.C),
     ],
 )
-def test_predefined_bodies_extra(obj, a, name, q):
-    assert obj.a == a
+def test_predefined_bodies_extra(obj, name, q):
     assert obj.name == name
     assert obj.q == q
 
 
-def test_differentials():
+def test_initial_states():
     parent = Sun
     name = "Earth"
     R = 6731 * u.km
     mass = 5.97219e24 * u.kg
     differential1 = CartesianDifferential(
-        0 * u.km, 0 * u.km, 0 * u.km, 0 * u.km / u.s, 0 * u.km / u.s, 0 * u.km / u.s
+        0. * u.s,
+        0. * u.m,
+        0. * u.m,
+        0. * u.m,
+        0. * u.m / u.s,
+        0. * u.m / u.s,
+        0. * u.m / u.s
     )
     differential2 = SphericalDifferential(
-        0 * u.km, 0 * u.rad, 0 * u.rad, 0 * u.km / u.s, 0 * u.rad / u.s, 0 * u.rad / u.s
+        0. * u.s,
+        0. * u.m,
+        0. * u.rad,
+        0. * u.rad,
+        0. * u.m / u.s,
+        0. * u.rad / u.s,
+        0. * u.rad / u.s
     )
     a = Body(name=name, mass=mass, R=R, differential=differential1, parent=parent)
     b = Body(name=name, mass=mass, R=R, differential=differential2, parent=parent)
+
     assert isinstance(a.pos_vec, list)
     assert isinstance(a.vel_vec, list)
     assert isinstance(b.pos_vec, list)
@@ -82,19 +94,18 @@ def test_differentials():
 
 
 def test_body_str_return():
-    body = Body(name="BodyTest", mass=1.989e30 * u.kg, a=0.3 * u.m, R=30 * u.km)
+    body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
+
     assert (
-        body.__str__() == "Body ( name: (BodyTest), "
-        "mass: (1.989e+30 kg), radius: (30.0 km), "
-        "coordinates: (None), spin factor: (0.3 m), charge: (0.0 C) )"
+        body.__str__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
+            Initial Coordinates: (None), Parent Body: (None) )"
     )
 
 
 def test_body_repr_return():
-    body = Body(name="BodyTest", mass=1.989e30 * u.kg, a=0.3 * u.m, R=30 * u.km)
+    body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
+
     assert (
-        body.__repr__() == "'Body ( name: (BodyTest), "
-        "mass: (1.989e+30 kg), "
-        "radius: (30.0 km), "
-        "coordinates: (None), spin factor: (0.3 m), charge: (0.0 C) )'"
+        body.__repr__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
+            Initial Coordinates: (None), Parent Body: (None) )"
     )

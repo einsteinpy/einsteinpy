@@ -5,10 +5,10 @@ import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
+from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential
+
 from einsteinpy.metric import Schwarzschild, Kerr, KerrNewman
-from einsteinpy.coordinates import CartesianConversion
-from einsteinpy.coordinates.utils import four_position, stacked_vec
-from einsteinpy.geodesic import Geodesic
+from einsteinpy.geodesic import Geodesic, Timelike
 
 from einsteinpy import constant
 
@@ -22,53 +22,50 @@ def test_str_repr():
     Tests, if the ``__str__`` and ``__repr__`` messages match
 
     """
-    t = 0.
-    M = 1e25
-
-    x_vec = np.array([306., np.pi / 2, np.pi / 2])
-    v_vec = np.array([0., 0.01, 10.])
-
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+    M = 1e25 * u.kg
+    sph = SphericalDifferential(
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
+    )
+    ms = Schwarzschild(coords=sph, M=M)
 
     end_lambda = 1.
     step_size = 0.4e-6
 
-    geod = Geodesic(
-        metric=ms_cov,
-        init_vec=init_vec,
-        end_lambda=end_lambda,
-        step_size=step_size
-    )
+    geod = Timelike(metric=ms, coords=sph, end_lambda=end_lambda, step_size=step_size)
 
     assert str(geod) == repr(geod)
 
 
 @pytest.fixture()
 def dummy_data():
-    M = 6e24
-    t = 0.
-    x_vec = np.array([130.0, np.pi / 2, -np.pi / 8])
-    v_vec = np.array([0.0, 0.0, 1900.0])
-
-    metric = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    metric_mat = metric.metric_covariant(x_4vec)
-    init_vec = stacked_vec(metric_mat, t, x_vec, v_vec, time_like=True)
+    sph = SphericalDifferential(
+        t=0.0 * u.s,
+        r=130.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 8 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=1900.0 * u.rad / u.s,
+    )
+    metric = Schwarzschild(coords=sph, M=6e24 * u.kg)
 
     end_lambda = 0.002
     step_size = 5e-8
 
-    return metric, init_vec, end_lambda, step_size
+    return sph, metric, end_lambda, step_size
 
 
 def test_Geodesics_has_trajectory(dummy_data):
-    metric, init_vec, end_lambda, step_size = dummy_data
-    geo = Geodesic(
+    sph, metric, end_lambda, step_size = dummy_data
+    geo = Timelike(
         metric=metric,
-        init_vec=init_vec,
+        coords=sph,
         end_lambda=end_lambda,
         step_size=step_size
     )
@@ -77,45 +74,58 @@ def test_Geodesics_has_trajectory(dummy_data):
 
 
 @pytest.mark.parametrize(
-    "x_vec, v_vec, t, M, end_lambda, step_size",
+    "sph, M, end_lambda, step_size",
     [
         (
-            np.array([306., np.pi / 2, np.pi / 2]),
-            np.array([0., 0., 951.]),
-            0.,
-            4e24,
+            SphericalDifferential(
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.0 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
+            ),
+            4e24 * u.kg,
             0.002,
             0.5e-6,
         ),
         (
-            np.array([1e3, 0.15, np.pi / 2]),
-            np.array([0.1 * _c, 0.5e-5 * _c, 0.5e-4 * _c]),
-            0.,
-            5.972e24,
+            SphericalDifferential(
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=0.5e-5 * u.rad / u.s,
+                v_p=0.5e-4 * _c * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
             0.0001,
             0.5e-6,
         ),
         (
-            np.array([50e3, np.pi / 2, np.pi / 2]),
-            np.array([0.1 * _c, 2e-7 * _c, 1e-5]),
-            0.,
-            5.972e24,
+            SphericalDifferential(
+                t=0.0 * u.s,
+                r=50e3 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=2e-7 * _c * u.rad / u.s,
+                v_p=1e-5 * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
             0.001,
             5e-6,
         ),
     ],
 )
-def test_calculate_trajectory_schwarzschild(
-    x_vec, v_vec, t, M, end_lambda, step_size
-):
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+def test_calculate_trajectory_schwarzschild(sph, M, end_lambda, step_size):
+    ms = Schwarzschild(coords=sph, M=M)
 
-    geod = Geodesic(
-        metric=ms_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=ms,
+        coords=sph,
         end_lambda=end_lambda,
         step_size=step_size,
         return_cartesian=False
@@ -126,40 +136,41 @@ def test_calculate_trajectory_schwarzschild(
     testarray = list()
     for i in ans:
         x = i[:4]
-        g = ms_cov.metric_covariant(x)
+        g = ms.metric_covariant(x)
         testarray.append(
             g[0][0] * (i[4] ** 2) +
             g[1][1] * (i[5] ** 2) +
             g[2][2] * (i[6] ** 2) +
             g[3][3] * (i[7] ** 2)
         )
-    testarray = np.array(testarray, dtype=float)
+    testarray = np.array(testarray)
 
-    assert_allclose(testarray, 1., 1e-4)
+    assert_allclose(testarray, _c ** 2, 1e-4)
 
 
 def test_calculate_trajectory2_schwarzschild():
     # based on the revolution of earth around sun
     # data from https://en.wikipedia.org/wiki/Earth%27s_orbit
-    t = 0.
-    M = 1.989e30
     distance_at_perihelion = 147.10e9
-    speed_at_perihelion = 30290
+    speed_at_perihelion = 29290
     angular_vel = (speed_at_perihelion / distance_at_perihelion)
 
-    x_vec = np.array([distance_at_perihelion, np.pi / 2, 0])
-    v_vec = np.array([0.0, 0.0, angular_vel])
-
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+    sph = SphericalDifferential(
+        t=0.0 * u.s,
+        r=distance_at_perihelion * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=0.0 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=angular_vel * u.rad / u.s,
+    )
+    metric = Schwarzschild(coords=sph, M=1.989e30 * u.kg)
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(
-        metric=ms_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=metric,
+        coords=sph,
         end_lambda=end_lambda,
         step_size=end_lambda / 2e3,
         return_cartesian=False
@@ -178,33 +189,26 @@ def test_calculate_trajectory3_schwarzschild():
     # same test as with test_calculate_trajectory2_schwarzschild(),
     # but initialized with cartesian coordinates
     # and function returning cartesian coordinates
-    t = 0.
-    M = 1.989e30
     distance_at_perihelion = 147.10e9
-    speed_at_perihelion = 30290
+    speed_at_perihelion = 29290
 
-    x_sph = CartesianConversion(
-        distance_at_perihelion / np.sqrt(2),
-        distance_at_perihelion / np.sqrt(2),
-        0.,
-        -speed_at_perihelion / np.sqrt(2),
-        speed_at_perihelion / np.sqrt(2),
-        0.
-    ).convert_spherical()
+    x_sph = CartesianDifferential(
+        t=0.0 * u.s,
+        x=distance_at_perihelion / np.sqrt(2) * u.m,
+        y=distance_at_perihelion / np.sqrt(2) * u.m,
+        z=0. * u.m,
+        v_x=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_y=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_z=0 * u.m / u.s
+    ).spherical_differential()
 
-    x_vec = x_sph[:3]
-    v_vec = x_sph[3:]
-
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+    metric = Schwarzschild(coords=x_sph, M=1.989e30 * u.kg)
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(
-        metric=ms_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=metric,
+        coords=x_sph,
         end_lambda=end_lambda,
         step_size=end_lambda / 2e3,
     )
@@ -224,23 +228,35 @@ def test_calculate_trajectory3_schwarzschild():
 
 
 @pytest.mark.parametrize(
-    "x_vec, v_vec, t, M, end_lambda, step_size, OdeMethodKwargs, return_cartesian",
+    "sph, M, end_lambda, step_size, OdeMethodKwargs, return_cartesian",
     [
         (
-            np.array([306., np.pi / 2, np.pi / 2]),
-            np.array([0., 0.1, 951.]),
-            0.,
-            4e24,
+            SphericalDifferential(
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.1 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
+            ),
+            4e24 * u.kg,
             0.0002,
             0.3e-6,
             {"stepsize": 0.3e-6},
             True,
         ),
         (
-            np.array([1e3, 0.15, np.pi / 2]),
-            np.array([_c, 0.5e-5 * _c, 1e-4 * _c]),
-            0.,
-            5.972e24,
+            SphericalDifferential(
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=_c * u.m / u.s,
+                v_th=1e-4 * _c * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
             0.0002,
             0.5e-6,
             {"stepsize": 0.5e-6},
@@ -249,16 +265,13 @@ def test_calculate_trajectory3_schwarzschild():
     ],
 )
 def test_calculate_trajectory_iterator_schwarzschild(
-    x_vec, v_vec, t, M, end_lambda, step_size, OdeMethodKwargs, return_cartesian
+    sph, M, end_lambda, step_size, OdeMethodKwargs, return_cartesian
 ):
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+    metric = Schwarzschild(coords=sph, M=M)
 
-    geod = Geodesic(
-        metric=ms_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=metric,
+        coords=sph,
         end_lambda=end_lambda,
         step_size=step_size,
         return_cartesian=return_cartesian
@@ -277,24 +290,25 @@ def test_calculate_trajectory_iterator_schwarzschild(
 
 
 def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
-    t = 0.
-    M = 1e25
-
-    x_vec = np.array([306., np.pi / 2, np.pi / 2])
-    v_vec = np.array([0., 0.01, 10.])
-
-    ms_cov = Schwarzschild(M=M)
-    x_4vec = four_position(t, x_vec)
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+    M = 1e25 * u.kg
+    sph = SphericalDifferential(
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
+    )
+    ms = Schwarzschild(coords=sph, M=M)
 
     end_lambda = 1.
     stepsize = 0.4e-6
     OdeMethodKwargs = {"stepsize": stepsize}
 
-    geod = Geodesic(
-        metric=ms_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=ms,
+        coords=sph,
         end_lambda=end_lambda,
         step_size=stepsize,
         return_cartesian=False
@@ -311,48 +325,63 @@ def test_calculate_trajectory_iterator_RuntimeWarning_schwarzschild():
 
 
 @pytest.mark.parametrize(
-    "x_vec, v_vec, t, M, a, end_lambda, step_size",
+    "bl, M, a, end_lambda, step_size",
     [
         (
-            np.array([306., np.pi / 2.05, np.pi / 2]),
-            np.array([0., 0., 951.]),
-            0.,
-            4e24,
-            2e-3,
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2.05 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.0 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
+            ),
+            4e24 * u.kg,
+            2e-3 * u.one,
             0.001,
             0.5e-6,
         ),
         (
-            np.array([1e3, 0.15, np.pi / 2]),
-            np.array([0.1 * _c, 0.5e-5 * _c, 0.5e-4 * _c]),
-            0.,
-            5.972e24,
-            2e-3,
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=0.5e-5 * _c * u.rad / u.s,
+                v_p=0.5e-4 * _c * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
+            2e-3 * u.one,
             0.0001,
             0.5e-6,
         ),
         (
-            np.array([50e3, np.pi / 2, np.pi / 2]),
-            np.array([0.1 * _c, 2e-7 * _c, 1e-5]),
-            0.,
-            5.972e24,
-            0.,
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=50e3 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=2e-7 * _c * u.rad / u.s,
+                v_p=1e-5 * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
+            0. * u.one,
             0.001,
             5e-6,
         ),
     ],
 )
 def test_calculate_trajectory_kerr(
-    x_vec, v_vec, t, M, a, end_lambda, step_size
+    bl, M, a, end_lambda, step_size
 ):
-    mk_cov = Kerr(coords="BL", M=M, a=a)
-    x_4vec = four_position(t, x_vec)
-    mk_cov_mat = mk_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mk_cov_mat, t, x_vec, v_vec, time_like=True)
+    mk = Kerr(coords=bl, M=M, a=a)
 
-    geod = Geodesic(
-        metric=mk_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mk,
+        coords=bl,
         end_lambda=end_lambda,
         step_size=step_size,
         return_cartesian=False
@@ -363,7 +392,7 @@ def test_calculate_trajectory_kerr(
     testarray = list()
     for i in ans:
         x = i[:4]
-        g = mk_cov.metric_covariant(x)
+        g = mk.metric_covariant(x)
         testarray.append(
             g[0][0] * (i[4] ** 2) +
             g[1][1] * (i[5] ** 2) +
@@ -371,9 +400,93 @@ def test_calculate_trajectory_kerr(
             g[3][3] * (i[7] ** 2) +
             2 * g[0][3] * i[4] * i[7]
         )
-    testarray = np.array(testarray, dtype=float)
+    testarray = np.array(testarray)
 
-    assert_allclose(testarray, 1., 1e-4)
+    assert_allclose(testarray, _c ** 2, 1e-8)
+
+
+# Picking a test randomly and testing with Geodesic
+# instead of Timelike
+@pytest.mark.parametrize(
+    "bl, M, a, end_lambda, step_size",
+    [
+        (
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2.05 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.0 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
+            ),
+            4e24 * u.kg,
+            2e-3 * u.one,
+            0.001,
+            0.5e-6,
+        ),
+        (
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=0.5e-5 * _c * u.rad / u.s,
+                v_p=0.5e-4 * _c * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
+            2e-3 * u.one,
+            0.0001,
+            0.5e-6,
+        ),
+        (
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=50e3 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.1 * _c * u.m / u.s,
+                v_th=2e-7 * _c * u.rad / u.s,
+                v_p=1e-5 * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
+            0. * u.one,
+            0.001,
+            5e-6,
+        ),
+    ],
+)
+def test_calculate_trajectory_kerr_Geodesic(
+    bl, M, a, end_lambda, step_size
+):
+    mk = Kerr(coords=bl, M=M, a=a)
+
+    geod = Geodesic(
+        time_like=True,
+        metric=mk,
+        coords=bl,
+        end_lambda=end_lambda,
+        step_size=step_size,
+        return_cartesian=False
+    )
+
+    ans = geod.trajectory
+
+    testarray = list()
+    for i in ans:
+        x = i[:4]
+        g = mk.metric_covariant(x)
+        testarray.append(
+            g[0][0] * (i[4] ** 2) +
+            g[1][1] * (i[5] ** 2) +
+            g[2][2] * (i[6] ** 2) +
+            g[3][3] * (i[7] ** 2) +
+            2 * g[0][3] * i[4] * i[7]
+        )
+    testarray = np.array(testarray)
+
+    assert_allclose(testarray, _c ** 2, 1e-8)
 
 
 def test_calculate_trajectory3_kerr():
@@ -381,34 +494,29 @@ def test_calculate_trajectory3_kerr():
     # Data from https://en.wikipedia.org/wiki/Earth%27s_orbit
     # Initialized with cartesian coordinates
     # Function returning cartesian coordinates
-    t = 0.
-    M = 1.989e30
-    a = 0.
+    M = 1.989e30 * u.kg
+    a = 0.0 * u.one
+
     distance_at_perihelion = 147.10e9
-    speed_at_perihelion = 30290
+    speed_at_perihelion = 29290
 
-    x_sph = CartesianConversion(
-        distance_at_perihelion / np.sqrt(2),
-        distance_at_perihelion / np.sqrt(2),
-        0.,
-        -speed_at_perihelion / np.sqrt(2),
-        speed_at_perihelion / np.sqrt(2),
-        0.
-    ).convert_spherical()
+    x_bl = CartesianDifferential(
+        t=0.0 * u.s,
+        x=distance_at_perihelion / np.sqrt(2) * u.m,
+        y=distance_at_perihelion / np.sqrt(2) * u.m,
+        z=0.0 * u.m,
+        v_x=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_y=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_z=0.0 * u.m / u.s
+    ).bl_differential(M=M, a=a)
 
-    x_vec = x_sph[:3]
-    v_vec = x_sph[3:]
-
-    mk_cov = Kerr(coords="BL", M=M, a=a)
-    x_4vec = four_position(t, x_vec)
-    mk_cov_mat = mk_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mk_cov_mat, t, x_vec, v_vec, time_like=True)
+    mk = Kerr(coords=x_bl, M=M, a=a)
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(
-        metric=mk_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mk,
+        coords=x_bl,
         end_lambda=end_lambda,
         step_size=end_lambda / 2e3,
     )
@@ -428,25 +536,37 @@ def test_calculate_trajectory3_kerr():
 
 
 @pytest.mark.parametrize(
-    "x_vec, v_vec, t, M, a, end_lambda, step_size, OdeMethodKwargs, return_cartesian",
+    "bl, M, a, end_lambda, step_size, OdeMethodKwargs, return_cartesian",
     [
         (
-            np.array([306., np.pi / 2, np.pi / 2]),
-            np.array([0., 0.1, 951.]),
-            0.,
-            4e24,
-            2e-3,
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=306.0 * u.m,
+                theta=np.pi / 2 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.0 * u.m / u.s,
+                v_th=0.1 * u.rad / u.s,
+                v_p=951.0 * u.rad / u.s,
+            ),
+            4e24 * u.kg,
+            2e-3 * u.one,
             0.0003,
             0.3e-6,
             {"stepsize": 0.3e-6},
             True,
         ),
         (
-            np.array([1e3, 0.15, np.pi / 2]),
-            np.array([0.2 * _c, 0.5e-5 * _c, 1e-4 * _c]),
-            0.,
-            5.972e24,
-            0.,
+            BoyerLindquistDifferential(
+                t=0.0 * u.s,
+                r=1e3 * u.m,
+                theta=0.15 * u.rad,
+                phi=np.pi / 2 * u.rad,
+                v_r=0.2 * _c * u.m / u.s,
+                v_th=0.5e-5 * _c * u.rad / u.s,
+                v_p=1e-4 * _c * u.rad / u.s,
+            ),
+            5.972e24 * u.kg,
+            0. * u.one,
             0.0004,
             0.5e-6,
             {"stepsize": 0.5e-6},
@@ -455,17 +575,13 @@ def test_calculate_trajectory3_kerr():
     ],
 )
 def test_calculate_trajectory_iterator_kerr(
-    x_vec, v_vec, t, M, a, end_lambda, step_size, OdeMethodKwargs, return_cartesian
+    bl, M, a, end_lambda, step_size, OdeMethodKwargs, return_cartesian
 ):
+    mk = Kerr(coords=bl, M=M, a=a)
 
-    mk_cov = Kerr(coords="BL", M=M, a=a)
-    x_4vec = four_position(t, x_vec)
-    mk_cov_mat = mk_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mk_cov_mat, t, x_vec, v_vec, time_like=True)
-
-    geod = Geodesic(
-        metric=mk_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mk,
+        coords=bl,
         end_lambda=end_lambda,
         step_size=step_size,
         return_cartesian=return_cartesian
@@ -484,25 +600,28 @@ def test_calculate_trajectory_iterator_kerr(
 
 
 def test_calculate_trajectory_iterator_RuntimeWarning_kerr():
-    t = 0.
-    M = 1e25
-    a = 0.
+    M = 1e25 * u.kg
+    a = 0. * u.one
 
-    x_vec = np.array([306., np.pi / 2, np.pi / 2])
-    v_vec = np.array([0., 0.01, 10.])
+    bl = BoyerLindquistDifferential(
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
+    )
 
-    mk_cov = Kerr(coords="BL", M=M, a=a)
-    x_4vec = four_position(t, x_vec)
-    mk_cov_mat = mk_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mk_cov_mat, t, x_vec, v_vec, time_like=True)
+    mk = Kerr(coords=bl, M=M, a=a)
 
     end_lambda = 1.
     stepsize = 0.4e-6
     OdeMethodKwargs = {"stepsize": stepsize}
 
-    geod = Geodesic(
-        metric=mk_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mk,
+        coords=bl,
         end_lambda=end_lambda,
         step_size=stepsize,
         return_cartesian=False
@@ -523,36 +642,30 @@ def test_calculate_trajectory0_kerrnewman():
     # Data from https://en.wikipedia.org/wiki/Earth%27s_orbit
     # Initialized with cartesian coordinates
     # Function returning cartesian coordinates
-    t = 0.
-    M = 1.989e30
-    a = 0.
-    Q = 0.
-    q = 0.
+    M = 1.989e30 * u.kg
+    a = 0. * u.one
+    Q = 0. * u.C
+    q = 0. * u.C / u.kg
     distance_at_perihelion = 147.10e9
-    speed_at_perihelion = 30290
+    speed_at_perihelion = 29290
 
-    x_sph = CartesianConversion(
-        distance_at_perihelion / np.sqrt(2),
-        distance_at_perihelion / np.sqrt(2),
-        0.,
-        -speed_at_perihelion / np.sqrt(2),
-        speed_at_perihelion / np.sqrt(2),
-        0.
-    ).convert_spherical()
+    x_bl = CartesianDifferential(
+        t=0.0 * u.s,
+        x=distance_at_perihelion / np.sqrt(2) * u.m,
+        y=distance_at_perihelion / np.sqrt(2) * u.m,
+        z=0.0 * u.m,
+        v_x=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_y=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_z=0.0 * u.m / u.s
+    ).bl_differential(M=M, a=a)
 
-    x_vec = x_sph[:3]
-    v_vec = x_sph[3:]
-
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
-    x_4vec = four_position(t, x_vec)
-    mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
+    mkn = KerrNewman(coords=x_bl, M=M, a=a, Q=Q, q=q)
 
     end_lambda = 3.154e7
 
-    geod = Geodesic(
-        metric=mkn_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mkn,
+        coords=x_bl,
         end_lambda=end_lambda,
         step_size=end_lambda / 1.5e3,
     )
@@ -575,27 +688,30 @@ def test_calculate_trajectory0_kerrnewman():
 def test_calculate_trajectory1_kerrnewman():
     # This needs more investigation
     # the test particle should not move as gravitational & electromagnetic forces are balanced
-    t = 0.
-    M = 0.5 * 5.972e24
-    a = 0.
-    Q = 11604461683.91822052001953125
-    q = _G * M / _Cc
+    M = 0.5 * 5.972e24 * u.kg
+    a = 0. * u.one
+    Q = 11604461683.91822052001953125 * u.C
+    q = _G * M.value / _Cc * u.C / u.kg
 
     r = 1e6
     end_lambda = 1000.0
     step_size = 0.5
 
-    x_vec = np.array([r, 0.5 * np.pi, 0.])
-    v_vec = np.array([0., 0., 0.])
+    bl = BoyerLindquistDifferential(
+        t=0.0 * u.s,
+        r=r * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=0.0 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=0.0 * u.rad / u.s,
+    )
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
-    x_4vec = four_position(t, x_vec)
-    mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
 
-    geod = Geodesic(
-        metric=mkn_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mkn,
+        coords=bl,
         end_lambda=end_lambda,
         step_size=step_size,
         return_cartesian=False
@@ -608,34 +724,37 @@ def test_calculate_trajectory1_kerrnewman():
 
 @pytest.fixture()
 def test_input():
-    t = 0.
-    a = 1e-6
-    Q = 100.
-    q = 1.
+    a = 1e-6 * u.one
+    Q = 100. * u.C
+    q = 1. * u.C / u.kg
     end_lambda = 200.0
     step_size = 1.0
 
-    return t, a, Q, q, end_lambda, step_size
+    return a, Q, q, end_lambda, step_size
 
 
 def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
-    t, a, Q, q, end_lambda, step_size = test_input
-    M = 0.5 * 5.972e24
+    a, Q, q, end_lambda, step_size = test_input
+    M = 0.5 * 5.972e24 * u.kg
 
-    x_vec = np.array([1e6, 0.6 * np.pi, np.pi / 8])
-    v_vec = np.array([1e4, -0.01, 0.])
+    bl = BoyerLindquistDifferential(
+        t=0.0 * u.s,
+        r=1e6 * u.m,
+        theta=0.6 * np.pi * u.rad,
+        phi=np.pi / 8 * u.rad,
+        v_r=1e4 * u.m / u.s,
+        v_th=-0.01 * u.rad / u.s,
+        v_p=0.0 * u.rad / u.s,
+    )
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
-    x_4vec = four_position(t, x_vec)
-    mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
 
     OdeMethodKwargs = {"stepsize": step_size}
     return_cartesian = False
 
-    geod = Geodesic(
-        metric=mkn_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mkn,
+        coords=bl,
         end_lambda=end_lambda,
         step_size=step_size,
         return_cartesian=return_cartesian
@@ -654,23 +773,27 @@ def test_compare_calculate_trajectory_iterator_bl_kerrnewman(test_input):
 
 
 def test_compare_calculate_trajectory_iterator_cartesian_kerrnewman(test_input):
-    t, a, Q, q, end_lambda, step_size = test_input
-    M = 2e24
+    a, Q, q, end_lambda, step_size = test_input
+    M = 2e24 * u.kg
 
-    x_vec = np.array([1e6, 1e6, 20.5])
-    v_vec = np.array([1e4, 1e4, -30.])
+    x_bl = CartesianDifferential(
+        t=0.0 * u.s,
+        x=1e6 * u.m,
+        y=1e6 * u.m,
+        z=20.5 * u.m,
+        v_x=1e4 * u.m / u.s,
+        v_y=1e4 * u.m / u.s,
+        v_z=-30.0 * u.m / u.s
+    ).bl_differential(M=M, a=a)
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
-    x_4vec = four_position(t, x_vec)
-    mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
+    mkn = KerrNewman(coords=x_bl, M=M, a=a, Q=Q, q=q)
 
     OdeMethodKwargs = {"stepsize": step_size}
     return_cartesian = True
 
-    geod = Geodesic(
-        metric=mkn_cov,
-        init_vec=init_vec,
+    geod = Timelike(
+        metric=mkn,
+        coords=x_bl,
         end_lambda=end_lambda,
         step_size=step_size,
         return_cartesian=return_cartesian
@@ -689,25 +812,28 @@ def test_compare_calculate_trajectory_iterator_cartesian_kerrnewman(test_input):
 
 
 def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
-    M = 0.5 * 5.972e24
-    a = 0.
-    Q = 0.
-    q = 0.
-    t = 0.
+    M = 0.5 * 5.972e24 * u.kg
+    a = 0. * u.one
+    Q = 0. * u.C
+    q = 0. * u.C / u.kg
 
-    x_vec = np.array([306, np.pi / 2, np.pi / 2])
-    v_vec = np.array([0., 0.01, 10.])
+    bl = BoyerLindquistDifferential(
+        t=0.0 * u.s,
+        r=306.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=np.pi / 2 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=-0.01 * u.rad / u.s,
+        v_p=10.0 * u.rad / u.s,
+    )
 
-    mkn_cov = KerrNewman(coords="BL", M=M, a=a, Q=Q, q=q)
-    x_4vec = four_position(t, x_vec)
-    mkn_cov_mat = mkn_cov.metric_covariant(x_4vec)
-    init_vec = stacked_vec(mkn_cov_mat, t, x_vec, v_vec, time_like=True)
+    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
 
     end_lambda = 200.
     step_size = 0.4e-6
     OdeMethodKwargs = {"stepsize": step_size}
 
-    geod = Geodesic(metric=mkn_cov, init_vec=init_vec, end_lambda=end_lambda, step_size=step_size)
+    geod = Timelike(metric=mkn, coords=bl, end_lambda=end_lambda, step_size=step_size)
 
     with warnings.catch_warnings(record=True) as w:
         it = geod.calculate_trajectory_iterator(
@@ -716,3 +842,35 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
         for _, _ in zip(range(1000), it):
             pass
         assert len(w) >= 1
+
+
+def test_calculate_state_raises_TypeError():
+    """
+    Tests, if ``_calculate_state`` raises TypeError, in case of \
+    coordinate mismatch
+
+    """
+    distance_at_perihelion = 147.10e9
+    speed_at_perihelion = 29290
+
+    x_sph = CartesianDifferential(
+        t=0.0 * u.s,
+        x=distance_at_perihelion / np.sqrt(2) * u.m,
+        y=distance_at_perihelion / np.sqrt(2) * u.m,
+        z=0. * u.m,
+        v_x=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_y=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        v_z=0 * u.m / u.s
+    )  # .spherical_differential()
+
+    metric = Schwarzschild(coords=x_sph.spherical_differential(), M=1.989e30 * u.kg)
+
+    end_lambda = 3.154e7
+
+    with pytest.raises(TypeError):
+        geod = Timelike(
+            metric=metric,
+            coords=x_sph,
+            end_lambda=end_lambda,
+            step_size=end_lambda / 2e3,
+        )

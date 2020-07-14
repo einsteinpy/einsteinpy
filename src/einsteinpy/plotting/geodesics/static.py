@@ -1,7 +1,7 @@
 import random
 
-import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.patches import Circle
 from mpl_toolkits import mplot3d

@@ -21,7 +21,7 @@ jobs:
           command: |
             . venv/bin/activate
             isort --version
-            isort -c -rc setup.py src/ -p einsteinpy -sd THIRDPARTY  # This avoids installing einsteinpy
+            isort -c setup.py src/ -p einsteinpy --section-default THIRDPARTY  # This avoids installing einsteinpy
             black --version
             black src/ setup.py --check
       - run:

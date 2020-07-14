@@ -1,13 +1,14 @@
 import numpy as np
+from astropy import units as u
 
-from einsteinpy.coordinates.utils import four_position, stacked_vec
-from einsteinpy.geodesic import Geodesic
+from einsteinpy.coordinates import SphericalDifferential
+from einsteinpy.geodesic import Timelike
 from einsteinpy.metric import Schwarzschild
 
 
 def perihelion():
     """
-    An example to showcase the usage of the various modules in ``einsteinpy.metric``. \
+    An example to showcase the usage of the various modules in ``einsteinpy``. \
     Here, we assume a Schwarzschild spacetime and obtain & plot the apsidal precession of \
     test particle orbit in it.
 
@@ -17,21 +18,25 @@ def perihelion():
         Geodesic defining test particle trajectory
 
     """
-    M = 6e24  # Mass
-    t = 10000  # Coordinate Time (has no effect in this case - Schwarzschild)
-    x_vec = np.array([130.0, np.pi / 2, -np.pi / 8])  # 3-Pos
-    v_vec = np.array([0.0, 0.0, 1900.0])  # 3-Vel
+    # Mass of the black hole in SI
+    M = 6e24 * u.kg
+
+    # Defining the initial coordinates of the test particle
+    # in SI
+    sph = SphericalDifferential(
+        t=10000.0 * u.s,
+        r=130.0 * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=-np.pi / 8 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=1900.0 * u.rad / u.s,
+    )
 
     # Schwarzschild Metric Object
-    ms_cov = Schwarzschild(M=M)
-    # Getting Position 4-Vector
-    x_4vec = four_position(t, x_vec)
-    # Calculating Schwarzschild Metric at x_4vec
-    ms_cov_mat = ms_cov.metric_covariant(x_4vec)
-    # Getting stacked (Length-8) initial vector, containing 4-Pos and 4-Vel
-    init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True)
+    ms = Schwarzschild(coords=sph, M=M)
 
     # Calculating Geodesic
-    geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=0.002, step_size=5e-8)
+    geod = Timelike(metric=ms, coords=sph, end_lambda=0.002, step_size=5e-8)
 
     return geod

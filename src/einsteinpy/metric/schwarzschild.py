@@ -1,4 +1,5 @@
 import numpy as np
+from astropy import units as u
 
 from einsteinpy import constant
 from einsteinpy.metric import BaseMetric
@@ -12,18 +13,21 @@ class Schwarzschild(BaseMetric):
 
     """
 
-    def __init__(self, M):
+    @u.quantity_input(M=u.kg)
+    def __init__(self, coords, M):
         """
         Constructor
 
         Parameters
         ----------
-        M : float
+        coords : ~einsteinpy.coordinates.differential.*
+            Coordinate system, in which Metric is to be represented
+        M : ~astropy.units.quantity.Quantity
             Mass of gravitating body, e.g. Black Hole
 
         """
         super().__init__(
-            coords="S",
+            coords=coords,
             M=M,
             name="Schwarzschild Metric",
             metric_cov=self.metric_covariant,
@@ -34,11 +38,35 @@ class Schwarzschild(BaseMetric):
     def metric_covariant(self, x_vec):
         """
         Returns Covariant Schwarzschild Metric Tensor \
+        in chosen Coordinates
+
+        Parameters
+        ----------
+        x_vec : array_like
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Covariant Schwarzschild Metric Tensor in chosen Coordinates
+            Numpy array of shape (4,4)
+
+        """
+        if self.coords.system == "Spherical":
+            return self._g_cov_s(x_vec)
+
+        raise NotImplementedError(
+            "Schwarzschild Metric is available only in Spherical Polar Coordinates."
+        )
+
+    def _g_cov_s(self, x_vec):
+        """
+        Returns Covariant Schwarzschild Metric Tensor \
         in Schwarschild Coordinates
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -52,22 +80,52 @@ class Schwarzschild(BaseMetric):
         r_s = self.sch_rad
         g_cov = np.zeros(shape=(4, 4), dtype=float)
 
-        tmp, c2 = 1.0 - (r_s / r), _c ** 2
-        g_cov[0, 0] = tmp
-        g_cov[1, 1] = -1.0 / (tmp * c2)
-        g_cov[2, 2] = -1 * (r ** 2) / c2
-        g_cov[3, 3] = -1 * ((r * np.sin(th)) ** 2) / c2
+        tmp = 1.0 - (r_s / r)
+        g_cov[0, 0] = tmp * _c ** 2
+        g_cov[1, 1] = -1.0 / tmp
+        g_cov[2, 2] = -(r ** 2)
+        g_cov[3, 3] = -((r * np.sin(th)) ** 2)
 
         return g_cov
 
     def _christoffels(self, x_vec):
+        """
+        Returns Christoffel Symbols for Schwarzschild Metric in chosen Coordinates
+
+        Parameters
+        ----------
+        x_vec : array_like
+            Position 4-Vector
+
+        Returns
+        -------
+        ~numpy.ndarray
+            Christoffel Symbols for Schwarzschild Metric \
+            in chosen Coordinates
+            Numpy array of shape (4,4,4)
+
+        Raises
+        ------
+        NotImplementedError
+            In case of the Christoffel Symbols are not \
+            available in the supplied Coordinate System
+
+        """
+        if self.coords.system == "Spherical":
+            return self._ch_sym_s(x_vec)
+
+        raise NotImplementedError(
+            "Christoffel Symbols for Schwarzschild Metric are available only in Spherical Polar Coordinates."
+        )
+
+    def _ch_sym_s(self, x_vec):
         """
         Returns the Christoffel Symbols for Schwarzschild Metric
         in Schwarzschild Coordinates
 
         Parameters
         ----------
-        x_vec : ~numpy.ndarray
+        x_vec : array_like
             Position 4-Vector
 
         Returns
@@ -80,10 +138,9 @@ class Schwarzschild(BaseMetric):
         """
         r, th = x_vec[1], x_vec[2]
         r_s = self.sch_rad
-        c2 = _c ** 2
         chl = np.zeros(shape=(4, 4, 4), dtype=float)
 
-        chl[1, 0, 0] = 0.5 * r_s * (r - r_s) * c2 / (r ** 3)
+        chl[1, 0, 0] = 0.5 * r_s * (r - r_s) * (_c ** 2) / (r ** 3)
         chl[1, 1, 1] = 0.5 * r_s / (r_s * r - r ** 2)
         chl[1, 2, 2] = r_s - r
         chl[1, 3, 3] = (r_s - r) * (np.sin(th) ** 2)
@@ -96,8 +153,8 @@ class Schwarzschild(BaseMetric):
 
     def _f_vec(self, lambda_, vec):
         """
-        Returns f_vec for Schwarzschild Metric
-        To be used in solving for Geodesics
+        Returns f_vec for Schwarzschild Metric in chosen coordinates
+        To be used for solving Geodesics ODE
 
         Parameters
         ----------
@@ -105,7 +162,41 @@ class Schwarzschild(BaseMetric):
             Parameterizes current integration step
             Used by ODE Solver
 
-        vec : ~numpy.ndarray
+        vec : array_like
+            Length-8 Vector, containing 4-Position & 4-Velocity
+
+        Returns
+        -------
+        ~numpy.ndarray
+            f_vec for Schwarzschild Metric in chosen coordinates
+            Numpy array of shape (8)
+
+        Raises
+        ------
+        NotImplementedError
+            In case of ``f_vec`` is not available in \
+            the supplied Coordinate System
+
+        """
+        if self.coords.system == "Spherical":
+            return self._f_vec_s(lambda_, vec)
+
+        raise NotImplementedError(
+            "'f_vec' for Schwarzschild Metric is available only in Spherical Polar Coordinates."
+        )
+
+    def _f_vec_s(self, lambda_, vec):
+        """
+        Returns f_vec for Schwarzschild Metric
+        To be used for solving Geodesics ODE
+
+        Parameters
+        ----------
+        lambda_ : float
+            Parameterizes current integration step
+            Used by ODE Solver
+
+        vec : array_like
             Length-8 Vector, containing 4-Position & 4-Velocity
 
         Returns

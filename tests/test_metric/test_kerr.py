@@ -1,9 +1,11 @@
 import collections
 
 import pytest
+import astropy.units as u
 import numpy as np
 from numpy.testing import assert_allclose
 
+from einsteinpy.coordinates import BoyerLindquistDifferential, SphericalDifferential
 from einsteinpy.metric import Kerr
 
 
@@ -13,24 +15,51 @@ def test_nonzero_christoffels():
     with that generated algorithmically
 
     """
-    mk = Kerr(coords="BL", M=1., a=0.5)
+    mk = Kerr(coords="BL", M=1. * u.kg, a=0.5 * u.one)
     l1 = mk.nonzero_christoffels()
     l2 = mk._nonzero_christoffels_list_bl
 
     assert collections.Counter(l1) == collections.Counter(l2)
 
 
-def test_christoffels():
+@pytest.fixture
+def sph():
+    return SphericalDifferential(
+        t=0. * u.s,
+        r=0.1 * u.m,
+        theta=4 * np.pi / 5 * u.rad,
+        phi=0. * u.rad,
+        v_r=0. * u.m / u.s,
+        v_th=0. * u.rad / u.s,
+        v_p=0. * u.rad / u.s
+    )
+
+
+@pytest.fixture
+def bl():
+    return BoyerLindquistDifferential(
+        t=0. * u.s,
+        r=0.1 * u.m,
+        theta=4 * np.pi / 5 * u.rad,
+        phi=0. * u.rad,
+        v_r=0. * u.m / u.s,
+        v_th=0. * u.rad / u.s,
+        v_p=0. * u.rad / u.s
+    )
+
+
+def test_christoffels(bl):
     """
     Compares output produced by optimized function, with that, produced via general method (formula)
 
     """
-    r, theta = 100.0, np.pi / 5
-    M, a = 6.73317655e26, 0.2
-    x_vec = np.array([0., r, theta, 0.])
+    r, theta = 100.0 * u.m, np.pi / 5 * u.rad
+    M, a = 6.73317655e26 * u.kg, 0.2 * u.one
+
+    x_vec = bl.position()
 
     # Output produced by the optimized function
-    mk = Kerr(coords="BL", M=M, a=a)
+    mk = Kerr(coords=bl, M=M, a=a)
     chl1 = mk.christoffels(x_vec)
 
     # Calculated using formula
@@ -49,66 +78,3 @@ def test_christoffels():
     chl2 = np.multiply(chl2, 0.5)
 
     assert_allclose(chl2, chl1, rtol=1e-8)
-
-
-@pytest.mark.parametrize(
-    "func_ks",
-    [
-        (
-            Kerr(coords="KS", M=1e22, a=0.7).metric_covariant
-        ),
-        (
-            Kerr(coords="KS", M=1e22, a=0.7).metric_contravariant
-        ),
-        (
-            Kerr(coords="KS", M=1e22, a=0.7).christoffels
-        ),
-        (
-            Kerr(coords="KS", M=1e22, a=0.7)._dg_dx_ks
-        ),
-    ],
-)
-def test_ks_raises_NotImplementedError(func_ks):
-    """
-    Tests, if NotImplementedError is raised, when Kerr-Schild coordinates are used
-
-    """
-    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
-
-    try:
-        func_ks(x_vec)
-        assert False
-
-    except NotImplementedError:
-        assert True
-
-
-def test_f_vec_ks_raises_NotImplementedError():
-    """
-    Tests, if NotImplementedError is raised by ``f_vec_ks()``, when Kerr-Schild coordinates are used
-
-    """
-    x_vec = np.array([0., 5.5, 2 * np.pi / 5, 0.])
-
-    try:
-        Kerr(coords="KS", M=1e22, a=0.7).f_vec(0., x_vec)
-        assert False
-
-    except NotImplementedError:
-        assert True
-
-
-def test_singularities_ks_raises_NotImplementedError():
-    """
-    Tests, if a NotImplementedError is raised, when KerrSchild coordinates \
-    are used with ``singularities()``
-
-    """
-    mk = Kerr(coords="KS", M=1e22, a=0.5)
-
-    try:
-        mk_sing = mk.singularities()
-        assert False
-
-    except NotImplementedError:
-        assert True

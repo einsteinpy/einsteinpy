@@ -15,10 +15,9 @@ and a way to define new bodies (:py:class:`~Body` class).
 Data references can be found in :py:mod:`~einsteinpy.constant`
 """
 
-import astropy.units as u
+from astropy import units as u
 
 from einsteinpy import constant
-from einsteinpy.coordinates import CartesianDifferential
 
 
 class Body:
@@ -31,31 +30,27 @@ class Body:
         self,
         name="Generic Body",
         mass=0 * u.kg,
+        q=0 * u.C,
         R=0 * u.km,
         differential=None,
-        a=0 * u.m,
-        q=0 * u.C,
         parent=None,
     ):
         """
         Parameters
         ----------
-        name : str
-            Name/ID of the body
+        name : string
+            Name or ID of the body
         mass : ~astropy.units.kg
             Mass of the body
+        q : ~astropy.units.C, optional
+            Charge on the body
         R : ~astropy.units
             Radius of the body
-        differential : ~einsteinpy.coordinates, optional
+        differential : ~einsteinpy.coordinates.differential.*, optional
             Complete coordinates of the body
-        a : ~astropy.units.m, optional
-            Spin factor of massive body. Should be less than half of schwarzschild radius.
-        q : ~astropy.units.C, optional
-            Charge on the massive body
-        is_attractor : Bool, optional
-            To denote is this body is acting as attractor or not
         parent : Body, optional
-            The parent object of the body.
+            The parent object of the body
+            Useful in case of multibody systems
         """
         if differential:
             if differential.system == "Cartesian":
@@ -63,30 +58,21 @@ class Body:
                 self.vel_vec = [differential.v_x, differential.v_y, differential.v_z]
             else:
                 self.pos_vec = [differential.r, differential.theta, differential.phi]
-                self.vel_vec = [differential.v_r, differential.v_t, differential.v_p]
-        self.a = a
-        self.R = R
-        self.q = q
-        self.mass = mass
+                self.vel_vec = [differential.v_r, differential.v_th, differential.v_p]
         self.name = name
-        self.coordinates = differential
+        self.mass = mass
+        self.q = q
+        self.R = R
+        self.coords = differential
         self.parent = parent
 
-    def __repr__(self):
-        return (
-            "'Body ( name: ({0}), mass: ({1}), radius: ({2}), coordinates: ({3}), spin factor: ({4}), charge: ({"
-            "5}) )'".format(
-                self.name, self.mass, self.R, self.coordinates, self.a, self.q
-            )
-        )
-
     def __str__(self):
-        return (
-            "Body ( name: ({0}), mass: ({1}), radius: ({2}), coordinates: ({3}), spin factor: ({4}), charge: ({"
-            "5}) )".format(
-                self.name, self.mass, self.R, self.coordinates, self.a, self.q
-            )
-        )
+        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
+            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
+
+    def __repr__(self):
+        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
+            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
 
 
 class _Sun(Body):
