@@ -123,3 +123,11 @@ class Shadow:
         self.intensity = smoothened
         self.fb1 = b_new
         self.fb2 = -1 * b_new
+
+
+class KerrShadow:
+    """
+    Class for Black Hole Shadow in Kerr Spacetime
+    Uses the formulation in [Sources] - ?????
+
+    """

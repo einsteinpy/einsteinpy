@@ -1,1 +1,1 @@
-from .shadow import Shadow
+from .shadow import KerrShadow, Shadow
