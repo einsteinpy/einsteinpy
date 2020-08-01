@@ -1,3 +1,3 @@
 from .geodesic import Geodesic
-from .nulllike import NullGeodesic
+from .null import Nulllike
 from .timelike import Timelike

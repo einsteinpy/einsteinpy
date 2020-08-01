@@ -11,12 +11,6 @@ class Geodesic:
 
     """
 
-    # Add a `state` class variable, which will
-    # store a function supplied by the user.
-    # For usual cases, it will be handled
-    # automatically by Timelike and NullGeodesic
-    # classes. This variable is expected to be used
-    # only for user-defined Geodesic classes. - ?????
     def __init__(
         self,
         time_like,
@@ -97,7 +91,6 @@ class Geodesic:
         """
         return self._trajectory
 
-    # Move to Timelike - ?????
     def _calculate_state(self):
         """
         Prepares and returns the Initial State Vector of the test particle
