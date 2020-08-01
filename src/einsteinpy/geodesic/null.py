@@ -4,7 +4,7 @@ import numpy as np
 from scipy.integrate import odeint
 
 from einsteinpy.coordinates.utils import spherical_to_cartesian_fast
-from einsteinpy.geodesic.utils import _f_vec, _f_vec_geod, _g_dd, _v0
+from einsteinpy.geodesic.utils import _f_vec, _g_dd, _v0
 
 
 class Nulllike:
@@ -147,13 +147,20 @@ class Nulllike:
         y = self.state
         lambdas = np.linspace(0, end_lambda, max_steps)
 
-        sol = odeint(_f_vec_geod, y, lambdas, args=(self.a,), tfirst=True)
+        sol = odeint(_f_vec, y, lambdas, args=(self.a,), tfirst=True)
 
         if return_cartesian:
             cart_vecs = list()
             for vs in sol:
                 vc = spherical_to_cartesian_fast(
-                    *vs[:4], *vs[5:], velocities_provided=True
+                    vs[0],
+                    vs[1],
+                    vs[2],
+                    vs[3],
+                    vs[5],
+                    vs[6],
+                    vs[7],
+                    velocities_provided=True,
                 )
                 cart_vecs.append(np.hstack((vc[:4], vs[4], vc[4:])))
 
