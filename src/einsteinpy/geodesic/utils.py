@@ -1,256 +1,308 @@
 """
 Utilities for Geodesic Module
 
-Unit System: M-Units => G = c = 1
-Coordinate System: Boyer-Lindquist Coordinates
+Unit System: M-Units => G = c = M = 1
 
 """
+import subprocess as sb
+import warnings
+
 import numpy as np
+import regex as re
 
 
-def _v0(g_dd, v1, v2, v3):
+def _energy(E, q, p, a, mu):
     """
-    Returns Timelike component of 4-Velocity for Null Geodesics
+    Utility function to compute Energy of the test particle,
+    using `scipy.optimize.fsolve`
+
+    Parameters
+    ----------
+    E : float
+        Variable, which `scipy.optimize.fsolve` solves for
+    q : array_like
+        Length-3 Array, containing the initial 3-Position
+    p: array_like
+        Length-3 Array, containing the initial 3-Momentum
+    a : float
+        Dimensionless Spin Parameter of the Black Hole
+        ``0 <= a <= 1``
+    mu : float
+        Rest Mass of the test particle
+        ``mu = 0.`` for Null Geodesics
+        ``mu = -1`` for Timelike Geodesics
+
+    Returns
+    -------
+    float
+        Energy of the test particle
 
     """
-    g = g_dd
-
-    # Defining coefficients for quadratic equation
-    A = g[0, 0]
-    B = 2 * (g[0, 1] * v1 + g[0, 2] * v2 + g[0, 3] * v3)
-    C = (
-        (g[1, 1] * np.square(v1) + g[2, 2] * np.square(v2) + g[3, 3] * np.square(v3))
-        + 2 * v1 * (g[1, 2] * v2 + g[1, 3] * v3)
-        + 2 * v2 * g[2, 3] * v3
+    return (
+        a ** 4 * (-(E ** 2) + mu ** 2 + 2 * p[0] ** 2)
+        + 8 * a * E * p[2] * q[0]
+        - a ** 2
+        * (
+            2 * p[2] ** 2
+            - 2 * p[1] ** 2
+            + q[0]
+            * (
+                mu ** 2 * (2 - 3 * q[0])
+                - 4 * p[0] ** 2 * (-2 + q[0])
+                + E ** 2 * (2 + 3 * q[0])
+            )
+        )
+        + 2
+        * q[0]
+        * (
+            p[1] ** 2 * (-2 + q[0])
+            + q[0]
+            * (
+                p[0] ** 2 * (-2 + q[0]) ** 2
+                + q[0] * (mu ** 2 * (-2 + q[0]) - E ** 2 * q[0])
+            )
+        )
+        - (a ** 2 + (-2 + q[0]) * q[0])
+        * (
+            a ** 2 * (E - mu) * (E + mu) * np.cos(2 * q[1])
+            - 2 * p[2] ** 2 * (1 / (np.sin(q[1]) ** 2))
+        )
+    ) / (
+        (a ** 2 + (-2 + q[0]) * q[0])
+        * (a ** 2 + 2 * q[0] ** 2 + a ** 2 * np.cos(2 * q[1]))
     )
-    D = np.square(B) - (4 * A * C)
-
-    v_t = (-B + np.sqrt(D)) / (2 * A)
-
-    return v_t
 
 
-def _g_dd(r, th, a):
+def _sphToCart(r, th, ph):
     """
-    Returns covariant Kerr metric in Boyer-Lindquist Coordinates \
-    and M-Units (G = c = M = 1)
+    Utility function to convert Spherical Polar 
+    Coordinates to Cartesian Coordinates
 
     """
-    r2, a2 = np.square(r), np.square(a)
-    sint2, cost2 = np.square(np.sin(th)), np.square(np.cos(th))
+    xs = r * np.sin(th) * np.cos(ph)
+    ys = r * np.sin(th) * np.sin(ph)
+    zs = r * np.cos(th)
+
+    return xs, ys, zs
+
+
+def _verlet_step(ld, y, params):
+    """
+    Synchornized Symplectic VerletLeapfrog Integrator
+    Advances integration by one step
+
+    Source: `Wikipedia: <https://en.wikipedia.org/wiki/Leapfrog_integration#Algorithm>`_
+
+    """
+    DIM = 3
+    y_next = np.copy(y)
+
+    acc1 = f_vec(ld, y, params)[3:]
+
+    for i in range(DIM):
+        y_next[i] = y[i] + ld * y[i + DIM] + 0.5 * ld * ld * acc1[i]
+
+    acc2 = f_vec(ld, y_next, params)[3:]
+
+    for i in range(DIM):
+        y_next[i + DIM] = y[i + DIM] + 0.5 * ld * (acc1[i] + acc2[i])
+
+    return y_next
+
+
+def f_vec(ld, y, params):
+    """
+    Evaluates expressions for the RHS of the dynamic equations,
+    from the Kerr Hamiltonian, to be used with ``_verlet_step()``
+
+    Source: `Fuerst and Wu, 2004: <https://ui.adsabs.harvard.edu/abs/2004A%26A...424..733F/abstract>`_
+    
+    Parameters
+    ----------
+    ld : float
+        Affine Parameter, Lambda (Step-size)
+    y : numpy.ndarray
+        Length-6 array, containing the initial position and momentum of the test particle
+    params : array_like
+        Length-3 Array, containing - Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
+        Test Particle Rest Mass, `mu`
+        
+    Returns
+    -------
+    yn : numpy.ndarray
+        Length-6 array, containing the RHS of the dynamic equations
+
+    """
+    yn = np.zeros(shape=y.shape)
+
+    r, th, ph = y[0], y[1], y[2]
+    pr, pth, pph = y[3], y[4], -y[5]
+    a, E, mu = params
+
+    r2 = r ** 2
+    pr2 = pr ** 2
+    pth2 = pth ** 2
+    pph2 = pph ** 2
+
+    a2 = a ** 2
+    E2 = E ** 2
+
+    sint = np.sin(th)
+    sint2 = sint ** 2
+    sint4 = sint ** 4
+    cost = np.cos(th)
+    cost2 = cost ** 2
+    csct2 = 1 / (sint ** 2)
 
     sg = r2 + a2 * cost2
     dl = r2 - 2 * r + a2
 
-    g_dd = np.zeros((4, 4), dtype=np.float64)
+    kappa = pth2 + pph2 * csct2 + a2 - (E2 * sint2 + mu)
 
-    g_dd[0, 0] = -1 + 2 * r / sg
-    g_dd[1, 1] = sg / dl
-    g_dd[2, 2] = sg
-    g_dd[3, 3] = (dl + (2 * r * (a2 + r2)) / sg) * sint2
-    g_dd[0, 3] = g_dd[3, 0] = (-2 * a * r * sint2) / sg
+    # Eqs. 21, 22, 27, 30, 31 in Source
+    yn[0] = (dl * pr) / sg
+    yn[1] = pth / sg
+    yn[2] = (a * (-a * pph + 2 * E * r) + pph * csct2 * dl) / (dl * sg)
+    yn[3] = (1 / (sg * dl)) * (
+        ((r2 + a2) * mu - kappa) * (r - 1)
+        + r * dl * mu
+        + 2 * r * (r2 + a2) * E2
+        - 2 * a * E * pph
+    ) - (2 * pr2 * (r - 1)) / sg
+    yn[4] = ((sint * cost) / sg) * ((pph2 / sint4) - a2 * (E2 + mu))
+    yn[5] = 0.0
 
-    return g_dd
+    return yn
 
 
-def _f_vec(t, vec, a):
+def _python_solver(q, p, params, end_lambda, step_size):
     """
-    Returns RHS of Geodesic Equations
+    Wrapper to VerletLeapfrog Integrator, defined by ``_verlet_step()``
+    
+    This backend is currently in beta and the solver may not be stable for 
+    certain sets of conditions, e.g. long simulations (`end_lambda > 50.`) 
+    or high initial radial distances (`position[0] > ~5.`). In these cases,
+    or if the output does not seem accurate, it is highly recommended to switch 
+    to the Julia backend, by setting `julia=True`, in the constructor call to
+    ``einsteinpy.geodesic.*``.
+
+    Parameters
+    ----------
+    q : array_like
+        Length-3 Array, containing the initial 3-Position
+    p : array_like
+        Length-3 Array, containing the initial Covariant 3-Momentum
+    params : array_like
+        Length-3 Array, containing Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
+        Test Particle Rest Mass, `mu`
+    end_lambda : float 
+        Affine Parameter value, where integration will end
+    step_size : float
+        Step Size (Fixed)
+
+    Returns
+    -------
+    lambdas : numpy.ndarray
+        Array, containing affine parameter values, where integration was performed
+    vecs : numpy.ndarray
+        2D Array, containing integrated 3-Positions and Covariant 3-Momenta
 
     """
-    vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
-    r, th = vec[1], vec[2]
-    tdot = vec[4]
-    rdot = vec[5]
-    thdot = vec[6]
-    pdot = vec[7]
+    state = np.hstack((q, p))
 
-    r2, a2 = np.square(r), np.square(a)
-    r4, a4 = np.power(r, 4), np.power(a, 4)
-    sint, cost = np.sin(th), np.cos(th)
-    sint2, cost2 = np.square(sint), np.square(cost)
-    cost4 = np.power(cost, 4)
-    sin2t, cos2t, cos4t = np.sin(2 * th), np.cos(2 * th), np.cos(4 * th)
+    y = state
+    next_step = 0
+    lambdas = list()
+    vecs = list()
 
-    vals[:4] = vec[4:]
+    lambdas.append(next_step)
+    vecs.append(list(y))
 
-    vals[4] = (
-        (
-            -2
-            * a2
-            * r
-            * thdot
-            * (
-                -2
-                * (
-                    a4
-                    + 2 * (-8 + r) * r2 * r
-                    + a2 * r * (-14 + 3 * r)
-                    + a2 * (a2 + (-2 + r) * r) * cos2t
-                )
-                * sin2t
-                * tdot
-                + 8
-                * a
-                * (a2 + (-2 + r) * r)
-                * cost
-                * (a2 + 2 * r2 + a2 * cos2t)
-                * sin2t
-                * sint
-                * pdot
-            )
-        )
-        + rdot
-        * (
-            (
-                3 * a4 * a2
-                - 6 * a4 * r
-                + 3 * a4 * r2
-                + 24 * a2 * r2 * r
-                - 8 * a2 * r4
-                - 8 * r4 * r2
-                + 4 * a2 * (a4 + a2 * r2 - 6 * r2 * r) * cos2t
-                + a4 * (a2 + r * (6 + r)) * cos4t
-            )
-            * tdot
-            - 16
-            * a
-            * (
-                (-r4 * (a2 + 3 * r2) + a4 * (a2 - r2) * cost4) * sint2
-                - a2 * r4 * (np.square(sin2t))
-            )
-            * pdot
-        )
-    ) / (
-        4
-        * (r2 + a2 * cost2)
-        * (
-            2 * a2 * r2 * (2 + a2 - 2 * r + r2) * cost2
-            + a4 * (a2 + (-2 + r) * r) * cost4
-            + r2 * ((-2 + r) * r2 * r + a2 * (4 + r2) - 8 * a2 * cos2t)
-        )
-    )
+    outer_event_horizon = 1 + np.sqrt(1 - a ** 2)
 
-    vals[5] = (1 / (np.power((r2 + a2 * cost2), 3))) * (
-        (
-            (
-                (np.square((r2 + a2 * cost2)))
-                * (r * (-a2 + r) + a2 * (-1 + r) * cost2)
-                * (np.square(rdot))
-            )
-            / (a2 + (-2 + r) * r)
-        )
-        + ((a2 + (-2 + r) * r) * (-r2 + a2 * cost2) * (np.square(tdot)))
-        + (2 * a2 * cost * (np.square((r2 + a2 * cost2))) * sint * rdot * thdot)
-        + (
-            r
-            * (a2 + (-2 + r) * r)
-            * (np.square((r2 + a2 * cost2)))
-            * (np.square(thdot))
-        )
-        - (4 * a * (a2 + (-2 + r) * r) * (-r2 + a2 * cost2) * sint2 * tdot * pdot)
-        + (
-            (a2 + (-2 + r) * r)
-            * (
-                -a2 * r2
-                + r4 * r
-                + a2 * (a2 + r2 + 2 * r2 * r) * cost2
-                + a4 * (-1 + r) * cost4
-            )
-            * sint2
-            * (np.square(pdot))
-        )
-    )
+    # Integrating and storing results from solver
+    while next_step <= end_lambda:
+        y = _verlet_step(step_size, y, params)
+        next_step += step_size
+        lambdas.append(next_step)
+        vecs.append(list(y))
 
-    vals[6] = (1 / (np.power((r2 + a2 * cost2), 3))) * (
-        (
-            -(a2 * cost * (np.square((r2 + a2 * cost2))) * sint * (np.square(rdot)))
-            / (a2 + (-2 + r) * r)
-        )
-        + (a2 * r * sin2t * (np.square(tdot)))
-        - (2 * r * (np.square((r2 + a2 * cost2))) * rdot * thdot)
-        + (a2 * cost * (np.square((r2 + a2 * cost2))) * sint * (np.square(thdot)))
-        - (4 * a * r * (a2 + r2) * sin2t * tdot * pdot)
-        - (
-            cost
-            * sint
-            * (
-                -(np.square((r2 + a2 * cost2)))
-                * (a2 - 2 * r + r2 + ((2 * r * (a2 + r2)) / (r2 + a2 * cost2)))
-                - 2 * a2 * r * (a2 + r2) * sint2
+        if np.abs(y[0]) <= np.abs(1.002 * outer_event_horizon):
+            warnings.warn(
+                "Test particle has reached the Event Horizon. ", RuntimeWarning
             )
-            * (np.square(pdot))
-        )
-    )
+            break
 
-    vals[7] = -(
-        (
-            2
-            * (
-                thdot
-                * (
-                    (
-                        -2
-                        * a
-                        * r
-                        * (a2 + (-2 + r) * r)
-                        * (a2 + 2 * r2 + a2 * cos2t)
-                        * (cost / sint)
-                        * tdot
-                    )
-                    + (
-                        (
-                            (
-                                a2
-                                * r2
-                                * (a2 * (-4 + 3 * r2) + r2 * (4 - 6 * r + 3 * r2))
-                                * cost2
-                            )
-                            + (a4 * r2 * (4 + 3 * a2 - 6 * r + 3 * r2) * cost4)
-                            + (a4 * a2 * (a2 + (-2 + r) * r) * cost4 * cost2)
-                            + (
-                                r2
-                                * (
-                                    (-2 + r) * r4 * r
-                                    + a4 * (6 + r)
-                                    + a2 * r2 * (2 + r + r2)
-                                    - a2 * (6 + r) * (a2 + r2) * cos2t
-                                )
-                            )
-                        )
-                        * (cost / sint)
-                        + (2 * a4 * r * (a2 + r2) * cost2 * cost * sint)
-                    )
-                    * pdot
-                )
-                + (
-                    rdot
-                    * (
-                        ((2 * a * r4 - 2 * a4 * a * cost4) * tdot)
-                        + (
-                            2 * a2 * r2 * r
-                            - a2 * r4
-                            - 2 * r4 * r2
-                            + r4 * r2 * r
-                            - a2 * r * (2 * a2 + r2 * (2 + 3 * r - 3 * r2)) * cost2
-                            + a4 * (a2 + r * (2 - 2 * r + 3 * r2)) * cost4
-                            + a4 * a2 * (-1 + r) * cost4 * cost2
-                            - 8 * a2 * r2 * r * sint2
-                            + 2 * a4 * r * (np.square(sin2t))
-                        )
-                        * pdot
-                    )
-                )
-            )
-        )
-        / (
-            (r2 + a2 * cost2)
-            * (
-                2 * a2 * r2 * (2 + a2 - 2 * r + r2) * cost2
-                + a4 * (a2 + (-2 + r) * r) * cost4
-                + r2 * ((-2 + r) * r2 * r + a2 * (4 + r2) - 8 * a2 * cos2t)
-            )
-        )
-    )
+    lambdas = np.array(lambdas)
+    vecs = np.array(vecs)
 
-    return vals
+    return lambdas, vecs
+
+
+def _julia_solver(q, p, params, end_lambda, step_size):
+    """
+    Wrapper to Julia code, in ``run.jl`` and ``KerSolver.jl``
+
+    This backend produces stable output. It is highly recommended to 
+    use this backend by setting `julia=True`, in the constructor call to
+    ``einsteinpy.geodesic.*``.
+
+    Parameters
+    ----------
+    q : array_like
+        Length-3 Array, containing the initial 3-Position
+    p : array_like
+        Length-3 Array, containing the initial Covariant 3-Momentum
+    params : array_like
+        Length-3 Array, containing Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
+        Test Particle Rest Mass, `mu`
+    end_lambda : float 
+        Affine Parameter value, where integration will end
+    step_size : float
+        Step Size (Fixed)
+
+    Returns
+    -------
+    lambdas : numpy.ndarray
+        Array, containing affine parameter values, where integration was performed
+    vecs : numpy.ndarray
+        2D Array, containing integrated 3-Positions and Covariant 3-Momenta
+
+    """
+    q1, q2, q3 = q
+    p1, p2, p3 = p
+    a, E, mu = params
+
+    # Arguments for julia script
+    args = f"{q1} {q2} {q3} {p1} {p2} {p3} {a} {E} {end_lambda} {step_size}".split(" ")
+
+    # Checking, if julia is callable
+    try:
+        sb.call(["julia"])
+    except OSError:
+        raise OSError(
+            """
+            Could not call 'julia'. 
+            Make sure 'julia' is installed in your system and added to path.
+            Refer: https://julialang.org/downloads/platform/.
+            Also, ensure that 'DifferentialEquations.jl' and 'ODEInterfaceDiffEq.jl' 
+            are installed in julia. You can install them by typing
+            `using Pkg; Pkg.add("DifferentialEquations"); Pkg.add("ODEInterfaceDiffEq");`
+            in a julia terminal.
+            """
+        )
+
+    # Running script
+    jl_out = sb.check_output(["julia", "julia_backend/run.jl"] + args)
+
+    # Sanitizing output and formatting it to a list
+    jl_out_list = re.findall(r"['\"](.*?)['\"]", str(jl_out.decode("unicode-escape")))
+    retcode, out_path = jl_out_list
+
+    lambdas = np.loadtxt(out_path + "\\lambdas.csv", delimiter=",")
+    vecs = np.loadtxt(out_path + "\\vecs.csv", delimiter=",")
+
+    if retcode == "Terminated":
+        warnings.warn("Test particle has reached the Event Horizon. ", RuntimeWarning)
+
+    return lambdas, vecs

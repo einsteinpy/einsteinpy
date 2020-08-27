@@ -1,254 +1,155 @@
 import warnings
 
 import numpy as np
+from scipy.optimize import fsolve
 
-from einsteinpy.integrators import RK45
+from .utils import _energy, _julia_solver, _python_solver, _sphToCart
 
 
 class Geodesic:
     """
     Base Class for defining Geodesics
+    Working in Geometrized Units (M-Units), with ``G = c = M = 1.``
 
     """
 
     def __init__(
         self,
-        time_like,
-        metric,
-        coords,
-        end_lambda,
-        step_size=1e-3,
+        position,
+        momentum,
+        a=0.0,
+        end_lambda=50.0,
+        step_size=0.0005,
+        time_like=True,
         return_cartesian=True,
+        julia=True,
     ):
         """
+        Constructor
+
         Parameters
         ----------
-        time_like : bool
+        position : array_like
+            Length-3 Array, containing the initial 3-Position
+        momentum : array_like
+            Length-3 Array, containing the initial 3-Momentum
+        a : float, optional
+            Dimensionless Spin Parameter of the Black Hole
+            ``0 <= a <= 1``
+            Defaults to ``0.`` (Schwarzschild Black Hole)
+        end_lambda : float, optional
+            Affine Parameter value, where integration will end
+            Equivalent to Proper Time for Timelike Geodesics
+            Defaults to ``50.``
+        step_size : float, optional
+            Size of each geodesic integration step
+            A fixed-step, symplectic VerletLeapfrog integrator is used
+            Defaults to ``0.0005``
+        time_like : bool, optional
             Determines type of Geodesic
             ``True`` for Time-like geodesics
             ``False`` for Null-like geodesics
-        metric : ~einsteinpy.metric.*
-            Metric, in which Geodesics are to be calculated
-        coords : ~einsteinpy.coordinates.differential.*
-            Coordinate system, in which Metric is to be represented
-        end_lambda : float
-            Affine Parameter, Lambda, where iterations will stop
-            Equivalent to Proper Time for Timelike Geodesics
-        step_size : float, optional
-            Size of each geodesic integration step
-            Defaults to ``1e-3``
+            Defaults to ``True``
         return_cartesian : bool, optional
-            Whether to return calculated values in Cartesian Coordinates
+            Whether to return calculated positions in Cartesian Coordinates
+            This only affects the coordinates. The momenta dimensionless quantities,
+            and are returned in Spherical Polar Coordinates.
+            Defaults to ``True``
+        julia : bool, optional
+            Whether to use the julia backend
             Defaults to ``True``
 
         """
-        self.time_like = time_like
-        self.metric = metric
-        self.coords = coords
+        self.position = position
+        self.momentum = momentum
+        self.a = a
+        self.end_lambda = end_lambda
+        self.step_size = step_size
+        self.kind = "Time-like" if time_like else "Null-like"
+        self.coords = "Cartesian" if return_cartesian else " Spherical Polar"
+        self.backend = "Julia" if julia else "Python"
 
-        self._state = self._calculate_state()
-        self._trajectory = self.calculate_trajectory(
-            end_lambda=end_lambda,
-            OdeMethodKwargs={"stepsize": step_size},
-            return_cartesian=return_cartesian,
-        )[1]
+        self._trajectory = self.calculate_trajectory()
 
     def __repr__(self):
-        kind = "Null-like"
-        if self.time_like:
-            kind = "Time-like"
-
         return f"Geodesic Object:\n\
-            Type = ({kind})\n\
-            Metric = ({self.metric}),\n\
-            Initial State = ({self.state}),\n\
-            Trajectory = ({self.trajectory})"
+            Type = ({self.kind}),\n\
+            Position = ({self.position}),\n\
+            Momentum = ({self.momentum}),\n\
+            Spin Parameter = ({self.a})\n\
+            Solver details = (\n\
+                Backend = ({self.backend})\n\
+                Step-size = ({self.step_size}),\n\
+                End-Lambda = ({self.end_lambda})\n\
+                Trajectory = (\n\
+                    {self.trajectory}\n\
+                ),\n\
+                Output Position Coordinate System = ({self.coords})\n\
+            )"
 
     def __str__(self):
-        kind = "Null-like"
-        if self.time_like:
-            kind = "Time-like"
-
-        return f"Geodesic Object:\n\
-            Type = ({kind})\n\
-            Metric = ({self.metric}),\n\
-            Initial State = ({self.state}),\n\
-            Trajectory = ({self.trajectory})"
-
-    @property
-    def state(self):
-        """
-        Returns the Initial State Vector of the Geodesic
-
-        """
-        return self._state
+        return self.__repr__()
 
     @property
     def trajectory(self):
         """
-        Returns the "Trajectory" of the Geodesic
+        Returns the trajectory of the test particle
 
         """
         return self._trajectory
 
-    def _calculate_state(self):
-        """
-        Prepares and returns the Initial State Vector of the test particle
-
-        Returns
-        -------
-        state : ~numpy.ndarray
-            Initial State Vector of the test particle
-            Length-8 Array
-
-        Raises
-        ------
-        TypeError
-            If there is a mismatch between the coordinates class of ``self.coords`` and \
-            coordinate class, with which ``self.metric`` object has been instantiated
-
-        """
-        if self.coords.system != self.metric.coords.system:
-            raise TypeError(
-                "Coordinate System Mismatch between Metric object and supplied initial coordinates."
-            )
-
-        x4 = self.coords.position()
-        v4 = self.coords.velocity(self.metric)
-
-        state = np.hstack((x4, v4))
-
-        return state
-
-    def calculate_trajectory(
-        self,
-        end_lambda=10.0,
-        OdeMethodKwargs={"stepsize": 1e-3},
-        return_cartesian=True,
-    ):
+    def calculate_trajectory(self):
         """
         Calculate trajectory in spacetime, according to Geodesic Equations
 
-        Parameters
-        ----------
-        end_lambda : float, optional
-            Affine Parameter, Lambda, where iterations will stop
-            Equivalent to Proper Time for Timelike Geodesics
-            Defaults to ``10.0``
-        OdeMethodKwargs : dict, optional
-            Kwargs to be supplied to the ODESolver
-            Dictionary with key 'stepsize' along with a float value is expected
-            Defaults to ``{'stepsize': 1e-3}``
-        return_cartesian : bool, optional
-            Whether to return calculated values in Cartesian Coordinates
-            Defaults to ``True``
-
         Returns
         -------
         ~numpy.ndarray
-            N-element numpy array containing Lambda, where the geodesic equations were evaluated
+            N-element numpy array, containing affine parameter 
+            values, where the integration was performed
         ~numpy.ndarray
-            (n,8) shape numpy array containing [x0, x1, x2, x3, v0, v1, v2, v3] for each Lambda
+            Shape-(N, 6) numpy array, containing [x1, x2, x3, p_r, p_theta, p_phi] for each Lambda
 
         """
-        ODE = RK45(
-            fun=self.metric.f_vec,
-            t0=0.0,
-            y0=self.state,
-            t_bound=end_lambda,
-            **OdeMethodKwargs,
-        )
+        mu = 1.0 if self.kind == "Time-like" else 0.0
+        q, p = self.position, self.momentum
+        a = self.a
 
-        g = self.metric
+        # Getting Energy value, after solving guu.pd.pd = -mu ** 2, where,
+        # 'u' denotes contravariant index and 'd' denotes covariant index
+        E = fsolve(_energy, 1.0, args=(q, p, a, mu))[-1]
 
-        vecs = list()
-        lambdas = list()
-        _scr = g.sch_rad * 1.001
+        params = [a, E, mu]
 
-        while ODE.t < end_lambda:
-            vecs.append(ODE.y)
-            lambdas.append(ODE.t)
-            ODE.step()
+        if self.backend == "Python":
+            warnings.warn(
+                """
+                Using Python backend to solve the system. This backend is currently in beta and the solver 
+                may not be stable for certain sets of conditions, e.g. long simulations (`end_lambda > 50.`) 
+                or high initial radial distances (`position[0] > ~5.`). In these cases or if the output does not seem accurate,
+                it is highly recommended to switch to the Julia backend, by setting `julia=True`, in the constructor call.
+                """,
+                RuntimeWarning,
+            )
+            lambdas, vecs = _python_solver(q, p, params, end_lambda, step_size)
 
-            if ODE.y[1] <= _scr:
-                warnings.warn(
-                    "Test particle has reached Schwarzchild Radius. ", RuntimeWarning
-                )
-                break
+        else:
+            lambdas, vecs = _julia_solver(q, p, params, end_lambda, step_size)
 
-        vecs, lambdas = np.array(vecs), np.array(lambdas)
+        if self.coords == "Cartesian":
+            xc = list()
+            yc = list()
+            zc = list()
 
-        if return_cartesian:
-            # Getting the corresponding Conversion superclass
-            # of the differential object
-            conv = type(self.coords).__bases__[0]
+            # Converting to Cartesian from Spherical Polar Coordinates
+            # Note that momenta cannot be converted correctly, this way,
+            # due to ambiguities in the signs of v_r and v_th (velocities)
             cart_vecs = list()
-            for v in vecs:
-                vals = conv(v[0], v[1], v[2], v[3], v[5], v[6], v[7]).convert_cartesian(
-                    M=g.M, a=g.a
-                )
-                cart_vecs.append(np.hstack((vals[:4], v[4], vals[4:])))
+            for y in vecs:
+                r, th, phi = y[0], y[1], y[2]
+                cart_coords = _sphToCart(r, th, phi)
+                cart_vecs.append(np.hstack((cart_coords, y[3:])))
 
             return lambdas, np.array(cart_vecs)
 
         return lambdas, vecs
-
-    def calculate_trajectory_iterator(
-        self, OdeMethodKwargs={"stepsize": 1e-3}, return_cartesian=True,
-    ):
-        """
-        Calculate trajectory in manifold according to geodesic equation
-        Yields an iterator
-
-        Parameters
-        ----------
-        OdeMethodKwargs : dict, optional
-            Kwargs to be supplied to the ODESolver
-            Dictionary with key 'stepsize' along with a float value is expected
-            Defaults to ``{'stepsize': 1e-3}``
-        return_cartesian : bool, optional
-            Whether to return calculated values in Cartesian Coordinates
-            Defaults to ``True``
-
-        Yields
-        ------
-        float
-            Affine Parameter, Lambda, where the geodesic equations were evaluated
-        ~numpy.ndarray
-            Numpy array containing [x0, x1, x2, x3, v0, v1, v2, v3] for each Lambda
-
-        """
-        ODE = RK45(
-            fun=self.metric.f_vec,
-            t0=0.0,
-            y0=self.state,
-            t_bound=1e300,
-            **OdeMethodKwargs,
-        )
-
-        g = self.metric
-
-        _scr = g.sch_rad * 1.001
-
-        while True:
-            if return_cartesian:
-                # Getting the corresponding Conversion superclass
-                # of the differential object
-                conv = type(self.coords).__bases__[0]
-                v = ODE.y
-                vals = conv(v[0], v[1], v[2], v[3], v[5], v[6], v[7]).convert_cartesian(
-                    M=g.M, a=g.a
-                )
-
-                yield ODE.t, np.hstack((vals[:4], v[4], vals[4:]))
-
-            else:
-                yield ODE.t, ODE.y
-
-            ODE.step()
-
-            if ODE.y[1] <= _scr:
-                warnings.warn(
-                    "Test particle has reached Schwarzchild Radius. ", RuntimeWarning
-                )
-                break
