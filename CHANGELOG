@@ -25,7 +25,8 @@ CHANGES
 - [#521]: Fixed #517, Removed Spin Parameter from bodies
 - [#521]: Fixed #524, Fixed breakage, caused due to isort changes
 - [#521]: Partially fixed #523, Fixed Schwarzschild and Kerr
-- #527: Added support for Null Geodesics in Kerr Spacetime
+- [#527]: Added support for Null Geodesics in Kerr & Schwarzschild Spacetimes
+- [#527]: Added new features to plotting.geodesic
 
 
 0.5.0

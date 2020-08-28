@@ -36,7 +36,7 @@ class StaticGeodesicPlotter:
         if ax is not None:
             warnings.warn(
                 """
-                Argument `ax` will be removed, in Version 0.5.0.
+                Argument `ax` will be removed in Version 0.5.0.
                 Since Version 0.4.0, `StaticGeodesicPlotter` automatically 
                 creates a new Axes Object.
                 """,
@@ -303,9 +303,9 @@ class StaticGeodesicPlotter:
         x_max, x_min = max(x), min(x)
         y_max, y_min = max(y), min(y)
         z_max, z_min = max(z), min(z)
-        margin_x = (x_max - x_min) * 0.1
-        margin_y = (y_max - y_min) * 0.1
-        margin_z = (z_max - z_min) * 0.1
+        margin_x = (x_max - x_min) * 0.2
+        margin_y = (y_max - y_min) * 0.2
+        margin_z = (z_max - z_min) * 0.2
 
         self.ax.set_xlim3d([x_min - margin_x, x_max + margin_x])
         self.ax.set_ylim3d([y_min - margin_y, y_max + margin_y])
@@ -317,6 +317,8 @@ class StaticGeodesicPlotter:
         def _update(num, data, line):
             line.set_data(data[:2, :num])
             line.set_3d_properties(data[2, :num])
+
+            return (line,)
 
         self.ani = FuncAnimation(
             self.fig, _update, N, fargs=(data, line), interval=interval, blit=True

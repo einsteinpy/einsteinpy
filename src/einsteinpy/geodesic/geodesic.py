@@ -1,9 +1,10 @@
 import warnings
 
 import numpy as np
+from einsteinpy_geodesics import solveSystem
 from scipy.optimize import fsolve
 
-from .utils import _energy, _julia_solver, _python_solver, _sphToCart
+from .utils import _energy, _python_solver, _sphToCart
 
 
 class Geodesic:
@@ -136,7 +137,7 @@ class Geodesic:
             lambdas, vecs = _python_solver(q, p, params, end_lambda, step_size)
 
         else:
-            lambdas, vecs = _julia_solver(q, p, params, end_lambda, step_size)
+            lambdas, vecs = solveSystem(q, p, params, end_lambda, step_size)
 
         if self.coords == "Cartesian":
             xc = list()
