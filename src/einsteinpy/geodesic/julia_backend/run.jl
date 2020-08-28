@@ -1,5 +1,5 @@
 """
-This script acts as a bridge between "einsteinpy.geodesics" and "KerrSolver.jl".
+This script acts as a bridge between "einsteinpy.geodesic" and "KerrSolver.jl".
 It solves the system, using "KerrSolver.jl", and saves the output to .csv files in 
 `/tmp/epy_geod_jl_temp/` (on *nix) or `%TEMP%/epy_geod_jl_temp/` (on Windows).
 These are accessed by the `_julia_wrapper` utility function in EinsteinPy.
@@ -10,8 +10,8 @@ These are accessed by the `_julia_wrapper` utility function in EinsteinPy.
 ("Success", "C:\\Users\\UserName\\AppData\\Local\\Temp\\epy_geod_jl")
 ```
 where the argument order is q1, q2, q3, p1, p2, p3, a, E, end_lambda, step_size.
-See "einsteinpy.geodesics" or  "KerrSolver.jl" for information on the arguments.
-The output is a 2-tuple of strings, containing the "return code", from the solver
+See "einsteinpy.geodesic.Geodesic" or "KerrSolver.jl" for information on the arguments.
+The output is a 2-tuple of strings, containing the "return code" from the solver
 and "folder-path", where the output is stored.
 
 """
@@ -32,14 +32,13 @@ function run(q, p, params)
     mkpath(temp_dir_name) # Does nothing, if folder exists
     cd(temp_dir_name)
 
-    # Writing to csvs (Rewrites existing files)
+    # Writing to csvs (Overwrites existing files)
     writedlm("lambdas.csv", lambdas, ",")
     writedlm("vecs.csv", vecs, ",")
 
     # Return retcode and folder-path as a 2-tuple of strings
     return retcode, pwd()
 end
-
 
 # Parsing input
 q1, q2, q3, p1, p2, p3, a, E, end_lambda, step_size = map(x -> parse(Float64, x), Base.ARGS)

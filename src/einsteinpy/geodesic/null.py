@@ -49,7 +49,6 @@ class Nulllike(Geodesic):
 
         """
         super().__init__(
-            self,
             position=position,
             momentum=momentum,
             a=a,

@@ -65,8 +65,9 @@ class Geodesic:
         self.a = a
         self.end_lambda = end_lambda
         self.step_size = step_size
+
         self.kind = "Time-like" if time_like else "Null-like"
-        self.coords = "Cartesian" if return_cartesian else " Spherical Polar"
+        self.coords = "Cartesian" if return_cartesian else "Spherical Polar"
         self.backend = "Julia" if julia else "Python"
 
         self._trajectory = self.calculate_trajectory()
@@ -105,7 +106,7 @@ class Geodesic:
         Returns
         -------
         ~numpy.ndarray
-            N-element numpy array, containing affine parameter 
+            N-element numpy array, containing affine parameter
             values, where the integration was performed
         ~numpy.ndarray
             Shape-(N, 6) numpy array, containing [x1, x2, x3, p_r, p_theta, p_phi] for each Lambda
@@ -114,6 +115,7 @@ class Geodesic:
         mu = 1.0 if self.kind == "Time-like" else 0.0
         q, p = self.position, self.momentum
         a = self.a
+        end_lambda, step_size = self.end_lambda, self.step_size
 
         # Getting Energy value, after solving guu.pd.pd = -mu ** 2, where,
         # 'u' denotes contravariant index and 'd' denotes covariant index

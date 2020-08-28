@@ -15,7 +15,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
     ):
         """
         Constructor and Initializer
-        
+
         Parameters
         ----------
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
@@ -37,7 +37,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
             syms is not a list or tuple
         ValueError
             config has more or less than 3 indices
-        
+
         """
         super(ChristoffelSymbols, self).__init__(
             arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
@@ -55,7 +55,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
         ----------
         metric : ~einsteinpy.symbolic.metric.MetricTensor
             Space-time Metric from which Christoffel Symbols are to be calculated
-        
+
         """
         dims = metric.dims
         tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
@@ -88,7 +88,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
             Specify the new configuration. Defaults to 'lll'
         metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Parent metric tensor for changing indices.
-            Already assumes the value of the metric tensor from which it was initialized if passed with None. 
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
             Compulsory if not initialized with 'from_metric'. Defaults to None.
 
         Returns

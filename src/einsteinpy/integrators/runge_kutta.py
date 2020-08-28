@@ -80,7 +80,7 @@ class RK45(integrate.RK45):
             Relative tolerance, defaults to 0.2*stepsize
         atol : float
             Absolute tolerance, defaults to rtol/0.8e3
-        
+
         """
         vectorized = not isinstance(y0, float)
         self._t_bound = t_bound

@@ -65,7 +65,7 @@ function solveSystem(q, p, params, end_lambda, step_size)
     prob = HamiltonianProblem(KerrHamiltonian, q, p, lambdas, params)
 
     # Condition for terminating integration, when outer event horizon is reached
-    reached_event_horizon(u,t,integrator) = u[1][1] - 1.002 * outer_event_horizon
+    reached_event_horizon(u,t,integrator) = u[1][1] - 1.01 * outer_event_horizon
     cb = ContinuousCallback(reached_event_horizon, terminate!)
 
     sol = solve(prob, VerletLeapfrog(), dt = step_size, callback=cb)

@@ -9,7 +9,7 @@ from scipy.optimize import newton
 
 class Shadow:
     """
-    Class for plotting the shadow of Schwarzschild Black Hole surrounded by a 
+    Class for plotting the shadow of Schwarzschild Black Hole surrounded by a
     thin accreting emission disk as seen by a distant observer.
     """
 
@@ -80,8 +80,8 @@ class Shadow:
 
     def _intensity(self):
         """
-        Returns an array of the integrated values using ~scipy.integrate.quadrature as the 
-        intensities for the blue shifted and red shifted rays above the critical impact paratmeter 
+        Returns an array of the integrated values using ~scipy.integrate.quadrature as the
+        intensities for the blue shifted and red shifted rays above the critical impact paratmeter
         from the distance to the emitter
         """
         intensity = []
@@ -98,7 +98,7 @@ class Shadow:
 
     def _intensity_from_event_horizon(self):
         """
-        Returns an array of the integrated values using ~scipy.integrate.quadrature as the 
+        Returns an array of the integrated values using ~scipy.integrate.quadrature as the
         intensities for the blue shifted and red shifted rays below the critical impact paratmeter
         from the event horizon to the distance given.
         """

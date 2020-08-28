@@ -4,11 +4,14 @@ Utilities for Geodesic Module
 Unit System: M-Units => G = c = M = 1
 
 """
+import os
 import subprocess as sb
 import warnings
 
 import numpy as np
 import regex as re
+
+import einsteinpy.geodesic
 
 
 def _energy(E, q, p, a, mu):
@@ -75,7 +78,7 @@ def _energy(E, q, p, a, mu):
 
 def _sphToCart(r, th, ph):
     """
-    Utility function to convert Spherical Polar 
+    Utility function to convert Spherical Polar
     Coordinates to Cartesian Coordinates
 
     """
@@ -84,6 +87,64 @@ def _sphToCart(r, th, ph):
     zs = r * np.cos(th)
 
     return xs, ys, zs
+
+
+def _f_vec(ld, y, params):
+    """
+    Evaluates expressions for the RHS of the dynamic equations,
+    from the Kerr Hamiltonian, to be used with ``_verlet_step()``
+
+    Source: `Fuerst and Wu, 2004: <hhttps://www.aanda.org/articles/aa/pdf/2004/36/aa0814.pdf>`_
+
+    Parameters
+    ----------
+    ld : float
+        Affine Parameter, Lambda (Step-size)
+    y : numpy.ndarray
+        Length-6 array, containing the initial position and momentum of the test particle
+    params : array_like
+        Length-3 Array, containing - Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
+        Test Particle Rest Mass, `mu`
+
+    Returns
+    -------
+    yn : numpy.ndarray
+        Length-6 array, containing the RHS of the dynamic equations
+
+    """
+    yn = np.zeros(shape=y.shape)
+
+    r, th, ph = y[:3]
+    pr, pth, pph = y[3:]
+    a, E, mu = params
+
+    r2 = r ** 2
+    pr2 = pr ** 2
+    pth2 = pth ** 2
+    pph2 = pph ** 2
+    a2 = a ** 2
+    E2 = E ** 2
+    sint = np.sin(th)
+    sint2 = sint ** 2
+    cost = np.cos(th)
+    sg = r2 + a2 * (cost ** 2)
+    dl = r2 - 2 * r + a2
+    kappa = pth2 + pph2 * (1 / sint2) + a2 - (E2 * sint2 + mu)
+
+    # Eqs. 21, 22, 27, 30, 31 in Source
+    yn[0] = (dl * pr) / sg
+    yn[1] = pth / sg
+    yn[2] = (a * (-a * pph + 2 * E * r) + pph * (1 / sint2) * dl) / (dl * sg)
+    yn[3] = (1 / (sg * dl)) * (
+        ((r2 + a2) * mu - kappa) * (r - 1)
+        + r * dl * mu
+        + 2 * r * (r2 + a2) * E2
+        - 2 * a * E * pph
+    ) - (2 * pr2 * (r - 1)) / sg
+    yn[4] = ((sint * cost) / sg) * ((pph2 / (sint ** 4)) - a2 * (E2 + mu))
+    yn[5] = 0.0
+
+    return yn
 
 
 def _verlet_step(ld, y, params):
@@ -97,12 +158,12 @@ def _verlet_step(ld, y, params):
     DIM = 3
     y_next = np.copy(y)
 
-    acc1 = f_vec(ld, y, params)[3:]
+    acc1 = _f_vec(ld, y, params)[3:]
 
     for i in range(DIM):
         y_next[i] = y[i] + ld * y[i + DIM] + 0.5 * ld * ld * acc1[i]
 
-    acc2 = f_vec(ld, y_next, params)[3:]
+    acc2 = _f_vec(ld, y_next, params)[3:]
 
     for i in range(DIM):
         y_next[i + DIM] = y[i + DIM] + 0.5 * ld * (acc1[i] + acc2[i])
@@ -110,79 +171,14 @@ def _verlet_step(ld, y, params):
     return y_next
 
 
-def f_vec(ld, y, params):
-    """
-    Evaluates expressions for the RHS of the dynamic equations,
-    from the Kerr Hamiltonian, to be used with ``_verlet_step()``
-
-    Source: `Fuerst and Wu, 2004: <https://ui.adsabs.harvard.edu/abs/2004A%26A...424..733F/abstract>`_
-    
-    Parameters
-    ----------
-    ld : float
-        Affine Parameter, Lambda (Step-size)
-    y : numpy.ndarray
-        Length-6 array, containing the initial position and momentum of the test particle
-    params : array_like
-        Length-3 Array, containing - Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
-        Test Particle Rest Mass, `mu`
-        
-    Returns
-    -------
-    yn : numpy.ndarray
-        Length-6 array, containing the RHS of the dynamic equations
-
-    """
-    yn = np.zeros(shape=y.shape)
-
-    r, th, ph = y[0], y[1], y[2]
-    pr, pth, pph = y[3], y[4], -y[5]
-    a, E, mu = params
-
-    r2 = r ** 2
-    pr2 = pr ** 2
-    pth2 = pth ** 2
-    pph2 = pph ** 2
-
-    a2 = a ** 2
-    E2 = E ** 2
-
-    sint = np.sin(th)
-    sint2 = sint ** 2
-    sint4 = sint ** 4
-    cost = np.cos(th)
-    cost2 = cost ** 2
-    csct2 = 1 / (sint ** 2)
-
-    sg = r2 + a2 * cost2
-    dl = r2 - 2 * r + a2
-
-    kappa = pth2 + pph2 * csct2 + a2 - (E2 * sint2 + mu)
-
-    # Eqs. 21, 22, 27, 30, 31 in Source
-    yn[0] = (dl * pr) / sg
-    yn[1] = pth / sg
-    yn[2] = (a * (-a * pph + 2 * E * r) + pph * csct2 * dl) / (dl * sg)
-    yn[3] = (1 / (sg * dl)) * (
-        ((r2 + a2) * mu - kappa) * (r - 1)
-        + r * dl * mu
-        + 2 * r * (r2 + a2) * E2
-        - 2 * a * E * pph
-    ) - (2 * pr2 * (r - 1)) / sg
-    yn[4] = ((sint * cost) / sg) * ((pph2 / sint4) - a2 * (E2 + mu))
-    yn[5] = 0.0
-
-    return yn
-
-
 def _python_solver(q, p, params, end_lambda, step_size):
     """
     Wrapper to VerletLeapfrog Integrator, defined by ``_verlet_step()``
-    
-    This backend is currently in beta and the solver may not be stable for 
-    certain sets of conditions, e.g. long simulations (`end_lambda > 50.`) 
+
+    This backend is currently in beta and the solver may not be stable for
+    certain sets of conditions, e.g. long simulations (`end_lambda > 50.`)
     or high initial radial distances (`position[0] > ~5.`). In these cases,
-    or if the output does not seem accurate, it is highly recommended to switch 
+    or if the output does not seem accurate, it is highly recommended to switch
     to the Julia backend, by setting `julia=True`, in the constructor call to
     ``einsteinpy.geodesic.*``.
 
@@ -195,7 +191,7 @@ def _python_solver(q, p, params, end_lambda, step_size):
     params : array_like
         Length-3 Array, containing Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
         Test Particle Rest Mass, `mu`
-    end_lambda : float 
+    end_lambda : float
         Affine Parameter value, where integration will end
     step_size : float
         Step Size (Fixed)
@@ -209,6 +205,7 @@ def _python_solver(q, p, params, end_lambda, step_size):
 
     """
     state = np.hstack((q, p))
+    a = params[0]
 
     y = state
     next_step = 0
@@ -227,7 +224,7 @@ def _python_solver(q, p, params, end_lambda, step_size):
         lambdas.append(next_step)
         vecs.append(list(y))
 
-        if np.abs(y[0]) <= np.abs(1.002 * outer_event_horizon):
+        if np.abs(y[0]) <= np.abs(1.01 * outer_event_horizon):
             warnings.warn(
                 "Test particle has reached the Event Horizon. ", RuntimeWarning
             )
@@ -243,7 +240,7 @@ def _julia_solver(q, p, params, end_lambda, step_size):
     """
     Wrapper to Julia code, in ``run.jl`` and ``KerSolver.jl``
 
-    This backend produces stable output. It is highly recommended to 
+    This backend produces stable output. It is highly recommended to
     use this backend by setting `julia=True`, in the constructor call to
     ``einsteinpy.geodesic.*``.
 
@@ -256,7 +253,7 @@ def _julia_solver(q, p, params, end_lambda, step_size):
     params : array_like
         Length-3 Array, containing Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
         Test Particle Rest Mass, `mu`
-    end_lambda : float 
+    end_lambda : float
         Affine Parameter value, where integration will end
     step_size : float
         Step Size (Fixed)
@@ -293,7 +290,9 @@ def _julia_solver(q, p, params, end_lambda, step_size):
         )
 
     # Running script
-    jl_out = sb.check_output(["julia", "julia_backend/run.jl"] + args)
+    module_abspath = einsteinpy.geodesic.__path__[0]
+    script_abspath = os.path.join(module_abspath, "julia_backend", "run.jl")
+    jl_out = sb.check_output(["julia", script_abspath] + args)
 
     # Sanitizing output and formatting it to a list
     jl_out_list = re.findall(r"['\"](.*?)['\"]", str(jl_out.decode("unicode-escape")))
