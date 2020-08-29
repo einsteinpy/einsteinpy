@@ -108,8 +108,7 @@ EinsteinPy requires the following Python packages:
 * Numba, for accelerating the code
 * EinsteinPy Geodesics, for calculating geodesics in Kerr geometries
 
-EinsteinPy is usually tested on Linux, Windows and OS X on Python
-3.6, 3.7 and 3.8 against latest NumPy.
+EinsteinPy is usually tested on Linux, Windows and macOS on Python 3.7 and 3.8, against latest NumPy.
 
 ==============  ===============  ===================
 Platform        Site             Status
