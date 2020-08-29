@@ -368,7 +368,8 @@ class KerrNewman(BaseMetric):
 
         """
         chl = self.christoffels(vec[:4])
-        F_cov = self.em_tensor_covariant(vec[:4])
+        F_contra = self.em_tensor_contravariant(vec[:4])
+        g_cov = self.metric_covariant(vec[:4])
 
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
@@ -403,7 +404,7 @@ class KerrNewman(BaseMetric):
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
 
-        vals[4:] -= (self.q.value * (F_cov @ vec[4:])).reshape(4, 1)
+        vals[4:] -= self.q.value * (F_contra @ vec[4:] @ g_cov)
 
         return vals
 
