@@ -34,6 +34,7 @@ def dummy_geod():
 
     return geod
 
+
 def test_static_geod_plotter_has_axes(dummy_geod):
     geod = dummy_geod
 
@@ -84,7 +85,7 @@ def test_static_geod_plotter_parameters(dummy_geod):
 
     sgpl = StaticGeodesicPlotter(bh_colors=("#0F0", "#FAF"), draw_ergosphere=False)
     assert sgpl.bh_colors == ("#0F0", "#FAF")
-    assert sgpl.draw_ergosphere == False
+    assert sgpl.draw_ergosphere is False
 
 
 def test_static_geod_plotter_ax_warning(dummy_geod):
@@ -149,6 +150,7 @@ def test_plot_geod_save_saves_parametric_plot(mock_save, dummy_geod):
 
     mock_save.assert_called_with(name)
     assert sgpl.ax.name != "3d"
+
 
 @mock.patch("einsteinpy.plotting.geodesic.static.plt.show")
 def test_static_geod_plotter_show_clear(mock_show, dummy_geod):

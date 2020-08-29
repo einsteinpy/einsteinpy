@@ -1,11 +1,14 @@
 import numpy as np
+import pytest
+
 from unittest.mock import patch
 from numpy.testing import assert_allclose
 
 import einsteinpy
+import einsteinpy_geodesics
 
 
-def Timelike_test(position, momentum, a, end_lambda, step_size, return_cartesian, julia):
+def solveSystem_test(q, p, params, end_lambda, step_size):
     partial_lambdas = np.array([0.0000e+00, 5.0000e-01, 1.0000e+00, 1.9990e+03, 1.9995e+03, 2.0000e+03])
     partial_vecs = np.array(
         [
@@ -21,12 +24,29 @@ def Timelike_test(position, momentum, a, end_lambda, step_size, return_cartesian
     return partial_lambdas, partial_vecs
 
 
-def test_precession_attr():
-    with patch('einsteinpy.examples.Timelike', new=Timelike_test):
-        p = einsteinpy.examples.precession()
-        L = p[1][0, 5]
+def test_mock_julia_backend():
+    q0 = [2.5, np.pi / 2, 0.]
+    p0 = [0., 0., -8.5]
+    a = 0.9
+    end_lambda = 10.
+    step_size = 0.005
 
-        assert p[0].shape[0] == p[1].shape[1]
-        assert p[1].shape[1] == 6
-        assert_allclose(p[1][:, 4], 0, atol=1e-12, rtol=1e-12)
-        assert_allclose(p[1][:, 5], L, atol=1e-12, rtol=1e-12)
+    with patch('einsteinpy.geodesic.geodesic.solveSystem', new=solveSystem_test):
+        geod = einsteinpy.geodesic.Geodesic(
+            position=q0,
+            momentum=p0,
+            a=a,
+            end_lambda=end_lambda,
+            step_size=step_size,
+            time_like=False,
+            return_cartesian=True,
+            julia=True
+        )
+
+        traj = geod.trajectory
+        L = traj[1][0, 5]
+
+        assert traj[0].shape[0] == traj[1].shape[1]
+        assert traj[1].shape[1] == 6
+        assert_allclose(traj[1][:, 4], 0, atol=1e-12, rtol=1e-12)
+        assert_allclose(traj[1][:, 5], L, atol=1e-12, rtol=1e-12)

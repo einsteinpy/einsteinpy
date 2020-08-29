@@ -37,7 +37,7 @@ class StaticGeodesicPlotter:
             warnings.warn(
                 """
                 Argument `ax` will be removed in Version 0.5.0.
-                Since Version 0.4.0, `StaticGeodesicPlotter` automatically 
+                Since Version 0.4.0, `StaticGeodesicPlotter` automatically
                 creates a new Axes Object.
                 """,
                 PendingDeprecationWarning,
@@ -261,7 +261,7 @@ class StaticGeodesicPlotter:
         fontsize = max(figsize) + 3
         self.fig.set_size_inches(figsize)
         self.ax = plt.axes()
-        self.ax.set_xlabel("Affine Paramter, $\lambda$", fontsize=fontsize)
+        self.ax.set_xlabel(r"Affine Paramter, $\lambda$", fontsize=fontsize)
         self.ax.set_ylabel("Coordinates", fontsize=fontsize)
 
         coords = geodesic.coords

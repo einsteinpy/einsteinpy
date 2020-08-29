@@ -302,11 +302,13 @@ class BaseRelativityTensor(Tensor):
             List of crucial symbols dentoting time-axis and/or spacial axis.
             For example, in case of 4D space-time, the arrangement would look like [t, x1, x2, x3].
         config : str
-            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
+            Configuration of contravariant and covariant indices in tensor.
+            'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Metric Tensor for some particular space-time which is associated with this Tensor.
         variables : tuple or list or set
-            List of symbols used in expressing the tensor other than symbols associated with denoting the space-time axis.
+            List of symbols used in expressing the tensor,
+            other than symbols associated with denoting the space-time axis.
             Calculates in real-time if left blank.
         functions : tuple or list or set
             List of symbolic functions used in epressing the tensor.

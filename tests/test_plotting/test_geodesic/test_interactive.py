@@ -90,7 +90,7 @@ def test_interactive_geod_plotter_parameters(dummy_geod):
 
     igpl = InteractiveGeodesicPlotter(bh_colors=("#0F0", "#FAF"), draw_ergosphere=False)
     assert igpl.bh_colors == ("#0F0", "#FAF")
-    assert igpl.draw_ergosphere == False
+    assert igpl.draw_ergosphere is False
     fig = igpl.show()
 
     assert fig

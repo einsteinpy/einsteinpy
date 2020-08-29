@@ -127,10 +127,11 @@ class Geodesic:
         if self.backend == "Python":
             warnings.warn(
                 """
-                Using Python backend to solve the system. This backend is currently in beta and the solver 
-                may not be stable for certain sets of conditions, e.g. long simulations (`end_lambda > 50.`) 
-                or high initial radial distances (`position[0] > ~5.`). In these cases or if the output does not seem accurate,
-                it is highly recommended to switch to the Julia backend, by setting `julia=True`, in the constructor call.
+                Using Python backend to solve the system. This backend is currently in beta and the
+                solver may not be stable for certain sets of conditions, e.g. long simulations
+                (`end_lambda > 50.`) or high initial radial distances (`position[0] > ~5.`).
+                In these cases or if the output does not seem accurate, it is highly recommended to
+                switch to the Julia backend, by setting `julia=True`, in the constructor call.
                 """,
                 RuntimeWarning,
             )
