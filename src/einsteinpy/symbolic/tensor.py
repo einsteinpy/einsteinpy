@@ -124,7 +124,7 @@ class Tensor:
     def __init__(self, arr, config="ll", name=None):
         """
         Constructor and Initializer
-        
+
         Parameters
         ----------
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
@@ -201,7 +201,7 @@ class Tensor:
         """
         Returns a String with a representation of the state of the object of class Tensor
 
-       """
+        """
         interpretable_representation = self.__class__.__name__
         interpretable_representation += self.arr.__repr__()
         return interpretable_representation
@@ -214,7 +214,7 @@ class Tensor:
         -------
         ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
             Sympy Array object
-        
+
         """
         return self.arr
 
@@ -278,7 +278,7 @@ class BaseRelativityTensor(Tensor):
         Undefined functions in the tensor expression.
     name : str or None
         Name of the tensor. Defaults to "GenericTensor".
-    
+
     """
 
     def __init__(
@@ -293,23 +293,25 @@ class BaseRelativityTensor(Tensor):
     ):
         """
         Constructor and Initializer
-        
+
         Parameters
         ----------
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
             Sympy Array or multi-dimensional list containing Sympy Expressions
         syms : tuple or list
-            List of crucial symbols dentoting time-axis and/or spacial axis. 
+            List of crucial symbols dentoting time-axis and/or spacial axis.
             For example, in case of 4D space-time, the arrangement would look like [t, x1, x2, x3].
         config : str
-            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
+            Configuration of contravariant and covariant indices in tensor.
+            'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Metric Tensor for some particular space-time which is associated with this Tensor.
         variables : tuple or list or set
-            List of symbols used in expressing the tensor other than symbols associated with denoting the space-time axis. 
+            List of symbols used in expressing the tensor,
+            other than symbols associated with denoting the space-time axis.
             Calculates in real-time if left blank.
         functions : tuple or list or set
-            List of symbolic functions used in epressing the tensor. 
+            List of symbolic functions used in epressing the tensor.
             Calculates in real-time if left blank.
         name : str or None
             Name of the Tensor. Defaults to "GenericTensor".
@@ -383,7 +385,7 @@ class BaseRelativityTensor(Tensor):
         -------
         tuple
             tuple containing (t,x1,x2,x3) in case of 4D space-time
-        
+
         """
         return self.syms
 

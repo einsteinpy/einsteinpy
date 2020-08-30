@@ -5,7 +5,7 @@ import astropy.units as u
 import numpy as np
 from numpy.testing import assert_allclose
 
-from einsteinpy.coordinates import BoyerLindquistDifferential, SphericalDifferential
+from einsteinpy.coordinates import BoyerLindquistDifferential
 from einsteinpy.metric import Kerr
 
 
@@ -20,19 +20,6 @@ def test_nonzero_christoffels():
     l2 = mk._nonzero_christoffels_list_bl
 
     assert collections.Counter(l1) == collections.Counter(l2)
-
-
-@pytest.fixture
-def sph():
-    return SphericalDifferential(
-        t=0. * u.s,
-        r=0.1 * u.m,
-        theta=4 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=0. * u.rad / u.s
-    )
 
 
 @pytest.fixture
@@ -78,3 +65,30 @@ def test_christoffels(bl):
     chl2 = np.multiply(chl2, 0.5)
 
     assert_allclose(chl2, chl1, rtol=1e-8)
+
+
+def test_f_vec_bl_kerr():
+    M, a = 6.73317655e26 * u.kg, 0.2 * u.one
+    bl = BoyerLindquistDifferential(
+        t=0. * u.s,
+        r=1e6 * u.m,
+        theta=4 * np.pi / 5 * u.rad,
+        phi=0. * u.rad,
+        v_r=0. * u.m / u.s,
+        v_th=0. * u.rad / u.s,
+        v_p=2e6 * u.rad / u.s
+    )
+    f_vec_expected = np.array(
+        [
+            3.92128321e+03, 0.00000000e+00, 0.00000000e+00, 2.00000000e+06,
+            -0.00000000e+00, 1.38196394e+18, -1.90211303e+12, -0.00000000e+00
+        ]
+    )
+
+    mk = Kerr(coords=bl, M=M, a=a)
+    state = np.hstack((bl.position(), bl.velocity(mk)))
+
+    f_vec = mk._f_vec(0., state)
+
+    assert isinstance(f_vec, np.ndarray)
+    assert_allclose(f_vec_expected, f_vec, rtol=1e-8)

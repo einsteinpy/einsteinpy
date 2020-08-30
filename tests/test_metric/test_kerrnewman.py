@@ -81,6 +81,34 @@ def test_christoffels_kerrnewman(test_input):
     assert_allclose(chl2, chl1, rtol=1e-10)
 
 
+def test_f_vec_bl_kerrnewman():
+    M, a = 6.73317655e26 * u.kg, 0.2 * u.one
+    Q, q = 0. * u.C, 0. * u.C / u.kg
+    bl = BoyerLindquistDifferential(
+        t=0. * u.s,
+        r=1e6 * u.m,
+        theta=4 * np.pi / 5 * u.rad,
+        phi=0. * u.rad,
+        v_r=0. * u.m / u.s,
+        v_th=0. * u.rad / u.s,
+        v_p=2e6 * u.rad / u.s
+    )
+    f_vec_expected = np.array(
+        [
+            3.92128321e+03, 0.00000000e+00, 0.00000000e+00, 2.00000000e+06,
+            -0.00000000e+00, 1.38196394e+18, -1.90211303e+12, -0.00000000e+00
+        ]
+    )
+
+    mk = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
+    state = np.hstack((bl.position(), bl.velocity(mk)))
+
+    f_vec = mk._f_vec(0., state)
+
+    assert isinstance(f_vec, np.ndarray)
+    assert_allclose(f_vec_expected, f_vec, rtol=1e-8)
+
+
 def test_compare_kerr_kerrnewman_christoffels(test_input):
     """
     Compares KerrNewman Christoffel Symbols, with that of Kerr metric, when Q -> 0

@@ -19,6 +19,7 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "matplotlib": ("https://matplotlib.org", None),
     "sympy": ("https://docs.sympy.org/latest", None),
+    "einsteinpy-geodesics": ("https://docs.geodesics.einsteinpy.org/en/latest/", None),
 }
 
 
