@@ -18,6 +18,7 @@ Jupyter notebooks
    :caption: metric, bodies, geodesic, coordinates
    
    /examples/Animations in EinsteinPy.ipynb
+   /examples/Using Geodesics (Back-ends & Plotting).ipynb
    /examples/Visualizing Event Horizon and Ergosphere (Singularities) of Kerr Metric or Black Hole.ipynb
    /examples/Visualizing Frame Dragging in Kerr Spacetime using EinsteinPy!.ipynb
    /examples/Visualizing Precession in Schwarzschild Spacetime.ipynb
