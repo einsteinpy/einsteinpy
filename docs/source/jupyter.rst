@@ -6,6 +6,10 @@ Jupyter notebooks
    :caption: hypersurface
    
    /examples/Plotting spacial hypersurface embedding for schwarzschild spacetime.ipynb
+   :target: https://en.wikipedia.org/wiki/Hypersurface
+   :alt: Spacial Hypersurface
+   :target: https://www.sciencedirect.com/science/article/pii/S0926224511000817
+   :alt: Schwarzschild Spacetime
 
 .. toctree::
    :maxdepth: 1
