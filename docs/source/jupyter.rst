@@ -5,6 +5,8 @@ Jupyter notebooks
    :maxdepth: 1
    :caption: hypersurface
    
+   This module provides basic computational functions which are essential for modelling the space-like hypersurface for any space-time geometry. Currently, the    module has an implementation for Schwarzschild geometry with conversion functions from Schwarzschildcoordinates to 3-D spherical coordinates and some plotting utilities.
+   
    /examples/Plotting spacial hypersurface embedding for schwarzschild spacetime.ipynb
 
 .. toctree::
