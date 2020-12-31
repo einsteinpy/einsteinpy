@@ -7,7 +7,7 @@ decorator instead.
 import inspect
 import warnings
 
-__all__ = ["ijit"]
+__all__ = ["jit"]
 
 
 def ijit(first=None, *args, **kwargs):
@@ -18,8 +18,8 @@ def ijit(first=None, *args, **kwargs):
 
     if inspect.isfunction(first):
         return first
-    else:
-        return _jit
+
+    return _jit
 
 
 try:

@@ -4,6 +4,7 @@ from einsteinpy.constant import G, c
 
 __all__ = ["primitive"]
 
+
 def primitive(*args):
     """
     Strips out units and returns numpy.float64 values \
