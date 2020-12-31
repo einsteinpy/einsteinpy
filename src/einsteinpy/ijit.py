@@ -7,6 +7,8 @@ decorator instead.
 import inspect
 import warnings
 
+__all__ = ["ijit"]
+
 
 def ijit(first=None, *args, **kwargs):
     """Identity JIT, returns unchanged function."""

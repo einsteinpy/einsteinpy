@@ -2,6 +2,7 @@ import numpy as np
 
 from einsteinpy.geodesic import Timelike
 
+__all__ = ["precession"]
 
 def precession():
     """

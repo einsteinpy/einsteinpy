@@ -2,6 +2,7 @@ from astropy import units as u
 
 from einsteinpy.constant import G, c
 
+__all__ = ["primitive"]
 
 def primitive(*args):
     """
