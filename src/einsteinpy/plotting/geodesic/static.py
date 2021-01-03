@@ -175,12 +175,13 @@ class StaticGeodesicPlotter:
             Picks a random color by default
 
         """
-        self._draw_bh(geodesic.a, figsize)
+        a = geodesic.metric_params[0]
+        self._draw_bh(a, figsize)
 
         traj = geodesic.trajectory[1]
-        x = traj[:, 0]
-        y = traj[:, 1]
-        z = traj[:, 2]
+        x = traj[:, 1]
+        y = traj[:, 2]
+        z = traj[:, 3]
 
         self.ax.plot(x, y, z, "--", color=color, label=geodesic.kind + " Geodesic")
 
@@ -216,13 +217,14 @@ class StaticGeodesicPlotter:
             If indices in ``coordinates`` do not take values from ``(1, 2, 3)``
 
         """
-        self._draw_bh_2D(geodesic.a, figsize)
+        a = geodesic.metric_params[0]
+        self._draw_bh_2D(a, figsize)
 
         traj = geodesic.trajectory[1]
-        A = coordinates[0] - 1
-        B = coordinates[1] - 1
+        A = coordinates[0]
+        B = coordinates[1]
 
-        if A not in (0, 1, 2) or B not in (0, 1, 2):
+        if A not in (1, 2, 3) or B not in (1, 2, 3):
             raise IndexError(
                 """
                 Please ensure, that indices in `coordinates` take two of these values: `(1, 2, 3)`.
@@ -267,9 +269,9 @@ class StaticGeodesicPlotter:
         coords = geodesic.coords
         traj = geodesic.trajectory
         lambdas = traj[0]
-        X1 = traj[1][:, 0]
-        X2 = traj[1][:, 1]
-        X3 = traj[1][:, 2]
+        X1 = traj[1][:, 1]
+        X2 = traj[1][:, 2]
+        X3 = traj[1][:, 3]
 
         self.ax.plot(lambdas, X1, color=colors[0], label=f"X1 ({coords})")
         self.ax.plot(lambdas, X2, color=colors[1], label=f"X2 ({coords})")
@@ -292,12 +294,13 @@ class StaticGeodesicPlotter:
             Picks a random color by default
 
         """
-        self._draw_bh(geodesic.a)
+        a = geodesic.metric_params[0]
+        self._draw_bh(a)
 
         traj = geodesic.trajectory
-        x = traj[1][:, 0]
-        y = traj[1][:, 1]
-        z = traj[1][:, 2]
+        x = traj[1][:, 1]
+        y = traj[1][:, 2]
+        z = traj[1][:, 3]
         N = x.shape[0]
 
         x_max, x_min = max(x), min(x)
@@ -311,7 +314,7 @@ class StaticGeodesicPlotter:
         self.ax.set_ylim3d([y_min - margin_y, y_max + margin_y])
         self.ax.set_zlim3d([z_min - margin_z, z_max + margin_z])
 
-        data = traj[1][:, 0:3].T
+        data = traj[1][:, 1:4].T
         (line,) = self.ax.plot(data[0, 0:1], data[1, 0:1], data[2, 0:1])
 
         def _update(num, data, line):

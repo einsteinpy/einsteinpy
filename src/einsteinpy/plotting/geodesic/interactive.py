@@ -98,9 +98,6 @@ class InteractiveGeodesicPlotter:
             Defaults to ``(6, 6)``
 
         """
-        colorscale_H = [(0, self.bh_colors[0]), (1, self.bh_colors[0])]
-        colorscale_E = [(0, self.bh_colors[1]), (1, self.bh_colors[1])]
-
         theta = np.linspace(0, 2 * np.pi, 50)
 
         # Outer Event Horizon
@@ -155,11 +152,12 @@ class InteractiveGeodesicPlotter:
 
         """
         traj = geodesic.trajectory[1]
-        X = traj[:, 0]
-        Y = traj[:, 1]
-        Z = traj[:, 2]
+        X = traj[:, 1]
+        Y = traj[:, 2]
+        Z = traj[:, 3]
 
-        self._draw_bh(geodesic.a)
+        a = geodesic.metric_params[0]
+        self._draw_bh(a)
         self.fig.add_trace(
             go.Scatter3d(
                 x=X,
@@ -216,17 +214,18 @@ class InteractiveGeodesicPlotter:
             If indices in ``coordinates`` do not take values from ``(1, 2, 3)``
 
         """
-        self._draw_bh_2D(geodesic.a, figsize)
+        a = geodesic.metric_params[0]
+        self._draw_bh_2D(a, figsize)
 
         traj = geodesic.trajectory[1]
-        A = coordinates[0] - 1
-        B = coordinates[1] - 1
+        A = coordinates[0]
+        B = coordinates[1]
 
-        if A not in (0, 1, 2) or B not in (0, 1, 2):
+        if A not in (1, 2, 3) or B not in (1, 2, 3):
             raise IndexError(
                 """
-                Please ensure, that indices in `coordinates` take two of these values: `(1, 2, 3)`.
-                Indices for `X1, X2, X3` are `(1, 2, 3)`.
+                Please ensure that indices in `coordinates` take two of these values: `(1, 2, 3)`.
+                E.g., Indices for `X1, X2, X3` are `(1, 2, 3)`.
                 """
             )
 
@@ -262,9 +261,9 @@ class InteractiveGeodesicPlotter:
         coords = geodesic.coords
         traj = geodesic.trajectory
         lambdas = traj[0]
-        X1 = traj[1][:, 0]
-        X2 = traj[1][:, 1]
-        X3 = traj[1][:, 2]
+        X1 = traj[1][:, 1]
+        X2 = traj[1][:, 2]
+        X3 = traj[1][:, 3]
 
         self.fig.add_trace(
             go.Scatter(

@@ -8,202 +8,158 @@ from einsteinpy.geodesic import Geodesic, Nulllike, Timelike
 
 
 @pytest.fixture()
-def dummy_time_python():
+def dummy_timegeod():
     """
-    Equatorial Spiral Capture
+    Equatorial Capture
 
     """
-    q0 = [2.15, np.pi / 2, 0.]
-    p0 = [0., 0., -1.5]
-    a = 0.
-    end_lambda = 10.
-    step_size = 0.005
-    julia = False
-
-    return q0, p0, a, end_lambda, step_size, julia
+    return Timelike(
+        metric="Kerr",
+        metric_params=(0.9,),
+        position=[2.15, np.pi / 2, 0.],
+        momentum=[0., 0., 1.5],
+        steps=50,
+        delta=0.5,
+        omega=0.01,  # Close orbit
+        return_cartesian=True,
+        suppress_warnings=True,
+    )
 
 
 @pytest.fixture()
-def dummy_null_python():
+def dummy_nullgeod():
     """
-    Equatorial Reverse & Capture
+    Equatorial Geodesic
 
     """
-    q0 = [2.5, np.pi / 2, 0.]
-    p0 = [0., 0., -8.5]
-    a = 0.9
-    end_lambda = 10.
-    step_size = 0.005
-    julia = False
-
-    return q0, p0, a, end_lambda, step_size, julia
-
-
-def test_str_repr(dummy_time_python):
-    q0, p0, a, end_lambda, step_size, julia = dummy_time_python
-    geod = Timelike(
-        position=q0,
-        momentum=p0,
-        a=a,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        return_cartesian=True,
-        julia=julia
+    return Nulllike(
+        metric="Kerr",
+        metric_params=(0.5,),
+        position=[4., np.pi / 2, 0.],
+        momentum=[0., 0., 2.],
+        steps=50,
+        delta=0.5,
+        return_cartesian=False,
+        suppress_warnings=True,
     )
+
+
+def test_str_repr(dummy_timegeod):
+    geod = dummy_timegeod
 
     assert str(geod) == repr(geod)
 
 
-def test_geodesic_attribute1(dummy_time_python):
-    q0, p0, a, end_lambda, step_size, julia = dummy_time_python
-    geod = Timelike(
-        position=q0,
-        momentum=p0,
-        a=a,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        return_cartesian=True,
-        julia=julia
-    )
-    traj = geod.trajectory
+def test_NotImplementedError():
+    try:
+        geod = Nulllike(
+            metric="Ker",
+            metric_params=(0.9,),
+            position=[2.5, np.pi / 2, 0.],
+            momentum=[0., 0., -8.5],
+        )
+        assert False
 
-    assert isinstance(traj, tuple)
-    assert isinstance(traj[0], np.ndarray)
-    assert isinstance(traj[1], np.ndarray)
+    except NotImplementedError:
+        assert True
 
 
-def test_geodesic_attribute2(dummy_time_python):
-    q0, p0, a, end_lambda, step_size, julia = dummy_time_python
-    geod = Timelike(
-        position=q0,
-        momentum=p0,
-        a=a,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        return_cartesian=True,
-        julia=julia
-    )
+def test_geodesic_attributes(dummy_timegeod):
+    geod = dummy_timegeod
     traj = geod.trajectory
 
     assert traj
+    assert isinstance(traj, tuple)
+    assert isinstance(traj[0], np.ndarray)
+    assert isinstance(traj[1], np.ndarray)
     assert traj[0].shape[0] == traj[1].shape[0]
-    assert traj[1].shape[1] == 6
+    assert traj[1].shape[1] == 8
 
 
-def test_runtime_warning_python(dummy_time_python):
-    q0, p0, a, end_lambda, step_size, julia = dummy_time_python
+def test_constant_angular_momentum(dummy_nullgeod):
+    L = dummy_nullgeod.momentum[-1]
 
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-
-        geod = Geodesic(
-            position=q0,
-            momentum=p0,
-            a=a,
-            end_lambda=end_lambda,
-            step_size=step_size,
-            time_like=True,
-            return_cartesian=True,
-            julia=julia
-        )
-
-        assert len(w) == 1  # 1 warning to be shown
-        assert issubclass(w[-1].category, RuntimeWarning)
+    assert_allclose(dummy_nullgeod.trajectory[1][:, -1], L, atol=1e-4, rtol=1e-4)
 
 
-def test_python_use_warning(dummy_null_python):
-    q0, p0, a, end_lambda, step_size, julia = dummy_null_python
+def test_equatorial_geodesic(dummy_nullgeod):
+    theta = dummy_nullgeod.position[2]
 
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-
-        geod = Nulllike(
-            position=q0,
-            momentum=p0,
-            a=a,
-            end_lambda=end_lambda,
-            step_size=step_size,
-            return_cartesian=True,
-            julia=julia
-        )
-
-        assert len(w) == 2  # 2 warnings to be shown (as capture geodesic)
-        assert issubclass(w[-2].category, RuntimeWarning)
-        assert issubclass(w[-1].category, RuntimeWarning)
+    assert_allclose(dummy_nullgeod.trajectory[1][:, 2], theta, atol=1e-6, rtol=1e-6)
 
 
-def test_constant_angular_momentum(dummy_null_python):
-    q0, p0, a, end_lambda, step_size, julia = dummy_null_python
-
-    geod = Nulllike(
-        position=q0,
-        momentum=p0,
-        a=a,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        return_cartesian=True,
-        julia=julia
-    )
-
-    L = p0[-1]
-
-    assert_allclose(geod.trajectory[1][:, 5], L, atol=1e-4, rtol=1e-4)
-
-
-def test_equatorial_geodesic(dummy_time_python):
-    q0, p0, a, end_lambda, step_size, julia = dummy_time_python
-
+def test_constant_rad():
     geod = Timelike(
+        metric="Kerr",
+        metric_params=(0.99,),
+        position=[4., np.pi / 3, 0.],
+        momentum=[0., 0.767851, 2.],
+        return_cartesian=False,
+        steps=50,
+        delta=1.,
+    )
+    r = geod.trajectory[1][:, 1]
+
+    assert_allclose(r, 4., atol=1e-2, rtol=1e-2)
+
+
+def test_kerr0_eq_sch():
+    metric_params = (0.,)
+    q0 = [4., np.pi / 2, 0.]
+    p0 =  [0., 0., 0.]
+
+    k = Timelike(
+        metric="Kerr",
+        metric_params=metric_params,
         position=q0,
         momentum=p0,
-        a=a,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        return_cartesian=False,
-        julia=julia
+        steps=50,
+        delta=0.5,
+        return_cartesian=True,
+        suppress_warnings=True,
     )
 
-    theta = q0[1]
+    s = Timelike(
+        metric="Schwarzschild",
+        metric_params=metric_params,
+        position=q0,
+        momentum=p0,
+        steps=50,
+        delta=0.5,
+        return_cartesian=True,
+        suppress_warnings=True,
+    )
 
-    assert_allclose(geod.trajectory[1][:, 1], theta, atol=1e-4, rtol=1e-4)
+    assert_allclose(k.trajectory[0], s.trajectory[0], atol=1e-6, rtol=1e-6)
+    assert_allclose(k.trajectory[1], s.trajectory[1], atol=1e-6, rtol=1e-6)
 
 
-def test_kerr_frame_dragging():
-    """
-    Tests, if higher spin implies a "faster" capture (in terms of lambda),
-    owing to frame dragging effects
-
-    """
+def test_kerr0_eq_kn00():
+    metric_params = (0.5, 0.)
     q0 = [2.5, np.pi / 2, 0.]
     p0 = [0., 0., -8.5]
-    end_lambda = 10.
-    step_size = 0.005
 
-    sch_geod = Timelike(
+    k = Timelike(
+        metric="Kerr",
+        metric_params=metric_params,
         position=q0,
         momentum=p0,
-        a=0.,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        return_cartesian=False,
-        julia=False
+        steps=50,
+        delta=0.5,
+        return_cartesian=True,
+        suppress_warnings=True,
     )
 
-    kerr_geod = Timelike(
+    kn = Timelike(
+        metric="KerrNewman",
+        metric_params=metric_params,
         position=q0,
         momentum=p0,
-        a=0.9,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        return_cartesian=False,
-        julia=False
+        steps=50,
+        delta=0.5,
+        return_cartesian=True,
+        suppress_warnings=True,
     )
 
-    sch_traj = sch_geod.trajectory
-    kerr_traj = kerr_geod.trajectory
-
-    # Final lambda_sch > Final lambda_kerr
-    assert sch_traj[0].shape[0] > kerr_traj[0].shape[0]
-    assert sch_traj[0][-1] > kerr_traj[0][-1]
-    # Final r_sch > Final r_kerr
-    assert sch_traj[1][:, 0][-1] > kerr_traj[1][:, 0][-1]
+    assert_allclose(k.trajectory[0], kn.trajectory[0], atol=1e-6, rtol=1e-6)
+    assert_allclose(k.trajectory[1], kn.trajectory[1], atol=1e-6, rtol=1e-6)

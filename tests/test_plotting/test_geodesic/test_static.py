@@ -6,33 +6,23 @@ import warnings
 from matplotlib.axes import Axes
 from matplotlib import pyplot as plt
 
-from einsteinpy.geodesic import Geodesic
+from einsteinpy.geodesic import Timelike
 from einsteinpy.plotting import StaticGeodesicPlotter
 
 
 @pytest.fixture()
 def dummy_geod():
-    q0 = [2.5, np.pi / 2, 0.]
-    p0 = [0., -0.2, -2.]
-    a = 0.9
-    end_lambda = 1.
-    step_size = 0.05
-    time_like = False
-    return_cartesian = True
-    julia = False
-
-    geod = Geodesic(
-        position=q0,
-        momentum=p0,
-        a=a,
-        end_lambda=end_lambda,
-        step_size=step_size,
-        time_like=time_like,
-        return_cartesian=return_cartesian,
-        julia=julia
+    return Timelike(
+        metric="Kerr",
+        metric_params=(0.9,),
+        position=[2.15, np.pi / 2, 0.],
+        momentum=[0., 0., 1.5],
+        steps=50,
+        delta=0.5,
+        omega=0.01,  # Close orbit
+        return_cartesian=True,
+        suppress_warnings=True,
     )
-
-    return geod
 
 
 def test_static_geod_plotter_has_axes(dummy_geod):
