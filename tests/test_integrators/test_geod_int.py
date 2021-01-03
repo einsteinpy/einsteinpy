@@ -109,7 +109,7 @@ def test_order_NotImplementedError():
         )
 
         assert False
-    
+
     except NotImplementedError:
         assert True
 

@@ -71,7 +71,8 @@ def test_geodesic_attributes1(dummy_timegeod):
     assert traj
     assert isinstance(traj, tuple)
     assert isinstance(traj[0], np.ndarray)
-    
+
+
 def test_geodesic_attributes2(dummy_timegeod):
     geod = dummy_timegeod
     traj = geod.trajectory
@@ -111,7 +112,7 @@ def test_constant_rad():
 def test_kerr0_eq_sch():
     metric_params = (0.,)
     q0 = [4., np.pi / 2, 0.]
-    p0 =  [0., 0., 0.]
+    p0 = [0., 0., 0.]
 
     k = Timelike(
         metric="Kerr",

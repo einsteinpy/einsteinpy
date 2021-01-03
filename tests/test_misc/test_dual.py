@@ -16,7 +16,7 @@ def test_Dual1():
     x = Dual(1., 2.)
     y = Dual(2., 3.)
     c = 2.
-    
+
     add_ = x + y
     assert_allclose([add_.a, add_.b], [3., 5.], atol=1e-8, rtol=1e-8)
 
@@ -40,7 +40,7 @@ def test_Dual2():
     x = Dual(1., 2.)
     y = Dual(2., 3.)
     c = 2.
-    
+
     add_ = x + c
     assert_allclose([add_.a, add_.b], [3., 2.], atol=1e-8, rtol=1e-8)
 
@@ -128,16 +128,14 @@ def test_Dual5():
 
 
 def test_deriv1():
-    f = lambda y: np.cos(y) * np.sin(y) ** 2
+    df = _deriv(lambda y: np.cos(y) * np.sin(y) ** 2, 1.)
 
-    df = _deriv(f, 1.)
     assert_allclose(df, -0.10452774015707361, atol=1e-8, rtol=1e-8)
 
 
 def test_deriv2():
-    f = lambda y: 0.
+    df = _deriv(lambda y: 0., 0.)
 
-    df = _deriv(f, 0.)
     assert_allclose(df, 0., atol=1e-8, rtol=1e-8)
 
 
@@ -235,15 +233,15 @@ def test_jacobian_g(g, g_prms, coords, wrt, expected):
 def test_ValueError1():
     try:
         d = _diff_g(
-            g = _sch,
-            g_prms = (),
-            coords = [0., 2.5, np.pi / 6, np.pi / 2],
-            indices = (2, 2, 2),
-            wrt = 2
+            g=_sch,
+            g_prms=(),
+            coords=[0., 2.5, np.pi / 6, np.pi / 2],
+            indices=(2, 2, 2),
+            wrt=2
         )
 
         assert False
-    
+
     except ValueError:
         assert True
 
@@ -251,11 +249,11 @@ def test_ValueError1():
 def test_ValueError2():
     try:
         d = _diff_g(
-            g = _sch,
-            g_prms = (),
-            coords = [0., 2.5, np.pi / 6, np.pi / 2],
-            indices = (2, 2),
-            wrt = 10
+            g=_sch,
+            g_prms=(),
+            coords=[0., 2.5, np.pi / 6, np.pi / 2],
+            indices=(2, 2),
+            wrt=10
         )
 
         assert False

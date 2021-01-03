@@ -52,8 +52,8 @@ class Geodesic:
             Defaults to ``True``
         return_cartesian : bool, optional
             Whether to return calculated positions in Cartesian Coordinates
-            This only affects the coordinates. Momenta are dimensionless quantities,
-            and are returned in Spherical Polar Coordinates.
+            This only affects the coordinates. Momenta are dimensionless
+            quantities, and are returned in Spherical Polar Coordinates.
             Defaults to ``True``
         kwargs : dict
             Keyword parameters for the Geodesic Integrator
@@ -159,7 +159,8 @@ class Geodesic:
         ~numpy.ndarray
             N-element numpy array, containing step count
         ~numpy.ndarray
-            Shape-(N, 8) numpy array, containing (4-Position, 4-Momentum) for each step
+            Shape-(N, 8) numpy array, containing
+            (4-Position, 4-Momentum) for each step
 
         Other Parameters
         ----------------
@@ -280,8 +281,8 @@ class Nulllike(Geodesic):
             considering the value of ``time_like``
         return_cartesian : bool, optional
             Whether to return calculated positions in Cartesian Coordinates
-            This only affects the coordinates. The momenta dimensionless quantities,
-            and are returned in Spherical Polar Coordinates.
+            This only affects the coordinates. The momenta dimensionless
+            quantities, and are returned in Spherical Polar Coordinates.
             Defaults to ``True``
         kwargs : dict
             Keyword parameters for the Geodesic Integrator
@@ -361,8 +362,8 @@ class Timelike(Geodesic):
             considering the value of ``time_like``
         return_cartesian : bool, optional
             Whether to return calculated positions in Cartesian Coordinates
-            This only affects the coordinates. The momenta dimensionless quantities,
-            and are returned in Spherical Polar Coordinates.
+            This only affects the coordinates. The momenta dimensionless
+            quantities, and are returned in Spherical Polar Coordinates.
             Defaults to ``True``
         kwargs : dict
             Keyword parameters for the Geodesic Integrator

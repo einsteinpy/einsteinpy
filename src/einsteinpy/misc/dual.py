@@ -181,9 +181,8 @@ def _diff_g(g, g_prms, coords, indices, wrt):
     ]
 
     dual_coords[wrt].b = 1.0
-    func = lambda q: g(dual_coords, *g_prms)[indices]
 
-    return _deriv(func, coords[wrt])
+    return _deriv(lambda q: g(dual_coords, *g_prms)[indices], coords[wrt])
 
 
 def _jacobian_g(g, g_prms, coords, wrt):
