@@ -150,26 +150,26 @@ class GeodesicIntegrator:
         )
         HB1 = np.array(
             [
-                _flow_B(g, g_prms, *HA1, 0.5 * dl)[0],
+                _flow_B(g, g_prms, HA1[0], HA1[1], HA1[2], HA1[3], 0.5 * dl)[0],
                 HA1[1],
                 HA1[2],
-                _flow_B(g, g_prms, *HA1, 0.5 * dl)[1],
+                _flow_B(g, g_prms, HA1[0], HA1[1], HA1[2], HA1[3], 0.5 * dl)[1],
             ]
         )
-        HC = _flow_mixed(*HB1, dl, omg)
+        HC = _flow_mixed(HB1[0], HB1[1], HB1[2], HB1[3], dl, omg)
         HB2 = np.array(
             [
-                _flow_B(g, g_prms, *HC, 0.5 * dl)[0],
+                _flow_B(g, g_prms, HC[0], HC[1], HC[2], HC[3], 0.5 * dl)[0],
                 HC[1],
                 HC[2],
-                _flow_B(g, g_prms, *HC, 0.5 * dl)[1],
+                _flow_B(g, g_prms, HC[0], HC[1], HC[2], HC[3], 0.5 * dl)[1],
             ]
         )
         HA2 = np.array(
             [
                 HB2[0],
-                _flow_A(g, g_prms, *HB2, 0.5 * dl)[1],
-                _flow_A(g, g_prms, *HB2, 0.5 * dl)[0],
+                _flow_A(g, g_prms, HB2[0], HB2[1], HB2[2], HB2[3], 0.5 * dl)[1],
+                _flow_A(g, g_prms, HB2[0], HB2[1], HB2[2], HB2[3], 0.5 * dl)[0],
                 HB2[3],
             ]
         )
@@ -199,8 +199,8 @@ class GeodesicIntegrator:
         Z14 = 1.3512071919596578
         Z04 = -1.7024143839193155
         step1 = self._ord_2(q1, p1, q2, p2, dl * Z14)
-        step2 = self._ord_2(*step1, dl * Z04)
-        step3 = self._ord_2(*step2, dl * Z14)
+        step2 = self._ord_2(step1[0], step1[1], step1[2], step1[3], dl * Z04)
+        step3 = self._ord_2(step2[0], step2[1], step2[2], step2[3], dl * Z14)
 
         return step3
 
@@ -214,10 +214,12 @@ class GeodesicIntegrator:
             If ``order`` != 2 or 4
 
         """
+        rl = self.res_list
+
         if self.order == 2:
-            arr = self._ord_2(*self.res_list, self.delta)
+            arr = self._ord_2(rl[0], rl[1], rl[2], rl[3], self.delta)
         elif self.order == 4:
-            arr = self._ord_4(*self.res_list)
+            arr = self._ord_4(rl[0], rl[1], rl[2], rl[3])
         else:
             raise NotImplementedError(
                 f"Order {self.order} integrator has not been implemented."

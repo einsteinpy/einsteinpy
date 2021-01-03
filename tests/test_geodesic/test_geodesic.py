@@ -64,13 +64,18 @@ def test_NotImplementedError():
         assert True
 
 
-def test_geodesic_attributes(dummy_timegeod):
+def test_geodesic_attributes1(dummy_timegeod):
     geod = dummy_timegeod
     traj = geod.trajectory
 
     assert traj
     assert isinstance(traj, tuple)
     assert isinstance(traj[0], np.ndarray)
+    
+def test_geodesic_attributes2(dummy_timegeod):
+    geod = dummy_timegeod
+    traj = geod.trajectory
+
     assert isinstance(traj[1], np.ndarray)
     assert traj[0].shape[0] == traj[1].shape[0]
     assert traj[1].shape[1] == 8

@@ -16,19 +16,18 @@ def precession():
 
     """
     # Defining initial conditions
+    metric = "Schwarzschild"
     position = [40.0, np.pi / 2, 0.0]
     momentum = [0.0, 0.0, 3.83405]
-    spin = 0.0
 
     # Calculating Geodesic
     geod = Timelike(
+        metric=metric,
+        metric_params=(),
         position=position,
         momentum=momentum,
-        a=spin,
-        end_lambda=2000.0,
-        step_size=0.5,
-        return_cartesian=True,
-        julia=True,
+        steps=5500,
+        delta=1.0,
     )
 
     return geod

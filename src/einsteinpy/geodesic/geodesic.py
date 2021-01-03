@@ -107,6 +107,8 @@ class Geodesic:
         self.metric_name = metric
         self.metric = _METRICS[metric]
         self.metric_params = metric_params
+        if metric == "Schwarzschild":
+            self.metric_params = (0.0,)
         self.position = np.array([0.0, *position])
         self.momentum = _P(
             self.metric, metric_params, self.position, momentum, time_like
