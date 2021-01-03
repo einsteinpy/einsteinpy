@@ -74,7 +74,7 @@ def test_Dual3():
     rtruediv2_ = c / x
     assert_allclose([rtruediv2_.a, rtruediv2_.b], [2., -4.], atol=1e-8, rtol=1e-8)
 
-    assert not(x == y)
+    assert x == x
 
     assert x != y
 
