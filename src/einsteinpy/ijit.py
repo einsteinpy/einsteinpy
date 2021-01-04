@@ -18,8 +18,8 @@ def ijit(first=None, *args, **kwargs):
 
     if inspect.isfunction(first):
         return first
-    else:
-        return _jit
+
+    return _jit
 
 
 try:

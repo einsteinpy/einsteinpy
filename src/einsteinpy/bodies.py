@@ -19,20 +19,7 @@ from astropy import units as u
 
 from einsteinpy import constant
 
-__all__ = [
-    "Body",
-    "_Sun",
-    "_Earth",
-    "_Moon",
-    "_Mercury",
-    "_Venus",
-    "_Mars",
-    "_Jupiter",
-    "_Saturn",
-    "_Uranus",
-    "_Neptune",
-    "_Pluto",
-]
+__all__ = ["Body"]
 
 
 class Body:

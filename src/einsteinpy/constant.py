@@ -6,8 +6,6 @@ __all__ = [
     "G",
     "eps0",
     "coulombs_const",
-    "Cosmo_Const_base",
-    "Cosmo_Const",
     "Solar_Mass",
     "R_sun",
 ]

@@ -6,7 +6,6 @@ from einsteinpy.plotting.hypersurface.core import HypersurfacePlotter
 from einsteinpy.plotting.rays.shadow import ShadowPlotter
 
 __all__ = [
-    "fractal",
     "GeodesicPlotter",
     "InteractiveGeodesicPlotter",
     "StaticGeodesicPlotter",
