@@ -4,6 +4,7 @@ from einsteinpy.geodesic import Timelike
 
 __all__ = ["precession"]
 
+
 def precession():
     """
     An example to showcase the usage of the various modules in ``einsteinpy``.
