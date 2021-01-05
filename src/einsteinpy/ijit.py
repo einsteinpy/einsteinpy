@@ -7,7 +7,7 @@ decorator instead.
 import inspect
 import warnings
 
-__all__ = ["ijit"]
+__all__ = ["jit"]
 
 
 def ijit(first=None, *args, **kwargs):
