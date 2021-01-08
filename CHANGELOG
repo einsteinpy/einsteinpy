@@ -10,6 +10,7 @@ CONTRIBUTORS
 - bibek22
 - JeS24
 - Qbiwan
+- Aditya7799
 
 CHANGES
 - [#506]: Tests moved outside of the package. 
@@ -32,6 +33,7 @@ CHANGES
 - [#547]: Fixed #516, Added __all__ across modules
 - [#547]: Fixed #552, Renamed missing attributes in einsteinpy.plotting.geodesic.static
 - [#547]: Increased test coverage for einsteinpy.ijit
+- [#551]: Fixed #526, Exceptions module added, CoordinateError class implemented
 
 0.5.0
 -----

@@ -25,6 +25,7 @@ from astropy import units as u
 
 from einsteinpy import constant
 from einsteinpy.units import primitive
+from einsteinpy.utils import CoordinateError
 
 _c = constant.c.value
 _G = constant.G.value
@@ -283,7 +284,7 @@ class BaseMetric:
 
         Raises
         ------
-        NotImplementedError
+        CoordinateError
             If ``einsteinpy.metric.*`` does not have the metric in the \
             coordinate system, the metric object has been instantiated with
 
@@ -322,7 +323,7 @@ class BaseMetric:
                     "outer_ergosphere": _out_ergo,
                 }
 
-            raise NotImplementedError(
+            raise CoordinateError(
                 "Singularities for Kerr solutions are only available in"
                 "Boyer-Lindquist Coordinates."
             )
@@ -335,7 +336,7 @@ class BaseMetric:
                 "outer_ergosphere": r_s,
             }
 
-        raise NotImplementedError(
+        raise CoordinateError(
             "Singularities for Schwarzschild Metric are only available in"
             "Spherical Polar Coordinates."
         )

@@ -8,6 +8,7 @@ from einsteinpy.coordinates.conversion import (
     SphericalConversion,
 )
 from einsteinpy.coordinates.utils import v0
+from einsteinpy.utils import CoordinateError
 
 _c = constant.c.value
 
@@ -106,15 +107,15 @@ class CartesianDifferential(CartesianConversion):
 
         Raises
         ------
-        TypeError
+        CoordinateError
             If ``metric`` object has been instantiated with a coordinate system, \
             other than Cartesian Coordinates.
 
         """
         g = args[0]
         if self.system != g.coords.system:
-            raise TypeError(
-                "Metric object has been instantiated with a coordinate system,"
+            raise CoordinateError(
+                f"Metric object has been instantiated with a coordinate system, ( {g.coords.system} )"
                 " other than Cartesian Coordinates."
             )
 
@@ -318,15 +319,15 @@ class SphericalDifferential(SphericalConversion):
 
         Raises
         ------
-        TypeError
+        CoordinateError
             If ``metric`` object has been instantiated with a coordinate system, \
-            other than Cartesian Coordinates.
+            other than Sperical Polar Coordinates.
 
         """
         g = args[0]
         if self.system != g.coords.system:
-            raise TypeError(
-                "Metric object has been instantiated with a coordinate system,"
+            raise CoordinateError(
+                f"Metric object has been instantiated with a coordinate system, ( {g.coords.system} )"
                 " other than Spherical Polar Coordinates."
             )
 
@@ -530,15 +531,15 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
 
         Raises
         ------
-        TypeError
+        CoordinateError
             If ``metric`` object has been instantiated with a coordinate system, \
-            other than Cartesian Coordinates.
+            other than Boyer-Lindquist Coordinates.
 
         """
         g = args[0]
         if self.system != g.coords.system:
-            raise TypeError(
-                "Metric object has been instantiated with a coordinate system,"
+            raise CoordinateError(
+                "Metric object has been instantiated with a coordinate system, ( {g.coords.system} )"
                 " other than Boyer-Lindquist Coordinates."
             )
 
