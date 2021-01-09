@@ -30,3 +30,4 @@ def test_decorator():
 
     assert res.__name__ == "_jit"
     assert res(_simple_func).__name__ == "_simple_func"
+
