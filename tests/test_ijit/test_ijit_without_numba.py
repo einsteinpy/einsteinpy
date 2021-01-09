@@ -19,7 +19,6 @@ def test_warning_and_returntype():
         assert len(w) >= 1
         assert isinstance(_simple_func, types.FunctionType)
 
-
 @mock.patch.dict(sys.modules, {"numba": None})
 def test_decorator():
     custom_jit = reload(einsteinpy.ijit)
@@ -31,4 +30,3 @@ def test_decorator():
 
     assert res.__name__ == "_jit"
     assert res(_simple_func).__name__ == "_simple_func"
-
