@@ -22,14 +22,13 @@ def test_warning_and_returntype():
 
 @mock.patch.dict(sys.modules, {"numba": None})
 def test_decorator():
-        custom_jit = reload(einsteinpy.ijit)
+    custom_jit = reload(einsteinpy.ijit)
 
-        def _simple_func(a, b):
-            return a + b
+    def _simple_func(a, b):
+        return a + b
 
-        return_func = custom_jit.jit(_simple_func)
-        res = custom_jit.jit()
+    res = custom_jit.jit()
 
-	assert res.__name__ == "_jit"
-	assert res(_simple_func).__name__ == "_simple_func"
+    assert res.__name__ == "_jit"
+    assert res(_simple_func).__name__ == "_simple_func"
 
