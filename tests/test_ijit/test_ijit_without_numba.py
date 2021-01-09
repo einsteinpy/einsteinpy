@@ -8,7 +8,7 @@ import einsteinpy.ijit
 
 
 @mock.patch.dict(sys.modules, {"numba": None})
-def test_decorator():
+def test_warning_and_returntype():
     with warnings.catch_warnings(record=True) as w:
         custom_jit = reload(einsteinpy.ijit)
 
@@ -19,25 +19,17 @@ def test_decorator():
         assert len(w) >= 1
         assert isinstance(_simple_func, types.FunctionType)
 
+
 @mock.patch.dict(sys.modules, {"numba": None})
-def test_function_given():
-    with warnings.catch_warnings(record=True) as w:
+def test_decorator():
         custom_jit = reload(einsteinpy.ijit)
 
         def _simple_func(a, b):
             return a + b
 
         return_func = custom_jit.jit(_simple_func)
+        res = custom_jit.jit()
 
-        assert len(w) >= 1
-        assert return_func.__name__ == "_simple_func"
+	assert res.__name__ == "_jit"
+	assert res(_simple_func).__name__ == "_simple_func"
 
-
-@mock.patch.dict(sys.modules, {"numba": None})
-def test_no_function_given():
-    with warnings.catch_warnings(record=True) as w:
-        custom_jit = reload(einsteinpy.ijit)
-        returned_func = custom_jit.jit()
-
-        assert len(w) >= 1
-        assert returned_func.__name__ == "_jit"
