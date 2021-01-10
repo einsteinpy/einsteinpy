@@ -19,6 +19,8 @@ from astropy import units as u
 
 from einsteinpy import constant
 
+__all__ = ["Body"]
+
 
 class Body:
     """

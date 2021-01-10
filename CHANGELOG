@@ -9,6 +9,7 @@ CONTRIBUTORS
 - shreyasbapat
 - bibek22
 - JeS24
+- Qbiwan
 
 CHANGES
 - [#506]: Tests moved outside of the package. 
@@ -28,7 +29,9 @@ CHANGES
 - [#527]: Added support for Null Geodesics in Kerr & Schwarzschild Spacetimes
 - [#527]: Added new features to plotting.geodesic
 - [#527]: Dropped support for Python 3.6
-
+- [#547]: Fixed #516, Added __all__ across modules
+- [#547]: Fixed #552, Renamed missing attributes in einsteinpy.plotting.geodesic.static
+- [#547]: Increased test coverage for einsteinpy.ijit
 
 0.5.0
 -----
