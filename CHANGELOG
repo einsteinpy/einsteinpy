@@ -9,11 +9,12 @@ CONTRIBUTORS
 - shreyasbapat
 - bibek22
 - JeS24
+- Qbiwan
 
 CHANGES
-- #506: Tests moved outside of the package. 
-- #510: Added a utility function for Outer Product and Contraction of Tensors in the symbolic module.
-- #512: Refactored metric, utils and geodesic modules, added metric.BaseMetric class
+- [#506]: Tests moved outside of the package. 
+- [#510]: Added a utility function for Outer Product and Contraction of Tensors in the symbolic module.
+- [#512]: Refactored metric, utils and geodesic modules, added metric.BaseMetric class
 - [#512]: Fixed #113, Fixed cyclomatic complexity issue in metric.Schwarzschild and metric.Kerr classes
 - [#512]: Fixed #141, Refactored utils and merged most utilities into metric itself
 - [#512]: Fixed #410, Improved __str__ and __repr__ messages for Geodesic objects
@@ -21,13 +22,22 @@ CHANGES
 - [#512]: Fixed #508, Removed a stray scaling factor in metric.KerrNewman class
 - [#512]: Fixed #514, Replaced Spin Parameter with Length Parameter throughout metric module
 - [#512]: Fixed #515, Renamed "maxwell" to "em"
-- #521: Refactored coordinates, geodesic and metric modules, added support for 4-Vectors
+- [#521]: Refactored coordinates, geodesic and metric modules, added support for 4-Vectors
 - [#521]: Fixed #517, Removed Spin Parameter from bodies
 - [#521]: Fixed #524, Fixed breakage, caused due to isort changes
 - [#521]: Partially fixed #523, Fixed Schwarzschild and Kerr
 - [#527]: Added support for Null Geodesics in Kerr & Schwarzschild Spacetimes
 - [#527]: Added new features to plotting.geodesic
 - [#527]: Dropped support for Python 3.6
+- [#547]: Fixed #516, Added __all__ across modules
+- [#547]: Fixed #552, Renamed missing attributes in einsteinpy.plotting.geodesic.static
+- [#547]: Increased test coverage for einsteinpy.ijit
+- [#548]: Fixed #36, Added support for animated Geodesic
+- [#548]: Fixed #105, Added support for simulating Null Geodesics in Kerr & Schwarzschild geometries
+- [#548]: Fixed #122, Schwarzschild & Kerr algorithms validated
+- [#548]: Fixed #367, Scaling issues fixed for Frame Dragging
+- [#548]: Fixed #535, Moved to a pure python geodesic solver, Julia dependency removed
+- [#548]: Minor edits to documentation for the geodesic and plotting.geodesic modules
 
 
 0.5.0

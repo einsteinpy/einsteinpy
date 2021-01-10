@@ -4,6 +4,7 @@ from sympy import Array
 
 from einsteinpy.symbolic import MetricTensor, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
+    AlcubierreWarp,
     AntiDeSitter,
     AntiDeSitterStatic,
     BarriolaVilekin,
@@ -28,6 +29,7 @@ from einsteinpy.symbolic.predefined import (
 @pytest.mark.parametrize(
     "metric_instance",
     [
+        AlcubierreWarp(),
         AntiDeSitter(),
         AntiDeSitterStatic(),
         DeSitter(),
