@@ -1,12 +1,12 @@
-Plotting module
-===============
+Plotting
+========
 
-This module contains the basic classes for static and interactive
-3-D and 2-D geodesic, hypersurface and shadow plotting modules.
+This module contains classes for producing static and interactive 
+plots for geodesics, hypersurface embeddings and black hole shadows.
 
 .. toctree::
     :maxdepth: 2
 
-    geodesics/geodesics_index
+    geodesic/geodesic_index
     hypersurface
     rays/rays_index

@@ -7,7 +7,7 @@ Metric Signature => :math:`(-, +, +, +)`
 """
 import numpy as np
 
-from einsteinpy.misc.dual import Dual
+from einsteinpy.utils.dual import DualNumber
 
 
 def _P(g, g_prms, q, p, time_like=True):
@@ -130,7 +130,7 @@ def _sch(x_vec, *params):
     """
     r, th = x_vec[1], x_vec[2]
 
-    g = np.zeros(shape=(4, 4), dtype=Dual)
+    g = np.zeros(shape=(4, 4), dtype=DualNumber)
 
     tmp = 1.0 - (2 / r)
     g[0, 0] = -1 / tmp
@@ -168,7 +168,7 @@ def _kerr(x_vec, *params):
     r, th = x_vec[1], x_vec[2]
     sg, dl = sigma(r, th, a), delta(r, a)
 
-    g = np.zeros(shape=(4, 4), dtype=Dual)
+    g = np.zeros(shape=(4, 4), dtype=DualNumber)
 
     g[0, 0] = -(r ** 2 + a ** 2 + (2 * r * (a * np.sin(th)) ** 2) / sg) / dl
     g[1, 1] = dl / sg
@@ -211,7 +211,7 @@ def _kerrnewman(x_vec, *params):
     csct2 = 1 / sint2
     csct4 = 1 / sint2 ** 2
 
-    g = np.zeros(shape=(4, 4), dtype=Dual)
+    g = np.zeros(shape=(4, 4), dtype=DualNumber)
 
     denom = dl * (a2 + 2 * r2 + a2 * np.cos(2 * th)) ** 2
     g[0, 0] = -(4 * sg * ((a2 + r2) ** 2 - a2 * dl * sint2) / denom)

@@ -17,7 +17,7 @@ class GeodesicIntegrator:
     .. [1] Christian, Pierre and Chan, Chi-Kwan;
         "FANTASY: User-Friendly Symplectic Geodesic Integrator
         for Arbitrary Metrics with Automatic Differentiation";
-        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`_
+        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
 
     """
 
@@ -133,7 +133,7 @@ class GeodesicIntegrator:
         .. [1] Christian, Pierre and Chan, Chi-Kwan;
             "FANTASY : User-Friendly Symplectic Geodesic Integrator
             for Arbitrary Metrics with Automatic Differentiation";
-            `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`_
+            `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
 
         """
         dl, omg = delta, self.omega
@@ -185,11 +185,11 @@ class GeodesicIntegrator:
         .. [1] Christian, Pierre and Chan, Chi-Kwan;
             "FANTASY: User-Friendly Symplectic Geodesic Integrator
             for Arbitrary Metrics with Automatic Differentiation";
-            `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`_
+            `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
         .. [2] Yoshida, Haruo,
             "Construction of higher order symplectic integrators";
              Physics Letters A, vol. 150, no. 5-7, pp. 262-268, 1990.
-            `DOI: <https://doi.org/10.1016/0375-9601(90)90092-3>`_
+            `DOI: <https://doi.org/10.1016/0375-9601(90)90092-3>`__
 
         """
         dl = self.delta
