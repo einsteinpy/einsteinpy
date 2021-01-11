@@ -7,3 +7,4 @@ The common utilities of the project are included in this module.
     :maxdepth: 2
 
     scalar_factor
+    exceptions

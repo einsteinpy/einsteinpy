@@ -3,6 +3,7 @@ from astropy import units as u
 
 from einsteinpy import constant
 from einsteinpy.metric import BaseMetric
+from einsteinpy.utils import CoordinateError
 
 _c = constant.c.value
 
@@ -93,15 +94,15 @@ class Kerr(BaseMetric):
 
         Raises
         ------
-        NotImplementedError
-            In case of the metric is not available in \
+        CoordinateError
+            Raised, if the metric is not available in \
             the supplied Coordinate System
 
         """
         if self.coords.system == "BoyerLindquist":
             return self._g_cov_bl(x_vec)
 
-        raise NotImplementedError(
+        raise CoordinateError(
             "Kerr Metric is available only in Boyer-Lindquist Coordinates."
         )
 
@@ -228,15 +229,15 @@ class Kerr(BaseMetric):
 
         Raises
         ------
-        NotImplementedError
-            In case of the Christoffel Symbols are not \
+        CoordinateError
+            Raised, if the Christoffel symbols are not \
             available in the supplied Coordinate System
 
         """
         if self.coords.system == "BoyerLindquist":
             return self._ch_sym_bl(x_vec)
 
-        raise NotImplementedError(
+        raise CoordinateError(
             "Christoffel Symbols for Kerr Metric are available only in Boyer-Lindquist Coordinates."
         )
 
@@ -305,15 +306,15 @@ class Kerr(BaseMetric):
 
         Raises
         ------
-        NotImplementedError
-            In case of ``f_vec`` is not available in \
+        CoordinateError
+            Raised, if ``f_vec`` is not available in \
             the supplied Coordinate System
 
         """
         if self.coords.system == "BoyerLindquist":
             return self._f_vec_bl(lambda_, vec)
 
-        raise NotImplementedError(
+        raise CoordinateError(
             "'f_vec' for Kerr Metric is available only in Boyer-Lindquist Coordinates."
         )
 

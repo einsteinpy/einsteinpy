@@ -10,6 +10,7 @@ from einsteinpy import constant
 from einsteinpy.coordinates import SphericalDifferential, BoyerLindquistDifferential
 
 from einsteinpy.metric import BaseMetric, Kerr, KerrNewman, Schwarzschild
+from einsteinpy.utils.exceptions import CoordinateError
 
 _c = constant.c.value
 
@@ -119,7 +120,7 @@ def dummy_input(sph, bl):
 
 def test_coordinate_mismatch0(dummy_input):
     """
-    Tests, if NotImplementedError is raised, in case of coordinate system mismatch, \
+    Tests, if CoordinateError is raised, in case of coordinate system mismatch, \
     between metric coordinates and supplied coordinates
 
     """
@@ -137,22 +138,22 @@ def test_coordinate_mismatch0(dummy_input):
     def test_ms_con(ms):
         ms_cov = ms.metric_contravariant(x_vec_sph)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_ms_cov(ms)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mk_cov(mk)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mkn_cov(mkn)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_ms_con(ms)
 
 
 def test_coordinate_mismatch1(dummy_input):
     """
-    Tests, if NotImplementedError is raised, in case of coordinate system mismatch, \
+    Tests, if CoordinateError is raised, in case of coordinate system mismatch, \
     between metric coordinates and supplied coordinates
 
     """
@@ -170,22 +171,22 @@ def test_coordinate_mismatch1(dummy_input):
     def test_ms_fvec(ms):
         ms_fvec = ms.f_vec(0., x_vec_sph)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_ms_chl(ms)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mk_chl(mk)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mkn_chl(mkn)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_ms_fvec(ms)
 
 
 def test_coordinate_mismatch2(dummy_input):
     """
-    Tests, if NotImplementedError is raised, in case of coordinate system mismatch, \
+    Tests, if CoordinateError is raised, in case of coordinate system mismatch, \
     between metric coordinates and supplied coordinates
 
     """
@@ -203,16 +204,16 @@ def test_coordinate_mismatch2(dummy_input):
     def test_mkn_fvec(mkn):
         ms_fvec = mkn.f_vec(0., x_vec_bl)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mk_con(mk)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mkn_con(mkn)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mk_fvec(mk)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         test_mkn_fvec(mkn)
 
 
@@ -380,9 +381,9 @@ def test_singularities_for_uncharged_nonrotating_case(sph, bl):
     assert_allclose(mksinglist[2], scr, rtol=1e-4, atol=0.0)
 
 
-def test_singularities_raises_NotImplementedError(sph, bl):
+def test_singularities_raises_CoordinateError(sph, bl):
     """
-    Tests, if ``singularities()`` raises a NotImplementedError, \
+    Tests, if ``singularities()`` raises a CoordinateError, \
     when there is a coordinate mismatch between supplied coordinate \
     object and the coordinate object, metric was instantiated with
 
@@ -406,13 +407,13 @@ def test_singularities_raises_NotImplementedError(sph, bl):
     def mknsing(mkn):
         mknsing = mkn.singularities()
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         mssing(ms)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         mksing(mk)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(CoordinateError):
         mknsing(mkn)
 
 

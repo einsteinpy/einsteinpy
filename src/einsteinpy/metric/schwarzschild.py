@@ -3,6 +3,7 @@ from astropy import units as u
 
 from einsteinpy import constant
 from einsteinpy.metric import BaseMetric
+from einsteinpy.utils import CoordinateError
 
 _c = constant.c.value
 
@@ -55,7 +56,7 @@ class Schwarzschild(BaseMetric):
         if self.coords.system == "Spherical":
             return self._g_cov_s(x_vec)
 
-        raise NotImplementedError(
+        raise CoordinateError(
             "Schwarzschild Metric is available only in Spherical Polar Coordinates."
         )
 
@@ -106,15 +107,15 @@ class Schwarzschild(BaseMetric):
 
         Raises
         ------
-        NotImplementedError
-            In case of the Christoffel Symbols are not \
+        CoordinateError
+            Raised, if the Christoffel Symbols are not \
             available in the supplied Coordinate System
 
         """
         if self.coords.system == "Spherical":
             return self._ch_sym_s(x_vec)
 
-        raise NotImplementedError(
+        raise CoordinateError(
             "Christoffel Symbols for Schwarzschild Metric are available only in Spherical Polar Coordinates."
         )
 
@@ -173,15 +174,15 @@ class Schwarzschild(BaseMetric):
 
         Raises
         ------
-        NotImplementedError
-            In case of ``f_vec`` is not available in \
+        CoordinateError
+            Raised, if ``f_vec`` is not available in \
             the supplied Coordinate System
 
         """
         if self.coords.system == "Spherical":
             return self._f_vec_s(lambda_, vec)
 
-        raise NotImplementedError(
+        raise CoordinateError(
             "'f_vec' for Schwarzschild Metric is available only in Spherical Polar Coordinates."
         )
 
