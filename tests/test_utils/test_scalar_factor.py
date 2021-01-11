@@ -41,6 +41,6 @@ def test_scalar_factor_and_derivative(t, era, tuning_param, sf, sfd):
 def test_scalar_factor_and_derivative_raise_ValueError():
     with pytest.raises(ValueError):
         sf = scalar_factor(1 * u.s, "era")
-    
+
     with pytest.raises(ValueError):
         sf = scalar_factor_derivative(1 * u.s, "era")
