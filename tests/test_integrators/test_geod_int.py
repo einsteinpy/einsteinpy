@@ -6,6 +6,19 @@ from numpy.testing import assert_allclose
 from einsteinpy.geodesic import Geodesic
 from einsteinpy.geodesic.utils import _kerr
 from einsteinpy.integrators import GeodesicIntegrator
+from einsteinpy.integrators.utils import _Z
+
+
+@pytest.mark.parametrize(
+    "order, expected",
+    [
+        (4, (-1.7024143839193153, 1.3512071919596578)),
+        (6, (-1.349343516178727, 1.1746717580893635)),
+        (8, (-1.2323658786507714, 1.1161829393253857)),
+    ]
+)
+def test__Z(order, expected):
+    assert_allclose(_Z(order), expected, atol=1e-8, rtol=1e-8)
 
 
 def test_str_repr():
@@ -96,7 +109,8 @@ def test_rtol_atol_runtime_warning():
 
 
 def test_order_NotImplementedError():
-    try:
+
+    with pytest.raises(NotImplementedError):
         geod = Geodesic(
             metric="Kerr",
             metric_params=(0.9,),
@@ -108,35 +122,24 @@ def test_order_NotImplementedError():
             order=5
         )
 
-        assert False
 
-    except NotImplementedError:
-        assert True
-
-
-@pytest.fixture()
-def dummy_nullgeod():
-    """
-    Equatorial Geodesic
-
-    """
-    return Geodesic(
+@pytest.mark.parametrize("order", [4, 6, 8])
+def test_higher_order_traits(order):
+    geod = Geodesic(
         metric="Kerr",
         metric_params=(0.5,),
         position=[4., np.pi / 2, 0.],
         momentum=[0., 0., 2.],
         time_like=False,
-        steps=50,
+        steps=10,
         delta=0.5,
-        order=4,
+        order=order,
         return_cartesian=False,
         suppress_warnings=True
     )
 
+    L = geod.momentum[-1]
+    theta = geod.position[2]
 
-def test_order_4_traits(dummy_nullgeod):
-    L = dummy_nullgeod.momentum[-1]
-    theta = dummy_nullgeod.position[2]
-
-    assert_allclose(dummy_nullgeod.trajectory[1][:, -1], L, atol=1e-4, rtol=1e-4)
-    assert_allclose(dummy_nullgeod.trajectory[1][:, 2], theta, atol=1e-6, rtol=1e-6)
+    assert_allclose(geod.trajectory[1][:, -1], L, atol=1e-4, rtol=1e-4)
+    assert_allclose(geod.trajectory[1][:, 2], theta, atol=1e-6, rtol=1e-6)

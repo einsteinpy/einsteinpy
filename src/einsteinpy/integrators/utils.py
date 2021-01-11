@@ -4,7 +4,7 @@ Utilities for Integration Module
 """
 import numpy as np
 
-from einsteinpy.utils.dual import DualNumber, _deriv, _diff_g, _jacobian_g
+from einsteinpy.utils.dual import _jacobian_g
 
 
 def _PartHamFlow(g, g_prms, q, p, wrt):
@@ -196,3 +196,24 @@ def _flow_mixed(q1, p1, q2, p2, delta=0.5, omega=1.0):
     p2_next = 0.5 * (p_sum - (p_dif) * cos + (q_dif) * sin)
 
     return q1_next, p1_next, q2_next, p2_next
+
+
+def _Z(order):
+    """
+    Returns the constants for Yoshida Triple Jump.
+    Used to compose higher order (even) integrators.
+
+    References
+    ----------
+    .. [1] Yoshida, Haruo,
+        "Construction of higher order symplectic integrators";
+         Physics Letters A, vol. 150, no. 5-7, pp. 262-268, 1990.
+        `DOI: <https://doi.org/10.1016/0375-9601(90)90092-3>`__
+
+    """
+    n = (order - 2) / 2
+    x = 2 ** (1 / (2 * n + 1))
+    Z0 = -x / (2 - x)
+    Z1 = 1 / (2 - x)
+
+    return Z0, Z1

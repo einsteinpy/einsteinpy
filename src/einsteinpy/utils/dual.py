@@ -11,105 +11,109 @@ class DualNumber:
 
     """
 
-    def __init__(self, a, b):
+    def __init__(self, val, deriv):
         """
         Constructor
 
         Parameters
         ----------
-        a : float
-            First component
-        b : float
-            Second component
+        val : float
+            Value
+        deriv : float
+            Directional Derivative
 
         """
-        self.a = float(a)
-        self.b = float(b)
+        self.val = float(val)
+        self.deriv = float(deriv)
 
     def __str__(self):
-        return f"DualNumber({self.a}, {self.b})"
+        return f"DualNumber({self.val}, {self.deriv})"
 
     def __repr__(self):
         return self.__str__()
 
     def __add__(self, other):
         if isinstance(other, DualNumber):
-            return DualNumber(self.a + other.a, self.b + other.b)
+            return DualNumber(self.val + other.val, self.deriv + other.deriv)
 
-        return DualNumber(self.a + other, self.b)
+        return DualNumber(self.val + other, self.deriv)
 
-    def __radd__(self, other):
-        return self + other
+    __radd__ = __add__
 
     def __sub__(self, other):
         if isinstance(other, DualNumber):
-            return DualNumber(self.a - other.a, self.b - other.b)
+            return DualNumber(self.val - other.val, self.deriv - other.deriv)
 
-        return DualNumber(self.a - other, self.b)
+        return DualNumber(self.val - other, self.deriv)
 
     def __rsub__(self, other):
         if isinstance(other, DualNumber):
-            return DualNumber(other.a - self.a, other.b - self.b)
+            return DualNumber(other.val - self.val, other.deriv - self.deriv)
 
         return DualNumber(other, 0) - self
 
     def __mul__(self, other):
         if isinstance(other, DualNumber):
-            return DualNumber(self.a * other.a, self.b * other.a + self.a * other.b)
+            return DualNumber(
+                self.val * other.val, self.deriv * other.val + self.val * other.deriv
+            )
 
-        return DualNumber(self.a * other, self.b * other)
+        return DualNumber(self.val * other, self.deriv * other)
 
-    def __rmul__(self, other):
-        return self * other
+    __rmul__ = __mul__
 
     def __truediv__(self, other):
         if isinstance(other, DualNumber):
-            if self.a == 0 and other.a == 0:
-                return DualNumber(self.b / other.b, 0.0)
+            if self.val == 0 and other.val == 0:
+                return DualNumber(self.deriv / other.deriv, 0.0)
 
             return DualNumber(
-                self.a / other.a, (self.b * other.a - self.a * other.b) / (other.a ** 2)
+                self.val / other.val,
+                (self.deriv * other.val - self.val * other.deriv) / (other.val ** 2),
             )
 
-        return DualNumber(self.a / other, self.b / other)
+        return DualNumber(self.val / other, self.deriv / other)
 
     def __rtruediv__(self, other):
         if isinstance(other, DualNumber):
-            if self.a == 0 and other.a == 0:
-                return DualNumber(other.b / self.b, 0.0)
+            if self.val == 0 and other.val == 0:
+                return DualNumber(other.deriv / self.deriv, 0.0)
 
             return DualNumber(
-                other.a / self.a, (other.b * self.a - other.a * self.b) / (self.a ** 2)
+                other.val / self.val,
+                (other.deriv * self.val - other.val * self.deriv) / (self.val ** 2),
             )
 
         return DualNumber(other, 0).__truediv__(self)
 
     def __eq__(self, other):
-        return (self.a == other.a) and (self.b == other.b)
+        return (self.val == other.val) and (self.deriv == other.deriv)
 
     def __ne__(self, other):
         return not (self == other)
 
     def __neg__(self):
-        return DualNumber(-self.a, -self.b)
+        return DualNumber(-self.val, -self.deriv)
 
     def __pow__(self, power):
-        return DualNumber(self.a ** power, self.b * power * self.a ** (power - 1))
+        return DualNumber(
+            self.val ** power, self.deriv * power * self.val ** (power - 1)
+        )
 
     def sin(self):
-        return DualNumber(np.sin(self.a), self.b * np.cos(self.a))
+        return DualNumber(np.sin(self.val), self.deriv * np.cos(self.val))
 
     def cos(self):
-        return DualNumber(np.cos(self.a), -self.b * np.sin(self.a))
+        return DualNumber(np.cos(self.val), -self.deriv * np.sin(self.val))
 
     def tan(self):
         return np.sin(self) / np.cos(self)
 
     def log(self):
-        return DualNumber(np.log(self.a), self.b / self.a)
+        return DualNumber(np.log(self.val), self.deriv / self.val)
 
     def exp(self):
-        return DualNumber(np.exp(self.a), self.b * np.exp(self.a))
+        return DualNumber(np.exp(self.val), self.deriv * np.exp(self.val))
 
 
 def _deriv(func, x):
@@ -132,7 +136,7 @@ def _deriv(func, x):
     funcdual = func(DualNumber(x, 1.0))
 
     if isinstance(funcdual, DualNumber):
-        return funcdual.b
+        return funcdual.deriv
 
     return 0.0
 
@@ -145,13 +149,16 @@ def _diff_g(g, g_prms, coords, indices, wrt):
     ----------
     g : callable
         Metric (Contravariant) Function
+    g_prms : array_like
+        Tuple of parameters to pass to the metric
+        E.g., ``(a,)`` for Kerr
     coords : array_like
         4-Position
     indices : array_like
         2-tuple, containing indices, indexing a metric
         element, whose derivative will be calculated
     wrt : int
-        coordsinate, with respect to which, the derivative
+        Coordinate, with respect to which, the derivative
         will be calculated
         Takes values from ``[0, 1, 2, 3]``
 
@@ -180,7 +187,8 @@ def _diff_g(g, g_prms, coords, indices, wrt):
         DualNumber(coords[3], 0.0),
     ]
 
-    dual_coords[wrt].b = 1.0
+    # Coordinate, against which, derivative will be propagated
+    dual_coords[wrt].deriv = 1.0
 
     return _deriv(lambda q: g(dual_coords, *g_prms)[indices], coords[wrt])
 
@@ -199,7 +207,7 @@ def _jacobian_g(g, g_prms, coords, wrt):
     coords : array_like
         4-Position
     wrt : int
-        coordsinate, with respect to which, the derivative
+        Coordinate, with respect to which, the derivative
         will be calculated
         Takes values from ``[0, 1, 2, 3]``
 

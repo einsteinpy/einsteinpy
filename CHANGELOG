@@ -10,6 +10,7 @@ CONTRIBUTORS
 - bibek22
 - JeS24
 - Qbiwan
+- Aditya7799
 
 CHANGES
 - [#506]: Tests moved outside of the package. 
@@ -32,13 +33,14 @@ CHANGES
 - [#547]: Fixed #516, Added __all__ across modules
 - [#547]: Fixed #552, Renamed missing attributes in einsteinpy.plotting.geodesic.static
 - [#547]: Increased test coverage for einsteinpy.ijit
-- [#548]: Fixed #36, Added support for animated Geodesic
+- [#551]: Fixed #526, Exceptions module added, CoordinateError class implemented
+- [#548]: Fixed #36, Added support for animated Geodesic plots
+- [#548]: Fixed #40, Added support for Order 4, 6 & 8 Geodesic Integrators
 - [#548]: Fixed #105, Added support for simulating Null Geodesics in Kerr & Schwarzschild geometries
 - [#548]: Fixed #122, Schwarzschild & Kerr algorithms validated
 - [#548]: Fixed #367, Scaling issues fixed for Frame Dragging
 - [#548]: Fixed #535, Moved to a pure python geodesic solver, Julia dependency removed
-- [#548]: Minor edits to documentation for the geodesic and plotting.geodesic modules
-
+- [#548]: Minor edits to documentation for geodesic and plotting.geodesic modules
 
 0.5.0
 -----

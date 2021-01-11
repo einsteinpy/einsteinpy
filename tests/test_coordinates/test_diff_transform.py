@@ -14,6 +14,7 @@ from einsteinpy.coordinates import (
 )
 from einsteinpy.metric import BaseMetric, Kerr, Schwarzschild
 from einsteinpy import constant
+from einsteinpy.utils import CoordinateError
 
 _c = constant.c.value
 
@@ -223,7 +224,7 @@ def test_velocity2(spherical_differential, bl_differential):
     assert_allclose(bd.velocity(metric=mk)[1:], [bd.v_r.value, bd.v_th.value, bd.v_p.value])
 
 
-def test_v_t_raises_TypeError(cartesian_differential, spherical_differential, bl_differential):
+def test_v_t_raises_CoordinateError(cartesian_differential, spherical_differential, bl_differential):
     M = 1e24 * u.kg
     a = 0. * u.one
     ms = Schwarzschild(coords=spherical_differential, M=M)
@@ -243,16 +244,16 @@ def test_v_t_raises_TypeError(cartesian_differential, spherical_differential, bl
     def sd_k(sd, mk):
         return sd.velocity(metric=mk)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(CoordinateError):
         cd_s(cd, ms)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(CoordinateError):
         bd_s(bd, ms)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(CoordinateError):
         cd_k(cd, mk)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(CoordinateError):
         sd_k(sd, mk)
 
 
@@ -268,17 +269,17 @@ def test_v_t_getter_setter0(cartesian_differential, spherical_differential, bl_d
     def sd_vt(spherical_differential, mk):
         spherical_differential.v_t = (mk,)
 
-    # This should not raise TypeError
+    # This should not raise CoordinateError
     try:
         spherical_differential.v_t = (ms,)
-    except TypeError:
+    except CoordinateError:
         pytest.fail("Unexpected TypeError!")
 
-    # These 2 should raise TypeError
-    with pytest.raises(TypeError):
+    # These 2 should raise CoordinateError
+    with pytest.raises(CoordinateError):
         cd_vt(cartesian_differential, ms)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(CoordinateError):
         sd_vt(spherical_differential, mk)
 
 
@@ -291,14 +292,14 @@ def test_v_t_getter_setter1(cartesian_differential, spherical_differential, bl_d
     def bd_vt(bl_differential, ms):
         bl_differential.v_t = (ms,)
 
-    # This should not raise TypeError
+    # This should not raise CoordinateError
     try:
         bl_differential.v_t = (mk,)
-    except TypeError:
+    except CoordinateError:
         pytest.fail("Unexpected TypeError!")
 
     # This should raise TypeError
-    with pytest.raises(TypeError):
+    with pytest.raises(CoordinateError):
         bd_vt(bl_differential, ms)
 
 

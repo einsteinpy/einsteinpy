@@ -2,7 +2,7 @@ import warnings
 
 import numpy as np
 
-from .utils import _flow_A, _flow_B, _flow_mixed
+from .utils import _Z, _flow_A, _flow_B, _flow_mixed
 
 
 class GeodesicIntegrator:
@@ -87,7 +87,18 @@ class GeodesicIntegrator:
             exceed specified tolerance (controlled by ``rtol`` and ``atol``)
             Defaults to ``False``
 
+        Raises
+        ------
+        NotImplementedError
+            If ``order`` is not in [2, 4, 6, 8]
+
         """
+        ORDERS = {
+            2: self._ord_2,
+            4: self._ord_4,
+            6: self._ord_6,
+            8: self._ord_8,
+        }
         self.metric = metric
         self.metric_params = metric_params
         self.q0 = q0
@@ -96,7 +107,12 @@ class GeodesicIntegrator:
         self.steps = steps
         self.delta = delta
         self.omega = omega
+        if order not in ORDERS:
+            raise NotImplementedError(
+                f"Order {order} integrator has not been implemented."
+            )
         self.order = order
+        self.integrator = ORDERS[order]
         self.rtol = rtol
         self.atol = atol
         self.suppress_warnings = suppress_warnings
@@ -176,54 +192,77 @@ class GeodesicIntegrator:
 
         return HA2
 
-    def _ord_4(self, q1, p1, q2, p2):
+    def _ord_4(self, q1, p1, q2, p2, delta):
         """
         Order 4 Integration Scheme
 
         References
         ----------
-        .. [1] Christian, Pierre and Chan, Chi-Kwan;
-            "FANTASY: User-Friendly Symplectic Geodesic Integrator
-            for Arbitrary Metrics with Automatic Differentiation";
-            `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
-        .. [2] Yoshida, Haruo,
+        .. [1] Yoshida, Haruo,
             "Construction of higher order symplectic integrators";
              Physics Letters A, vol. 150, no. 5-7, pp. 262-268, 1990.
             `DOI: <https://doi.org/10.1016/0375-9601(90)90092-3>`__
 
         """
-        dl = self.delta
+        dl = delta
 
-        # Consult the referenced papers
-        # for details on these constants
-        Z14 = 1.3512071919596578
-        Z04 = -1.7024143839193155
-        step1 = self._ord_2(q1, p1, q2, p2, dl * Z14)
-        step2 = self._ord_2(step1[0], step1[1], step1[2], step1[3], dl * Z04)
-        step3 = self._ord_2(step2[0], step2[1], step2[2], step2[3], dl * Z14)
+        Z0, Z1 = _Z(self.order)
+        step1 = self._ord_2(q1, p1, q2, p2, dl * Z1)
+        step2 = self._ord_2(step1[0], step1[1], step1[2], step1[3], dl * Z0)
+        step3 = self._ord_2(step2[0], step2[1], step2[2], step2[3], dl * Z1)
+
+        return step3
+
+    def _ord_6(self, q1, p1, q2, p2, delta):
+        """
+        Order 6 Integration Scheme
+
+        References
+        ----------
+        .. [1] Yoshida, Haruo,
+            "Construction of higher order symplectic integrators";
+             Physics Letters A, vol. 150, no. 5-7, pp. 262-268, 1990.
+            `DOI: <https://doi.org/10.1016/0375-9601(90)90092-3>`__
+
+        """
+        dl = delta
+
+        Z0, Z1 = _Z(self.order)
+        step1 = self._ord_4(q1, p1, q2, p2, dl * Z1)
+        step2 = self._ord_4(step1[0], step1[1], step1[2], step1[3], dl * Z0)
+        step3 = self._ord_4(step2[0], step2[1], step2[2], step2[3], dl * Z1)
+
+        return step3
+
+    def _ord_8(self, q1, p1, q2, p2, delta):
+        """
+        Order 8 Integration Scheme
+
+        References
+        ----------
+        .. [1] Yoshida, Haruo,
+            "Construction of higher order symplectic integrators";
+             Physics Letters A, vol. 150, no. 5-7, pp. 262-268, 1990.
+            `DOI: <https://doi.org/10.1016/0375-9601(90)90092-3>`__
+
+        """
+        dl = delta
+
+        Z0, Z1 = _Z(self.order)
+        step1 = self._ord_6(q1, p1, q2, p2, dl * Z1)
+        step2 = self._ord_6(step1[0], step1[1], step1[2], step1[3], dl * Z0)
+        step3 = self._ord_6(step2[0], step2[1], step2[2], step2[3], dl * Z1)
 
         return step3
 
     def step(self):
         """
-        Advances integration one step forward
-
-        Raises
-        ------
-        NotImplementedError
-            If ``order`` != 2 or 4
+        Advances integration by one step
 
         """
         rl = self.res_list
 
-        if self.order == 2:
-            arr = self._ord_2(rl[0], rl[1], rl[2], rl[3], self.delta)
-        elif self.order == 4:
-            arr = self._ord_4(rl[0], rl[1], rl[2], rl[3])
-        else:
-            raise NotImplementedError(
-                f"Order {self.order} integrator has not been implemented."
-            )
+        arr = self.integrator(rl[0], rl[1], rl[2], rl[3], self.delta)
 
         self.res_list = arr
         self.step_num += 1
