@@ -21,7 +21,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
     ):
         """
         Constructor and Initializer
-        
+
         Parameters
         ----------
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
@@ -43,7 +43,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
             syms is not a list or tuple
         ValueError
             config has more or less than 4 indices
-        
+
         """
         super(RiemannCurvatureTensor, self).__init__(
             arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
@@ -65,7 +65,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
             Corresponding Metric for the Riemann Tensor.
             None if it should inherit the Parent Metric of Christoffel Symbols.
             Defaults to None.
-        
+
         """
         if not chris.config == "ull":
             chris = chris.change_config(newconfig="ull", metric=parent_metric)
@@ -96,7 +96,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         ----------
         metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor from which Riemann Curvature Tensor to be calculated
-        
+
         """
         ch = ChristoffelSymbols.from_metric(metric)
         return cls.from_christoffels(ch, parent_metric=None)
@@ -111,7 +111,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
             Specify the new configuration. Defaults to 'llll'
         metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Parent metric tensor for changing indices.
-            Already assumes the value of the metric tensor from which it was initialized if passed with None. 
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
             Compulsory if not initialized with 'from_metric'. Defaults to None.
 
         Returns

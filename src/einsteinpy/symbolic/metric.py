@@ -12,7 +12,7 @@ class MetricTensor(BaseRelativityTensor):
     def __init__(self, arr, syms, config="ll", name="GenericMetricTensor"):
         """
         Constructor and Initializer
-        
+
         Parameters
         ----------
         arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
@@ -32,7 +32,7 @@ class MetricTensor(BaseRelativityTensor):
             syms is not a list or tuple
         ValueError
             config has more or less than 2 indices
-        
+
         """
         super(MetricTensor, self).__init__(
             arr=arr, syms=syms, config=config, parent_metric=self, name=name
@@ -59,7 +59,7 @@ class MetricTensor(BaseRelativityTensor):
         Raises
         ------
         ValueError
-            Raised when new configuration is not 'll' or 'uu'. 
+            Raised when new configuration is not 'll' or 'uu'.
             This constraint is in place because we are dealing with Metric Tensor.
 
         """
@@ -81,14 +81,14 @@ class MetricTensor(BaseRelativityTensor):
 
     def inv(self):
         """
-        Returns the inverse of the Metric. 
+        Returns the inverse of the Metric.
         Returns contravariant Metric if it is originally covariant or vice-versa.
 
         Returns
         -------
         ~einsteinpy.symbolic.metric.MetricTensor
             New Metric which is the inverse of original Metric.
-        
+
         """
         if self._invmetric is None:
             if self.config == "ll":
@@ -104,7 +104,7 @@ class MetricTensor(BaseRelativityTensor):
         Returns
         -------
         ~einsteinpy.symbolic.metric.MetricTensor
-            same instance if the configuration is already lower or 
+            same instance if the configuration is already lower or
             inverse of given metric if configuration is upper
 
         """

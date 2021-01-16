@@ -92,7 +92,7 @@ def metric(r, theta, M, c=constant.c.value, G=constant.G.value):
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float
@@ -123,7 +123,7 @@ def christoffels(r, theta, M, c=constant.c.value, G=constant.G.value):
 
     Parameters
     ----------
-    
+
     r : float
         Distance from the centre
     theta : float

@@ -41,7 +41,7 @@ class Cartesian(CartesianConversion):
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
+        Method to return coordinates.
         Objects are subsctiptable with both explicit names of parameters
         and integer indices.
 
@@ -174,7 +174,7 @@ class Spherical(SphericalConversion):
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
+        Method to return coordinates.
         Objects are subsctiptable with both explicit names of parameters
         and integer indices.
 
@@ -277,7 +277,7 @@ class BoyerLindquist(BoyerLindquistConversion):
 
     def __getitem__(self, item):
         """
-        Method to return coordinates. 
+        Method to return coordinates.
         Objects are subsctiptable with both explicit names of parameters
         and integer indices.
 

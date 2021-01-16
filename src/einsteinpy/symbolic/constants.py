@@ -3,7 +3,7 @@ from sympy.core.symbol import Symbol
 
 class SymbolicConstant(Symbol):
     """
-    This class inherits from ~sympy.core.symbol.Symbol 
+    This class inherits from ~sympy.core.symbol.Symbol
 
     """
 
@@ -14,11 +14,11 @@ class SymbolicConstant(Symbol):
         Parameters
         ----------
         name : str
-            Short, commonly accepted name of the constant. 
+            Short, commonly accepted name of the constant.
             For example, 'c' for Speed of light.
         descriptive_name : str
-            The extended name of the constant. 
-            For example, 'Speed of Light' for 'c'. 
+            The extended name of the constant.
+            For example, 'Speed of Light' for 'c'.
             Defaults to None.
 
         """
@@ -49,9 +49,9 @@ def get_constant(name):
     Parameters
     ----------
     name : str
-        Name of the constant. 
+        Name of the constant.
         Currently available names are 'c', 'G', 'Cosmo_Const', 'eps_0'.
-    
+
     Returns
     -------
     ~einsteinpy.symbolic.constants.SymbolicConstant

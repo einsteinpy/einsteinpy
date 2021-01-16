@@ -138,6 +138,7 @@ def test_maxwell_tensor_contravariant_for_natural_units():
     m = kerrnewman_utils.maxwell_tensor_contravariant(r, theta, a, Q, M, 1.0, 1.0, 1.0)
     assert_allclose(m, -m.T, rtol=1e-12)
 
+
 def test_event_horizon_for_nonrotating_uncharged_case():
     M = 5e27
     a = 0.0

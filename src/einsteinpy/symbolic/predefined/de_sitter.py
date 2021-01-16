@@ -39,7 +39,7 @@ def DeSitter():
     de Sitter space
 
     Hawking and Ellis p125
-    
+
     """
     coords = symbols("t x y z")
     t = coords[1]
