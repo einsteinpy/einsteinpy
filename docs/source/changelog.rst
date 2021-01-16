@@ -1,6 +1,18 @@
 What's new
 ==========
 
+einsteinpy 0.3.1 - 2021-01-16
+-----------------------------
+
+This release is a minor patch release for fixing a minor Debian issue.
+
+Contributors
+............
+
+This is the complete list of the people that contributed to this release, with a + sign indicating first contribution.
+
+* Shreyas Bapat
+
 einsteinpy 0.3.0 - 2020-05-05
 -----------------------------
 
