@@ -31,7 +31,7 @@ To build the docs, you must first create a development environment (see
 below) and then in the ``docs/`` directory run::
 
     $ cd docs
-    $ make html
+    $ sphinx-build -b html source build
 
 After this, the new docs will be inside ``build/html``. You can open
 them by running an HTTP server::
