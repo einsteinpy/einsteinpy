@@ -15,7 +15,7 @@ def BertottiKasner(c=constants.c, k=symbols("k"), lambd=symbols("l")):
     c : ~sympy.core.basic.Basic or int or float
         Any value to assign to speed of light. Defaults to 'c'.
     lambd : ~sympy.core.basic.Basic or int or float
-        The cosmological constant, note it must be postive. 
+        The cosmological constant, note it must be postive.
         Defaults to ``l``.
     """
     coords = symbols("t r theta phi")

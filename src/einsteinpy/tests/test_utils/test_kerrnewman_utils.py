@@ -110,10 +110,7 @@ def test_maxwell_tensor_covariant_for_natural_units():
     Q = 10.0
     a = 0.5
     m = kerrnewman_utils.maxwell_tensor_covariant(r, theta, a, Q, M, 1.0, 1.0, 1.0)
-    for t in range(16):
-        i = int(t / 4) % 4
-        j = t % 4
-        assert_allclose(0, m[i, j] + m[j, i], rtol=0.0, atol=1e-10)
+    assert_allclose(m, -m.T, rtol=1e-12)
     th, r2, a2 = theta, r ** 2, a ** 2
     E_r = Q * (r2 - (a * np.cos(th)) ** 2) / ((r2 + (a * np.cos(th)) ** 2) ** 2)
     E_th = (a2) * (-Q) * np.sin(2 * th) / ((r2 + (a * np.cos(th)) ** 2) ** 2)
@@ -139,10 +136,7 @@ def test_maxwell_tensor_contravariant_for_natural_units():
     Q = 45.0
     a = 0.7
     m = kerrnewman_utils.maxwell_tensor_contravariant(r, theta, a, Q, M, 1.0, 1.0, 1.0)
-    for t in range(16):
-        i = int(t / 4) % 4
-        j = t % 4
-        assert_allclose(0, m[i, j] + m[j, i], rtol=0.0, atol=1e-10)
+    assert_allclose(m, -m.T, rtol=1e-12)
 
 
 def test_event_horizon_for_nonrotating_uncharged_case():

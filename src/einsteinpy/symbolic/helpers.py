@@ -54,7 +54,7 @@ def sympy_to_np_array(arr):
     ----------
     arr : ~sympy.tensor.array.ndim_array.NDimArray
         Sympy Array
-    
+
     Returns
     -------
     ~numpy.ndarray
@@ -108,7 +108,7 @@ class TransformationMatrix(ImmutableDenseNDimArray):
         ValueError
             Raised when tensor has a rank not equal to 2.
             This is because, a matrix is expected.
-        
+
         """
 
         # __new__() is called after __init__() automatically
@@ -150,7 +150,7 @@ class TransformationMatrix(ImmutableDenseNDimArray):
         new2old : list or tuple, optional
             List of expressions for old coordinates in terms of new coordinates.
             For example, ``[r*cos(theta), r*sin(theta)]``.
-        
+
         """
         tmp_array = derive_by_array(new2old, new_coords)
         tmp_array = sympy_to_np_array(tmp_array)
