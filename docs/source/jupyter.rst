@@ -27,11 +27,10 @@ Jupyter notebooks
    :maxdepth: 1
    :caption: symbolic
    
-   /examples/Einstein Tensor symbolic calculation.ipynb
-   /examples/Lambdify symbolic calculation.ipynb
-   /examples/Playing with Contravariant and Covariant Indices in Tensors(Symbolic).ipynb
-   /examples/Predefined Metrics in Symbolic Module.ipynb
-   /examples/Ricci Tensor and Scalar Curvature symbolic calculation.ipynb
-   /examples/Symbolically Understanding Christoffel Symbol and Riemann Curvature Tensor using EinsteinPy.ipynb
-   /examples/Weyl Tensor symbolic calculation.ipynb
-   
+   /examples/Symbolic Module - Einstein Tensor.ipynb
+   /examples/Symbolic Module - Lambdify.ipynb
+   /examples/Symbolic Module - Tensor Indexing.ipynb
+   /examples/Symbolic Module - Predefined Metrics.ipynb
+   /examples/Symbolic Module - Ricci Tensor and Scalar Curvature.ipynb
+   /examples/Symbolic Module - Christoffel Symbols and Riemann Curvature Tensor.ipynb
+   /examples/Symbolic Module - Weyl Tensor.ipynb
