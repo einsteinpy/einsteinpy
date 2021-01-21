@@ -622,7 +622,7 @@ class IngoingEddingtonFinkelsteinConversion:
 
     """
 
-    def __init__(self, v, r, theta, phi, v_r=None, v_th=None, V_p=None):
+    def __init__(self, v, r, theta, phi, v_r=None, v_th=None, v_p=None):
         """
         Constructor
 
