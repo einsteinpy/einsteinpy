@@ -6,6 +6,8 @@ from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
     SphericalConversion,
+    KerrSchildConversion,
+    IngoingEddingtonFinkelsteinConversion
 )
 
 _c = constant.c.value
@@ -634,7 +636,7 @@ class IngoingEddingtonFinkelstein(IngoingEddingtonFinkelsteinConversion):
             return self._dimension[self._dimension_order[item]]
         return self._dimension[item]
 
-     def position(self):
+    def position(self):
         """
         Returns Position 4-Vector in SI units
 

@@ -3,6 +3,10 @@ from einsteinpy.coordinates.utils import (
     cartesian_to_bl_fast,
     cartesian_to_spherical_fast,
     spherical_to_cartesian_fast,
+    ks_to_ief_fast,
+    ief_to_ks_fast,
+    spherical_to_ief_fast,
+    ief_to_spherical_fast
 )
 from einsteinpy.metric import BaseMetric
 
