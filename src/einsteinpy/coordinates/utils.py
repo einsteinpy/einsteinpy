@@ -335,7 +335,7 @@ def ks_to_ief_novel(t, x, y, z, alpha):
     )
     v = t + r
     th = np.arccos(z / r)
-    p = np.arccos(x / (np.sqrt(r ** 2 + alpha ** 2) * np.sin(th))) + np.arctan2(
+    p = np.arccos(x / ((np.sqrt(r ** 2 + alpha ** 2) * np.sin(th)))) + np.arctan2(
         alpha, r
     )
 
