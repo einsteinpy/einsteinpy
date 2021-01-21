@@ -80,7 +80,7 @@ contributions and feedback are more than welcome. You can test EinsteinPy in you
 browser using binder, a cloud Jupyter notebook server:
 
 .. image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
-   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
 
 .. _`source code`: https://github.com/einsteinpy/einsteinpy
 .. _`issue tracker`: https://github.com/einsteinpy/einsteinpy/issues
