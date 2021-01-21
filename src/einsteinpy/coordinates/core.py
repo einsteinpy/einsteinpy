@@ -714,3 +714,4 @@ class IngoingEddingtonFinkelstein(IngoingEddingtonFinkelsteinConversion):
         t, x, y, z = self.convert_ks(M=M, a=a)
 
         return KerrSchild(t * u.s, x * u.m, y * u.m, z * u.m)
+        
