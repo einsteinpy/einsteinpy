@@ -495,7 +495,7 @@ class BoyerLindquistConversion:
 
         return cart.convert_spherical()
 
-    
+
 class KerrSchildConversion:
     """
     Class for conversion to and from Kerr-Schild Coordinates in SI Units

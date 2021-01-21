@@ -463,7 +463,7 @@ class KerrSchild(KerrSchildConversion):
     """
     @u.quantity_input(t=u.s, x=u.m, y=u.m, z=u.m)
     def __init__(self, t, x, y, z):
-         """
+        """
         Constructor
 
         Parameters

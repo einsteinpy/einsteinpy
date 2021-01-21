@@ -220,7 +220,7 @@ def spherical_to_ief_novel(t, r, th, p, M):
 
     """
     v = t + (r / _c) + ((2 * _G * M) / (_c ** 3)) * np.log(np.absolute(r - ((2 * _G * M) / (_c ** 2))))
-    
+
     return v, r, th, p
 
 
@@ -248,7 +248,7 @@ def ief_to_spherical_novel(v, r, th, p, M):
 
     """
     t = v - (r / _c) - ((2 * _G * M) / (_c ** 3)) * np.log(np.absolute(r - ((2 * _G * M) / (_c ** 2))))
-    
+
     return t, r, th, p
 
 
