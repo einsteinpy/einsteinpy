@@ -767,13 +767,13 @@ class IngoingEddingtonFinkelsteinConversion:
         alpha = BaseMetric.alpha(M=M, a=a)
 
         return ief_to_ks_fast(
-            self.t_si,
-            self.x_si,
-            self.y_si,
-            self.z_si,
+            self.v_si,
+            self.r_si,
+            self.th_si,
+            self.p_si,
             alpha,
-            self.v_x_si,
-            self.v_y_si,
-            self.v_z_si,
+            self.v_r_si,
+            self.v_th_si,
+            self.v_p_si,
             self._velocities_provided,
         )
