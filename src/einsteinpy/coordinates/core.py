@@ -5,9 +5,9 @@ from einsteinpy import constant
 from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
-    SphericalConversion,
+    IngoingEddingtonFinkelsteinConversion,
     KerrSchildConversion,
-    IngoingEddingtonFinkelsteinConversion
+    SphericalConversion,
 )
 
 _c = constant.c.value
@@ -304,7 +304,9 @@ class Spherical(SphericalConversion):
         M = kwargs["M"]
         v, r, theta, phi = self.convert_ief(M=M)
 
-        return IngoingEddingtonFinkelstein(v * u.s, r * u.rad, theta * u.rad, phi * u.rad)
+        return IngoingEddingtonFinkelstein(
+            v * u.s, r * u.rad, theta * u.rad, phi * u.rad
+        )
 
 
 class BoyerLindquist(BoyerLindquistConversion):
@@ -463,6 +465,7 @@ class KerrSchild(KerrSchildConversion):
     using SI units
 
     """
+
     @u.quantity_input(t=u.s, x=u.m, y=u.m, z=u.m)
     def __init__(self, t, x, y, z):
         """
@@ -569,7 +572,9 @@ class KerrSchild(KerrSchildConversion):
         M, a = kwargs["M"], kwargs["a"]
         v, r, theta, phi = self.convert_ief(M=M, a=a)
 
-        return IngoingEddingtonFinkelstein(v * u.s, r * u.rad, theta * u.rad, phi * u.rad)
+        return IngoingEddingtonFinkelstein(
+            v * u.s, r * u.rad, theta * u.rad, phi * u.rad
+        )
 
 
 class IngoingEddingtonFinkelstein(IngoingEddingtonFinkelsteinConversion):
@@ -578,6 +583,7 @@ class IngoingEddingtonFinkelstein(IngoingEddingtonFinkelsteinConversion):
     using SI units
 
     """
+
     @u.quantity_input(v=u.s, r=u.m, theta=u.rad, phi=u.rad)
     def __init__(self, v, r, theta, phi):
         """
@@ -714,4 +720,3 @@ class IngoingEddingtonFinkelstein(IngoingEddingtonFinkelsteinConversion):
         t, x, y, z = self.convert_ks(M=M, a=a)
 
         return KerrSchild(t * u.s, x * u.m, y * u.m, z * u.m)
-        

@@ -2,11 +2,11 @@ from einsteinpy.coordinates.utils import (
     bl_to_cartesian_fast,
     cartesian_to_bl_fast,
     cartesian_to_spherical_fast,
-    spherical_to_cartesian_fast,
-    ks_to_ief_fast,
     ief_to_ks_fast,
+    ief_to_spherical_fast,
+    ks_to_ief_fast,
+    spherical_to_cartesian_fast,
     spherical_to_ief_fast,
-    ief_to_spherical_fast
 )
 from einsteinpy.metric import BaseMetric
 
@@ -321,9 +321,7 @@ class SphericalConversion:
         try:
             M = kwargs["M"]
         except KeyError:
-            raise KeyError(
-                "One keyword argument is expected: Mass, 'M'."
-            )
+            raise KeyError("One keyword argument is expected: Mass, 'M'.")
 
         return spherical_to_ief_fast(
             self.t_si,
@@ -713,9 +711,7 @@ class IngoingEddingtonFinkelsteinConversion:
         try:
             M = kwargs["M"]
         except KeyError:
-            raise KeyError(
-                "One keyword argument is expected: Mass, 'M'."
-            )
+            raise KeyError("One keyword argument is expected: Mass, 'M'.")
 
         return ief_to_spherical_fast(
             self.v_si,
