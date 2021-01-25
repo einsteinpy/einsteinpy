@@ -90,7 +90,7 @@ applications of einsteinpy. You can consider theses Jupyter Notebooks as tutoria
 You can launch a cloud Jupyter server using `binder`_ to edit
 the notebooks without installing anything. Try it out!
 
-https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/master?filepath=index.ipynb
+https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
 
 .. _binder: https://beta.mybinder.org/
 
