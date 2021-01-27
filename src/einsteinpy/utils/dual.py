@@ -8,6 +8,14 @@ class DualNumber:
     Their addition and multiplication properties make them
     suitable for Automatic Differentiation (AD).
     EinsteinPy uses AD for solving Geodesics in arbitrary spacetimes.
+    This module is based on [1]_.
+
+    References
+    ----------
+    .. [1] Christian, Pierre and Chan, Chi-Kwan;
+        "FANTASY: User-Friendly Symplectic Geodesic Integrator
+        for Arbitrary Metrics with Automatic Differentiation";
+        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
 
     """
 
