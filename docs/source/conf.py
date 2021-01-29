@@ -32,6 +32,7 @@ html_theme_options = {
     "logo": "logo_small.png",
     "logo_name": True,
     "logo_text_align": "center",
+    "badge_branch": "main",
     "codecov_button": True,
     "description": "General Relativity in Python",
     "body_text_align": "left",

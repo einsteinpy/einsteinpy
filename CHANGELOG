@@ -36,6 +36,7 @@ CHANGES
 - [#547]: Increased test coverage for einsteinpy.ijit
 - [#551]: Fixed #526, Exceptions module added, CoordinateError class implemented
 - [#565]: Fixed #549, Updated einsteinpy.symbolic Jupyter Notebooks
+- [#571]: Fixed #570, Updated Master to Main
 
 0.5.0
 -----

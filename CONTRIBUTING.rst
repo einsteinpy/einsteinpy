@@ -111,4 +111,4 @@ These are some succint steps to set up a development environment:
 7. Make changes and commit.
 8. `Push to your fork <https://help.github.com/articles/pushing-to-a-remote/>`_.
 9. `Open a pull request! <https://help.github.com/articles/creating-a-pull-request/>`_
-10. Make sure that all the Pull Requests have `changelog entries. <https://github.com/einsteinpy/einsteinpy/blob/master/CHANGELOG>`_
+10. Make sure that all the Pull Requests have `changelog entries. <https://github.com/einsteinpy/einsteinpy/blob/main/CHANGELOG>`_
