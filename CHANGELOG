@@ -43,6 +43,7 @@ CHANGES
 - [#548]: Fixed #367, Scaling issues fixed for Frame Dragging
 - [#548]: Fixed #535, Moved to a pure python geodesic solver, Julia dependency removed
 - [#548]: Minor edits to documentation for geodesic and plotting.geodesic modules
+- [#571]: Fixed #570, Updated Master to Main
 
 0.5.0
 -----
