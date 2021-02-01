@@ -1,5 +1,3 @@
-from .geodesic import Geodesic
-from .null import Nulllike
-from .timelike import Timelike
+from .geodesic import Geodesic, Nulllike, Timelike
 
 __all__ = ["Geodesic", "Nulllike", "Timelike"]

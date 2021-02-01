@@ -28,5 +28,5 @@ know the API of the classes and methods. If you find anything missing, please op
     constant
     units
     bodies
-    geodesic
+    geodesic/geodesic_index
     examples

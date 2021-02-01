@@ -1,261 +1,223 @@
 """
 Utilities for Geodesic Module
 
-Unit System: M-Units => G = c = M = 1
+Unit System: M-Units => :math:`c = G = M = k_e = 1`
+Metric Signature => :math:`(-, +, +, +)`
 
 """
-import warnings
-
 import numpy as np
 
+from einsteinpy.utils.dual import DualNumber
 
-def _energy(E, q, p, a, mu):
+
+def _P(g, g_prms, q, p, time_like=True):
     """
-    Utility function to compute Energy of the test particle,
-    using `scipy.optimize.fsolve`
+    Utility function to compute 4-Momentum of the test particle
 
     Parameters
     ----------
-    E : float
-        Variable, which `scipy.optimize.fsolve` solves for
+    g : callable
+        Metric Function
+    g_prms : array_like
+        Tuple of parameters to pass to the metric
+        E.g., ``(a,)`` for Kerr
     q : array_like
-        Length-3 Array, containing the initial 3-Position
-    p: array_like
-        Length-3 Array, containing the initial 3-Momentum
-    a : float
-        Dimensionless Spin Parameter of the Black Hole
-        ``0 <= a <= 1``
-    mu : float
-        Rest Mass of the test particle
-        ``mu = 0.`` for Null Geodesics
-        ``mu = -1`` for Timelike Geodesics
+        Initial 4-Position
+    p : array_like
+        Initial 3-Momentum
+    time_like: bool, optional
+        Determines type of Geodesic
+        ``True`` for Time-like geodesics
+        ``False`` for Null-like geodesics
+        Defaults to ``True``
 
     Returns
     -------
-    float
-        Energy of the test particle
+    P: numpy.ndarray
+        4-Momentum
 
     """
-    return (
-        a ** 4 * (-(E ** 2) + mu ** 2 + 2 * p[0] ** 2)
-        + 8 * a * E * p[2] * q[0]
-        - a ** 2
-        * (
-            2 * p[2] ** 2
-            - 2 * p[1] ** 2
-            + q[0]
-            * (
-                mu ** 2 * (2 - 3 * q[0])
-                - 4 * p[0] ** 2 * (-2 + q[0])
-                + E ** 2 * (2 + 3 * q[0])
-            )
-        )
-        + 2
-        * q[0]
-        * (
-            p[1] ** 2 * (-2 + q[0])
-            + q[0]
-            * (
-                p[0] ** 2 * (-2 + q[0]) ** 2
-                + q[0] * (mu ** 2 * (-2 + q[0]) - E ** 2 * q[0])
-            )
-        )
-        - (a ** 2 + (-2 + q[0]) * q[0])
-        * (
-            a ** 2 * (E - mu) * (E + mu) * np.cos(2 * q[1])
-            - 2 * p[2] ** 2 * (1 / (np.sin(q[1]) ** 2))
-        )
-    ) / (
-        (a ** 2 + (-2 + q[0]) * q[0])
-        * (a ** 2 + 2 * q[0] ** 2 + a ** 2 * np.cos(2 * q[1]))
+    guu = g(q, *g_prms)
+    P = np.array([0.0, *p])
+
+    A = guu[0, 0]
+    B = 2 * guu[0, 3] * P[3]
+    C = (
+        guu[1, 1] * P[1] * P[1]
+        + guu[2, 2] * P[2] * P[2]
+        + guu[3, 3] * P[3] * P[3]
+        + int(time_like)
     )
 
+    P[0] = (-B + np.sqrt(B ** 2 - 4 * A * C)) / (2 * A)
 
-def _sphToCart(r, th, ph):
+    return P
+
+
+def sigma(r, theta, a):
     """
-    Utility function to convert Spherical Polar
-    Coordinates to Cartesian Coordinates
+    Returns the value of :math:`r^2 + a^2 * \\cos^2(\\theta)`
+    Uses natural units, with :math:`c = G = M = k_e = 1`
 
     Parameters
     ----------
     r : float
-        r-component of 3-Position
-    th : float
-        theta-component of 3-Position
-    ph : float
-        phi-component of 3-Position
+        r-component of 4-Position
+    theta : float
+        theta-component of 4-Position
+    a : float
+        Spin Parameter
+        :math:`0 \\le a \\le 1`
 
     Returns
     -------
-    tuple
-        3-Tuple, containing the coordinates in cartesian form
+    float
+        The value of :math:`r^2 + a^2 * \\cos^2(\\theta)`
 
     """
-    xs = r * np.sin(th) * np.cos(ph)
-    ys = r * np.sin(th) * np.sin(ph)
-    zs = r * np.cos(th)
+    sigma = (r ** 2) + ((a * np.cos(theta)) ** 2)
 
-    return xs, ys, zs
+    return sigma
 
 
-def _f_vec(ld, y, params):
+def delta(r, a, Q=0):
     """
-    Evaluates expressions for the RHS of the dynamic equations,
-    from the Kerr Hamiltonian, to be used with ``_verlet_step()``
-
-    Source: `Fuerst and Wu, 2004: <hhttps://www.aanda.org/articles/aa/pdf/2004/36/aa0814.pdf>`_
+    Returns the value of :math:`r^2 - r_s r + a^2 + r_Q^2`
+    Uses natural units, with :math:`c = G = M = k_e = 1`
 
     Parameters
     ----------
-    ld : float
-        Affine Parameter, Lambda (Step-size)
-    y : numpy.ndarray
-        Length-6 array, containing the initial position and momentum of the test particle
-    params : array_like
-        Length-3 Array, containing - Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
-        Test Particle Rest Mass, `mu`
+    r : float
+        r-component of 4-Position
+    a : float
+        Spin Parameter
+        :math:`0 \\le a \\le 1`
+    Q : float
+        Charge on gravitating body
+        Defaults to ``0``
 
     Returns
     -------
-    yn : numpy.ndarray
-        Length-6 array, containing the RHS of the dynamic equations
+    float
+        The value of :math:`r^2 - r_s r + a^2 + r_Q^2`
 
     """
-    yn = np.zeros(shape=y.shape)
+    delta = (r ** 2) - (2 * r) + (a ** 2) + Q ** 2
 
-    r, th, ph = y[:3]
-    pr, pth, pph = y[3:]
-    a, E, mu = params
-
-    r2 = r ** 2
-    pr2 = pr ** 2
-    pth2 = pth ** 2
-    pph2 = pph ** 2
-    a2 = a ** 2
-    E2 = E ** 2
-    sint = np.sin(th)
-    sint2 = sint ** 2
-    cost = np.cos(th)
-    sg = r2 + a2 * (cost ** 2)
-    dl = r2 - 2 * r + a2
-    kappa = pth2 + pph2 * (1 / sint2) + a2 - (E2 * sint2 + mu)
-
-    # Eqs. 21, 22, 27, 30, 31 in Source
-    yn[0] = (dl * pr) / sg
-    yn[1] = pth / sg
-    yn[2] = (a * (-a * pph + 2 * E * r) + pph * (1 / sint2) * dl) / (dl * sg)
-    yn[3] = (1 / (sg * dl)) * (
-        ((r2 + a2) * mu - kappa) * (r - 1)
-        + r * dl * mu
-        + 2 * r * (r2 + a2) * E2
-        - 2 * a * E * pph
-    ) - (2 * pr2 * (r - 1)) / sg
-    yn[4] = ((sint * cost) / sg) * ((pph2 / (sint ** 4)) - a2 * (E2 + mu))
-    yn[5] = 0.0
-
-    return yn
+    return delta
 
 
-def _verlet_step(ld, y, params):
+def _sch(x_vec, *params):
     """
-    Synchornized Symplectic VerletLeapfrog Integrator
-    Advances integration by one step
-
-    Source: `Wikipedia: <https://en.wikipedia.org/wiki/Leapfrog_integration#Algorithm>`_
+    Contravariant Schwarzschild Metric in Spherical Polar coordinates
+    Uses natural units, with :math:`c = G = M = k_e = 1`
 
     Parameters
     ----------
-    ld : float
-        Affine Parameter, Lambda (Step-size)
-    y : numpy.ndarray
-        Length-6 array, containing the initial position and momentum of the test particle
+    x_vec : array_like
+        4-Position
+
+    Other Parameters
+    ----------------
     params : array_like
-        Length-3 Array, containing - Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
-        Test Particle Rest Mass, `mu`
+        Tuple of parameters to pass to the metric
 
     Returns
     -------
-    y_next : numpy.ndarray
-        Length-6 array, containing the values of 3-Position and 3-Momentum,
-        corresponding to the integration step
+    numpy.ndarray
+        Contravariant Schwarzschild Metric Tensor
 
     """
-    DIM = 3
-    y_next = np.copy(y)
+    r, th = x_vec[1], x_vec[2]
 
-    acc1 = _f_vec(ld, y, params)[3:]
+    g = np.zeros(shape=(4, 4), dtype=DualNumber)
 
-    for i in range(DIM):
-        y_next[i] = y[i] + ld * y[i + DIM] + 0.5 * ld * ld * acc1[i]
+    tmp = 1.0 - (2 / r)
+    g[0, 0] = -1 / tmp
+    g[1, 1] = tmp
+    g[2, 2] = 1 / (r ** 2)
+    g[3, 3] = 1 / ((r * np.sin(th)) ** 2)
 
-    acc2 = _f_vec(ld, y_next, params)[3:]
-
-    for i in range(DIM):
-        y_next[i + DIM] = y[i + DIM] + 0.5 * ld * (acc1[i] + acc2[i])
-
-    return y_next
+    return g
 
 
-def _python_solver(q, p, params, end_lambda, step_size):
+def _kerr(x_vec, *params):
     """
-    Wrapper to VerletLeapfrog Integrator, defined by ``_verlet_step()``
-
-    This backend is currently in beta and the solver may not be stable for
-    certain sets of conditions, e.g. long simulations (`end_lambda > 50.`)
-    or high initial radial distances (`position[0] > ~5.`). In these cases,
-    or if the output does not seem accurate, it is highly recommended to switch
-    to the Julia backend, by setting `julia=True`, in the constructor call to
-    ``einsteinpy.geodesic.*``.
+    Contravariant Kerr Metric in Boyer-Lindquist coordinates
+    Uses natural units, with :math:`c = G = M = k_e = 1`
 
     Parameters
     ----------
-    q : array_like
-        Length-3 Array, containing the initial 3-Position
-    p : array_like
-        Length-3 Array, containing the initial Covariant 3-Momentum
+    x_vec : array_like
+        4-Position
+
+    Other Parameters
+    ----------------
     params : array_like
-        Length-3 Array, containing Black Hole Spin Parameter, `a`, Test Particle Energy, `E` and
-        Test Particle Rest Mass, `mu`
-    end_lambda : float
-        Affine Parameter value, where integration will end
-    step_size : float
-        Step Size (Fixed)
+        Tuple of parameters to pass to the metric
+        Should contain Spin Parameter, ``a``
 
     Returns
     -------
-    lambdas : numpy.ndarray
-        Array, containing affine parameter values, where integration was performed
-    vecs : numpy.ndarray
-        2D Array, containing integrated 3-Positions and Covariant 3-Momenta
+    numpy.ndarray
+        Contravariant Kerr Metric Tensor
 
     """
-    state = np.hstack((q, p))
     a = params[0]
 
-    y = state
-    next_step = 0
-    lambdas = list()
-    vecs = list()
+    r, th = x_vec[1], x_vec[2]
+    sg, dl = sigma(r, th, a), delta(r, a)
 
-    lambdas.append(next_step)
-    vecs.append(list(y))
+    g = np.zeros(shape=(4, 4), dtype=DualNumber)
 
-    outer_event_horizon = 1 + np.sqrt(1 - a ** 2)
+    g[0, 0] = -(r ** 2 + a ** 2 + (2 * r * (a * np.sin(th)) ** 2) / sg) / dl
+    g[1, 1] = dl / sg
+    g[2, 2] = 1 / sg
+    g[3, 3] = (1 / (dl * np.sin(th) ** 2)) * (1 - 2 * r / sg)
+    g[0, 3] = g[3, 0] = -(2 * r * a) / (sg * dl)
 
-    # Integrating and storing results from solver
-    while next_step <= end_lambda:
-        y = _verlet_step(step_size, y, params)
-        next_step += step_size
-        lambdas.append(next_step)
-        vecs.append(list(y))
+    return g
 
-        if np.abs(y[0]) <= np.abs(1.01 * outer_event_horizon):
-            warnings.warn(
-                "Test particle has reached the Event Horizon. ", RuntimeWarning
-            )
-            break
 
-    lambdas = np.array(lambdas)
-    vecs = np.array(vecs)
+def _kerrnewman(x_vec, *params):
+    """
+    Contravariant Kerr-Newman Metric in Boyer-Lindquist coordinates
+    Uses natural units, with :math:`c = G = M = k_e = 1`
 
-    return lambdas, vecs
+    Parameters
+    ----------
+    x_vec : array_like
+        4-Position
+
+    Other Parameters
+    ----------------
+    params : array_like
+        Tuple of parameters to pass to the metric
+        Should contain Spin, ``a``, and Charge, ``Q``
+
+    Returns
+    -------
+    numpy.ndarray
+        Contravariant Kerr-Newman Metric Tensor
+
+    """
+    a, Q = params[0], params[1]
+
+    r, th = x_vec[1], x_vec[2]
+    sg, dl = sigma(r, th, a), delta(r, a, Q)
+    a2 = a ** 2
+    r2 = r ** 2
+    sint2 = np.sin(th) ** 2
+    csct2 = 1 / sint2
+    csct4 = 1 / sint2 ** 2
+
+    g = np.zeros(shape=(4, 4), dtype=DualNumber)
+
+    denom = dl * (a2 + 2 * r2 + a2 * np.cos(2 * th)) ** 2
+    g[0, 0] = -(4 * sg * ((a2 + r2) ** 2 - a2 * dl * sint2) / denom)
+    g[1, 1] = dl / sg
+    g[2, 2] = 1 / sg
+    g[3, 3] = (sg * csct4 * (-a2 + dl * csct2)) / (dl * (a2 - (a2 + r2) * csct2) ** 2)
+    g[0, 3] = g[3, 0] = -(4 * a * (a2 - dl + r2) * sg / denom)
+
+    return g

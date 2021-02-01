@@ -36,6 +36,13 @@ CHANGES
 - [#547]: Increased test coverage for einsteinpy.ijit
 - [#551]: Fixed #526, Exceptions module added, CoordinateError class implemented
 - [#565]: Fixed #549, Updated einsteinpy.symbolic Jupyter Notebooks
+- [#548]: Fixed #36, Added support for animated Geodesic plots
+- [#548]: Fixed #40, Added support for Order 4, 6 & 8 Geodesic Integrators
+- [#548]: Fixed #105, Added support for simulating Null Geodesics in Kerr & Schwarzschild geometries
+- [#548]: Fixed #122, Schwarzschild & Kerr algorithms validated
+- [#548]: Fixed #367, Scaling issues fixed for Frame Dragging
+- [#548]: Fixed #535, Moved to a pure python geodesic solver, Julia dependency removed
+- [#548]: Minor edits to documentation for geodesic and plotting.geodesic modules
 - [#571]: Fixed #570, Updated Master to Main
 
 0.5.0
