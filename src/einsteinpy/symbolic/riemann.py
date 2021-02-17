@@ -55,7 +55,8 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
     @classmethod
     def from_christoffels(cls, chris, parent_metric=None):
         """
-        Get Riemann Tensor calculated from a Christoffel Symbols Reimann Tensor is given as:
+        Get Riemann Tensor from Christoffel Symbols.
+        Riemann Tensor is given as::
         .. math::
            R^{t}{}_{s r n}=\\Gamma^{t}{}_{s n, r} - \\Gamma^{t }{}_{s r, n }
            + \\Gamma^{p}{}_{s n}\\Gamma^{t}{}_{p r} - \\Gamma^{p}{}_{s r}\\Gamma^{t}{}_{p n}
