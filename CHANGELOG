@@ -12,6 +12,7 @@ CONTRIBUTORS
 - Qbiwan
 - Aditya7799
 - prakashaditya369
+- aweinr4
 
 CHANGES
 - [#506]: Tests moved outside of the package. 
@@ -44,6 +45,8 @@ CHANGES
 - [#548]: Fixed #535, Moved to a pure python geodesic solver, Julia dependency removed
 - [#548]: Minor edits to documentation for geodesic and plotting.geodesic modules
 - [#571]: Fixed #570, Updated Master to Main
+- [#576]: Fixed #573, changed indices in riemann tensor calculation
+- [#576]: Added equation to docstring in riemann tensor
 
 0.5.0
 -----
