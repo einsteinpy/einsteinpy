@@ -281,6 +281,9 @@ class BaseRelativityTensor(Tensor):
 
     """
 
+    # defaults used for names or to find the parent tensor class
+    _default = {"parent_tensor": None, "from_parent": None}
+
     def __init__(
         self,
         arr,
@@ -455,3 +458,76 @@ class BaseRelativityTensor(Tensor):
             functions=self.functions,
             name=_change_name(self.name, context="__lt"),
         )
+
+    @classmethod
+    def possible_sources(cls):
+        """
+        Returns a tuple of possible classes that can be used to compute this tensor
+
+        Parameters
+        ----------
+
+        None
+
+        Returns
+        -------
+
+        tuple:
+            tuple of subclasses of ~einsteinpy.symbolic.tensor.BaseRelativityTensor
+
+        """
+        # check if class has an expected parent
+        if isinstance(cls._default["parent_tensor"], type(None)):
+            return (None,)
+        # if class has parent check the parent for parents and add those in
+        else:
+            sources = (cls._default["parent_tensor"],)
+            for i in cls._default["parent_tensor"].possible_sources():
+                if i:
+                    sources += i
+            return sources
+
+    @classmethod
+    def from_(cls, src):
+        """
+        Returns an instance of the tensor from any possible parent tensor
+
+        Parameters
+        ----------
+
+        src:
+            subclass of ~einsteinpy.symbolic.tensor.BaseRelativityTensor
+                tensor used to compute this tensor.
+                must be one of the classes returned by possible_sources method.
+
+        Returns
+        -------
+
+        subclass of ~einsteinpy.symbolic.tensor.BaseRelativityTensor:
+            instance of own class type
+
+        Raises
+        ------
+
+        TypeError
+            raised when src is not a possible parent for this tensor
+
+        AttributeError
+            raised when tensor does not have any default parents
+
+
+        """
+        if isinstance(cls._default["parent_tensor"], type(None)):
+            raise AttributeError(
+                f"{cls.__name__} does not have parents and cannot be computed with this method"
+            )
+
+        if isinstance(src, cls._default["parent_tensor"]):
+            return getattr(cls, cls._default["from_parent"])(src)
+        elif isinstance(src, cls.possible_sources()):
+            newsrc = cls._default["parent_tensor"].from_(src)
+            return getattr(cls, cls._default["from_parent"])(newsrc)
+        else:
+            raise TypeError(
+                f"object type {type(src)} is invalid, valid types are {cls.possible_sources()}"
+            )
