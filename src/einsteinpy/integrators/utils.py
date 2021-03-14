@@ -37,7 +37,7 @@ def _PartHamFlow(g, g_prms, q, p, wrt):
     .. [1] Christian, Pierre and Chan, Chi-Kwan;
         "FANTASY: User-Friendly Symplectic Geodesic Integrator
         for Arbitrary Metrics with Automatic Differentiation";
-        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
+        `2021 ApJ 909 67 <https://doi.org/10.3847/1538-4357/abdc28>`__
 
     """
     return _jacobian_g(g, g_prms, q, wrt) @ p @ p
@@ -76,7 +76,7 @@ def _flow_A(g, g_prms, q1, p1, q2, p2, delta=0.5):
     .. [1] Christian, Pierre and Chan, Chi-Kwan;
         "FANTASY: User-Friendly Symplectic Geodesic Integrator
         for Arbitrary Metrics with Automatic Differentiation";
-        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
+        `2021 ApJ 909 67 <https://doi.org/10.3847/1538-4357/abdc28>`__
 
     """
     dH1 = [0.5 * (_PartHamFlow(g, g_prms, q1, p2, i)) for i in range(4)]
@@ -123,7 +123,7 @@ def _flow_B(g, g_prms, q1, p1, q2, p2, delta=0.5):
     .. [1] Christian, Pierre and Chan, Chi-Kwan;
         "FANTASY: User-Friendly Symplectic Geodesic Integrator
         for Arbitrary Metrics with Automatic Differentiation";
-        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
+        `2021 ApJ 909 67 <https://doi.org/10.3847/1538-4357/abdc28>`__
 
     """
     dH2 = [
@@ -180,7 +180,7 @@ def _flow_mixed(q1, p1, q2, p2, delta=0.5, omega=1.0):
     .. [1] Christian, Pierre and Chan, Chi-Kwan;
         "FANTASY: User-Friendly Symplectic Geodesic Integrator
         for Arbitrary Metrics with Automatic Differentiation";
-        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
+        `2021 ApJ 909 67 <https://doi.org/10.3847/1538-4357/abdc28>`__
 
     """
     q_sum = q1 + q2
