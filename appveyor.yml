@@ -2,7 +2,7 @@
 # Windows
 # File shamelessly inspired by Astropy
 
-version: 0.4.dev0-{build}
+version: 0.5.dev0-{build}
 
 environment:
   global:
@@ -14,6 +14,7 @@ branches:
     - 0.1.x
     - 0.2.x
     - 0.3.x
+    - 0.4.x
 
 matrix:
   fast_finish: true
