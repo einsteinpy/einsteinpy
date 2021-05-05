@@ -26,11 +26,7 @@
    :target: https://github.com/einsteinpy/einsteinpy/raw/main/COPYING
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://docs.einsteinpy.org/en/latest/?badge=latest
-
-.. |codeclimate| image:: https://img.shields.io/codeclimate/maintainability/einsteinpy/einsteinpy.svg?logo=code-climate&style=flat-square
-   :target: https://codeclimate.com/github/einsteinpy/einsteinpy/maintainability
-   :alt: Maintainability
+   :target: https://docs.einsteinpy.org/en/latest/?badge=v0.4.0
 
 .. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/main.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
@@ -49,11 +45,11 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.4.dev0
+:Version: 0.4.0
 
 |astropy| |mailing| |gitter| |riotchat| |license| |docs|
 
-|circleci| |ghactions| |appveyor| |codecov| |codeclimate|
+|circleci| |ghactions| |appveyor| |codecov|
 
 **EinsteinPy** is an open source pure Python package dedicated to problems arising
 in General Relativity and gravitational physics, such as geodesics plotting for
@@ -106,7 +102,6 @@ EinsteinPy requires the following Python packages:
 * SciPy, for solving ordinary differential equations.
 * SymPy, for symbolic calculations related to GR.
 * Numba, for accelerating the code
-* EinsteinPy Geodesics, for calculating geodesics in Kerr geometries
 
 EinsteinPy is usually tested on Linux, Windows and macOS on Python 3.7 and 3.8, against latest NumPy.
 
