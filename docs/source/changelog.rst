@@ -1,6 +1,61 @@
 What's new
 ==========
 
+einsteinpy 0.4.0 - 2021-05-06
+-----------------------------
+
+This major release brings a lot of improvements to the numerical module of the project. COVID19 is proving
+to be very difficult for India and we are trying to cope up. Please forgive us for any issues you faced with
+the v0.3.1 and the documentation.
+
+Changes
+.......
+
+* [#506]: Tests moved outside of the package.
+* [#510]: Added a utility function for Outer Product and Contraction of Tensors in the symbolic module.
+* [#512]: Refactored metric, utils and geodesic modules, added metric.BaseMetric class
+* [#512]: Fixed #113, Fixed cyclomatic complexity issue in metric.Schwarzschild and metric.Kerr classes
+* [#512]: Fixed #141, Refactored utils and merged most utilities into metric itself
+* [#512]: Fixed #410, Improved __str__ and __repr__ messages for Geodesic objects
+* [#512]: Fixed #507, Fixed a mathematical inaccuracy in metric.Schwarzschild class
+* [#512]: Fixed #508, Removed a stray scaling factor in metric.KerrNewman class
+* [#512]: Fixed #514, Replaced Spin Parameter with Length Parameter throughout metric module
+* [#512]: Fixed #515, Renamed "maxwell" to "em"
+* [#521]: Refactored coordinates, geodesic and metric modules, added support for 4-Vectors
+* [#521]: Fixed #517, Removed Spin Parameter from bodies
+* [#521]: Fixed #524, Fixed breakage, caused due to isort changes
+* [#521]: Partially fixed #523, Fixed Schwarzschild and Kerr
+* [#527]: Added support for Null Geodesics in Kerr & Schwarzschild Spacetimes
+* [#527]: Added new features to plotting.geodesic
+* [#527]: Dropped support for Python 3.6
+* [#547]: Fixed #516, Added __all__ across modules
+* [#547]: Fixed #552, Renamed missing attributes in einsteinpy.plotting.geodesic.static
+* [#547]: Increased test coverage for einsteinpy.ijit
+* [#551]: Fixed #526, Exceptions module added, CoordinateError class implemented
+* [#565]: Fixed #549, Updated einsteinpy.symbolic Jupyter Notebooks
+* [#548]: Fixed #36, Added support for animated Geodesic plots
+* [#548]: Fixed #40, Added support for Order 4, 6 & 8 Geodesic Integrators
+* [#548]: Fixed #105, Added support for simulating Null Geodesics in Kerr & Schwarzschild geometries
+* [#548]: Fixed #122, Schwarzschild & Kerr algorithms validated
+* [#548]: Fixed #367, Scaling issues fixed for Frame Dragging
+* [#548]: Fixed #535, Moved to a pure python geodesic solver, Julia dependency removed
+* [#548]: Minor edits to documentation for geodesic and plotting.geodesic modules
+* [#571]: Fixed #570, Updated Master to Main
+* [#573]: Fixed bug in Riemann Tensor calculation from Christoffels
+
+Contributors
+............
+
+This is the complete list of the people that contributed to this release, with a + sign indicating first contribution.
+
+* Shreyas Bapat
+* Jyotirmaya Shivottam
+* Bibek Gautam
+* Qbiwan+ (GitHub Username)
+* Aditya Prashant Dalvi+
+* Aditya Prakash+
+* aweinr4+ (GitHub Username)
+
 einsteinpy 0.3.1 - 2021-01-16
 -----------------------------
 
