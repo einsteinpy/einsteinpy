@@ -252,15 +252,15 @@ class BaseMetric:
         float
             Rotational Length Parameter
 
-        Raises
+        Warning
         ------
-        ValueError
-            If a is not between 0 and 1
+        Warn
+            If a is not between 0 and 1 - lots of things will break, but some will work!
 
         """
         M, a = primitive(M, a)
         if a < 0 or a > 1:
-            raise ValueError("Spin Parameter, a, should be between 0 and 1.")
+            warnings.warn("Spin Parameter, a, should be between 0 and 1.")
         half_rs = _G * M / _c ** 2
 
         return a * half_rs
