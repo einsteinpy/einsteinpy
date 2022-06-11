@@ -21,9 +21,9 @@ def Schwarzschild(c=constants.c, sch=symbols("r_s")):
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
-    val1, c2 = 1 - sch / r, c ** 2
+    val1, c2 = 1 - sch / r, c**2
     metric = diag(
-        val1, -1 / (val1 * c2), -(r ** 2) / c2, -((r * sin(theta)) ** 2) / c2
+        val1, -1 / (val1 * c2), -(r**2) / c2, -((r * sin(theta)) ** 2) / c2
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="SchwarzschildMetric")
 
@@ -47,16 +47,16 @@ def Kerr(c=constants.c, sch=symbols("r_s"), a=symbols("a")):
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
-    Sigma = r ** 2 + (a ** 2 * cos(theta) ** 2)
-    Delta = r ** 2 - sch * r + a ** 2
-    c2 = c ** 2
+    Sigma = r**2 + (a**2 * cos(theta) ** 2)
+    Delta = r**2 - sch * r + a**2
+    c2 = c**2
 
     metric = diag(
         1 - (sch * r / Sigma),
         -Sigma / (Delta * c2),
         -Sigma / c2,
         -(
-            (r ** 2 + a ** 2 + (sch * r * (a ** 2) * (sin(theta) ** 2) / Sigma))
+            (r**2 + a**2 + (sch * r * (a**2) * (sin(theta) ** 2) / Sigma))
             * (sin(theta) ** 2)
         )
         / c2,
@@ -98,16 +98,16 @@ def KerrNewman(
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
-    Sigma = r ** 2 + (a ** 2 * cos(theta) ** 2)
-    rQsq = ((Q ** 2) * G) / (4 * pi * eps_0 * (c ** 4))
-    Delta = r ** 2 - sch * r + a ** 2 + rQsq
-    c2 = c ** 2
+    Sigma = r**2 + (a**2 * cos(theta) ** 2)
+    rQsq = ((Q**2) * G) / (4 * pi * eps_0 * (c**4))
+    Delta = r**2 - sch * r + a**2 + rQsq
+    c2 = c**2
 
     metric = diag(
         1 + ((rQsq - sch * r) / Sigma),
         -Sigma / (Delta * c2),
         -Sigma / c2,
-        (Delta * a ** 2 * sin(theta) ** 2 - (r ** 2 + a ** 2) ** 2)
+        (Delta * a**2 * sin(theta) ** 2 - (r**2 + a**2) ** 2)
         * sin(theta) ** 2
         / (Sigma * c2),
     ).tolist()
@@ -146,11 +146,11 @@ def ReissnerNordstorm(
     """
     coords = symbols("t r theta phi")
     t, r, theta, phi = coords
-    rQsq = ((Q ** 2) * G) / (4 * pi * eps_0 * (c ** 4))
-    Arn = 1 - sch / r + rQsq / r ** 2
-    c2 = c ** 2
+    rQsq = ((Q**2) * G) / (4 * pi * eps_0 * (c**4))
+    Arn = 1 - sch / r + rQsq / r**2
+    c2 = c**2
 
     metric = diag(
-        Arn, -1 / (Arn * c2), -(r ** 2) / c2, -(r ** 2) * sin(theta) ** 2 / c2
+        Arn, -1 / (Arn * c2), -(r**2) / c2, -(r**2) * sin(theta) ** 2 / c2
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="ReissnerNordstormMetric")

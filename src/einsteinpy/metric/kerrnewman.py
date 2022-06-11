@@ -140,15 +140,15 @@ class KerrNewman(BaseMetric):
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
-        g_cov_bl[0, 0] = (_c ** 2) * ((dl - ((alpha * np.sin(th)) ** 2)) / (rho2))
+        g_cov_bl[0, 0] = (_c**2) * ((dl - ((alpha * np.sin(th)) ** 2)) / (rho2))
         g_cov_bl[1, 1] = -rho2 / dl
         g_cov_bl[2, 2] = -rho2
         g_cov_bl[3, 3] = -(
             (np.sin(th) ** 2)
-            * (((r ** 2 + alpha ** 2) ** 2 - dl * (alpha * np.sin(th)) ** 2) / rho2)
+            * (((r**2 + alpha**2) ** 2 - dl * (alpha * np.sin(th)) ** 2) / rho2)
         )
         g_cov_bl[0, 3] = g_cov_bl[3, 0] = _c * (
-            (-alpha * (np.sin(th) ** 2) * (dl - (r ** 2) - (alpha ** 2))) / rho2
+            (-alpha * (np.sin(th) ** 2) * (dl - (r**2) - (alpha**2))) / rho2
         )
 
         return g_cov_bl
@@ -188,50 +188,50 @@ class KerrNewman(BaseMetric):
             drh2dr = 2 * r
             dddr = 2 * r - self.sch_rad
             dgdx[1, 0, 0] = (
-                (_c ** 2)
+                (_c**2)
                 * (dddr * rho2 - drh2dr * (dl - (alpha * np.sin(th)) ** 2))
-                / (rho2 ** 2)
+                / (rho2**2)
             )
-            dgdx[1, 1, 1] = (-1 / (dl ** 2)) * (drh2dr * dl - dddr * rho2)
+            dgdx[1, 1, 1] = (-1 / (dl**2)) * (drh2dr * dl - dddr * rho2)
             dgdx[1, 2, 2] = -drh2dr
             dgdx[1, 3, 3] = ((np.sin(th) / rho2) ** 2) * (
                 (
                     (
                         ((alpha * np.sin(th)) ** 2) * dddr
-                        - 4 * (r ** 3)
-                        - 4 * (r * (alpha ** 2))
+                        - 4 * (r**3)
+                        - 4 * (r * (alpha**2))
                     )
                     * rho2
                 )
                 - (
                     drh2dr
-                    * (((alpha * np.sin(th)) ** 2) * dl - ((r ** 2 + alpha ** 2) ** 2))
+                    * (((alpha * np.sin(th)) ** 2) * dl - ((r**2 + alpha**2) ** 2))
                 )
             )
             dgdx[1, 0, 3] = dgdx[1, 3, 0] = (
-                _c * (-alpha) * (np.sin(th) ** 2) / (rho2 ** 2)
-            ) * ((dddr - 2 * r) * rho2 - drh2dr * (dl - r ** 2 - alpha ** 2))
+                _c * (-alpha) * (np.sin(th) ** 2) / (rho2**2)
+            ) * ((dddr - 2 * r) * rho2 - drh2dr * (dl - r**2 - alpha**2))
 
         # Differentiation of metric wrt theta
         def due_to_theta():
             nonlocal dgdx
-            drh2dth = -(alpha ** 2) * np.sin(2 * th)
+            drh2dth = -(alpha**2) * np.sin(2 * th)
             dgdx[2, 0, 0] = (-((_c / rho2) ** 2)) * (
                 (drh2dth * (dl - ((alpha * np.sin(th)) ** 2)))
-                + ((alpha ** 2) * rho2 * np.sin(2 * th))
+                + ((alpha**2) * rho2 * np.sin(2 * th))
             )
             dgdx[2, 1, 1] = -drh2dth / dl
             dgdx[2, 2, 2] = -drh2dth
-            dgdx[2, 3, 3] = (1 / (rho2 ** 2)) * (
+            dgdx[2, 3, 3] = (1 / (rho2**2)) * (
                 (dl * (alpha * np.sin(th)) ** 2)
                 * (2 * rho2 * np.sin(2 * th) - drh2dth * (np.sin(th)) ** 2)
                 - (
-                    ((r ** 2 + alpha ** 2) ** 2)
+                    ((r**2 + alpha**2) ** 2)
                     * (rho2 * np.sin(2 * th) - drh2dth * (np.sin(th)) ** 2)
                 )
             )
             dgdx[2, 0, 3] = dgdx[2, 3, 0] = (
-                (-alpha * _c * (dl - r ** 2 - alpha ** 2)) / (rho2 ** 2)
+                (-alpha * _c * (dl - r**2 - alpha**2)) / (rho2**2)
             ) * ((np.sin(2 * th) * rho2) - (drh2dth * (np.sin(th) ** 2)))
 
         due_to_r()
@@ -431,7 +431,7 @@ class KerrNewman(BaseMetric):
 
         alpha = super().alpha(M, a)
         # Geometrized Charge
-        r_Q = np.sqrt((Q ** 2 * _G * _Cc) / _c ** 4)
+        r_Q = np.sqrt((Q**2 * _G * _Cc) / _c**4)
         rho2 = super().rho(r, th, M, a) ** 2
 
         A = np.zeros((4,), dtype=float)
@@ -483,24 +483,24 @@ class KerrNewman(BaseMetric):
         M, a, Q = self.M.value, self.a.value, self.Q.value
 
         alpha = super().alpha(M, a)
-        r_Q = np.sqrt((Q ** 2 * _G * _Cc) / _c ** 4)
+        r_Q = np.sqrt((Q**2 * _G * _Cc) / _c**4)
         rho2 = super().rho(r, th, M, a) ** 2
         # Partial derivatives of rho2
         drho2_dr = 2 * r
-        drho2_dtheta = -(alpha ** 2 * np.sin(2 * th))
+        drho2_dtheta = -(alpha**2 * np.sin(2 * th))
 
         F = np.zeros((4, 4), dtype=float)
 
-        F[0, 1] = -(r_Q * (rho2 - drho2_dr * r)) / (rho2 ** 2)
+        F[0, 1] = -(r_Q * (rho2 - drho2_dr * r)) / (rho2**2)
         F[1, 0] = -F[0, 1]
-        F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2 ** 2)
+        F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2**2)
         F[2, 0] = -F[0, 2]
         F[1, 3] = (
-            (1 / rho2 ** 2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r ** 2)
+            (1 / rho2**2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r**2)
         )
         F[3, 1] = -F[1, 3]
         F[2, 3] = (
-            (1 / rho2 ** 2)
+            (1 / rho2**2)
             * (alpha * r_Q * r * np.sin(2 * th))
             * (rho2 + (alpha * np.sin(th)) ** 2)
         )

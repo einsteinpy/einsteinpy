@@ -82,9 +82,9 @@ class Schwarzschild(BaseMetric):
         g_cov = np.zeros(shape=(4, 4), dtype=float)
 
         tmp = 1.0 - (r_s / r)
-        g_cov[0, 0] = tmp * _c ** 2
+        g_cov[0, 0] = tmp * _c**2
         g_cov[1, 1] = -1.0 / tmp
-        g_cov[2, 2] = -(r ** 2)
+        g_cov[2, 2] = -(r**2)
         g_cov[3, 3] = -((r * np.sin(th)) ** 2)
 
         return g_cov
@@ -141,8 +141,8 @@ class Schwarzschild(BaseMetric):
         r_s = self.sch_rad
         chl = np.zeros(shape=(4, 4, 4), dtype=float)
 
-        chl[1, 0, 0] = 0.5 * r_s * (r - r_s) * (_c ** 2) / (r ** 3)
-        chl[1, 1, 1] = 0.5 * r_s / (r_s * r - r ** 2)
+        chl[1, 0, 0] = 0.5 * r_s * (r - r_s) * (_c**2) / (r**3)
+        chl[1, 1, 1] = 0.5 * r_s / (r_s * r - r**2)
         chl[1, 2, 2] = r_s - r
         chl[1, 3, 3] = (r_s - r) * (np.sin(th) ** 2)
         chl[0, 0, 1] = chl[0, 1, 0] = -chl[1, 1, 1]

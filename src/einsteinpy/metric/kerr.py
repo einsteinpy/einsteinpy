@@ -131,11 +131,11 @@ class Kerr(BaseMetric):
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
-        g_cov_bl[0, 0] = (1 - (r_s * r / sg)) * _c ** 2
+        g_cov_bl[0, 0] = (1 - (r_s * r / sg)) * _c**2
         g_cov_bl[1, 1] = -(sg / dl)
         g_cov_bl[2, 2] = -sg
         g_cov_bl[3, 3] = -(
-            ((r ** 2) + (alpha ** 2) + ((r_s * r * (alpha * np.sin(th)) ** 2) / sg))
+            ((r**2) + (alpha**2) + ((r_s * r * (alpha * np.sin(th)) ** 2) / sg))
             * (np.sin(th) ** 2)
         )
         g_cov_bl[0, 3] = g_cov_bl[3, 0] = (_c * r_s * r * alpha * (np.sin(th) ** 2)) / (
@@ -178,8 +178,8 @@ class Kerr(BaseMetric):
             nonlocal dgdx
             dsdr = 2 * r
             dddr = 2 * r - r_s
-            tmp = r_s * (sg - r * dsdr) / (sg ** 2)  # r_s * d (r/sg) / dr
-            dgdx[1, 0, 0] = -tmp * _c ** 2
+            tmp = r_s * (sg - r * dsdr) / (sg**2)  # r_s * d (r/sg) / dr
+            dgdx[1, 0, 0] = -tmp * _c**2
             dgdx[1, 1, 1] = -(dsdr - (sg * (dddr / dl))) / dl
             dgdx[1, 2, 2] = -dsdr
             dgdx[1, 3, 3] = (-2 * r + ((alpha * np.sin(th)) ** 2) * tmp) * (
@@ -190,19 +190,19 @@ class Kerr(BaseMetric):
         # Differentiation of metric wrt theta
         def due_to_theta():
             nonlocal dgdx
-            dsdth = -(alpha ** 2) * np.sin(2 * th)
+            dsdth = -(alpha**2) * np.sin(2 * th)
             tmp = (
                 ((_c / sg) ** 2) * r_s * r * dsdth
             )  # (- _c**2 * r_s * r) * d (1/sg) / dth
             dgdx[2, 0, 0] = tmp
             dgdx[2, 1, 1] = -(dsdth / dl)
             dgdx[2, 2, 2] = -dsdth
-            dgdx[2, 3, 3] = -np.sin(2 * th) * ((r ** 2) + (alpha ** 2)) - (
-                r_s * r * alpha ** 2
+            dgdx[2, 3, 3] = -np.sin(2 * th) * ((r**2) + (alpha**2)) - (
+                r_s * r * alpha**2
             ) * ((np.sin(th) / sg) ** 2) * (
                 2 * sg * np.sin(2 * th) - (np.sin(th) ** 2) * dsdth
             )
-            dgdx[2, 0, 3] = dgdx[2, 3, 0] = ((_c * alpha * r_s * r) / (sg ** 2)) * (
+            dgdx[2, 0, 3] = dgdx[2, 3, 0] = ((_c * alpha * r_s * r) / (sg**2)) * (
                 sg * np.sin(2 * th) - dsdth * np.sin(th) ** 2
             )
 
@@ -406,11 +406,11 @@ class Kerr(BaseMetric):
         # hack ends
 
         chl = np.zeros(shape=(4, 4, 4), dtype=bool)
-        tmp = np.array([i for i in range(4 ** 3)])
+        tmp = np.array([i for i in range(4**3)])
         vcl = list()
 
         for t in tmp:
-            i = int(t / (4 ** 2)) % 4
+            i = int(t / (4**2)) % 4
             j = int(t / 4) % 4
             k = t % 4
 

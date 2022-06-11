@@ -25,8 +25,8 @@ def cartesian_to_spherical(t, x, y, z, v_x, v_y, v_z):
     r = np.hypot(hxy, z)
     theta = np.arctan2(hxy, z)
     phi = np.arctan2(y, x)
-    n1 = x ** 2 + y ** 2
-    n2 = n1 + z ** 2
+    n1 = x**2 + y**2
+    n2 = n1 + z**2
     v_r = (x * v_x + y * v_y + z * v_z) / np.sqrt(n2)
     v_th = (z * (x * v_x + y * v_y) - n1 * v_z) / (n2 * np.sqrt(n1))
     v_p = -1 * (v_x * y - x * v_y) / n1
@@ -64,20 +64,20 @@ def cartesian_to_bl(t, x, y, z, alpha, v_x, v_y, v_z):
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    w = (x ** 2 + y ** 2 + z ** 2) - (alpha ** 2)
-    r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (alpha ** 2) * (z ** 2)))))
+    w = (x**2 + y**2 + z**2) - (alpha**2)
+    r = np.sqrt(0.5 * (w + np.sqrt((w**2) + (4 * (alpha**2) * (z**2)))))
     theta = np.arccos(z / r)
     phi = np.arctan2(y, x)
     dw_dt = 2 * (x * v_x + y * v_y + z * v_z)
     v_r = (1 / (2 * r)) * (
         (dw_dt / 2)
         + (
-            (w * dw_dt + 4 * (alpha ** 2) * z * v_z)
-            / (2 * np.sqrt((w ** 2) + (4 * (alpha ** 2) * (z ** 2))))
+            (w * dw_dt + 4 * (alpha**2) * z * v_z)
+            / (2 * np.sqrt((w**2) + (4 * (alpha**2) * (z**2))))
         )
     )
-    v_th = (-1 / np.sqrt(1 - np.square(z / r))) * ((v_z * r - v_r * z) / (r ** 2))
-    v_p = (1 / (1 + np.square(y / x))) * ((v_y * x - v_x * y) / (x ** 2))
+    v_th = (-1 / np.sqrt(1 - np.square(z / r))) * ((v_z * r - v_r * z) / (r**2))
+    v_p = (1 / (1 + np.square(y / x))) * ((v_y * x - v_x * y) / (x**2))
 
     return t, r, theta, phi, v_r, v_th, v_p
 
@@ -89,8 +89,8 @@ def cartesian_to_bl_novel(t, x, y, z, alpha):
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    w = (x ** 2 + y ** 2 + z ** 2) - (alpha ** 2)
-    r = np.sqrt(0.5 * (w + np.sqrt((w ** 2) + (4 * (alpha ** 2) * (z ** 2)))))
+    w = (x**2 + y**2 + z**2) - (alpha**2)
+    r = np.sqrt(0.5 * (w + np.sqrt((w**2) + (4 * (alpha**2) * (z**2)))))
     theta = np.arccos(z / r)
     phi = np.arctan2(y, x)
 
@@ -159,7 +159,7 @@ def bl_to_cartesian(t, r, th, p, alpha, v_r, v_th, v_p):
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    xa = np.sqrt(r ** 2 + alpha ** 2)
+    xa = np.sqrt(r**2 + alpha**2)
     sin_norm = xa * np.sin(th)
     x = sin_norm * np.cos(p)
     y = sin_norm * np.sin(p)
@@ -186,7 +186,7 @@ def bl_to_cartesian_novel(t, r, th, p, alpha):
     This function should eventually result in Coordinate Transformation Graph!
 
     """
-    xa = np.sqrt(r ** 2 + alpha ** 2)
+    xa = np.sqrt(r**2 + alpha**2)
     sin_norm = xa * np.sin(th)
     x = sin_norm * np.cos(p)
     y = sin_norm * np.sin(p)
@@ -216,7 +216,7 @@ def lorentz_factor(v1, v2, v3):
     """
     v_vec = np.array([v1, v2, v3])
     v_norm2 = v_vec.dot(v_vec)
-    gamma = 1 / np.sqrt(1 - v_norm2 / _c ** 2)
+    gamma = 1 / np.sqrt(1 - v_norm2 / _c**2)
 
     return gamma
 
@@ -247,17 +247,17 @@ def v0(g_cov_mat, v1, v2, v3):
     """
     g = g_cov_mat
     # Factor to add to coefficient, C
-    fac = -1 * _c ** 2
+    fac = -1 * _c**2
     # Defining coefficients for quadratic equation
     A = g[0, 0]
     B = 2 * (g[0, 1] * v1 + g[0, 2] * v2 + g[0, 3] * v3)
     C = (
-        (g[1, 1] * v1 ** 2 + g[2, 2] * v2 ** 2 + g[3, 3] * v3 ** 2)
+        (g[1, 1] * v1**2 + g[2, 2] * v2**2 + g[3, 3] * v3**2)
         + 2 * v1 * (g[1, 2] * v2 + g[1, 3] * v3)
         + 2 * v2 * g[2, 3] * v3
         + fac
     )
-    D = (B ** 2) - (4 * A * C)
+    D = (B**2) - (4 * A * C)
 
     v_t = (-B + np.sqrt(D)) / (2 * A)
 
