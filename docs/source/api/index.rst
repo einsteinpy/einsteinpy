@@ -14,7 +14,6 @@ know the API of the classes and methods. If you find anything missing, please op
     }
 
 .. toctree::
-    :hidden:
     :maxdepth: 2
 
     integrators/integrators_index
