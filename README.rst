@@ -1,6 +1,6 @@
 .. einsteinpy
 
-.. image:: https://blog.einsteinpy.org/img/logo.png
+.. image::  docs\source\einsteinpy.svg
    :target: https://einsteinpy.org/
    :alt: EinsteinPy logo
    :width: 675px
