@@ -1,6 +1,6 @@
 .. einsteinpy
 
-.. image::  docs\source\einsteinpy.svg
+.. image::  docs\source\einstein.png
    :target: https://einsteinpy.org/
    :alt: EinsteinPy logo
    :width: 675px
