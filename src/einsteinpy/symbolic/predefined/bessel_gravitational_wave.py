@@ -27,7 +27,7 @@ def BesselGravitationalWave(C=symbols("C")):
     U = C * besselj(rho, 0) * cos(t)
     K = (
         (1 / 2)
-        * (C ** 2)
+        * (C**2)
         * rho
         * (
             (rho * ((besselj(rho, 0) ** 2) + (besselj(rho, 1) ** 2)))
@@ -39,7 +39,7 @@ def BesselGravitationalWave(C=symbols("C")):
     metric = diag(
         -1 * exp(-2 * U) * exp(2 * K),
         exp(-2 * U) * exp(2 * K),
-        exp(-2 * U) * (rho ** 2),
+        exp(-2 * U) * (rho**2),
         exp(2 * U),
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="BesselGravitationalWaveMetric")

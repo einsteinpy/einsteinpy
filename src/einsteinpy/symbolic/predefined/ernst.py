@@ -26,8 +26,8 @@ def Ernst(B=symbols("B"), M=symbols("M")):
 
     # define the metric
     metric = diag(
-        -1 * (lambd ** 2) * w,
-        (lambd ** 2) / w,
+        -1 * (lambd**2) * w,
+        (lambd**2) / w,
         ((r * lambd) ** 2),
         (((r * sin(th)) / lambd) ** 2),
     ).tolist()

@@ -23,8 +23,8 @@ def BertottiKasner(c=constants.c, k=symbols("k"), lambd=symbols("l")):
     # define the metric
     metric = diag(
         -1,
-        exp(2 * sqrt(lambd) * c * t) / (c ** 2),
-        1 / (lambd * (c ** 2)),
-        (sin(th) ** 2) / (lambd * (c ** 2)),
+        exp(2 * sqrt(lambd) * c * t) / (c**2),
+        1 / (lambd * (c**2)),
+        (sin(th) ** 2) / (lambd * (c**2)),
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="BertottiKasnerMetric")

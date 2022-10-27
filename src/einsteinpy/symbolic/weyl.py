@@ -73,12 +73,12 @@ class WeylTensor(BaseRelativityTensor):
             dims = g.dims
             # Indexing for resultant Weyl Tensor is iklm
             C = np.zeros(shape=(dims, dims, dims, dims), dtype=int).tolist()
-            for t in range(dims ** 4):
+            for t in range(dims**4):
                 i, k, l, m = (
                     t % dims,
                     (int(t / dims)) % (dims),
-                    (int(t / (dims ** 2))) % (dims),
-                    (int(t / (dims ** 3))) % (dims),
+                    (int(t / (dims**2))) % (dims),
+                    (int(t / (dims**3))) % (dims),
                 )
                 C[i][k][l][m] = t_riemann_cov[i, k, l, m] + (
                     (

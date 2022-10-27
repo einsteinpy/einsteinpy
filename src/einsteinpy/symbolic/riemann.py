@@ -77,13 +77,13 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         arr, syms = chris.tensor(), chris.symbols()
         dims = len(syms)
         riemann_list = (np.zeros(shape=(dims, dims, dims, dims), dtype=int)).tolist()
-        for i in range(dims ** 4):
+        for i in range(dims**4):
             # t,s,r,n each goes from 0 to (dims-1)
             # hack for codeclimate. Could be done with 4 nested for loops
             n = i % dims
             r = (int(i / dims)) % (dims)
-            s = (int(i / (dims ** 2))) % (dims)
-            t = (int(i / (dims ** 3))) % (dims)
+            s = (int(i / (dims**2))) % (dims)
+            t = (int(i / (dims**3))) % (dims)
             temp = sympy.diff(arr[t, s, n], syms[r]) - sympy.diff(arr[t, s, r], syms[n])
             for p in range(dims):
                 temp += arr[p, s, n] * arr[t, p, r] - arr[p, s, r] * arr[t, p, n]
