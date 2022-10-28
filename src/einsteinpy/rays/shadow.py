@@ -57,11 +57,11 @@ class Shadow:
         """
         GTT = 1 - (2 * self.mass.value / r)
         GRR = (1 - (2 * self.mass.value / r)) ** (-1)
-        KRKText = ((GTT / GRR) * (1 - (b ** 2 * GTT / (r ** 2)))) ** 0.5
+        KRKText = ((GTT / GRR) * (1 - (b**2 * GTT / (r**2)))) ** 0.5
         Gblue = (
             (1 / GTT) - KRKText * (GRR / GTT) * ((1 - GTT) / (GTT * GRR)) ** 0.5
         ) ** (-1)
-        Iblue = -(Gblue ** 3) * (GTT / (r ** 2)) * (1 / KRKText)
+        Iblue = -(Gblue**3) * (GTT / (r**2)) * (1 / KRKText)
         return Iblue
 
     def _intensity_red_sch(self, r, b):
@@ -71,11 +71,11 @@ class Shadow:
         """
         GTT = 1 - (2 * self.mass.value / r)
         GRR = (1 - (2 * self.mass.value / r)) ** (-1)
-        KRKText = ((GTT / GRR) * (1 - (b ** 2 * GTT / (r ** 2)))) ** 0.5
+        KRKText = ((GTT / GRR) * (1 - (b**2 * GTT / (r**2)))) ** 0.5
         Gred = (
             (1 / GTT) + KRKText * (GRR / GTT) * ((1 - GTT) / (GTT * GRR)) ** 0.5
         ) ** (-1)
-        Ired = (Gred ** 3) * (GTT / (r ** 2)) * (1 / KRKText)
+        Ired = (Gred**3) * (GTT / (r**2)) * (1 / KRKText)
         return Ired
 
     def _intensity(self):

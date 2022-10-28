@@ -10,11 +10,11 @@ def Davidson():
     """
     coords = symbols("t r z phi")
     t, r, z, phi = coords
-    expr = (1 + r ** 2) ** Rational(2, 5)
+    expr = (1 + r**2) ** Rational(2, 5)
     metric = diag(
-        -(expr ** 3),
+        -(expr**3),
         t ** Rational(4, 3) * expr,
         t ** Rational(-2, 3) / expr,
-        t ** Rational(4, 3) * r ** 2 / expr,
+        t ** Rational(4, 3) * r**2 / expr,
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="DavidsonMetric")

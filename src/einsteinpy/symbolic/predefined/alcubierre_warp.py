@@ -43,8 +43,8 @@ def AlcubierreWarp(
     r_s = sqrt((x - x_s) ** 2 + y + z)
     f = (tanh(sigma * (r_s + R)) - tanh(sigma * (r_s - R))) / (2 * tanh(sigma * R))
 
-    v2 = v ** 2
-    f2 = f ** 2
+    v2 = v**2
+    f2 = f**2
 
     metric = diag(v2 * f2 - 1, 1, 1, 1).tolist()
     metric[0][1] = metric[1][0] = -v * f

@@ -148,7 +148,7 @@ class BaseMetric:
         """
         r, theta, M, a = primitive(r, theta, M, a)
         alpha = BaseMetric.alpha(M, a)
-        sigma = (r ** 2) + ((alpha * np.cos(theta)) ** 2)
+        sigma = (r**2) + ((alpha * np.cos(theta)) ** 2)
         return sigma
 
     @staticmethod
@@ -177,11 +177,11 @@ class BaseMetric:
 
         """
         r, M, a, Q = primitive(r, M, a, Q)
-        r_s = 2 * M * _G / _c ** 2
+        r_s = 2 * M * _G / _c**2
         alpha = BaseMetric.alpha(M, a)
         # Square of Geometrized Charge
-        r_Q2 = (Q ** 2) * _G * _Cc / _c ** 4
-        delta = (r ** 2) - (r_s * r) + (alpha ** 2) + r_Q2
+        r_Q2 = (Q**2) * _G * _Cc / _c**4
+        delta = (r**2) - (r_s * r) + (alpha**2) + r_Q2
 
         return delta
 
@@ -228,7 +228,7 @@ class BaseMetric:
         """
         (M,) = primitive(M)
 
-        return 2 * _G * M / _c ** 2
+        return 2 * _G * M / _c**2
 
     @staticmethod
     def alpha(M, a):
@@ -261,7 +261,7 @@ class BaseMetric:
         M, a = primitive(M, a)
         if a < 0 or a > 1:
             raise ValueError("Spin Parameter, a, should be between 0 and 1.")
-        half_rs = _G * M / _c ** 2
+        half_rs = _G * M / _c**2
 
         return a * half_rs
 
@@ -291,21 +291,21 @@ class BaseMetric:
         """
         system, M, a, Q = self.coords.system, self.M.value, self.a.value, self.Q.value
 
-        r_s = 2 * M * _G / _c ** 2
+        r_s = 2 * M * _G / _c**2
         alpha = BaseMetric.alpha(M, a)
         # Square of Geometrized Charge
-        r_Q2 = (Q ** 2) * _G * _Cc / _c ** 4
+        r_Q2 = (Q**2) * _G * _Cc / _c**4
 
         def _in_ergo(theta):
             return (
                 r_s
-                - np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
+                - np.sqrt((r_s**2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
             ) / 2
 
         def _out_ergo(theta):
             return (
                 r_s
-                + np.sqrt((r_s ** 2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
+                + np.sqrt((r_s**2) - (4 * (alpha * np.cos(theta)) ** 2) - (4 * r_Q2))
             ) / 2
 
         if self.name in ("Kerr Metric", "Kerr-Newman Metric"):
@@ -313,11 +313,11 @@ class BaseMetric:
                 return {
                     "inner_ergosphere": _in_ergo,
                     "inner_horizon": (
-                        r_s - np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
+                        r_s - np.sqrt((r_s**2) - (4 * alpha**2) - (4 * r_Q2))
                     )
                     / 2,
                     "outer_horizon": (
-                        r_s + np.sqrt((r_s ** 2) - (4 * alpha ** 2) - (4 * r_Q2))
+                        r_s + np.sqrt((r_s**2) - (4 * alpha**2) - (4 * r_Q2))
                     )
                     / 2,
                     "outer_ergosphere": _out_ergo,

@@ -57,7 +57,7 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
     def from_metric(cls, metric):
         t_einstein = EinsteinTensor.from_metric(metric)
         stress_tensor = (
-            c ** 4
+            c**4
             / (8 * np.pi * G)
             * (t_einstein.tensor() - Cosmo_Const * metric.lower_config().tensor())
         )
