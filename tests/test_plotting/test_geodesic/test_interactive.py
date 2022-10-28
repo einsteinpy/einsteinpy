@@ -109,3 +109,63 @@ def test_interactive_geod_plotter_saves_plot(mock_save, dummy_geod):
     mock_save.assert_called_with(
         igpl.fig, image=ext[1:], image_filename=basename, show_link=False
     )
+ 
+
+@pytest.fixture
+def expected_interactive_geod_plot_title(dummy_geod, request):
+    geod = dummy_geod
+    
+    igpl = InteractiveGeodesicPlotter()
+    igpl.plot(geod, title=request.node.funcargs['input_interactive_geod_plot_title'])
+    
+    return igpl.fig.layout.title.text
+
+@pytest.mark.parametrize('input_interactive_geod_plot_title', ["title", "", "title\n"])
+def test_interactive_geod_plot_title(input_interactive_geod_plot_title, expected_interactive_geod_plot_title):
+    assert input_interactive_geod_plot_title == expected_interactive_geod_plot_title
+
+
+@pytest.fixture
+def expected_interactive_geod_plot2D_title(dummy_geod, request):
+    geod = dummy_geod
+    
+    igpl = InteractiveGeodesicPlotter()
+    igpl.plot2D(geod, title=request.node.funcargs['input_interactive_geod_plot2D_title'])
+    
+    if igpl.fig.layout.title.text == None:
+        return ''
+    else:
+        return igpl.fig.layout.title.text
+    
+@pytest.mark.parametrize('input_interactive_geod_plot2D_title', ["title", ""])
+def test_interactive_geod_plot2D_title(input_interactive_geod_plot2D_title, expected_interactive_geod_plot2D_title):
+    assert input_interactive_geod_plot2D_title == expected_interactive_geod_plot2D_title
+
+
+
+@pytest.fixture
+def expected_interactive_geod_plot_aspect(dummy_geod, request):
+    geod = dummy_geod
+    
+    igpl = InteractiveGeodesicPlotter()
+    igpl.plot(geod, aspect=request.node.funcargs['input_interactive_geod_plot_aspect'])
+    
+    return igpl.fig.layout.scene.aspectmode
+    
+@pytest.mark.parametrize('input_interactive_geod_plot_aspect', ["auto", "data", "manual", "cube"])
+def test_interactive_geod_plot_aspect(input_interactive_geod_plot_aspect, expected_interactive_geod_plot_aspect):
+    assert input_interactive_geod_plot_aspect == expected_interactive_geod_plot_aspect
+    
+
+def test_interactive_geod_plot_raises_error(dummy_geod):
+    geod = dummy_geod
+    
+    igpl = InteractiveGeodesicPlotter()
+    
+    try:
+        igpl.plot(geod, aspect="nonexistent")
+
+        assert False
+
+    except ValueError:
+        assert True
