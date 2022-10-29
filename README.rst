@@ -12,21 +12,24 @@
 .. |mailing| image:: https://img.shields.io/badge/mailing%20list-groups.io-8cbcd1.svg?style=flat-square
    :target: https://groups.io/g/einsteinpy-dev
 
-.. |doi| image:: https://zenodo.org/badge/168302584.svg?style=flat-square
-   :target: https://zenodo.org/badge/latestdoi/168302584
+.. |doi| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2582387.svg
+   :target: https://doi.org/10.5281/zenodo.2582387
 
 .. |gitter| image:: https://img.shields.io/gitter/room/EinsteinPy-Project/EinsteinPy.svg?logo=gitter&style=flat-square
    :alt: Join the chat at https://gitter.im/EinsteinPy-Project/EinsteinPy
    :target: https://gitter.im/EinsteinPy-Project/EinsteinPy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 .. |riotchat| image:: https://img.shields.io/matrix/einsteinpy:matrix.org.svg?logo=riot&style=flat-square
-   :target: https://riot.im/app/#/room/#einsteinpy:matrix.org
+   :target: https://app.element.io/#/room/#einsteinpy:matrix.org
 
 .. |license| image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
    :target: https://github.com/einsteinpy/einsteinpy/raw/main/COPYING
 
-.. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
+.. |docslatest| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
    :target: https://docs.einsteinpy.org/en/latest/?badge=latest
+
+.. |docsstable| image:: https://img.shields.io/badge/docs-stable-brightgreen.svg?style=flat-square
+   :target: https://docs.einsteinpy.org/en/stable/?badge=stable
 
 .. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/main.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
@@ -47,94 +50,89 @@
 :Website: https://einsteinpy.org/
 :Version: 0.5.dev0
 
-|astropy| |mailing| |gitter| |riotchat| |license| |docs|
+|astropy| |docslatest| |gitter| |riotchat| |mailing| |license| 
 
 |circleci| |ghactions| |appveyor| |codecov|
 
-**EinsteinPy** is an open source pure Python package dedicated to problems arising
-in General Relativity and gravitational physics, such as geodesics plotting for
-Schwarzschild, Kerr and Kerr Newman space-time model, calculation of Schwarzschild
-radius, calculation of Event Horizon and Ergosphere for Kerr space-time. Symbolic
-Manipulations of various tensors like Metric, Riemann, Ricci, Ricci Scalar, Weyl,
-Schouten, Stress-Energy-Momentum, Einstein and Christoffel Symbols is also possible
-using the library. EinsteinPy also features Hypersurface Embedding of Schwarzschild
-space-time, which will soon lead to modelling of Gravitational Lensing!
-It is released under the MIT license.
+**EinsteinPy** is an open-source pure Python package dedicated to the study of problems arising 
+in General Relativity and gravitational physics. Using EinsteinPy, it is possible to approach 
+problems symbolically as well as numerically. On the symbolic side, EinsteinPy provides a robust 
+API, which allows users to access several predefined metrics or to define custom metrics and perform 
+symbolic calculations on them. Computation of quantities, such as terms of metric tensors, 
+Christoffel symbols, Riemann Curvature tensor, Ricci tensor, stress-energy tensor and more are 
+all supported and extensible, since the symbolic modules are built on top of SymPy. On 
+the numerical side, EinsteinPy provides tools to calculate and visualize geodesics, metric 
+singularities and hypersurface embeddings in certain spacetimes. We hope to extend the package to 
+include more features in the future. EinsteinPy is released under the MIT license.
 
 Documentation
 =============
 
-|docs|
+|docslatest| |docsstable|
 
-Complete documentation, including a user guide and an API reference, can be read on
+Complete documentation, including a user guide and an API reference, can be perused on
 the wonderful `Read the Docs`_.
 
-https://docs.einsteinpy.org/
-
-.. _`Read the Docs`: https://readthedocs.org/
+.. _`Read the Docs`: https://docs.einsteinpy.org/en/latest/
 
 Examples
 ========
 
 .. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
-   :target: https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
+   :target: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
 
 |mybinder|
 
-In the examples directory, you can find several Jupyter notebooks with specific
-applications of einsteinpy. You can consider theses Jupyter Notebooks as tutorials for einsteinpy.
-You can launch a cloud Jupyter server using `binder`_ to edit
-the notebooks without installing anything. Try it out!
+Several tutorial Jupyter notebooks on specific applications of EinsteinPy can be found 
+in the `examples`_ directory. You can launch a Jupyter notebook instance in the cloud 
+using `binder`_ to run and edit these notebooks without installing anything. Try it out!
 
-https://beta.mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
-
-.. _binder: https://beta.mybinder.org/
+.. _examples: https://github.com/einsteinpy/einsteinpy/tree/main/docs/source/examples
+.. _binder: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
 
 Requirements
 ============
 
 EinsteinPy requires the following Python packages:
 
-* NumPy, for basic numerical routines
-* Astropy, for physical units and time handling
-* Matplotlib, for static geodesics plotting and visualizations.
-* Plotly, for interactive geodesics plotting and visualizations.
-* SciPy, for solving ordinary differential equations.
-* SymPy, for symbolic calculations related to GR.
-* Numba, for accelerating the code
+* ``NumPy``, for basic numerical routines
+* ``SciPy``, for solving ordinary differential equations
+* ``SymPy``, for symbolic calculations
+* ``Astropy``, for handling conversion between physical units
+* ``Matplotlib``, for producing static visualizations
+* ``Plotly``, for producing interactive visualizations
+* ``Numba``, for accelerating the code
 
-EinsteinPy is usually tested on Linux, Windows and macOS on Python 3.7 and 3.8, against latest NumPy.
+EinsteinPy is currently tested on Linux, Windows and macOS on Python 3.7 and 3.8, against the latest ``NumPy``.
 
 ==============  ===============  ===================
 Platform        Site             Status
 ==============  ===============  ===================
 Linux           CircleCI         |circleci|
-OS X            Github Actions   |ghactions|
+macOS           Github Actions   |ghactions|
 Windows x64     Appveyor         |appveyor|
 ==============  ===============  ===================
 
 Installation
 ============
 
-The easiest and fastest way to get the package up and running is to
-install EinsteinPy using `conda <http://conda.io>`_::
-
-  $ conda install einsteinpy --channel conda-forge
-  
-Or you can simply install it from `PyPI <https://pypi.org/>`_::
+Currently, the recommended way to install EinsteinPy is using ``pip``
+from `PyPI <https://pypi.org/project/einsteinpy/>`_::
 
   $ pip install einsteinpy
 
-Or for Debian/Ubuntu/Mint users, the package is installable (Ubuntu 19.04 onwards) from `apt <https://packages.debian.org/sid/python3-einsteinpy>`_::
+Or, you can install the package using `conda <https://anaconda.org/conda-forge/einsteinpy>`_::
+
+  $ conda install einsteinpy --channel conda-forge
+
+Note that the package on ``conda-forge`` is currently a version behind ``PyPI``. We are working on updating it. 
+
+For Debian/Ubuntu/Mint users, the package is installable via `apt <https://packages.debian.org/sid/python3-einsteinpy>`_ (Ubuntu 19.04 onwards)::
 
   $ sudo apt install python3-einsteinpy
 
-Please note that the package version in Debian Repositories might not be the latest.
-But it will be definitely the most stable version of EinsteinPy available till date.
-
-Please check out the `guide for alternative installation methods`_.
-
-.. _`guide for alternative installation methods`: https://einsteinpy.github.io/installation/
+If you prefer to install from source to stay on the latest but likely unstable version, 
+you can do so using the method described `here <https://docs.einsteinpy.org/en/latest/getting_started.html#installation>`_.
 
 
 Problems
@@ -148,80 +146,74 @@ please open an issue in the `issue tracker`_.
 Contributing
 ============
 
-EinsteinPy is a community project, hence all contributions are more than
-welcome! For more information, head to `CONTRIBUTING.rst`_.
+EinsteinPy is a community project. Hence, all contributions are more than
+welcome! For more information, head to `CONTRIBUTING`_ or see the `developer guide`_.
 
-.. _`CONTRIBUTING.rst`: https://github.com/einsteinpy/einsteinpy/blob/main/CONTRIBUTING.rst
-
-Developers Documentation can be found here.
+.. _`CONTRIBUTING`: https://github.com/einsteinpy/einsteinpy/blob/main/CONTRIBUTING.rst
+.. _`developer guide`: https://docs.einsteinpy.org/en/latest/dev_guide.html
 
 Support
 =======
 
-|mailing|
+|gitter| |riotchat| |mailing|
 
-Release announcements and general discussion take place on our `mailing list`_.
-Feel free to join!
-
-.. _`mailing list`: https://groups.io/g/einsteinpy-dev
-
-https://groups.io/g/einsteinpy-dev
-
-Please join our `[matrix]`_ channel or `gitter`_ chat room for further queries.
+Please join our `[matrix]`_ channel or `gitter`_ chat room for general discussions and further queries.
 
 .. _`[matrix]`: https://matrix.to/#/#einsteinpy:matrix.org
 
 .. _`gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
 
-If you still have a doubt, write a mail directly to `all@einsteinpy.org <mailto:all@einsteinpy.org>`_.
+Release announcements take place on our `mailing list`_. Feel free to join!
+
+.. _`mailing list`: https://groups.io/g/einsteinpy-dev
+
+If you still have a doubt, write to us directly at `all@einsteinpy.org <mailto:all@einsteinpy.org>`_.
 
 Citing
 ======
 
-If you use EinsteinPy on your project, please
-`drop us a line <mailto:all@einsteinpy.org>`_.
-
-You can also use the DOI to cite it in your publications. This is the latest
-one:
+If you use EinsteinPy in your project, please `drop us a line <mailto:all@einsteinpy.org>`_. 
+You can also use the DOI to cite it in your publications. This is the latest one:
 
 |doi|
 
-And this is an example citation format::
+And this is an example citation format:
 
- Shreyas Bapat et al.. (2019). EinsteinPy: einsteinpy 0.1.0. Zenodo. 10.5281/zenodo.2582388
-
+ Shreyas Bapat et al (2021). EinsteinPy 0.4.0 (v0.4.0). Zenodo. https://doi.org/10.5281/zenodo.2582387
 
 License
 =======
 
 |license|
 
-EinsteinPy is released under the MIT license, hence allowing commercial
-use of the library. Please refer to `COPYING`_.
+EinsteinPy is released under the MIT license, thereby allowing commercial
+use of the library. Please refer to `COPYING`_ for more details.
 
 .. _`COPYING`: https://github.com/einsteinpy/einsteinpy/blob/main/COPYING
 
 FAQ
 ===
 
-Why Einstein-Py?
-----------------
+Why "EinsteinPy"?
+-----------------
 
-EinsteinPy comes from the name of the famous physicist, Nobel laureate, revolutionary person, Prof. Albert Einstein.
-This is a small tribute from our part for the amazing work he did for the humanity!
+EinsteinPy borrows the name of the famous physicist, Nobel laureate and revolutionary 
+human, Dr. Albert Einstein. This is a small tribute on our part for the amazing work 
+he did for humanity!
 
 
-Can I do <insert nerdy thing> with EinsteinPy?
-----------------------------------------------
+Can I do <`insert nerdy thing`> with EinsteinPy?
+------------------------------------------------
 
-EinsteinPy is focused on general relativity.  One can always discuss probable features on the mailing list and try to implement it.
-We welcome every contribution and will be happy to include it in EinsteinPy.
+EinsteinPy is focused on general relativity. One can always discuss probable features in discussion 
+forums and the mailing list and also work with the maintainers to try to implement them. 
+We welcome every contribution to EinsteinPy. Please see `CONTRIBUTING`_ for more details.
 
 What's the future of the project?
 ---------------------------------
 
 EinsteinPy is actively maintained and we hope to receive an influx of new contributors.
-The best way to get an idea of the roadmap is to see the `Milestones`_ of
+The best way to get an idea about the roadmap is to view the `milestones`_ of
 the project.
 
 .. _`Milestones`: https://github.com/einsteinpy/einsteinpy/milestones
@@ -229,7 +221,7 @@ the project.
 Inspiration
 -----------
 
-The whole documentation and code structure is shamelessly inspired by `poliastro`_ . We really thank the poliastro
-developers to make this possible. EinsteinPy is nothing without it's supporters.
+The documentation and code structure is shamelessly inspired by `poliastro`_. We wholeheartedly thank the ``poliastro``
+developers that made this possible. EinsteinPy is nothing without its supporters and community.
 
 .. _`poliastro`: https://docs.poliastro.space/
