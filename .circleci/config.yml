@@ -2,7 +2,7 @@ version: 2
 jobs:
   quality:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.8
     parallelism: 4
     working_directory: ~/repo
 
@@ -29,9 +29,9 @@ jobs:
           command: |
             . venv/bin/activate
             mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
-  test_py37: &test-template  # See https://discuss.circleci.com/t/run-tests-on-multiple-versions-of-python/15462/2
+  test_py38: &test-template
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.8
 
     working_directory: ~/repo
 
@@ -52,14 +52,18 @@ jobs:
           command: |
             . venv/bin/activate
             MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
-  test_py38:
+  test_py39:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.9
+  test_py310:
+    <<: *test-template
+    docker:
+      - image:  cimg/python:3.10
 
   coverage:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.8
 
     working_directory: ~/repo
 
@@ -86,7 +90,7 @@ jobs:
             codecov
   docs:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.8
 
     working_directory: ~/repo
 
@@ -115,10 +119,13 @@ workflows:
   build_and_test:
     jobs:
       - quality
-      - test_py37:
+      - test_py38:
           requires:
             - quality
-      - test_py38:
+      - test_py39:
+          requires:
+            - quality
+      - test_py310:
           requires:
             - quality
       - coverage:
@@ -126,5 +133,6 @@ workflows:
             - quality
       - docs:
           requires:
-            - test_py37
             - test_py38
+            - test_py39
+            - test_py310
