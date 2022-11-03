@@ -10,6 +10,8 @@ class EinsteinTensor(BaseRelativityTensor):
     Class for defining Einstein Tensor
     """
 
+    _default = {"parent_tensor": RicciTensor, "from_parent": "from_riccitensor"}
+
     def __init__(
         self, arr, syms, config="ll", parent_metric=None, name="EinsteinTensor"
     ):
@@ -48,18 +50,31 @@ class EinsteinTensor(BaseRelativityTensor):
             raise ValueError("config should be of length {}".format(self._order))
 
     @classmethod
-    def from_metric(cls, metric):
-        t_ricci = RicciTensor.from_metric(metric)
-        r_scalar = RicciScalar.from_riccitensor(t_ricci, t_ricci.parent_metric)
+    def from_riccitensor(cls, ricci, parent_metric=None):
+        if not isinstance(parent_metric, type(None)):
+            metric = parent_metric
+        else:
+            metric = ricci.parent_metric
+
+        if not ricci.config == "ll":
+            t_ricci = ricci.change_config("ll")
+        else:
+            t_ricci = ricci
+        r_scalar = RicciScalar.from_riccitensor(t_ricci, metric)
         einstein_tensor = (
             t_ricci.tensor() - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
         )
         return cls(
             einstein_tensor,
-            metric.syms,
+            ricci.syms,
             config="ll",
-            parent_metric=t_ricci.parent_metric,
+            parent_metric=metric,
         )
+
+    @classmethod
+    def from_metric(cls, metric):
+        ricci = RicciTensor.from_metric(metric)
+        return cls.from_riccitensor(ricci, parent_metric=metric)
 
     def change_config(self, newconfig="ul", metric=None):
         """

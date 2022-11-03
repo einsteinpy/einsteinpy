@@ -11,6 +11,7 @@ CHANGES
 -----
 CONTRIBUTORS
 - JeS24
+- aweinr4
 
 CHANGES
 - [#607]: Fixed #586 #598 #599 #600 #601, Fixed a bug in tensor_lambdify
@@ -19,6 +20,7 @@ CHANGES
 - [#617]: Fixed #616, Dropped support for Python 3.7, Added support for Python 3.10
 - [#619]: General codebase maintenance
 - [#620]: Fixed #540, #541, Partially addressed #614, Updated documentation
+- [#575]: Added a general from_ method for symbolic tensors, added new from methods to weyl,einstein and schouten tensors
 
 0.4.0
 -----

@@ -2,6 +2,7 @@ import numpy as np
 import sympy
 
 from einsteinpy.symbolic.helpers import _change_name
+from einsteinpy.symbolic.metric import MetricTensor
 from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 
@@ -9,6 +10,8 @@ class ChristoffelSymbols(BaseRelativityTensor):
     """
     Class for defining christoffel symbols.
     """
+
+    _default = {"parent_tensor": MetricTensor, "from_parent": "from_metric"}
 
     def __init__(
         self, arr, syms, config="ull", parent_metric=None, name="ChristoffelSymbols"

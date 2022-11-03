@@ -13,6 +13,8 @@ class RicciTensor(BaseRelativityTensor):
     Class for defining Ricci Tensor
     """
 
+    _default = {"parent_tensor": RiemannCurvatureTensor, "from_parent": "from_riemann"}
+
     def __init__(self, arr, syms, config="ll", parent_metric=None, name="RicciTensor"):
         """
         Constructor and Initializer
@@ -175,6 +177,8 @@ class RicciScalar(BaseRelativityTensor):
     """
     Class for defining Ricci Scalar
     """
+
+    _default = {"parent_tensor": RicciTensor, "from_parent": "from_riccitensor"}
 
     def __init__(self, arr, syms, parent_metric=None):
         """

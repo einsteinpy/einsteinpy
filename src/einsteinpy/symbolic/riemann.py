@@ -11,6 +11,8 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
     Class for defining Riemann Curvature Tensor
     """
 
+    _default = {"parent_tensor": ChristoffelSymbols, "from_parent": "from_christoffels"}
+
     def __init__(
         self,
         arr,
