@@ -16,9 +16,9 @@ CONTRIBUTORS
 CHANGES
 - [#607]: Fixed #586 #598 #599 #600 #601, Fixed a bug in tensor_lambdify
 - [#609]: Fixed #608, Fixed notebook preview errors in documentation
-- [#612]: Partially addressed #610, Added support for setting plot aspect ratio and title via API
 - [#615]: Partially fixed #613, Updated README and CONTRIBUTING
 - [#617]: Fixed #616, Dropped support for Python 3.7, Added support for Python 3.10
+- [#612]: Partially addressed #610, Added support for setting plot aspect ratio and title via API
 
 
 0.4.0
