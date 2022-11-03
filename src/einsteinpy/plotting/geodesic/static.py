@@ -290,6 +290,8 @@ class StaticGeodesicPlotter:
             3-Tuple, containing hexcodes (Strings) for the color
             of the lines, for each of the 3 coordinates
             Defaults to ``("#00FFFF", "#FF00FF", "#00FFFF")``
+        title : str, optional
+            Plot title
 
         """
         self.fig, self.ax = plt.subplots(figsize=figsize)
