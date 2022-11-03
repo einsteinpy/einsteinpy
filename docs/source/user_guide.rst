@@ -1,7 +1,9 @@
 Introduction
-############
+============
 
-This document gives a brief overview of some of the features of EinsteinPy. For more complete hands-on tutorials, please refer to the Jupyter notebooks.
+This page gives a brief overview of some of the features of EinsteinPy. For more complete hands-on tutorials, please refer to the Jupyter notebooks in `Examples`_.
+
+.. _Examples: https://docs.einsteinpy.org/en/latest/jupyter.html
 
 :py:class:`~einsteinpy.metric` Module
 *************************************
@@ -87,7 +89,7 @@ We can also obtain a static plot of the geodesic using :py:class:`~einsteinpy.pl
         sgpl.plot2D(geod)
         sgpl.show()
 
-..  image:: ./_static/user_guide/precess.png
+..  image:: ./_static/precess.png
     :align: center
 
 ----

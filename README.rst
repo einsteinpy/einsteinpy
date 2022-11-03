@@ -79,7 +79,7 @@ Examples
 ========
 
 .. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
-   :target: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
+   :target: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=docs/source/examples/index.ipynb
 
 |mybinder|
 
@@ -88,7 +88,7 @@ in the `examples`_ directory. You can launch a Jupyter notebook instance in the 
 using `binder`_ to run and edit these notebooks without installing anything. Try it out!
 
 .. _examples: https://github.com/einsteinpy/einsteinpy/tree/main/docs/source/examples
-.. _binder: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
+.. _binder: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=docs/source/examples/index.ipynb
 
 Requirements
 ============
