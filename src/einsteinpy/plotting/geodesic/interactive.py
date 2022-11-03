@@ -168,7 +168,7 @@ class InteractiveGeodesicPlotter:
         Raises
         ------
         ValueError
-            If ``aspect`` do not take values from ``{"auto", "data", "manual", "cube"}``
+            If ``aspect`` does not take values from ``{"auto", "data", "manual", "cube"}``
 
         """
         aspects = ["auto", "data", "manual", "cube"]

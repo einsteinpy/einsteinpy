@@ -184,7 +184,7 @@ class StaticGeodesicPlotter:
         Raises
         ------
         ValueError
-            If ``aspect`` do not take values from ``{"auto", "equal", "equalxy", "equalyz", "equalxz"}``
+            If ``aspect`` does not take values from ``{"auto", "equal", "equalxy", "equalyz", "equalxz"}``
 
         """
         aspects = ["auto", "equal", "equalxy", "equalyz", "equalxz"]
