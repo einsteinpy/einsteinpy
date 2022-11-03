@@ -114,7 +114,7 @@ The Riemann Curvature tensor encapsulates the idea of *curvature* in GR. It can 
 a condensed notation using the Christoffel symbols and their derivaties:
 
 .. math::
-  R^{\mu}_{\alpha\beta\gamma} = \partial_\gamma\Gamma^{\mu}_{\alpha\beta} - \partial_\beta\Gamma^{\mu}_{\alpha\gamma} + \Gamma^{\mu}_{\alpha\delta}\Gamma^{\delta}_{\beta\gamma} - \Gamma^{\mu}_{\beta\delta}\Gamma^{\delta}_{\alpha\gamma}
+  \boxed{R^{\mu}_{\alpha\beta\gamma} = \partial_\gamma\Gamma^{\mu}_{\alpha\beta} - \partial_\beta\Gamma^{\mu}_{\alpha\gamma} + \Gamma^{\mu}_{\alpha\delta}\Gamma^{\delta}_{\beta\gamma} - \Gamma^{\mu}_{\beta\delta}\Gamma^{\delta}_{\alpha\gamma}}
 
 A space with zero curvature implies that the Riemann tensor is zero and vice-versa. Since, 
 we are dealing with tensors, i.e. objects that operate independently of basis choice, this statement 
@@ -135,9 +135,9 @@ translated along a given geodesic. The trace of the Ricci tensor gives the Scala
 
 :math:`R` relates the volume of infinitesimal geodesic balls in curved space to that in Euclidean space.
 
-This was a short and superficial look into some of the basic quantities that are used to characterize 
-the structure of spacetime in General Relativity. Readers, who are interested in gaining a deeper 
-understanding, are strongly recommended to peruse the resources listed in `References`_.
+With this, we end our short and superficial look into some of the basic quantities that are used to 
+characterize the structure of spacetime in General Relativity. Readers, who are interested in gaining a deeper 
+understanding, are strongly recommended to peruse the resources listed below.
 
 ----
 
@@ -162,5 +162,5 @@ References
   * `General Relativity <https://archive.org/details/generalrelativit0000wald>`_ by Robert Wald
   * `Spacetime and Geometry: An Introduction to General Relativity <https://worldcat.org/title/1112495919>`_ by Sean Carroll
   * `Black Hole Physics <https://archive.org/details/blackholephysics0000frol>`_ by Valeri P. Frolov and Igor D. Novikov
-  * `General Relativity <http://lightandmatter.com/genrel/>`_ by Benjamin Crowell
+  * `General Relativity (Crowell) <https://archive.org/details/genrel>`_ by Benjamin Crowell
   

@@ -19,7 +19,7 @@ Symbolic computations
 
    /examples/Einstein Tensor symbolic calculation.ipynb
    /examples/Lambdify symbolic calculation.ipynb
-   /examples/Playing with Contravariant and Covariant Indices in Tensors(Symbolic).ipynb
+   /examples/Playing with Contravariant and Covariant Indices in Tensors (Symbolic).ipynb
    /examples/Predefined Metrics in Symbolic Module.ipynb
    /examples/Ricci Tensor and Scalar Curvature symbolic calculation.ipynb
    /examples/Symbolically Understanding Christoffel Symbol and Riemann Curvature Tensor using EinsteinPy.ipynb
@@ -41,8 +41,8 @@ Numerical computations
    :maxdepth: 1
 
    /examples/Animations in EinsteinPy.ipynb
-   /examples/Plotting spatial hypersurface embedding for Schwarzschild spacetime.ipynb
-   /examples/Shadow cast by a thin emission disk around a black hole.ipynb
+   /examples/Plotting Spatial Hypersurface Embedding for Schwarzschild Spacetime.ipynb
+   /examples/Shadow cast by a thin emission disk around a Schwarzschild black hole.ipynb
    /examples/Using Geodesics (Back-ends & Plotting).ipynb
    /examples/Visualizing Event Horizon and Ergosphere (Singularities) of Kerr Metric or Black Hole.ipynb
    /examples/Visualizing Frame Dragging in Kerr Spacetime.ipynb

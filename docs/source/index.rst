@@ -85,9 +85,9 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    getting_started
+    installation
     user_guide
-    metric
+    gr_primer
     jupyter
     api/index
     dev_guide
