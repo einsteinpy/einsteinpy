@@ -7,7 +7,7 @@ from einsteinpy.symbolic.metric import MetricTensor
 def Ernst(B=symbols("B"), M=symbols("M")):
     """
     Black holes in a magnetic universe.
-    J. Math. Phys., 17:54–56, 1976.
+    J. Math. Phys., 17:54-56, 1976.
     Frederick J. Ernst.
 
     Parameters

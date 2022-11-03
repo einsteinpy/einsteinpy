@@ -59,7 +59,7 @@ jobs:
   test_py310:
     <<: *test-template
     docker:
-      - image:  cimg/python:3.10
+      - image: cimg/python:3.10
 
   coverage:
     docker:

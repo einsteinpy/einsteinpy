@@ -123,8 +123,8 @@ def ReissnerNordstorm(
     Q=symbols("Q"),
 ):
     """
-    The Reissner–Nordström metric in spherical coordinates
-    A static solution to the Einstein–Maxwell field equations,
+    The Reissner-Nordström metric in spherical coordinates
+    A static solution to the Einstein-Maxwell field equations,
     which corresponds to the gravitational field of a charged,
     non-rotating, spherically symmetric body of mass M.
 

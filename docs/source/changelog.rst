@@ -1,4 +1,4 @@
-What's new
+What's New
 ==========
 
 einsteinpy 0.4.0 - 2021-05-06
@@ -188,7 +188,7 @@ This release brings a lot of new features for the EinsteinPy Users.
 A better API, intuitive structure and easy coordinates handling! This major release
 comes before Python in Astronomy 2019 workshop and brings a lots of cool stuff. 
 
-Part of this release is sponsored by ESA/ESTEC – Adv. Concepts & Studies Office
+Part of this release is sponsored by ESA/ESTEC - Adv. Concepts & Studies Office
 (European Space Agency), through Summer of Code in Space (SOCIS) 2019 program.
 
 This is a short-term supported version and will be supported only until December 2019. 

@@ -157,11 +157,10 @@ Support
 
 |gitter| |riotchat| |mailing|
 
-Please join our `[matrix]`_ channel or `gitter`_ chat room for general discussions and further queries.
+Please join our `[matrix]`_ channel or `Gitter`_ chat room for general discussions and further queries.
 
 .. _`[matrix]`: https://matrix.to/#/#einsteinpy:matrix.org
-
-.. _`gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
+.. _`Gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
 
 Release announcements take place on our `mailing list`_. Feel free to join!
 

@@ -10,7 +10,7 @@ relativistic astrophysics research. The library is an attempt to provide
 programming and numerical environment for a lot of numerical relativity
 problems like geodesics plotter, gravitational lensing and ray tracing,
 solving and simulating relativistic hydrodynamical equations, plotting
-of black hole event horizons, solving Einstein’s field equations and
+of black hole event horizons, solving Einstein's field equations and
 simulating various dynamical systems like binary merger etc.
 
 
@@ -34,14 +34,14 @@ with the help of tutorials and documentation given for the library. We
 aim to provide all steps, from setting up your library environment to
 running your first geodesic plotter with example jupyter notebooks.
 
-So now you are motivated enough so let’s first start with installing the
+So now you are motivated enough so let's first start with installing the
 library.
 
 
 Installation
 ------------
 
-It’s as easy as running one command!
+It's as easy as running one command!
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Stable Versions:

@@ -9,7 +9,7 @@ def JanisNewmanWinicour(
 ):
     """
     Reality of the Schwarzschild singularity.
-    Phys. Rev. Lett., 20:878–880, 1968.
+    Phys. Rev. Lett., 20:878-880, 1968.
     A. I. Janis, E. T. Newman, and J. Winicour.
 
     Parameters
