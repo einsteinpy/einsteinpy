@@ -85,9 +85,9 @@ Contents
 .. toctree::
     :maxdepth: 2
 
+    gr_primer
     installation
     user_guide
-    gr_primer
     jupyter
     api/index
     dev_guide

@@ -132,7 +132,7 @@ For Debian/Ubuntu/Mint users, the package is installable via `apt <https://packa
   $ sudo apt install python3-einsteinpy
 
 If you prefer to install from source to stay on the latest but likely unstable version, 
-you can do so using the method described `here <https://docs.einsteinpy.org/en/latest/getting_started.html#installation>`_.
+you can do so using the method described `here <https://docs.einsteinpy.org/en/latest/installation.html#latest-version>`_.
 
 
 Problems
