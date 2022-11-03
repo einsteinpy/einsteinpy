@@ -44,7 +44,7 @@ class InteractiveGeodesicPlotter:
         THETA, PHI = np.meshgrid(theta, phi)
 
         # Outer Event Horizon
-        rh_outer = 1 + np.sqrt(1 - a ** 2)
+        rh_outer = 1 + np.sqrt(1 - a**2)
 
         XH = rh_outer * np.sin(PHI) * np.cos(THETA)
         YH = rh_outer * np.sin(PHI) * np.sin(THETA)
@@ -101,7 +101,7 @@ class InteractiveGeodesicPlotter:
         theta = np.linspace(0, 2 * np.pi, 50)
 
         # Outer Event Horizon
-        rh_outer = 1 + np.sqrt(1 - a ** 2)
+        rh_outer = 1 + np.sqrt(1 - a**2)
 
         XH = rh_outer * np.sin(theta)
         YH = rh_outer * np.cos(theta)

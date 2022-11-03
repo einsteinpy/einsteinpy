@@ -1,163 +1,102 @@
-User guide
-##########
+Introduction
+============
 
-Defining the geometry: :py:class:`~einsteinpy.metric` objects
-*************************************************************
+This page gives a brief overview of some of the features of EinsteinPy. For more complete hands-on tutorials, please refer to the Jupyter notebooks in `Examples`_.
 
-EinsteinPy provides a way to define the background geometry, on which the code would deal with the relativistic dynamics. This geometry has a central operating quantity, known as the Metric Tensor, that encapsulates all the geometrical and topological information about the 4D spacetime.
+.. _Examples: https://docs.einsteinpy.org/en/latest/jupyter.html
 
-* EinsteinPy provides a :py:class:`~einsteinpy.metric.BaseMetric` class, that has various utility functions and a proper template, that can be used to define custom Metric classes. All pre-defined classes in :py:class:`~einsteinpy.metric` derive from this class.
-* The central quantity required to simulate trajectory of a particle in a gravitational field are the metric derivatives, that can be succinctly written using Christoffel Symbols.
-* EinsteinPy provides an easy to use interface to calculate these symbols.
-* BaseMetric also provides support for ``f_vec`` and ``perturbation``, where ``f_vec`` corresponds to the RHS of the geodesic equation and ``perturbation`` is a linear Kerr-Schild Perturbation, that can be defined on the underlying metric.
-* Note that, EinsteinPy does not perform physical checks on ``perturbation`` currently, and so, users should exercise caution while using it.
+:py:class:`~einsteinpy.metric` Module
+*************************************
 
-We provide an example below, showing how to calculate Time-like Geodesics in Schwarzschild spacetime.
+EinsteinPy provides a way to define the background geometry for relativistic dynamics. This geometry has a central operating quantity known as the Metric tensor, that encapsulates all the geometrical and topological information about the 4D spacetime.
 
-Schwarzschild Metric
-====================
+* EinsteinPy provides a :py:class:`~einsteinpy.metric.BaseMetric` class, that has various utility functions and a proper template, that can be used to define custom Metric classes. All predefined classes in :py:class:`~einsteinpy.metric` derive from this class.
+* The central quantities required to simulate the trajectory of a particle in a gravitational field are the metric derivatives, that can be succinctly written using Christoffel Symbols. EinsteinPy provides an easy-to-use interface to calculate these symbols for the predefined metrics. To perform calculations for general metrics, see the :py:class:`~einsteinpy.symbolic` module.
+* :py:class:`~einsteinpy.metric.BaseMetric` also provides support for ``f_vec`` and ``perturbation``, where ``f_vec`` corresponds to the RHS of the geodesic equation and ``perturbation`` is a linear Kerr-Schild Perturbation that can be defined on the underlying metric. Note that EinsteinPy does not perform physical checks on ``perturbation`` currently. Users should exercise caution while using it.
 
-EinsteinPy provides an intuitive interface for calculating time-like geodesics in Schwarzschild spacetime.
+----
 
-First of all, we import all the relevant modules and classes:
+:py:class:`~einsteinpy.geodesic` Module
+***************************************
+EinsteinPy provides an intuitive interface for calculating timelike and nulllike geodesics for vacuum solutions. Below, we calculate the orbit of a precessing particle in Schwarzschild spacetime.
+
+First, we import all the relevant modules and classes and define the initial conditions for our test particle, such as its initial 3-position in spherical coordinates and corresponding 3-momentum (or 3-velocity, given that we are working in geometric units with :math:`M = 1`).
 
     .. code-block:: python
 
         import numpy as np
-
-        from einsteinpy.coordinates.utils import four_position, stacked_vec
-        from einsteinpy.geodesic import Geodesic
-        from einsteinpy.metric import Schwarzschild
+        from einsteinpy.geodesic import Timelike
+        from einsteinpy.plotting.geodesic import StaticGeodesicPlotter
 
 
-Defining initial parameters and our Metric Object
--------------------------------------------------
+        position = [40., np.pi / 2, 0.]
+        momentum = [0., 0., 3.83405]
+        a = 0. # Spin = 0 for a Schwarzschild black hole
+        steps = 5500 # Number of steps to be taken by the solver
+        delta = 1 # Step size
 
-Now, we define the initial parameters, that specify the Schwarzschild metric and our test particle.
-
-    .. code-block:: python
-
-        M = 6e24  # Mass
-        t = 0.  # Coordinate Time (has no effect in this case, as Schwarzschild metric is static)
-        x_vec = np.array([130.0, np.pi / 2, -np.pi / 8])  # 3-Position of test particle
-        v_vec = np.array([0.0, 0.0, 1900.0])  # 3-Velocity of test particle
-
-        ms_cov = Schwarzschild(M=M) # Schwarzschild Metric Object
-        x_4vec = four_position(t, x_vec) # Getting Position 4-Vector
-        ms_cov_mat = ms_cov.metric_covariant(x_4vec) # Calculating Schwarzschild Metric at x_4vec
-        init_vec = stacked_vec(ms_cov_mat, t, x_vec, v_vec, time_like=True) # Contains 4-Pos and 4-Vel
-
-
-Calculating Trajectory/Time-like Geodesic
------------------------------------------
-After creating the metric object and the initial vector, we can use :py:class:`~einsteinpy.geodesic.Geodesic` to create a Geodesic object, that automatically calculates the trajectory. 
+After defining our initial conditions, we can use :py:class:`~einsteinpy.geodesic.Timelike` to create a Geodesic object, that automatically calculates the trajectory. 
 
     .. code-block:: python
 
-        # Calculating Geodesic
-        geod = Geodesic(metric=ms_cov, init_vec=init_vec, end_lambda=0.002, step_size=5e-8)
-        # Getting a descriptive summary on geod
+        geod = Timelike(
+            metric="Schwarzschild",
+            metric_params=(a,),
+            position=position,
+            momentum=momentum,
+            steps=steps,
+            delta=delta,
+            suppress_warnings=True,
+            return_cartesian=True
+        )
         print(geod)
 
     .. code-block:: python
 
-        Geodesic Object:
+        Geodesic Object:(
+            Type : (Time-like),
+            Metric : (Schwarzschild),
+            Metric Parameters : ((0.0,)),
+            Initial 4-Position : ([ 0.         40.          1.57079633  0.        ]),
+            Initial 4-Momentum : ([-0.97914661  0.          0.          3.83405   ]),
+            Trajectory = (
+                (array([  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,
+                        13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,
+                        26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,
+                        ...
+                        468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480,
+                        481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493,
+                        494, 495, 496, 497, 498, 499]),
+                array([[ 1.03068069e+00,  3.99997742e+01,  9.58510673e-02, ...,
+                        -3.87363444e-04,  5.62571365e-19,  3.83405000e+00],
+                        [ 2.06136190e+00,  3.99987445e+01,  1.91699898e-01, ...,
+                        -9.48048366e-04,  1.12515772e-18,  3.83404999e+00],
+                        ...,
+                        [ 5.71172446e+02,  1.55983863e+01,  1.49940531e+01, ...,
+                        1.65861080e-01,  3.12992232e-15,  3.83405010e+00],
+                        [ 5.72250940e+02,  1.55832138e+01,  1.52252617e+01, ...,
+                        1.64780132e-01,  3.13183198e-15,  3.83404993e+00]]))
+            ),
+            Output Position Coordinate System = (Cartesian)
+        ))
 
-        Metric = ((
-        Name: (Schwarzschild Metric),            
-        Coordinates: (S),            
-        Mass: (6e+24),            
-        Spin parameter: (0),            
-        Charge: (0),            
-        Schwarzschild Radius: (0.008911392322942397)
-        )),            
-
-        Initial Vector = ([ 0.00000000e+00  1.30000000e+02  1.57079633e+00 -3.92699082e-01
-        1.00003462e+00  0.00000000e+00  0.00000000e+00  1.90000000e+03]),            
-
-        Trajectory = ([[ 0.00000000e+00  1.20104339e+02 -4.97488462e+01 ...  9.45228078e+04
-        2.28198245e+05  0.00000000e+00]
-        [ 4.00013846e-08  1.20108103e+02 -4.97397110e+01 ...  9.36471118e+04
-        2.28560931e+05 -5.80379473e-14]
-        [ 4.40015231e-07  1.20143810e+02 -4.96475618e+01 ...  8.48885265e+04
-        2.32184177e+05 -6.38424865e-13]
-        ...
-        [ 1.99928576e-03  1.29695466e+02 -6.52793459e-01 ...  1.20900076e+05
-        2.46971585e+05 -1.86135457e-10]
-        [ 1.99968577e-03  1.29741922e+02 -5.53995726e-01 ...  1.11380963e+05
-        2.47015864e+05 -1.74024168e-10]
-        [ 2.00008578e-03  1.29784572e+02 -4.55181739e-01 ...  1.01868292e+05
-        2.47052855e+05 -1.61922169e-10]])
-
-
-Bodies Module: :py:class:`~einsteinpy.bodies`
-*********************************************
-
-EinsteinPy has a module to define the attractor and revolving bodies, using which plotting and geodesic calculation 
-becomes much easier.
-
-Importing all the relevant modules and classes :
+We can also obtain a static plot of the geodesic using :py:class:`~einsteinpy.plotting.geodesic.StaticGeodesicPlotter`.
 
     .. code-block:: python
 
-        import numpy as np
-        from astropy import units as u
-        from einsteinpy.coordinates import BoyerLindquistDifferential
-        from einsteinpy.metric import Kerr
-        from einsteinpy.bodies import Body
-        from einsteinpy.geodesic import Geodesic
+        # Use InteractiveGeodesicPlotter() to get interactive plots
+        sgpl = StaticGeodesicPlotter()
+        sgpl.plot2D(geod)
+        sgpl.show()
 
+..  image:: ./_static/precess.png
+    :align: center
 
-Defining various astronomical bodies :
+----
 
-    .. code-block:: python
-
-        spin_factor = 0.3 * u.m
-        Attractor = Body(name="BH", mass = 1.989e30 * u.kg, a = spin_factor)
-        BL_obj = BoyerLindquistDifferential(50e5 * u.km, np.pi / 2 * u.rad, np.pi * u.rad,
-                                            0 * u.km / u.s, 0 * u.rad / u.s, 0 * u.rad / u.s,
-                                            spin_factor)
-        Particle = Body(differential = BL_obj, parent = Attractor)
-        geodesic = Geodesic(body = Particle, end_lambda = ((1 * u.year).to(u.s)).value / 930,
-                            step_size = ((0.02 * u.min).to(u.s)).value,
-                            metric=Kerr)
-        geodesic.trajectory  # get the values of the trajectory
-
-
-Plotting the trajectory :
-
-    .. code-block:: python
-
-        from einsteinpy.plotting import GeodesicPlotter
-        obj = GeodesicPlotter()
-        obj.plot(geodesic)
-        obj.show()
-
-
-Utilities: :py:class:`~einsteinpy.utils`
-****************************************
-
-EinsteinPy provides a great set of utility functions which are frequently used in general and numerical relativity.
-
-* Conversion of Coordinates (both position & velocity)
-
- * Cartesian/Spherical
- * Cartesian/Boyer-Lindquist
-
-* Calculation of Schwarzschild Geometry related quantities
-
- * Schwarzschild Radius
- * Rate of change of coordinate time w.r.t. proper time
-
-Coordinate Conversion
-=====================
-
-In a short example, we would see coordinate conversion between Cartesian and Boyer-Lindquist Coordinates.
-
-Using the functions:
-
-* :py:class:`~einsteinpy.coordinates.BoyerLindquistDifferential.to_cartesian`
-* :py:class:`~einsteinpy.coordinates.CartesianDifferential.to_bl`
+:py:class:`~einsteinpy.coordinates` Module
+******************************************
+EinsteinPy currently supports 3 coordinate systems, namely, Cartesian, Spherical and Boyer-Lindquist. The :py:class:`~einsteinpy.coordinates` module provides a way to convert between these coordinate systems. Below, we show how to convert 4-positions and velocities (defined alongside positions) between Cartesian and Boyer-Lindquist coordinates.
 
     .. code-block:: python
 
@@ -165,71 +104,98 @@ Using the functions:
         from astropy import units as u
         from einsteinpy.coordinates import BoyerLindquistDifferential, CartesianDifferential, Cartesian, BoyerLindquist
 
-        a = 0.5 * u.km
+        M = 1e20 * u.kg
+        a = 0.5 * u.one
 
-        pos_vec = Cartesian(.265003774 * u.km, -153.000000e-03 * u.km,  0 * u.km)
+        # 4-Position
+        t = 1. * u.s
+        x = 0.2 * u.km
+        y = 0.15 * u.km
+        z = 0. * u.km
 
-        bl_pos = pos_vec.to_bl(a)
-        print(bl_pos)
+        _4pos_cart = Cartesian(t, x, y, z)
 
-        cartsn_pos = bl_pos.to_cartesian(a)
+        # The keyword arguments, M & a are required for conversion to & from Boyer-Lindquist coordinates
+        _4pos_bl = _4pos_cart.to_bl(M=M, a=a)
+        print(_4pos_bl)
+
+        cartsn_pos = _4pos_bl.to_cartesian(M=M, a=a)
         print(cartsn_pos)
 
-        pos_vel_coord = CartesianDifferential(.265003774 * u.km, -153.000000e-03 * u.km,  0 * u.km,
-                                  145.45557 * u.km/u.s, 251.93643748389 * u.km/u.s, 0 * u.km/u.s)
+        # With position & velocity
+        v_x = 150 * u.km / u.s
+        v_y = 250 * u.km / u.s
+        v_z = 0. * u.km / u.s
 
-        bl_coord = pos_vel_coord.bl_differential(a)
-        bl_coord = bl_coord.si_values()
-        bl_vel = bl_coord[3:]
-        print(bl_vel)
+        pos_vel_cart = CartesianDifferential(t, x, y, z, v_x, v_y, v_z)
 
-        cartsn_coord = bl_coord.cartesian_differential(a)
-        cartsn_coord = cartsn_coord.si_values()
-        cartsn_vel = cartsn_coord[3:]
-        print(cartsn_vel)
+        # Converting to Boyer-Lindquist coordinates
+        pos_vel_bl = pos_vel_cart.bl_differential(M=M, a=a)
+        print(pos_vel_bl)
 
-
-    .. code-block:: python
-
-        [ 200.  -100.    20.5]
-        [224.54398697   1.47937288  -0.46364761]
-
-Symbolic Calculations
-=====================
-EinsteinPy also supports symbolic calculations in
-:py:class:`~einsteinpy.symbolic`
+        # Converting back to Cartesian coordinates
+        pos_vel_cart = pos_vel_bl.cartesian_differential(M=M, a=a)
+        print(pos_vel_cart)
 
     .. code-block:: python
 
-        import sympy
-        from einsteinpy.symbolic import SchwarzschildMetric, ChristoffelSymbols
+        Boyer-Lindquist Coordinates: 
+            t = (1.0 s), r = (250.0 m), theta = (1.5707963267948966 rad), phi = (0.6435011087932844 rad)
+        Cartesian Coordinates: 
+            t = (1.0 s), x = (200.0 m), y = (150.0 m), z = (1.5308084989341916e-14 m)
+        Boyer-Lindquist Coordinates: 
+            t = (1.0 s), r = (250.0 m), theta = (1.5707963267948966 rad), phi = (0.6435011087932844 rad)
+            v_t: None, v_r: 270000.0 m / s, v_th: -0.0 rad / s, v_p: 440.0 rad / s
+        Cartesian Coordinates: 
+            t = (1.0 s), x = (200.0 m), y = (150.0 m), z = (1.5308084989341916e-14 m)
+            v_t: None, v_x: 150000.0 m / s, v_y: 250000.0 m / s, v_z: 1.6532731788489268e-11 m / s
 
-        m = SchwarzschildMetric()
+You can also pass a ``einsteinpy.metric.*`` object to the differential object to set ``v_t``. For usage without units, see the functions in ``einsteinpy.coordinates.util``.
+
+----
+
+:py:class:`~einsteinpy.symbolic` Module
+***************************************
+EinsteinPy also supports a robust symbolic module that allows users to access several predefined metrics, or to define custom metrics and perform symbolic calculations. A short example with a predefined metric is shown below.
+
+    .. code-block:: python
+
+        from sympy import simplify
+        from einsteinpy.symbolic import Schwarzschild, ChristoffelSymbols, EinsteinTensor
+
+        m = Schwarzschild()
         ch = ChristoffelSymbols.from_metric(m)
-        print(ch[1,2,:])
-
-    .. code-block:: python
-
-        [0, 0, -r*(-a/r + 1), 0]
-
-
-    .. code-block:: python
-
-        import sympy
-        from einsteinpy.symbolic import SchwarzschildMetric, EinsteinTensor
-
-        m = SchwarzschildMetric()
         G1 = EinsteinTensor.from_metric(m)
+        print(f"ch(1, 2, k) = {simplify(ch[1, 2, :])}") # k is an index in [0, 1, 2, 3]
         print(G1.arr)
 
     .. code-block:: python
 
-        [[a*c**2*(-a + r)/r**4 + a*c**2*(a - r)/r**4, 0, 0, 0], [0, a/(r**2*(a - r)) + a/(r**2*(-a + r)), 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        ch(1, 2, k) = [0, 0, -r + r_s, 0]
+        [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
+----
+
+Utility functions
+*****************
+EinsteinPy provides a great set of utility functions in many of the modules which are frequently used in general and numerical relativity.
+
+* Utils in :py:class:`~einsteinpy.coordinates`, that allow:
+    * Unitless conversion between coordinate systems for both position & velocity in the following systems:
+        * Cartesian
+        * Spherical
+        * Boyer-Lindquist
+    * Calculation of Lorentz factor
+    * Calculation of timelike component of 4-velocity in any pseudo-Riemannian metric
+* Utils in :py:class:`~einsteinpy.geodesic` that can be used to calculate quantities related to the vacuum solutions, such as:
+    * :math:`\rho^2 = r^2 + a^2\cos^2(\theta)` or :math:`\Delta = r^2 - r_s r + a^2 + r_Q^2`
+    * Calculation of particle 4-momentum
+
+----
 
 Future Plans
-============
-
+************
 * Support for null-geodesics in different geometries
-* Ultimate goal is providing numerical solutions for Einstein's equations for arbitrarily complex matter distribution.
+    * Partial support is available for vacuum solutions since version 0.4.0.
+* Ultimate goal is to provide numerical solutions for Einstein's equations for arbitrarily complex matter distributions.
 * Relativistic hydrodynamics

@@ -7,11 +7,11 @@ from einsteinpy.symbolic.metric import MetricTensor
 def BesselGravitationalWave(C=symbols("C")):
     """
     Exact gravitational wave solution without diffraction.
-    Class. Quantum Grav., 16:L75–78, 1999.
+    Class. Quantum Grav., 16:L75-78, 1999.
     D. Kramer.
 
     An exact solution describing an axisymmetric gravitational wave propagating in the
-    z-direction in closed form. This solution to Einstein’s vacuum field equations has the
+    z-direction in closed form. This solution to Einstein's vacuum field equations has the
     remarkable property that the curvature invariants decrease monotonically with increasing radial
     distance from the axis and vanish at infinity. The solution is regular at the symmetry axis.
 
@@ -27,7 +27,7 @@ def BesselGravitationalWave(C=symbols("C")):
     U = C * besselj(rho, 0) * cos(t)
     K = (
         (1 / 2)
-        * (C ** 2)
+        * (C**2)
         * rho
         * (
             (rho * ((besselj(rho, 0) ** 2) + (besselj(rho, 1) ** 2)))
@@ -39,7 +39,7 @@ def BesselGravitationalWave(C=symbols("C")):
     metric = diag(
         -1 * exp(-2 * U) * exp(2 * K),
         exp(-2 * U) * exp(2 * K),
-        exp(-2 * U) * (rho ** 2),
+        exp(-2 * U) * (rho**2),
         exp(2 * U),
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="BesselGravitationalWaveMetric")

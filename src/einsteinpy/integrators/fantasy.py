@@ -17,7 +17,7 @@ class GeodesicIntegrator:
     .. [1] Christian, Pierre and Chan, Chi-Kwan;
         "FANTASY: User-Friendly Symplectic Geodesic Integrator
         for Arbitrary Metrics with Automatic Differentiation";
-        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
+        `2021 ApJ 909 67 <https://doi.org/10.3847/1538-4357/abdc28>`__
 
     """
 
@@ -150,7 +150,7 @@ class GeodesicIntegrator:
         .. [1] Christian, Pierre and Chan, Chi-Kwan;
             "FANTASY : User-Friendly Symplectic Geodesic Integrator
             for Arbitrary Metrics with Automatic Differentiation";
-            `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
+            `2021 ApJ 909 67 <https://doi.org/10.3847/1538-4357/abdc28>`__
 
         """
         dl, omg = delta, self.omega

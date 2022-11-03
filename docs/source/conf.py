@@ -15,7 +15,7 @@ autoclass_content = "both"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "astropy": ("http://docs.astropy.org/en/stable/", None),
-    "numpy": ("https://docs.scipy.org/doc/numpy/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "matplotlib": ("https://matplotlib.org", None),
     "sympy": ("https://docs.sympy.org/latest", None),
@@ -43,7 +43,7 @@ html_theme_options = {
     "github_banner": True,
     "donate_url": "https://opencollective.com/einsteinpy",
     "github_button": True,
-    "extra_nav_links": {"Blog": "https://docs.einsteinpy.org/"},
+    "extra_nav_links": {"Blog": "https://blog.einsteinpy.org/"},
 }
 
 add_function_parentheses = True

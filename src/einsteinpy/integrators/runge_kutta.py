@@ -22,7 +22,7 @@ class RK4naive:
         y0 : ~numpy.array or float
             Initial y
         t_bound : float
-            Boundary time - the integration won’t continue beyond it. It also determines the direction of the integration.
+            Boundary time - the integration won't continue beyond it. It also determines the direction of the integration.
         stepsize : float
             Size of each increment in t
 
@@ -73,7 +73,7 @@ class RK45(integrate.RK45):
         y0 : ~numpy.array or float
             Initial y
         t_bound : float
-            Boundary time - the integration won’t continue beyond it. It also determines the direction of the integration.
+            Boundary time - the integration won't continue beyond it. It also determines the direction of the integration.
         stepsize : float
             Size of each increment in t
         rtol : float

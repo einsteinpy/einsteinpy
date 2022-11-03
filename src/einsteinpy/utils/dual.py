@@ -15,7 +15,7 @@ class DualNumber:
     .. [1] Christian, Pierre and Chan, Chi-Kwan;
         "FANTASY: User-Friendly Symplectic Geodesic Integrator
         for Arbitrary Metrics with Automatic Differentiation";
-        `arXiv:2010.02237 <https://arxiv.org/abs/2010.02237>`__
+        `2021 ApJ 909 67 <https://doi.org/10.3847/1538-4357/abdc28>`__
 
     """
 
@@ -77,7 +77,7 @@ class DualNumber:
 
             return DualNumber(
                 self.val / other.val,
-                (self.deriv * other.val - self.val * other.deriv) / (other.val ** 2),
+                (self.deriv * other.val - self.val * other.deriv) / (other.val**2),
             )
 
         return DualNumber(self.val / other, self.deriv / other)
@@ -89,7 +89,7 @@ class DualNumber:
 
             return DualNumber(
                 other.val / self.val,
-                (other.deriv * self.val - other.val * self.deriv) / (self.val ** 2),
+                (other.deriv * self.val - other.val * self.deriv) / (self.val**2),
             )
 
         return DualNumber(other, 0).__truediv__(self)
@@ -105,7 +105,7 @@ class DualNumber:
 
     def __pow__(self, power):
         return DualNumber(
-            self.val ** power, self.deriv * power * self.val ** (power - 1)
+            self.val**power, self.deriv * power * self.val ** (power - 1)
         )
 
     def sin(self):

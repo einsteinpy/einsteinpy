@@ -49,7 +49,7 @@ def _P(g, g_prms, q, p, time_like=True):
         + int(time_like)
     )
 
-    P[0] = (-B + np.sqrt(B ** 2 - 4 * A * C)) / (2 * A)
+    P[0] = (-B + np.sqrt(B**2 - 4 * A * C)) / (2 * A)
 
     return P
 
@@ -75,7 +75,7 @@ def sigma(r, theta, a):
         The value of :math:`r^2 + a^2 * \\cos^2(\\theta)`
 
     """
-    sigma = (r ** 2) + ((a * np.cos(theta)) ** 2)
+    sigma = (r**2) + ((a * np.cos(theta)) ** 2)
 
     return sigma
 
@@ -102,7 +102,7 @@ def delta(r, a, Q=0):
         The value of :math:`r^2 - r_s r + a^2 + r_Q^2`
 
     """
-    delta = (r ** 2) - (2 * r) + (a ** 2) + Q ** 2
+    delta = (r**2) - (2 * r) + (a**2) + Q**2
 
     return delta
 
@@ -135,7 +135,7 @@ def _sch(x_vec, *params):
     tmp = 1.0 - (2 / r)
     g[0, 0] = -1 / tmp
     g[1, 1] = tmp
-    g[2, 2] = 1 / (r ** 2)
+    g[2, 2] = 1 / (r**2)
     g[3, 3] = 1 / ((r * np.sin(th)) ** 2)
 
     return g
@@ -170,7 +170,7 @@ def _kerr(x_vec, *params):
 
     g = np.zeros(shape=(4, 4), dtype=DualNumber)
 
-    g[0, 0] = -(r ** 2 + a ** 2 + (2 * r * (a * np.sin(th)) ** 2) / sg) / dl
+    g[0, 0] = -(r**2 + a**2 + (2 * r * (a * np.sin(th)) ** 2) / sg) / dl
     g[1, 1] = dl / sg
     g[2, 2] = 1 / sg
     g[3, 3] = (1 / (dl * np.sin(th) ** 2)) * (1 - 2 * r / sg)
@@ -205,11 +205,11 @@ def _kerrnewman(x_vec, *params):
 
     r, th = x_vec[1], x_vec[2]
     sg, dl = sigma(r, th, a), delta(r, a, Q)
-    a2 = a ** 2
-    r2 = r ** 2
+    a2 = a**2
+    r2 = r**2
     sint2 = np.sin(th) ** 2
     csct2 = 1 / sint2
-    csct4 = 1 / sint2 ** 2
+    csct4 = 1 / sint2**2
 
     g = np.zeros(shape=(4, 4), dtype=DualNumber)
 

@@ -9,7 +9,7 @@ def JanisNewmanWinicour(
 ):
     """
     Reality of the Schwarzschild singularity.
-    Phys. Rev. Lett., 20:878–880, 1968.
+    Phys. Rev. Lett., 20:878-880, 1968.
     A. I. Janis, E. T. Newman, and J. Winicour.
 
     Parameters
@@ -23,14 +23,14 @@ def JanisNewmanWinicour(
     coords = symbols("t r theta phi")
     t, r, th, ph = coords
     # Helper functions
-    r_s = (2 * G * M) / (c ** 2)
+    r_s = (2 * G * M) / (c**2)
     alpha = 1 - (r_s / (gam * r))
 
     # define the metric
     metric = diag(
-        -1 * (alpha ** gam),
-        (alpha ** -gam) / (c ** 2),
-        (r ** 2) * (alpha ** (-gam + 1)),
-        (r ** 2) * (alpha ** (-gam + 1)) * (sin(th) ** 2),
+        -1 * (alpha**gam),
+        (alpha**-gam) / (c**2),
+        (r**2) * (alpha ** (-gam + 1)),
+        (r**2) * (alpha ** (-gam + 1)) * (sin(th) ** 2),
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="JanisNewmanWinicourMetric")

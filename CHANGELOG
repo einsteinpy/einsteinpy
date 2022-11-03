@@ -2,6 +2,25 @@
 File for tracking changes in EinsteinPy from v0.3.0. This file should be dumped later into the main changelog.
 --------------------------------------------------------------------------------------------------------------
 
+0.6.0
+-----
+CONTRIBUTORS
+CHANGES
+
+0.5.0
+-----
+CONTRIBUTORS
+- JeS24
+- aweinr4
+
+CHANGES
+- [#607]: Fixed #586 #598 #599 #600 #601, Fixed a bug in tensor_lambdify
+- [#609]: Fixed #608, Fixed notebook preview errors in documentation
+- [#615]: Partially fixed #613, Updated README and CONTRIBUTING
+- [#617]: Fixed #616, Dropped support for Python 3.7, Added support for Python 3.10
+- [#619]: General codebase maintenance
+- [#620]: Fixed #540, #541, Partially addressed #614, Updated documentation
+- [#575]: Added a general from_ method for symbolic tensors, added new from methods to weyl,einstein and schouten tensors
 
 0.4.0
 -----
@@ -46,14 +65,3 @@ CHANGES
 - [#548]: Minor edits to documentation for geodesic and plotting.geodesic modules
 - [#571]: Fixed #570, Updated Master to Main
 - [#573]: Fixed bug in Riemann Tensor calculation from Christoffels
-- [#575]: Added a general from_ method for symbolic tensors, added new from methods to weyl,einstein and schouten tensors
-
-0.5.0
------
-CONTRIBUTORS
-CHANGES
-
-0.6.0
------
-CONTRIBUTORS
-CHANGES

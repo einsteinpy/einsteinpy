@@ -415,10 +415,12 @@ class BaseRelativityTensor(Tensor):
         """
 
         if len(args) == 0:
-            numeric_arr = sympy.lambdify([*self.syms, *self.variables], self.arr, np)
+            numeric_arr = sympy.lambdify(
+                [*self.syms, *self.variables], self.arr, modules="numpy"
+            )
             arg_list = (*self.syms, *self.variables)
         else:
-            numeric_arr = sympy.lambdify(args, self.arr, np)
+            numeric_arr = sympy.lambdify(args, self.arr, modules="numpy")
             arg_list = tuple(args)
         return arg_list, numeric_arr
 
