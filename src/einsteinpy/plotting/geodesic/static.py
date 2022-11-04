@@ -312,8 +312,7 @@ class StaticGeodesicPlotter:
         self.ax.plot(lambdas, X2, color=colors[1], label=f"X2 ({coords})")
         self.ax.plot(lambdas, X3, color=colors[2], label=f"X3 ({coords})")
 
-        if title:
-            self.ax.set_title(title)
+        self.ax.set_title(title)
 
     def animate(
         self, geodesic, interval=10, color="#{:06x}".format(random.randint(0, 0xFFFFFF))
