@@ -79,7 +79,7 @@ Examples
 ========
 
 .. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
-   :target: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
+   :target: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=docs/source/examples/index.ipynb
 
 |mybinder|
 
@@ -88,7 +88,7 @@ in the `examples`_ directory. You can launch a Jupyter notebook instance in the 
 using `binder`_ to run and edit these notebooks without installing anything. Try it out!
 
 .. _examples: https://github.com/einsteinpy/einsteinpy/tree/main/docs/source/examples
-.. _binder: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=index.ipynb
+.. _binder: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=docs/source/examples/index.ipynb
 
 Requirements
 ============
@@ -132,7 +132,7 @@ For Debian/Ubuntu/Mint users, the package is installable via `apt <https://packa
   $ sudo apt install python3-einsteinpy
 
 If you prefer to install from source to stay on the latest but likely unstable version, 
-you can do so using the method described `here <https://docs.einsteinpy.org/en/latest/getting_started.html#installation>`_.
+you can do so using the method described `here <https://docs.einsteinpy.org/en/latest/installation.html#latest-version>`_.
 
 
 Problems
@@ -157,11 +157,10 @@ Support
 
 |gitter| |riotchat| |mailing|
 
-Please join our `[matrix]`_ channel or `gitter`_ chat room for general discussions and further queries.
+Please join our `[matrix]`_ channel or `Gitter`_ chat room for general discussions and further queries.
 
 .. _`[matrix]`: https://matrix.to/#/#einsteinpy:matrix.org
-
-.. _`gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
+.. _`Gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
 
 Release announcements take place on our `mailing list`_. Feel free to join!
 
