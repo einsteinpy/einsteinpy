@@ -162,3 +162,73 @@ def test_animate_creates_ani(dummy_geod):
     sgpl.animate(geod, interval=10)
 
     assert sgpl.ani
+
+
+@pytest.fixture
+def expected_static_geod_plot_title(dummy_geod, request):
+    geod = dummy_geod
+    
+    sgpl = StaticGeodesicPlotter()
+    sgpl.plot(geod, title=request.node.funcargs['input_static_geod_plot_title'])
+    
+    return sgpl.ax.get_title()
+
+@pytest.mark.parametrize('input_static_geod_plot_title', ["title", "", "title\n"])
+def test_static_geod_plot_title(input_static_geod_plot_title, expected_static_geod_plot_title):
+    assert input_static_geod_plot_title == expected_static_geod_plot_title
+
+
+@pytest.fixture
+def expected_static_geod_plot2D_title(dummy_geod, request):
+    geod = dummy_geod
+    
+    sgpl = StaticGeodesicPlotter()
+    sgpl.plot2D(geod, title=request.node.funcargs['input_static_geod_plot2D_title'])
+    
+    return sgpl.ax.get_title()
+
+@pytest.mark.parametrize('input_static_geod_plot2D_title', ["title", ""])
+def test_static_geod_plot2D_title(input_static_geod_plot2D_title, expected_static_geod_plot2D_title):
+    assert input_static_geod_plot2D_title == expected_static_geod_plot2D_title
+    
+
+@pytest.fixture
+def expected_static_geod_plot_aspect(dummy_geod, request):
+    geod = dummy_geod
+    
+    sgpl = StaticGeodesicPlotter()
+    sgpl.plot(geod, aspect=request.node.funcargs['input_static_geod_plot_aspect'])
+    
+    return sgpl.ax.get_aspect()
+    
+@pytest.mark.parametrize('input_static_geod_plot_aspect', ["auto", "equal", "equalxy", "equalyz", "equalxz"])
+def test_static_geod_plot_aspect(input_static_geod_plot_aspect, expected_static_geod_plot_aspect):
+    assert input_static_geod_plot_aspect == expected_static_geod_plot_aspect
+    
+
+@pytest.fixture
+def expected_static_geod_parametric_plot_title(dummy_geod, request):
+    geod = dummy_geod
+    
+    sgpl = StaticGeodesicPlotter()
+    sgpl.parametric_plot(geod, title=request.node.funcargs['input_static_geod_parametric_plot_title'])
+    
+    return sgpl.ax.get_title()
+
+@pytest.mark.parametrize('input_static_geod_parametric_plot_title', ["title", ""])
+def expected_static_geod_parametric_plot_title(input_static_geod_parametric_plot_title, expected_static_geod_parametric_plot_title):
+    assert input_static_geod_parametric_plot_title == expected_static_geod_parametric_plot_title
+
+    
+def test_static_geod_plot_raises_error(dummy_geod):
+    geod = dummy_geod
+    
+    sgpl = StaticGeodesicPlotter()
+    
+    try:
+        sgpl.plot(geod, aspect="nonexistent")
+
+        assert False
+
+    except ValueError:
+        assert True

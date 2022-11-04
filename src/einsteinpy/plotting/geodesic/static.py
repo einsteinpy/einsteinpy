@@ -158,6 +158,8 @@ class StaticGeodesicPlotter:
         geodesic,
         figsize=(6, 6),
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
+        title: str = "",
+        aspect: str = "auto",
     ):
         """
         Plots the Geodesic
@@ -173,8 +175,25 @@ class StaticGeodesicPlotter:
             Hexcode (String) for the color of the
             dashed lines, that represent the Geodesic
             Picks a random color by default
+        title : str, optional
+            Plot title
+        aspect : {"auto", "equal", "equalxy", "equalyz", "equalxz"}
+            Aspect ratio for plot axes
+            Defaults to "auto"
+
+        Raises
+        ------
+        ValueError
+            If ``aspect`` does not take values from ``{"auto", "equal", "equalxy", "equalyz", "equalxz"}``
 
         """
+        aspects = ["auto", "equal", "equalxy", "equalyz", "equalxz"]
+
+        if aspect not in aspects:
+            raise ValueError(
+                f"Invalid aspect type. Expected one of {aspects}. Received '{aspect}'."
+            )
+
         a = geodesic.metric_params[0]
         self._draw_bh(a, figsize)
 
@@ -184,6 +203,10 @@ class StaticGeodesicPlotter:
         z = traj[:, 3]
 
         self.ax.plot(x, y, z, "--", color=color, label=geodesic.kind + " Geodesic")
+        self.ax.set_aspect(aspect)
+
+        if title:
+            self.ax.set_title(title)
 
     def plot2D(
         self,
@@ -191,6 +214,7 @@ class StaticGeodesicPlotter:
         coordinates=(1, 2),
         figsize=(6, 6),
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
+        title: str = "",
     ):
         """
         Plots the Geodesic in 2D
@@ -210,6 +234,8 @@ class StaticGeodesicPlotter:
             Hexcode (String) for the color of the
             dashed lines, that represent the Geodesic
             Picks a random color by default
+        title: str, optional
+            Plot title
 
         Raises
         ------
@@ -240,8 +266,15 @@ class StaticGeodesicPlotter:
             traj[:, A], traj[:, B], "--", color=color, label=geodesic.kind + " Geodesic"
         )
 
+        if title:
+            self.ax.set_title(title)
+
     def parametric_plot(
-        self, geodesic, figsize=(8, 6), colors=("#00FFFF", "#FF00FF", "#FFFF00")
+        self,
+        geodesic,
+        figsize=(8, 6),
+        colors=("#00FFFF", "#FF00FF", "#FFFF00"),
+        title: str = "",
     ):
         """
         Plots the coordinates of the Geodesic, against Affine Parameter
@@ -257,6 +290,8 @@ class StaticGeodesicPlotter:
             3-Tuple, containing hexcodes (Strings) for the color
             of the lines, for each of the 3 coordinates
             Defaults to ``("#00FFFF", "#FF00FF", "#00FFFF")``
+        title : str, optional
+            Plot title
 
         """
         self.fig, self.ax = plt.subplots(figsize=figsize)
@@ -276,6 +311,8 @@ class StaticGeodesicPlotter:
         self.ax.plot(lambdas, X1, color=colors[0], label=f"X1 ({coords})")
         self.ax.plot(lambdas, X2, color=colors[1], label=f"X2 ({coords})")
         self.ax.plot(lambdas, X3, color=colors[2], label=f"X3 ({coords})")
+
+        self.ax.set_title(title)
 
     def animate(
         self, geodesic, interval=10, color="#{:06x}".format(random.randint(0, 0xFFFFFF))

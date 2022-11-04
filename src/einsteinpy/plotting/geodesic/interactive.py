@@ -137,7 +137,14 @@ class InteractiveGeodesicPlotter:
                 )
             )
 
-    def plot(self, geodesic, color="#{:06x}".format(random.randint(0, 0xFFFFFF))):
+    def plot(
+        self,
+        geodesic,
+        color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
+        title: str = "Geodesic Plot",
+        aspect: str = "auto",
+        aspect_ratio: dict = dict(x=1, y=1, z=1),
+    ):
         """
         Plots the Geodesic
 
@@ -149,8 +156,28 @@ class InteractiveGeodesicPlotter:
             Hexcode (String) for the color of the
             dashed lines, that represent the Geodesic
             Picks a random color by default
+        title : str, optional
+            Plot title
+        aspect : {"auto", "data", "manual", "cube"}
+            Aspect ratio for plot axes
+            Defaults to "auto"
+        aspect_ratio : dict, optional
+            Aspect ratio to define if aspect type is "manual"
+            Defaults to ``dict(x=1, y=1, z=1)``
+
+        Raises
+        ------
+        ValueError
+            If ``aspect`` does not take values from ``{"auto", "data", "manual", "cube"}``
 
         """
+        aspects = ["auto", "data", "manual", "cube"]
+
+        if aspect not in aspects:
+            raise ValueError(
+                f"Invalid aspect type. Expected one of {aspects}. Received '{aspect}'."
+            )
+
         traj = geodesic.trajectory[1]
         X = traj[:, 1]
         Y = traj[:, 2]
@@ -172,15 +199,18 @@ class InteractiveGeodesicPlotter:
             )
         )
 
-        _title_3D = dict(
-            text="Geodesic Plot", y=0.9, x=0.46, xanchor="center", yanchor="top"
-        )
+        _title_3D = dict(text=title, y=0.9, x=0.46, xanchor="center", yanchor="top")
 
         _scene_3D = dict(
             xaxis_title="X (GM/c^2)", yaxis_title="Y (GM/c^2)", zaxis_title="Z (GM/c^2)"
         )
 
-        self.fig.update_layout(title=_title_3D, scene=_scene_3D)
+        self.fig.update_layout(
+            title=_title_3D,
+            scene=_scene_3D,
+            scene_aspectmode=aspect,
+            scene_aspectratio=aspect_ratio,
+        )
 
     def plot2D(
         self,
@@ -188,6 +218,7 @@ class InteractiveGeodesicPlotter:
         coordinates=(1, 2),
         figsize=(6, 6),
         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
+        title: str = "",
     ):
         """
         Plots the Geodesic in 2D
@@ -207,6 +238,8 @@ class InteractiveGeodesicPlotter:
             Hexcode (String) for the color of the
             dashed lines, that represent the Geodesic
             Picks a random color by default
+        title : str, optional
+            Plot title
 
         Raises
         ------
@@ -244,7 +277,21 @@ class InteractiveGeodesicPlotter:
             yaxis_title=f"X{coordinates[1]} (GM/c^2)",
         )
 
-    def parametric_plot(self, geodesic, colors=("#00FFFF", "#FF00FF", "#FFFF00")):
+        if title:
+            self.fig.layout.title = {
+                "text": title,
+                "x": 0.46,
+                "xanchor": "center",
+                "y": 0.9,
+                "yanchor": "top",
+            }
+
+    def parametric_plot(
+        self,
+        geodesic,
+        colors=("#00FFFF", "#FF00FF", "#FFFF00"),
+        title: str = "Parametric Plot",
+    ):
         """
         Plots the coordinates of the Geodesic, against Affine Parameter
 
@@ -256,6 +303,8 @@ class InteractiveGeodesicPlotter:
             3-Tuple, containing hexcodes (Strings) for the color
             of the lines, for each of the 3 coordinates
             Defaults to ``("#00FFFF", "#FF00FF", "#FFFF00")``
+        title : str, optional
+            Plot title
 
         """
         coords = geodesic.coords
@@ -293,9 +342,7 @@ class InteractiveGeodesicPlotter:
             )
         )
 
-        _title_2D = dict(
-            text="Parametric Plot", y=0.9, x=0.46, xanchor="center", yanchor="top"
-        )
+        _title_2D = dict(text=title, y=0.9, x=0.46, xanchor="center", yanchor="top")
 
         self.fig.update_layout(
             title=_title_2D,
