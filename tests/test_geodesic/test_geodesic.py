@@ -5,6 +5,7 @@ import pytest
 from numpy.testing import assert_allclose
 
 from einsteinpy.geodesic import Geodesic, Nulllike, Timelike
+from einsteinpy.geodesic.utils import _kerr
 
 
 @pytest.fixture()
@@ -169,3 +170,27 @@ def test_kerr0_eq_kn00():
 
     assert_allclose(k.trajectory[0], kn.trajectory[0], atol=1e-6, rtol=1e-6)
     assert_allclose(k.trajectory[1], kn.trajectory[1], atol=1e-6, rtol=1e-6)
+
+
+def test_custom_callable_metric():
+    metric_params = (0.,)
+    q0 = [4., np.pi / 2, 0.]
+    p0 = [0., 0., 0.]
+
+    try:
+        c = Timelike(
+            metric=_kerr,
+            metric_params=metric_params,
+            position=q0,
+            momentum=p0,
+            steps=50,
+            delta=0.5,
+            return_cartesian=True,
+            suppress_warnings=True,
+        )
+        assert c.metric_name == _kerr.__name__
+        assert c.metric == _kerr
+
+    except:
+        assert False
+

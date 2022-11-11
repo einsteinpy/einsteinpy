@@ -99,13 +99,18 @@ class Geodesic:
         }
 
         if metric not in _METRICS:
-            raise NotImplementedError(
-                f"'{metric}' is unsupported. Currently, these metrics are supported:\
-                \n1. Schwarzschild\n2. Kerr\n3. KerrNewman"
-            )
+            if not callable(metric):
+                raise NotImplementedError(
+                    f"'{metric}' is unsupported. Currently, these metrics are supported:\
+                    \n1. Schwarzschild\n2. Kerr\n3. KerrNewman\n4. Any user-supplied callable metric function"
+                )
 
-        self.metric_name = metric
-        self.metric = _METRICS[metric]
+            self.metric_name = metric.__name__
+            self.metric = metric
+        else:
+            self.metric_name = metric
+            self.metric = _METRICS[metric]
+
         self.metric_params = metric_params
         if metric == "Schwarzschild":
             self.metric_params = (0.0,)
