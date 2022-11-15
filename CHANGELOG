@@ -12,6 +12,7 @@ CHANGES
 CONTRIBUTORS
 - JeS24
 - mshumayl
+- a3ahmad
 
 CHANGES
 - [#607]: Fixed #586 #598 #599 #600 #601, Fixed a bug in tensor_lambdify
@@ -21,6 +22,7 @@ CHANGES
 - [#612]: Partially addressed #610, Added support for setting plot aspect ratio and title via API
 - [#619]: General codebase maintenance
 - [#620]: Fixed #540, #541, Partially addressed #614, Updated documentation
+- [#625]: Add ability to compute geodesics for arbitrary metrics
 
 0.4.0
 -----
