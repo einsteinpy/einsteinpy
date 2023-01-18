@@ -17,7 +17,7 @@ def _julia(A, c, zabs_max, i, j, dims, x_range, y_range, iter_max):
     ymin, ymax = y_range
     xwidth, ywidth = xmax - xmin, ymax - ymin
     it = 0
-    z = np.complex((i / width) * xwidth + xmin + 1j * ((j / height) * ywidth + ymin))
+    z = complex((i / width) * xwidth + xmin + 1j * ((j / height) * ywidth + ymin))
     while abs(z) < zabs_max and it < iter_max:
         z = z**2 + c
         it += 1
