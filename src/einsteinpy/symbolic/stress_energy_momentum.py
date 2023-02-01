@@ -1,4 +1,5 @@
 import numpy as np
+import sympy
 
 from einsteinpy.symbolic.constants import Cosmo_Const, G, c
 from einsteinpy.symbolic.einstein import EinsteinTensor
@@ -58,48 +59,21 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
         t_einstein = EinsteinTensor.from_metric(metric)
         stress_tensor = (
             c**4
-            / (8 * np.pi * G)
+            / (8 * sympy.pi * G)
             * (t_einstein.tensor() - Cosmo_Const * metric.lower_config().tensor())
         )
         return cls(stress_tensor, metric.syms, config="ll", parent_metric=metric)
 
-    def change_config(self, newconfig="ul", metric=None):
-        """
-        Changes the index configuration(contravariant/covariant)
-
-        Parameters
-        ----------
-        newconfig : str
-            Specify the new configuration. Defaults to 'ul'
-        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Parent metric tensor for changing indices.
-            Already assumes the value of the metric tensor from which it was initialized if passed with None.
-            Compulsory if somehow does not have a parent metric. Defaults to None.
-
-        Returns
-        -------
-        ~einsteinpy.symbolic.stress_energy_momentum.StressEnergyMomentumTensor
-            New tensor with new configuration. Defaults to 'ul'
-
-        Raises
-        ------
-        Exception
-            Raised when a parent metric could not be found.
-
-        """
-        if metric is None:
-            metric = self._parent_metric
-        if metric is None:
-            raise Exception("Parent Metric not found, can't do configuration change")
-        new_tensor = _change_config(self, metric, newconfig)
-        new_obj = EinsteinTensor(
-            new_tensor,
-            self.syms,
-            config=newconfig,
-            parent_metric=metric,
-            name=_change_name(self.name, context="__" + newconfig),
-        )
-        return new_obj
+    @classmethod
+    def from_einstein(cls, einstein):
+        metric = einstein.parent_metric
+        stress_tensor = einstein.change_config("ll").tensor()
+        #(
+        #    c**4
+        #    / (8 * sympy.pi * G)
+        #    * (einstein.tensor() - Cosmo_Const * metric.lower_config().tensor())
+        #)
+        return cls(stress_tensor, metric.syms, config="ll", parent_metric=metric)
 
     def lorentz_transform(self, transformation_matrix):
         """
