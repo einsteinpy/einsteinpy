@@ -107,6 +107,67 @@ class WeylTensor(BaseRelativityTensor):
             )
         raise ValueError("Dimension of the space/space-time should be 3 or more")
 
+    @classmethod
+    def from_tensors(cls, metric, riemann, ricci, ricci_scalar):
+        """
+        Get Weyl tensor calculated from the metric, riemann, ricci tensor and ricci scalar
+
+        Parameters
+        ----------
+        metric : ~einsteinpy.symbolic.metric.MetricTensor
+            Space-time Metric from which Christoffel Symbols are to be calculated
+
+        Raises
+        ------
+        ValueError
+            Raised when the dimension of the tensor is less than 3
+
+        """
+        if metric.dims > 3:
+            metric_cov = metric.lower_config()
+            t_riemann  = riemann
+            t_riemann_cov = t_riemann.change_config("llll", metric=None)
+            t_ricci = ricci
+            r_scalar = ricci_scalar
+            g = metric_cov
+            dims = g.dims
+            # Indexing for resultant Weyl Tensor is iklm
+            C = np.zeros(shape=(dims, dims, dims, dims), dtype=int).tolist()
+            for t in range(dims**4):
+                i, k, l, m = (
+                    t % dims,
+                    (int(t / dims)) % (dims),
+                    (int(t / (dims**2))) % (dims),
+                    (int(t / (dims**3))) % (dims),
+                )
+                C[i][k][l][m] = t_riemann_cov[i, k, l, m] + (
+                    (
+                        (
+                            t_ricci[i, m] * g[k, l]
+                            - t_ricci[i, l] * g[k, m]
+                            + t_ricci[k, l] * g[i, m]
+                            - t_ricci[k, m] * g[i, l]
+                        )
+                        / (dims - 2)
+                    )
+                    + (
+                        r_scalar.expr
+                        * (g[i, l] * g[k, m] - g[i, m] * g[k, l])
+                        / ((dims - 1) * (dims - 2))
+                    )
+                )
+            C = sympy.simplify(sympy.Array(C))
+            return cls(C, metric.syms, config="llll", parent_metric=metric)
+        if metric.dims == 3:
+            return cls(
+                sympy.Array(np.zeros((3, 3, 3, 3), dtype=int)),
+                metric.syms,
+                config="llll",
+                parent_metric=metric,
+            )
+        raise ValueError("Dimension of the space/space-time should be 3 or more")
+
+
     def change_config(self, newconfig="llll", metric=None):
         """
         Changes the index configuration(contravariant/covariant)
