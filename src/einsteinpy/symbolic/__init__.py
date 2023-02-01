@@ -28,6 +28,7 @@ from .stress_energy_momentum import StressEnergyMomentumTensor
 from .tensor import BaseRelativityTensor, Tensor
 from .vector import GenericVector
 from .weyl import WeylTensor
+from .spacetime import GenericSpacetime
 
 __all__ = [
     "ChristoffelSymbols",
@@ -46,6 +47,7 @@ __all__ = [
     "Tensor",
     "GenericVector",
     "WeylTensor",
+    "GenericSpacetime",
     "AlcubierreWarp",
     "BarriolaVilekin",
     "BertottiKasner",
