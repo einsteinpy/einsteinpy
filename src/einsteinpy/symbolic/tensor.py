@@ -1,8 +1,9 @@
 import numpy as np
 import sympy
-from sympy import simplify, tensorcontraction, tensorproduct
+from sympy import simplify, tensorcontraction, tensorproduct, permutedims
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
+
 
 from einsteinpy.symbolic.helpers import (
     _change_name,
@@ -121,7 +122,7 @@ class Tensor:
     Base Class for Tensor manipulation
     """
 
-    def __init__(self, arr, config="ll", name=None):
+    def __init__(self, arr, config="ll", name=None, simplify=True):
         """
         Constructor and Initializer
 
@@ -133,6 +134,8 @@ class Tensor:
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
         name : str or None
             Name of the tensor.
+        simplify : Bool
+            Whether to call the simplify routine on initiation
 
         Raises
         ------
@@ -164,6 +167,8 @@ class Tensor:
                     config
                 )
             )
+        if simplify:
+            self.simplify()
         self.name = name
 
     @property
@@ -278,6 +283,8 @@ class BaseRelativityTensor(Tensor):
         Undefined functions in the tensor expression.
     name : str or None
         Name of the tensor. Defaults to "GenericTensor".
+    simplify : Bool
+            Whether to call the simplify routine on initiation
 
     """
 
@@ -290,6 +297,7 @@ class BaseRelativityTensor(Tensor):
         variables=list(),
         functions=list(),
         name="GenericTensor",
+        simplify=True,
     ):
         """
         Constructor and Initializer
@@ -330,7 +338,7 @@ class BaseRelativityTensor(Tensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(BaseRelativityTensor, self).__init__(arr=arr, config=config, name=name)
+        super(BaseRelativityTensor, self).__init__(arr=arr, config=config, name=name, simplify=simplify)
 
         if len(self.arr.shape) != 0 and self.arr.shape[0] != len(syms):
             raise ValueError("invalid shape of argument arr for syms: {}".format(syms))
@@ -457,3 +465,105 @@ class BaseRelativityTensor(Tensor):
             functions=self.functions,
             name=_change_name(self.name, context="__lt"),
         )
+
+    def change_config(self, newconfig="llll", metric=None):
+        """
+        Changes the index configuration(contravariant/covariant)
+
+        Parameters
+        ----------
+        newconfig : str
+            Specify the new configuration. Defaults to 'llll'
+        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Parent metric tensor for changing indices.
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
+            Compulsory if not initialized with 'from_metric'. Defaults to None.
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.riemann.BaseRelativityTensor
+            New tensor with new configuration. Configuration defaults to 'llll'
+
+        Raises
+        ------
+        Exception
+            Raised when a parent metric could not be found.
+
+        """
+        if self.config == newconfig:
+            return self
+        if metric is None:
+            metric = self._parent_metric
+        if metric is None:
+            raise Exception("Parent Metric not found, can't do configuration change")
+        new_tensor = _change_config(self, metric, newconfig)
+        new_obj = self.__class__(
+            new_tensor,
+            self.syms,
+            config=newconfig,
+            parent_metric=metric,
+            name=_change_name(self.name, context="__" + newconfig),
+        )
+        return new_obj
+
+    def subs(self, *args):
+        """
+        Substitute the variables/expressions in a Tensor with other sympy variables/expressions.
+
+        Parameters
+        ----------
+        args : one argument or two argument
+            - two arguments, e.g foo.subs(old, new)
+            - one iterable argument, e.g foo.subs([(old1, new1), (old2, new2)]) for multiple substitutions at once.
+
+        Returns
+        -------
+        ~Instance of self:
+            Tensor with substituted values
+
+        """
+        return self.__class__(self.tensor().subs(*args), self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
+
+    def symmetric_part(self, i=0, j=1):
+        """
+
+        """
+        if self.order < 2:
+            raise Exception("Cannot symmetrize vector")
+        if i >= self.order or j >= self.order:
+            raise Exception("Indices out of bounds")
+
+        indices = np.arange(self.order, dtype=int)
+        indices[i] = j
+        indices[j] = i
+        arr = self.tensor()
+        arrT = permutedims(self.tensor(), indices)
+        return BaseRelativityTensor( (arr + arrT)/2 ,
+                                        self.syms,
+                                        config=self.config,
+                                        parent_metric=self.parent_metric,
+                                        name=self.name
+                                    )
+
+    def antisymmetric_part(self, i=0, j=1):
+        """
+
+        """
+        if self.order < 2:
+            raise Exception("Cannot antisymmetrize vector")
+        if i >= self.order or j >= self.order:
+            raise Exception("Indices out of bounds")
+
+        indices = np.arange(self.order, dtype=int)
+        indices[i] = j
+        indices[j] = i
+        arr = self.tensor()
+        arrT = permutedims(self.tensor(), indices)
+        return BaseRelativityTensor( (arr - arrT)/2 ,
+                                        self.syms,
+                                        config=self.config,
+                                        parent_metric=self.parent_metric,
+                                        name=self.name
+                                    )
+
+
