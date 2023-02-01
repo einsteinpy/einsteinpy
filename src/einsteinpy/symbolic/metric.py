@@ -134,3 +134,15 @@ class MetricTensor(BaseRelativityTensor):
             config=self._config,
             name=_change_name(self.name, context="__lt"),
         )
+
+    def determinant(self):
+        """
+        Returns the determinant of the given metric tensor
+
+        Returns
+        ---
+            ~sympy.core.mul.Mul
+                Sympy multiplication object
+        """
+        return sympy.Matrix(self.lower_config().tensor()).det()
+
