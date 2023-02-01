@@ -30,6 +30,8 @@ from .vector import GenericVector
 from .weyl import WeylTensor
 from .spacetime import GenericSpacetime
 from .optdecomposition import OPTDecompositionTensor, OPTMetric
+from .optspacetime import OPTSpacetime, OPTSEMTensor
+from .gem import GravitoElectricTensor, GravitoMagneticTensor
 
 __all__ = [
     "ChristoffelSymbols",
@@ -51,6 +53,10 @@ __all__ = [
     "GenericSpacetime",
     "OPTDecompositionTensor",
     "OPTMetric",
+    "OPTSEMTensor",
+    "OPTSpacetime",
+    "GravitoElectricTensor",
+    "GravitoMagneticTensor",
     "AlcubierreWarp",
     "BarriolaVilekin",
     "BertottiKasner",
