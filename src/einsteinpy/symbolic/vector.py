@@ -1,5 +1,5 @@
 from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
+from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config, tensor_product, tensorcontraction
 
 
 class GenericVector(BaseRelativityTensor):
@@ -106,3 +106,27 @@ class GenericVector(BaseRelativityTensor):
             parent_metric=None,
             name=_change_name(self.name, context="__lt"),
         )
+
+    def norm(self, metric=None):
+        """
+        Returns the norm of the vector wrt the metric
+
+        Parameters
+        ------
+        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Parent metric tensor for changing indices.
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
+            Defaults to None.
+
+        Returns
+            ~ImmutableDenseNDimArray
+            The norm
+        """
+        if self.config == "u":
+            l = self.change_config("l", metric=metric)
+            u = self
+        else:
+            l = self
+            u = self.change_config("u", metric=metric)
+        return tensorcontraction(tensor_product(l, u).tensor(), (0,1))
+
