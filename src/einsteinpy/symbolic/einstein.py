@@ -61,6 +61,20 @@ class EinsteinTensor(BaseRelativityTensor):
             parent_metric=t_ricci.parent_metric,
         )
 
+    @classmethod
+    def from_ricci(cls, ricci):
+        metric = ricci.parent_metric
+        r_scalar = RicciScalar.from_riccitensor(ricci, metric)
+        einstein_tensor = (
+            ricci.tensor() - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
+        )
+        return cls(
+            einstein_tensor,
+            metric.syms,
+            config="ll",
+            parent_metric=metric,
+        )
+
     def change_config(self, newconfig="ul", metric=None):
         """
         Changes the index configuration(contravariant/covariant)
