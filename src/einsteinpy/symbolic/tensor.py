@@ -8,6 +8,7 @@ from sympy.core.function import AppliedUndef, UndefinedFunction
 from einsteinpy.symbolic.helpers import (
     _change_name,
     simplify_sympy_array,
+    expand_sympy_array,
     sympy_to_np_array,
 )
 
@@ -522,7 +523,7 @@ class BaseRelativityTensor(Tensor):
             Tensor with substituted values
 
         """
-        return self.__class__(self.tensor().subs(*args), self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
+        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
 
     def symmetric_part(self, i=0, j=1):
         """

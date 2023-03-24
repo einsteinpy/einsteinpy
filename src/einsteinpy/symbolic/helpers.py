@@ -45,6 +45,33 @@ def simplify_sympy_array(arr):
     except IndexError:
         return sympy.Array(sympy.simplify(sum(arr)))
 
+def expand_sympy_array(arr):
+    """
+    Function to expand sympy expression or array.
+
+    This function is explicitely defined as native ``expand`` function within sympy
+    stopped working with sympy version change.
+
+    Parameters
+    ----------
+    arr : ~sympy.tensor.array.ndim_array.NDimArray or ~sympy.core.expr.Expr
+        Any sympy array or expression.
+
+    Returns
+    -------
+    sympy.tensor.array.ndim_array.NDimArray or ~sympy.core.expr.Expr
+        Expanded sympy array or expression.
+
+    """
+    try:
+        flattened_list = _flatten_list(arr.tolist())
+        expanded_flattened_list = [sympy.expand(e) for e in flattened_list]
+        return sympy.Array(expanded_flattened_list, arr.shape)
+    except AttributeError:
+        return sympy.expand(arr)
+    except IndexError:
+        return sympy.Array(sympy.expand(sum(arr)))
+
 
 def sympy_to_np_array(arr):
     """

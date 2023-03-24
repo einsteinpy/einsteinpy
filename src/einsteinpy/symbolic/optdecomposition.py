@@ -2,6 +2,7 @@ import numpy as np
 import sympy
 from sympy import simplify, tensorcontraction, tensorproduct
 
+from .helpers import expand_sympy_array
 from .tensor import BaseRelativityTensor, Tensor, tensor_product, _change_name
 from .vector import GenericVector
 
@@ -128,7 +129,7 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Tensor with substituted values
 
         """
-        return self.__class__(self.tensor().subs(*args), nvec=self.normal_vector, syms=self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
+        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), nvec=self.normal_vector, syms=self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
 
 
 class OPTMetric(OPTDecompositionTensor):
