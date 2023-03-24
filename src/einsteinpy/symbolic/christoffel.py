@@ -59,8 +59,9 @@ class ChristoffelSymbols(BaseRelativityTensor):
         """
         dims = metric.dims
         tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
-        mat, syms = metric.lower_config().tensor(), metric.symbols()
-        matinv = sympy.Matrix(mat.tolist()).inv()
+        metric = metric.change_config("ll")
+        mat, syms = metric.tensor(), metric.symbols()
+        matinv = metric.inv().tensor()
         for t in range(dims**3):
             # i,j,k each goes from 0 to (dims-1)
             # hack for codeclimate. Could be done with 3 nested for loops
