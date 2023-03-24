@@ -208,15 +208,20 @@ class GenericSpacetime:
         syms = chris.symbols()
 
         Td = []
-        for s in syms:
-            Td.append(T.tensor().diff(s))
-        Td = BaseRelativityTensor(Td, syms=syms, config="l" + T.config, parent_metric=self.Metric)
+        try:
+            for s in syms:
+                Td.append(T.tensor().diff(s))
+            Td = BaseRelativityTensor(Td, syms=syms, config="l" + T.config, parent_metric=self.Metric)
 
-        for i in range(T.order):
-            if T.config[i] == "u":
-                Td.arr += tensor_product(chris, T, 2, i).arr
-            if T.config[i] == "l":
-                Td.arr -= tensor_product(chris, T, 0, i).arr
+            for i in range(T.order):
+                if T.config[i] == "u":
+                    Td.arr += tensor_product(chris, T, 2, i).arr
+                if T.config[i] == "l":
+                    Td.arr -= tensor_product(chris, T, 0, i).arr
+        except AttributeError:
+            for s in syms:
+                Td.append(T.diff(s))
+            Td = BaseRelativityTensor(Td, syms=syms, config="l", parent_metric=self.Metric)
 
         return Td
 

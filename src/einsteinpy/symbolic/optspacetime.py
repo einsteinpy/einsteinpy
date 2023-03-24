@@ -132,13 +132,14 @@ class OPTSpacetime(GenericSpacetime):
         u_dot, Du = self.projected_covariant_derivative(u_down)
         self._acceleration_vector = u_dot
         self._expansion_scalar = tensorcontraction(Du.change_config("ul").tensor(), (0,1))
-        self._shear_tensor = self.pstf(Du)
-        self._vorticity_tensor = Du.antisymmetric_part()
+        self._vorticity_tensor = OPTDecompositionTensor(Du.antisymmetric_part().tensor(),
+                                                        nvec=self.NormalVector, syms=self.Metric.syms, config="ll", parent_metric=self.Metric)
         self._vorticity_vector = OPTDecompositionTensor( -
                                     tensorcontraction(
                                             tensor_product(self.ProjectedAlternatingTensor, self._vorticity_tensor.change_config("uu"), 1, 0).arr,
                                                         (1,2))/2,
                                                         nvec=self.NormalVector, syms=self.Metric.syms, config="l", parent_metric=self.Metric)
+        self._shear_tensor = self.pstf(Du)
 
 
 
@@ -294,9 +295,9 @@ class OPTSpacetime(GenericSpacetime):
         """
         h = self.ProjectorTensor
         S = S.change_config("ll")
-        h = h.change_config("lu")
-        l = tensor_product(h, S, 1, 0)
-        l = tensor_product(h, l, 1, 1)
+        h_lu = h.change_config("lu")
+        l = tensor_product(h_lu, S, 1, 0)
+        l = tensor_product(h_lu, l, 1, 1)
         l = l.symmetric_part().arr
         r = tensor_product(h.change_config("uu"), S, 0, 0)
         r = tensor_product(r, h.change_config("ll"))
@@ -322,7 +323,7 @@ class OPTSpacetime(GenericSpacetime):
                 r = r.arr
         elif V.order == 2:
             if W.order == 1:
-                return self.vector_product(W, V)
+                return self.vector_product(W, V) # TODO: Check -
             S = V.change_config("ul")
             Q = W.change_config("uu")
             r = tensor_product(eps, S, 1, 0)
@@ -342,14 +343,15 @@ class OPTSpacetime(GenericSpacetime):
         """
         NablaT = self.covariant_derivative(T)
         u = self.Metric.normal_vector.change_config("u")
-        h = self.ProjectorTensor
+        h_lu = self.ProjectorTensor.change_config("lu")
+        h_ul = self.ProjectorTensor.change_config("ul")
         Tdot = tensor_product(u, NablaT, 0, 0)
-        DT = tensor_product(h.change_config("lu"), NablaT, 1, 0)
+        DT = tensor_product(h_lu, NablaT, 1, 0)
         for i in range(1, DT.order):
             if DT.config[i] == "l":
-                DT = tensor_product(h.change_config("lu"), DT, 1, i)
+                DT = tensor_product(h_lu, DT, 1, i)
             else:
-                DT = tensor_product(h.change_config("ul"), DT, 1, i)
+                DT = tensor_product(h_ul, DT, 1, i)
         return Tdot, DT
 
 
