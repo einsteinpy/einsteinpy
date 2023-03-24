@@ -197,16 +197,8 @@ class OPTMetric(OPTDecompositionTensor):
         """
         if newconfig == self.config:
             return self
-        if newconfig == "uu" or newconfig == "ll":
-            inv_met = OPTMetric(
-                sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
-                nvec=self.normal_vector,
-                syms=self.syms,
-                config=newconfig,
-                name=_change_name(self.name, context="__" + newconfig),
-            )
-            inv_met._invmetric = self
-            return inv_met
+        elif newconfig == "uu" or newconfig == "ll":
+            return self.inv()
 
         raise ValueError(
             "Configuration can't have one upper and one lower index in Metric Tensor."
@@ -224,10 +216,16 @@ class OPTMetric(OPTDecompositionTensor):
 
         """
         if self._invmetric is None:
-            if self.config == "ll":
-                self._invmetric = self.change_config("uu")
-            else:
-                self._invmetric = self.change_config("ll")
+            newconfig = "ll" if self.config == "uu" else "uu"
+            inv_met = OPTMetric(
+                sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
+                nvec=self.normal_vector,
+                syms=self.syms,
+                config=newconfig,
+                name=_change_name(self.name, context="__" + newconfig),
+            )
+            inv_met._invmetric = self
+            self._invmetric =  inv_met
         return self._invmetric
 
     def lower_config(self):
@@ -261,6 +259,9 @@ class OPTMetric(OPTDecompositionTensor):
             self._proj_tensor = OPTDecompositionTensor(g + uu, nvec=self.normal_vector, syms=self.syms, config="ll", parent_metric=self)
         return self._proj_tensor
 
+    @projector_tensor.setter
+    def projector_tensor(self, value):
+        self._proj_tensor = value
 
     def determinant(self):
         """
