@@ -3,7 +3,7 @@ import sympy
 from sympy import simplify, tensorcontraction, tensorproduct, permutedims
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
-
+from sympy.combinatorics import Permutation, PermutationGroup
 
 from einsteinpy.symbolic.helpers import (
     _change_name,
@@ -267,7 +267,110 @@ class Tensor:
             self.arr = t
             return self.tensor()
         # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
-        return simplify_sympy_array(self.tensor())
+        return t
+
+
+
+    def _get_permutations(self, indices):
+        """
+        Creates a PermutationGroup for all permutations of the given indices
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~sympy.combinatorics.PermutationGroup
+            The permutation group created by the possible permutations of the indices
+        """
+        if len(np.unique(indices)) < len(indices):
+            raise Exception("Cannot specify the same index twice")
+        if np.max(indices) >= self.order:
+            raise Exception("Indices out of bounds")
+        
+        permutations = []
+        for i in range(0, len(indices)):
+            for j in range(0, len(indices)):
+                if not i == j:
+                    permutations.append(Permutation(indices[i], indices[j], size=self.order))
+        
+        return PermutationGroup(permutations)
+
+
+    def symmetric_part(self, indices=None):
+        """
+        Calculates the symmetric part of a tensor 
+            T_(ab..) = 1/p!  \Sum_{all permutations sigma} T_{sigma(ab...)}
+
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.Tensor
+            Symmetrized Tensor
+        """
+        if self.order < 2:
+            raise Exception("Cannot symmetrize vector")
+        if indices is None:
+            indices = np.arange(self.order, dtype=int)
+        
+        permutations = self._get_permutations(indices)
+        
+        arr = self.tensor()
+        base_indices = np.arange(self.order, dtype=int)
+        for p in permutations._elements[1:]: # skip identity
+            arr += permutedims(self.tensor(), p(base_indices))
+        
+        return Tensor( arr /permutations.order() ,
+                                        config=self.config,
+                                        name=self.name
+                                    )
+
+
+    def antisymmetric_part(self, indices=None):
+        """
+        Calculates the antisymmetric part of a tensor 
+            T_[ab..] = 1/p!  \Sum_{all permutations sigma} sign(sigma)  T_{sigma(ab...)}
+
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.Tensor
+            Antisymmetrized Tensor
+        """
+        if self.order < 2:
+            raise Exception("Cannot symmetrize vector")
+        if indices is None:
+            indices = np.arange(self.order, dtype=int)
+        
+        permutations = self._get_permutations(indices)
+        
+        arr = self.tensor()
+        base_indices = np.arange(self.order, dtype=int)
+        for p in permutations._elements[1:]: # skip identity
+            arr += p.signature() * permutedims(self.tensor(), p(base_indices))
+        
+        return Tensor( arr / permutations.order() ,
+                                        config=self.config,
+                                        name=self.name
+                                    )
 
 
 class BaseRelativityTensor(Tensor):
@@ -542,49 +645,19 @@ class BaseRelativityTensor(Tensor):
             Tensor with substituted values
 
         """
-        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
+        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), self.syms, 
+                              config=self.config, parent_metric=self._parent_metric, parent_spacetime=self._parent_spacetime, name=self.name)
 
-    def symmetric_part(self, i=0, j=1):
-        """
 
-        """
-        if self.order < 2:
-            raise Exception("Cannot symmetrize vector")
-        if i >= self.order or j >= self.order:
-            raise Exception("Indices out of bounds")
+    def symmetric_part(self, indices=None):
+        return BaseRelativityTensor( super().symmetric_part(indices).arr, syms=self.syms, config=self.config, parent_metric=self._parent_metric,
+                                        parent_spacetime=self._parent_spacetime, simplify=False)
+    
 
-        indices = np.arange(self.order, dtype=int)
-        indices[i] = j
-        indices[j] = i
-        arr = self.tensor()
-        arrT = permutedims(self.tensor(), indices)
-        return BaseRelativityTensor( (arr + arrT)/2 ,
-                                        self.syms,
-                                        config=self.config,
-                                        parent_metric=self.parent_metric,
-                                        name=self.name
-                                    )
-
-    def antisymmetric_part(self, i=0, j=1):
-        """
-
-        """
-        if self.order < 2:
-            raise Exception("Cannot antisymmetrize vector")
-        if i >= self.order or j >= self.order:
-            raise Exception("Indices out of bounds")
-
-        indices = np.arange(self.order, dtype=int)
-        indices[i] = j
-        indices[j] = i
-        arr = self.tensor()
-        arrT = permutedims(self.tensor(), indices)
-        return BaseRelativityTensor( (arr - arrT)/2 ,
-                                        self.syms,
-                                        config=self.config,
-                                        parent_metric=self.parent_metric,
-                                        name=self.name
-                                    )
+    def antisymmetric_part(self, indices=None):
+        return BaseRelativityTensor( super().antisymmetric_part(indices).arr, syms=self.syms, config=self.config, parent_metric=self._parent_metric,
+                                        parent_spacetime=self._parent_spacetime, simplify=False)
+    
 
     @property
     def DualTensor(self):

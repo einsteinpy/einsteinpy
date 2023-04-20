@@ -100,18 +100,18 @@ class OPTDecompositionTensor(BaseRelativityTensor):
         self.__class__ = cls
         return self.__class__(t.arr, nvec=self.normal_vector, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
 
-    def symmetric_part(self, i=0, j=1):
+    def symmetric_part(self, indices=None):
         """
 
         """
-        t = super(OPTDecompositionTensor, self).symmetric_part(i,j)
+        t = super(OPTDecompositionTensor, self).symmetric_part(indices=indices)
         return OPTDecompositionTensor(t.arr, nvec=self.normal_vector, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
 
-    def antisymmetric_part(self, i=0, j=1):
+    def antisymmetric_part(self, indices=None):
         """
 
         """
-        t = super(OPTDecompositionTensor, self).antisymmetric_part(i,j)
+        t = super(OPTDecompositionTensor, self).antisymmetric_part(indices=indices)
         return OPTDecompositionTensor(t.arr, nvec=self.normal_vector, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
 
 
