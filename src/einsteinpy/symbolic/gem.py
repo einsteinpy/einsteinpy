@@ -2,7 +2,7 @@ import numpy as np
 import sympy
 
 from .helpers import simplify_sympy_array
-from .tensor import BaseRelativityTensor, Tensor, tensor_product
+from .tensor import BaseRelativityTensor, Tensor, tensor_product, tensorcontraction
 from .vector import GenericVector
 from .spacetime import LeviCivitaAlternatingTensor
 from .optdecomposition import OPTDecompositionTensor
@@ -41,6 +41,7 @@ class GravitoElectricTensor(OPTDecompositionTensor):
         syms,
         config="ll",
         parent_metric=None,
+        parent_spacetime=None,
         variables=list(),
         functions=list(),
         name="GravitoElectricTensor",
@@ -86,7 +87,7 @@ class GravitoElectricTensor(OPTDecompositionTensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(GravitoElectricTensor, self).__init__(arr=arr, nvec=nvec, syms=syms, config=config, parent_metric=parent_metric, variables=variables, functions=functions, name=name)
+        super(GravitoElectricTensor, self).__init__(arr=arr, nvec=nvec, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, variables=variables, functions=functions, name=name)
 
 
 
@@ -112,7 +113,7 @@ class GravitoElectricTensor(OPTDecompositionTensor):
         E = tensor_product(C, u, 1, 0)
         E = tensor_product(E, u, 2, 0)
 
-        return cls(simplify_sympy_array(E.tensor()), nvec, weyl.syms, config="ll", parent_metric=metric)
+        return cls(E.tensor(), nvec, weyl.syms, config="ll", parent_metric=metric)
 
 
 class GravitoMagneticTensor(OPTDecompositionTensor):
@@ -145,6 +146,7 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
         syms,
         config="ll",
         parent_metric=None,
+        parent_spacetime=None, 
         variables=list(),
         functions=list(),
         name="GravitoMagneticTensor",
@@ -195,6 +197,7 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
                                                     syms=syms,
                                                     config=config,
                                                     parent_metric=parent_metric,
+                                                    parent_spacetime=parent_spacetime,
                                                     variables=variables,
                                                     functions=functions,
                                                     name=name)
@@ -202,7 +205,7 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
 
 
     @classmethod
-    def from_weyl(cls, weyl, nvec, metric=None, levi_civita=None):
+    def from_weyl(cls, weyl, nvec, metric=None, levi_civita=None, st=None):
         """
         Get gravitomagnetic tensor from the weyl tensor and a normal timelike unit vector
 
@@ -215,16 +218,32 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
 
         """
         if metric is None:
-            metric = weyl.parent_metric
+            metric = weyl.parent_metric if st is None else st.Metric
         if levi_civita is None:
-            levi_civita = LeviCivitaAlternatingTensor.from_metric(metric)
+            levi_civita = LeviCivitaAlternatingTensor.from_metric(metric) if st is None else st.LeviCivitaTensor
 
         C = weyl.change_config(newconfig="llll", metric=metric)
-
-        C_s = levi_civita.GetDualTensor(C)
         u = nvec.change_config("u", metric=metric)
 
+        try:
+            C_s = C.DualTensor
+        except:
+            C_s = levi_civita.GetDualTensor(C)
+        
         H = tensor_product(C_s, u, 1, 0)
         H = tensor_product(H, u, 2, 0)
 
-        return cls(simplify_sympy_array(H.tensor()), nvec, weyl.syms, config="ll", parent_metric=metric)
+        return cls(H.tensor(), nvec, weyl.syms, config="ll", parent_metric=metric)
+
+    @classmethod
+    def from_opt_spacetime(cls, st):
+        C = st.WeylTensor.change_config("uull")
+        u = st.NormalVector.change_config("u")
+        eps = st.ProjectedAlternatingTensor.change_config("lll")
+
+        H = tensor_product(eps, C, 1, 0)
+        H = tensor_product(H, u, 4, 0)
+        return cls( tensorcontraction(H.arr, (1,2)) / 2 , st.NormalVector, syms=st.Metric.syms, config="ll", parent_metric=st.Metric, parent_spacetime=st)
+
+
+

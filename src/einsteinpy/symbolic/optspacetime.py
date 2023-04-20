@@ -10,24 +10,27 @@ from .gem import GravitoElectricTensor, GravitoMagneticTensor
 from .stress_energy_momentum import StressEnergyMomentumTensor
 
 
-class ProjectedAlternatingTensor(OPTDecompositionTensor):
+class ProjectedLeviCivitaAlternatingTensor(OPTDecompositionTensor):
 
-    def __init__(self, optmetric):
+
+    def __init__(self, arr, nvec, syms, config="lll", parent_metric=None, parent_spacetime=None, name="ProjectedAlternatingTensor"):
+
+        super(ProjectedLeviCivitaAlternatingTensor, self).__init__(arr,  nvec=nvec, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name)
+
+    @classmethod
+    def from_metric(cls, optmetric):
         lcat = LeviCivitaAlternatingTensor.from_metric(optmetric)
         eps = tensor_product(lcat, optmetric.normal_vector.change_config("u"), 3, 0)
-        super(ProjectedAlternatingTensor, self).__init__(sympy.Array(eps.tensor()),  nvec=optmetric.normal_vector, syms=optmetric.syms, config="lll", parent_metric=optmetric)
+        return ProjectedLeviCivitaAlternatingTensor(sympy.Array(eps.tensor()),  nvec=optmetric.normal_vector, syms=optmetric.syms, config="lll", parent_metric=optmetric)
+    
+    @classmethod
+    def from_spacetime(cls, optst):
+        optmetric = optst.Metric
+        lcat = optst.LeviCivitaTensor
+        eps = tensor_product(lcat, optmetric.normal_vector.change_config("u"), 3, 0)
+        return ProjectedLeviCivitaAlternatingTensor(sympy.Array(eps.tensor()),  
+                                                    nvec=optmetric.normal_vector, syms=optmetric.syms, config="lll", parent_metric=optmetric, parent_spacetime=optst)
 
-
-    '''
-    def GetDualTensor(self, T):
-
-        T = T.change_config("llll")
-        eps = self.change_config( "uull")
-
-        dual = 1./2. * sympy.tensorproduct(T.arr, eps.arr)
-        dual = sympy.simplify(sympy.tensorcontraction(sympy.tensorcontraction(dual, (2, 4)), (2, 4)))
-        return BaseRelativityTensor(dual, syms=T.syms, config="llll", parent_metric=self.parent_metric)
-    '''
 
 class OPTSEMTensor(OPTDecompositionTensor):
     """
@@ -128,25 +131,24 @@ class OPTSpacetime(GenericSpacetime):
 
 
     def _calculate_kinematic_quantities(self):
-        u_down = self.NormalVector.change_config("l")
-        u_dot, Du = self.projected_covariant_derivative(u_down)
-        self._acceleration_vector = u_dot
-        self._expansion_scalar = tensorcontraction(Du.change_config("ul").tensor(), (0,1))
+        u_dot, Du = self.projected_covariant_derivative(self.NormalVector.change_config("l"))
+        self._acceleration_vector = u_dot if self._acceleration_vector is None else self._acceleration_vector
+        self._expansion_scalar = tensorcontraction(Du.change_config("ul").tensor(), (0,1)) if self._expansion_scalar is None else self._expansion_scalar
         self._vorticity_tensor = OPTDecompositionTensor(Du.antisymmetric_part().tensor(),
-                                                        nvec=self.NormalVector, syms=self.Metric.syms, config="ll", parent_metric=self.Metric)
+                                                        nvec=self.NormalVector, syms=self.Metric.syms, config="ll", parent_metric=self.Metric) if self._vorticity_tensor is None else self._vorticity_tensor
         self._vorticity_vector = OPTDecompositionTensor( -
                                     tensorcontraction(
                                             tensor_product(self.ProjectedAlternatingTensor, self._vorticity_tensor.change_config("uu"), 1, 0).arr,
                                                         (1,2))/2,
-                                                        nvec=self.NormalVector, syms=self.Metric.syms, config="l", parent_metric=self.Metric)
-        self._shear_tensor = self.pstf(Du)
+                                                        nvec=self.NormalVector, syms=self.Metric.syms, config="l", parent_metric=self.Metric) if self._vorticity_vector is None else self._vorticity_vector
+        self._shear_tensor = self.pstf(Du) if self._shear_tensor is None else self._shear_tensor
 
 
 
     @property
     def ProjectedAlternatingTensor(self):
         if self._proj_alt_tensor is None:
-            self._proj_alt_tensor = ProjectedAlternatingTensor(self.Metric)
+            self._proj_alt_tensor = ProjectedLeviCivitaAlternatingTensor.from_spacetime(self)
         return self._proj_alt_tensor
 
     @ProjectedAlternatingTensor.setter
@@ -244,7 +246,7 @@ class OPTSpacetime(GenericSpacetime):
     @property
     def GravitoMagneticTensor(self):
         if self._H_tensor is None:
-            self._H_tensor = GravitoMagneticTensor.from_weyl(self.WeylTensor, self.NormalVector)
+            self._H_tensor = GravitoMagneticTensor.from_opt_spacetime(self)
         return self._H_tensor
 
     @GravitoMagneticTensor.setter
@@ -319,7 +321,7 @@ class OPTSpacetime(GenericSpacetime):
                 S = W.change_config("lu")
                 r = tensor_product(eps, S, 0, 1)
                 r = tensor_product(r, V.change_config("u"), 1, 0)
-                r =  r.symmetric_part(0,1)
+                r =  r.symmetric_part()
                 r = r.arr
         elif V.order == 2:
             if W.order == 1:
@@ -349,9 +351,9 @@ class OPTSpacetime(GenericSpacetime):
         DT = tensor_product(h_lu, NablaT, 1, 0)
         for i in range(1, DT.order):
             if DT.config[i] == "l":
-                DT = tensor_product(h_lu, DT, 1, i)
+                DT = tensor_product(DT, h_lu, i, 1)
             else:
-                DT = tensor_product(h_ul, DT, 1, i)
+                DT = tensor_product(DT, h_ul, i, 1)
         return Tdot, DT
 
 

@@ -39,6 +39,7 @@ class OPTDecompositionTensor(BaseRelativityTensor):
         syms,
         config="ll",
         parent_metric=None,
+        parent_spacetime=None,
         variables=list(),
         functions=list(),
         name="GenericOPTDecompositionTensor",
@@ -85,7 +86,8 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(OPTDecompositionTensor, self).__init__(arr=arr, syms=syms, config=config, parent_metric=parent_metric, variables=variables, functions=functions, name=name, simplify=simplify)
+        super(OPTDecompositionTensor, self).__init__(arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, 
+                                                        variables=variables, functions=functions, name=name, simplify=simplify)
 
         # Make sure we have a unit vector ?
         self.normal_vector = nvec

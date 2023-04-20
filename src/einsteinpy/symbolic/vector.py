@@ -8,7 +8,7 @@ class GenericVector(BaseRelativityTensor):
 
     """
 
-    def __init__(self, arr, syms, config="u", parent_metric=None, name="GenericVector"):
+    def __init__(self, arr, syms, config="u", parent_metric=None, parent_spacetime=None, name="GenericVector"):
         """
         Constructor and Initializer
 
@@ -35,7 +35,7 @@ class GenericVector(BaseRelativityTensor):
 
         """
         super(GenericVector, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
         )
         if self.arr.rank() == 1:
             self._order = 1

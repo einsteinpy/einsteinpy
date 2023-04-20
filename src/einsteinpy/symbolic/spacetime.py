@@ -7,72 +7,12 @@ from .helpers import _change_name
 from .tensor import BaseRelativityTensor, _change_config, tensor_product
 from .vector import GenericVector
 from .metric import MetricTensor
+from .levicivita import LeviCivitaAlternatingTensor
 from .christoffel import ChristoffelSymbols
 from .riemann import RiemannCurvatureTensor
 from .ricci import RicciScalar, RicciTensor
 from .einstein import EinsteinTensor
 from .weyl import WeylTensor
-
-
-
-class LeviCivitaAlternatingTensor(BaseRelativityTensor):
-
-    def __init__(self, arr, syms, config="ll", parent_metric=None, name="LeviCivitaAlternatingTensor"):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-            Sympy Array or multi-dimensional list containing Sympy Expressions
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        config : str
-            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Ricci Tensor.
-            Defaults to None.
-        name : str
-            Name of the Tensor. Defaults to "RicciTensor".
-
-        Raises
-        ------
-        TypeError
-            Raised when arr is not a list or sympy Array
-        TypeError
-            syms is not a list or tuple
-        ValueError
-            config has more or less than 2 indices
-
-        """
-        super(LeviCivitaAlternatingTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
-        )
-        self._order = 4
-        if not len(config) == self._order:
-            raise ValueError("config should be of length {}".format(self._order))
-
-
-    @classmethod
-    def from_metric(cls, metric):
-        eps = sympy.MutableDenseNDimArray(np.zeros((4,)*4))
-        for mu in range(4):
-            for nu in range(4):
-                for alpha in range(4):
-                    for beta in range(4):
-                        eps[mu,nu,alpha,beta] = LeviCivita(mu, nu, alpha, beta)
-        eps = sympy.sqrt(-metric.determinant()) * eps
-        return cls(sympy.Array(eps), syms=metric.syms, config="llll", parent_metric=metric)
-
-
-    def GetDualTensor(self, T):
-
-        T = T.change_config("llll")
-        eps = self.change_config( "uull")
-
-        dual = 1./2. * sympy.tensorproduct(T.arr, eps.arr)
-        dual = sympy.simplify(sympy.tensorcontraction(sympy.tensorcontraction(dual, (2, 4)), (2, 4)))
-        return BaseRelativityTensor(dual, syms=T.syms, config="llll", parent_metric=self.parent_metric)
 
 
 
@@ -100,7 +40,7 @@ class GenericSpacetime:
     @property
     def EinsteinTensor(self):
         if self._einstein is None:
-            self._einstein = EinsteinTensor.from_ricci(self.RicciTensor)
+            self._einstein = EinsteinTensor.from_ricci(self.RicciTensor, self.RicciScalar)
         return self._einstein
 
     @EinsteinTensor.setter
@@ -187,9 +127,8 @@ class GenericSpacetime:
 
 
     def GeodesicEquation(self, wline, apar):
-        chris = self.ChristoffelSymbols
-        chris.change_config("ull")
-        wline.change_config("u")
+        chris = self.ChristoffelSymbols.change_config("ull")
+        wline = wline.change_config("u")
         dx_ds = GenericVector(wline.tensor().diff(apar), syms=wline.syms, config="u")
         rhs = tensor_product(tensor_product(chris, dx_ds, 1, 0), dx_ds, 1, 0)
         d2x_ds2 = dx_ds.tensor().diff(apar)
@@ -215,7 +154,7 @@ class GenericSpacetime:
 
             for i in range(T.order):
                 if T.config[i] == "u":
-                    Td.arr += tensor_product(chris, T, 2, i).arr
+                    Td.arr += tensor_product(chris, T, 1, i).arr
                 if T.config[i] == "l":
                     Td.arr -= tensor_product(chris, T, 0, i).arr
         except AttributeError:

@@ -11,7 +11,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
     """
 
     def __init__(
-        self, arr, syms, config="ull", parent_metric=None, name="ChristoffelSymbols"
+        self, arr, syms, config="ull", parent_metric=None, parent_spacetime=None, name="ChristoffelSymbols"
     ):
         """
         Constructor and Initializer
@@ -40,7 +40,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
 
         """
         super(ChristoffelSymbols, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
         )
         self._order = 3
         if not len(self.config) == self._order:

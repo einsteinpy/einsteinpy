@@ -1,10 +1,11 @@
 import numpy as np
 import sympy
+from sympy import simplify, tensorcontraction, tensorproduct
 
 from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.ricci import RicciScalar, RicciTensor
 from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
+from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config, tensor_product
 
 
 class WeylTensor(BaseRelativityTensor):
@@ -12,7 +13,7 @@ class WeylTensor(BaseRelativityTensor):
     Class for defining Weyl Tensor
     """
 
-    def __init__(self, arr, syms, config="ulll", parent_metric=None, name="WeylTensor"):
+    def __init__(self, arr, syms, config="ulll", parent_metric=None, parent_spacetime=None, name="WeylTensor", simplify=True):
         """
         Constructor and Initializer
 
@@ -40,7 +41,7 @@ class WeylTensor(BaseRelativityTensor):
 
         """
         super(WeylTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name, simplify=simplify
         )
         self._order = 4
         if not len(config) == self._order:

@@ -295,6 +295,7 @@ class BaseRelativityTensor(Tensor):
         syms,
         config="ll",
         parent_metric=None,
+        parent_spacetime=None,
         variables=list(),
         functions=list(),
         name="GenericTensor",
@@ -347,6 +348,10 @@ class BaseRelativityTensor(Tensor):
         # Cannot implement the check that parent metric belongs to the class MetricTensor
         # Due to the issue of cyclic imports, would find a workaround
         self._parent_metric = parent_metric
+        self._parent_spacetime = parent_spacetime
+        if (self._parent_metric is None) and (not parent_spacetime is None):
+            self._parent_metric = parent_spacetime.Metric
++        
         if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
@@ -385,6 +390,13 @@ class BaseRelativityTensor(Tensor):
         Returns the Metric from which Tensor was derived/associated, if available.
         """
         return self._parent_metric
+    
+    @property
+    def parent_spacetime(self):
+        """
+        Returns the Spacetime from which Tensor was derived/associated, if available.
+        """
+        return self._parent_spacetime
 
     def symbols(self):
         """
