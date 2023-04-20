@@ -1,7 +1,7 @@
 from .christoffel import ChristoffelSymbols
 from .constants import SymbolicConstant, get_constant
 from .einstein import EinsteinTensor
-from .helpers import TransformationMatrix, simplify_sympy_array, expand_sympy_array
+from .helpers import TransformationMatrix, simplify_sympy_array, expand_sympy_array, discard_terms_sympy_array
 from .metric import MetricTensor
 from .predefined.alcubierre_warp import AlcubierreWarp
 from .predefined.barriola_vilenkin import BarriolaVilekin
@@ -41,6 +41,7 @@ __all__ = [
     "TransformationMatrix",
     "simplify_sympy_array",
     "expand_sympy_array",
+    "discard_terms_sympy_array",
     "MetricTensor",
     "RicciScalar",
     "RicciTensor",

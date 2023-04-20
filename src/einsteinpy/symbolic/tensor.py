@@ -9,6 +9,7 @@ from einsteinpy.symbolic.helpers import (
     _change_name,
     simplify_sympy_array,
     expand_sympy_array,
+    discard_terms_sympy_array,
     sympy_to_np_array,
 )
 
@@ -242,7 +243,7 @@ class Tensor:
         """
         return Tensor(self.tensor().subs(*args))
 
-    def simplify(self, set_self=True):
+    def simplify(self, set_self=True, discard_terms=None):
         """
         Returns a simplified Tensor
 
@@ -258,8 +259,12 @@ class Tensor:
             Simplified Tensor
 
         """
+        t = self.tensor()
+        if not discard_terms is None:
+            t = discard_terms_sympy_array(self.tensor(), discard_terms)
+        t = simplify_sympy_array(t)
         if set_self:
-            self.arr = simplify_sympy_array(self.tensor())
+            self.arr = t
             return self.tensor()
         # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
         return simplify_sympy_array(self.tensor())
