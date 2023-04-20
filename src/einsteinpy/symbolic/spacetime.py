@@ -12,7 +12,7 @@ from .christoffel import ChristoffelSymbols
 from .riemann import RiemannCurvatureTensor
 from .ricci import RicciScalar, RicciTensor
 from .einstein import EinsteinTensor
-from .weyl import WeylTensor
+from .weyl import WeylTensor, BelRobinsonTensor
 
 
 
@@ -36,6 +36,7 @@ class GenericSpacetime:
         self._sem_tensor = sem_tensor
         self._levi_civita = None
         self._weyl = None
+        self._belrob = None
 
     @property
     def EinsteinTensor(self):
@@ -81,11 +82,22 @@ class GenericSpacetime:
     def WeylTensor(self):
         if self._weyl is None:
             self._weyl = WeylTensor.from_tensors(self.Metric, self.RiemannTensor, self.RicciTensor, self.RicciScalar)
+            self._weyl._parent_spacetime = self
         return self._weyl
 
     @WeylTensor.setter
     def WeylTensor(self, value):
         self._weyl = value
+    
+    @property
+    def BelRobinsonTensor(self):
+        if self._belrob is None:
+            self._belrob = BelRobinsonTensor.from_weyl(self.WeylTensor)
+        return self._belrob
+
+    @BelRobinsonTensor.setter
+    def BelRobinsonTensor(self, value):
+        self._belrob = value
 
     @property
     def ChristoffelSymbols(self):

@@ -46,6 +46,8 @@ class WeylTensor(BaseRelativityTensor):
         self._order = 4
         if not len(config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
+        
+        self._dual = None
 
     @classmethod
     def from_metric(cls, metric):
@@ -169,43 +171,6 @@ class WeylTensor(BaseRelativityTensor):
         raise ValueError("Dimension of the space/space-time should be 3 or more")
 
 
-    def change_config(self, newconfig="llll", metric=None):
-        """
-        Changes the index configuration(contravariant/covariant)
-
-        Parameters
-        ----------
-        newconfig : str
-            Specify the new configuration. Defaults to 'llll'
-        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Parent metric tensor for changing indices.
-            Already assumes the value of the metric tensor from which it was initialized if passed with None.
-            Compulsory if not initialized with 'from_metric'. Defaults to None.
-
-        Returns
-        -------
-        ~einsteinpy.symbolic.weyl.WeylTensor
-            New tensor with new configuration. Configuration defaults to 'llll'
-
-        Raises
-        ------
-        Exception
-            Raised when a parent metric could not be found.
-
-        """
-        if metric is None:
-            metric = self._parent_metric
-        if metric is None:
-            raise Exception("Parent Metric not found, can't do configuration change")
-        new_tensor = _change_config(self, metric, newconfig)
-        new_obj = WeylTensor(
-            new_tensor,
-            self.syms,
-            config=newconfig,
-            parent_metric=metric,
-            name=_change_name(self.name, context="__" + newconfig),
-        )
-        return new_obj
 
     def lorentz_transform(self, transformation_matrix):
         """
@@ -224,6 +189,95 @@ class WeylTensor(BaseRelativityTensor):
         """
         t = super(WeylTensor, self).lorentz_transform(transformation_matrix)
         return WeylTensor(
+            t.tensor(),
+            syms=self.syms,
+            config=self._config,
+            parent_metric=None,
+            name=_change_name(self.name, context="__lt"),
+        )
+
+
+class BelRobinsonTensor(BaseRelativityTensor):
+    """
+    Class for defining Bel-Robinson Tensor
+    """
+
+    def __init__(self, arr, syms, config="ulll", parent_metric=None, parent_spacetime=None, simplify=True, name="BelRobinsonTensor"):
+        """
+        Constructor and Initializer
+
+        Parameters
+        ----------
+        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+            Sympy Array or multi-dimensional list containing Sympy Expressions
+        syms : tuple or list
+            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+        config : str
+            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
+        parent_metric : ~einsteinpy.symbolic.metric.WeylTensor
+            Corresponding Metric for the Weyl Tensor. Defaults to None.
+        name : str
+            Name of the Tensor. Defaults to "WeylTensor"
+
+        Raises
+        ------
+        TypeError
+            Raised when arr is not a list or sympy Array
+        TypeError
+            syms is not a list or tuple
+        ValueError
+            config has more or less than 4 indices
+
+        """
+        super(BelRobinsonTensor, self).__init__(
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, simplify=simplify, name=name
+        )
+        self._order = 4
+        if not len(config) == self._order:
+            raise ValueError("config should be of length {}".format(self._order))
+
+    @classmethod
+    def from_weyl(cls, C):
+        """
+        Get Bel-Robinson tensor calculated from the Weyl tensor and the alternating Levi-Civita Tensor
+
+        Parameters
+        ----------
+        C : ~einsteinpy.symbolic.WeylTensor
+            WeylTensor
+
+        Raises
+        ------
+        ValueError
+            Raised when the dimension of the tensor is less than 3
+
+        """
+        C_dual = C.DualTensor
+
+        l = tensorcontraction(tensor_product(C.change_config("llll"), C.change_config("ullu"), 0, 0).tensor(), (2, 5))
+        r = tensorcontraction(tensor_product(C_dual.change_config("llll"), C_dual.change_config("ullu"), 0, 0).tensor(), (2, 5))
+
+        return cls( (l + r) / 4, syms=C.parent_metric.syms, config="llll", parent_metric=C.parent_metric, simplify=False)
+        
+
+
+    def lorentz_transform(self, transformation_matrix):
+        """
+        Performs a Lorentz transform on the tensor.
+
+        Parameters
+        ----------
+            transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
+                Sympy Array or multi-dimensional list containing Sympy Expressions
+
+        Returns
+        -------
+            ~einsteinpy.symbolic.weyl.BelRobinsonTensor
+                lorentz transformed tensor(or vector)
+
+        """
+        t = super(BelRobinsonTensor, self).lorentz_transform(transformation_matrix)
+        return BelRobinsonTensor(
             t.tensor(),
             syms=self.syms,
             config=self._config,

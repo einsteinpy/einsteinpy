@@ -27,7 +27,7 @@ from .schouten import SchoutenTensor
 from .stress_energy_momentum import StressEnergyMomentumTensor
 from .tensor import BaseRelativityTensor, Tensor
 from .vector import GenericVector
-from .weyl import WeylTensor
+from .weyl import WeylTensor, BelRobinsonTensor
 from .spacetime import GenericSpacetime
 from .optdecomposition import OPTDecompositionTensor, OPTMetric
 from .optspacetime import OPTSpacetime, OPTSEMTensor
@@ -52,6 +52,7 @@ __all__ = [
     "Tensor",
     "GenericVector",
     "WeylTensor",
+    "BelRobinsonTensor",
     "GenericSpacetime",
     "OPTDecompositionTensor",
     "OPTMetric",

@@ -356,7 +356,9 @@ class BaseRelativityTensor(Tensor):
         self._parent_spacetime = parent_spacetime
         if (self._parent_metric is None) and (not parent_spacetime is None):
             self._parent_metric = parent_spacetime.Metric
-+        
+        
+        self._dual = None
+        
         if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
@@ -584,4 +586,13 @@ class BaseRelativityTensor(Tensor):
                                         name=self.name
                                     )
 
+    @property
+    def DualTensor(self):
+        if self._dual is None:
+            self._dual = self._parent_spacetime.LeviCivitaTensor.GetDualTensor(self)
+        return self._dual
+    
+    @DualTensor.setter
+    def DualTensor(self, value):
+        self._dual = value
 
