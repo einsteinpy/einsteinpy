@@ -5,6 +5,7 @@ from einsteinpy.coordinates.utils import (
     spherical_to_cartesian_fast,
 )
 from einsteinpy.metric import BaseMetric
+from einsteinpy.ijit import jit
 
 
 class CartesianConversion:
@@ -46,6 +47,7 @@ class CartesianConversion:
             (v_x is None) or (v_y is None) or (v_z is None)
         )
 
+    @jit
     def values(self):
         """
         Returns components of the coordinates in SI units
@@ -71,6 +73,7 @@ class CartesianConversion:
 
         return self.t_si, self.x_si, self.y_si, self.z_si
 
+    @jit
     def convert_spherical(self, **kwargs):
         """
         Converts to Spherical Polar Coordinates
@@ -98,6 +101,7 @@ class CartesianConversion:
             self._velocities_provided,
         )
 
+    @jit
     def convert_bl(self, **kwargs):
         """
         Converts to Boyer-Lindquist Coordinates
@@ -191,6 +195,7 @@ class SphericalConversion:
             (v_r is None) or (v_th is None) or (v_p is None)
         )
 
+    @jit
     def values(self):
         """
         Returns components of the coordinates
@@ -216,6 +221,7 @@ class SphericalConversion:
 
         return self.t_si, self.r_si, self.th_si, self.p_si
 
+    @jit
     def convert_cartesian(self, **kwargs):
         """
         Converts to Cartesian Coordinates
@@ -243,6 +249,7 @@ class SphericalConversion:
             self._velocities_provided,
         )
 
+    @jit
     def convert_bl(self, **kwargs):
         """
         Converts to Boyer-Lindquist Coordinates
@@ -326,7 +333,8 @@ class BoyerLindquistConversion:
         self._velocities_provided = not (
             (v_r is None) or (v_th is None) or (v_p is None)
         )
-
+    
+    @jit
     def values(self):
         """
         Returns components of the coordinates
@@ -352,6 +360,7 @@ class BoyerLindquistConversion:
 
         return self.t_si, self.r_si, self.th_si, self.p_si
 
+    @jit
     def convert_cartesian(self, **kwargs):
         """
         Converts to Cartesian Coordinates
@@ -404,7 +413,8 @@ class BoyerLindquistConversion:
             self.v_p_si,
             self._velocities_provided,
         )
-
+    
+    @jit
     def convert_spherical(self, **kwargs):
         """
         Converts to Spherical Polar Coordinates
