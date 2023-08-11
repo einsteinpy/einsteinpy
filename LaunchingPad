@@ -1,0 +1,103 @@
+=================================
+| Welcome to the Launch Pad !   |
+=================================
+
+This Launch Pad starter guide is designed to help you understand how to install, download, and interact with the EinsteinPy software.
+
+Here is a step-by-step list on how to get started:
+
+1) Downloading:
+
+Using the pip command from PyPI:
+
+$ pip install einsteinpy
+
+Or, you can install the package using conda:
+
+$ conda install einsteinpy --channel conda-forge
+
+For Debian/Ubuntu/Mint users, the package is installable via apt (Ubuntu 19.04 onwards):
+
+$ sudo apt install python3-einsteinpy
+
+2) Interacting:
+
+In order to contribute to the current database, follow these steps:
+(Note: must have Python3 installed)
+
+-Install git.
+
+-Create an account on GitHub, if you don’t already have one.
+
+-Fork EinsteinPy’s repository (einsteinpy/einsteinpy).
+
+-Clone your forked repository.
+
+-Create a virtual environment and activate it using the following commands:
+
+$ python -m venv <your-venv-name>
+$ source <your-venv-name>/bin/activate # Linux/macOS
+$ ./<your-venv-name>/Scripts/activate # Windows
+
+-After activating the environment, install EinsteinPy in editable or development mode like so:
+
+$ pip install -e ./einsteinpy/[dev]
+[dev] ensures that all the dependencies required for development and testing are installed, while the -e or --editable flag 
+ensures that any changes you make to the code take effect immediately (after you save the changes).
+
+-Create and switch to a new branch like so:
+
+$ git checkout -b <your-branch-name>
+
+3) Packages:
+
+EinsteinPy requires the following Python packages:
+
+-NumPy, for basic numerical routines
+-SciPy, for solving ordinary differential equations
+-SymPy, for symbolic calculations
+-Astropy, for handling conversion between physical units
+-Matplotlib, for producing static visualizations
+-Plotly, for producing interactive visualizations
+-Numba, for accelerating the code
+
+4) Usage Example:
+
+The following is an example to display the mathematical capabilities of the software in calculating
+the geodisic, or denoting the shortest possible line between two points on a sphere or other curved surface.
+
+import numpy as np
+
+from einsteinpy.geodesic import Timelike
+
+__all__ = ["precession"]
+
+
+def precession():
+    """
+    An example to showcase the usage of the various modules in ``einsteinpy``.
+    Here, we assume a Schwarzschild spacetime and obtain a test particle orbit, that
+    shows apsidal precession.
+
+    Returns
+    -------
+    geod: ~einsteinpy.geodesic.Timelike
+        Timelike Geodesic, defining test particle trajectory
+
+    """
+    # Defining initial conditions
+    metric = "Schwarzschild"
+    position = [40.0, np.pi / 2, 0.0]
+    momentum = [0.0, 0.0, 3.83405]
+
+    # Calculating Geodesic
+    geod = Timelike(
+        metric=metric,
+        metric_params=(),
+        position=position,
+        momentum=momentum,
+        steps=5500,
+        delta=1.0,
+    )
+
+    return geod
