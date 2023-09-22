@@ -22,7 +22,6 @@ class SchwarzschildEmbedding:
     """
 
     def __init__(self, M):
-
         """
         Constructor
         Initialize mass and embedding initial radial coordinate in appropiate units
@@ -45,7 +44,6 @@ class SchwarzschildEmbedding:
         )
 
     def gradient(self, r):
-
         """
         Calculate gradient of Z coordinate w.r.t r to update the value of r and
         thereby get value of spherical radial coordinate R.
@@ -72,7 +70,6 @@ class SchwarzschildEmbedding:
         return num_one * num_two / deno
 
     def radial_coord(self, r):
-
         """
         Returns spherical radial coordinate (of the embedding) from given schwarzschild
         coordinate.
@@ -90,7 +87,6 @@ class SchwarzschildEmbedding:
         return r / np.sqrt(1 - (2 * self.M.value / r))
 
     def get_values(self, alpha):
-
         """
         Obtain the Z coordinate values and corrosponding R values for range of
         r as 9m/4 < r < 9m.
@@ -130,7 +126,6 @@ class SchwarzschildEmbedding:
         return x_axis, y_axis
 
     def get_values_surface(self, alpha):
-
         """
         Obtain the same values as of the get_values function but reshapes them to obtain
         values for all points on the solid of revolution about Z axis (as the
