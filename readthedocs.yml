@@ -18,7 +18,9 @@ sphinx:
    configuration: docs/source/conf.py
 
 # Build in all formats - htmlzip, epub, pdf
-formats: all
+formats:
+  - htmlzip
+  - epub
 
 # Install with extra requirements
 python:
