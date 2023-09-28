@@ -27,6 +27,8 @@ class WeylTensor(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
         parent_metric : ~einsteinpy.symbolic.metric.WeylTensor
             Corresponding Metric for the Weyl Tensor. Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "WeylTensor"
 
@@ -46,7 +48,7 @@ class WeylTensor(BaseRelativityTensor):
         self._order = 4
         if not len(config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
-        
+
         self._dual = None
 
     @classmethod
@@ -171,6 +173,24 @@ class WeylTensor(BaseRelativityTensor):
         raise ValueError("Dimension of the space/space-time should be 3 or more")
 
 
+    @property
+    def DualTensor(self):
+        """
+        Property that returns the dual tensor of the Weyl tensor.
+        If it does not exist, it will be calculated if parent_spacetime is provided.
+
+        Returns
+        -----
+            _dual : einsteinpy.symbolic.BaseRelativityTensor
+                The dual tensor
+        """
+        if self._dual is None:
+            self._dual = self._parent_spacetime.LeviCivitaTensor.GetDualTensor(self)
+        return self._dual
+
+    @DualTensor.setter
+    def DualTensor(self, value):
+        self._dual = value
 
     def lorentz_transform(self, transformation_matrix):
         """
@@ -258,7 +278,7 @@ class BelRobinsonTensor(BaseRelativityTensor):
         r = tensorcontraction(tensor_product(C_dual.change_config("llll"), C_dual.change_config("ullu"), 0, 0).tensor(), (2, 5))
 
         return cls( (l + r) / 4, syms=C.parent_metric.syms, config="llll", parent_metric=C.parent_metric, simplify=False)
-        
+
 
 
     def lorentz_transform(self, transformation_matrix):

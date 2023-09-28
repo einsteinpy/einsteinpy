@@ -9,7 +9,7 @@ from .tensor import BaseRelativityTensor, _change_config, tensor_product
 
 class LeviCivitaAlternatingTensor(BaseRelativityTensor):
 
-    def __init__(self, arr, syms, config="ll", parent_metric=None, name="LeviCivitaAlternatingTensor"):
+    def __init__(self, arr, syms, config="ll", parent_metric=None, parent_spacetime=None, name="LeviCivitaAlternatingTensor"):
         """
         Constructor and Initializer
 
@@ -24,6 +24,8 @@ class LeviCivitaAlternatingTensor(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Ricci Tensor.
             Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "RicciTensor".
 
@@ -38,7 +40,7 @@ class LeviCivitaAlternatingTensor(BaseRelativityTensor):
 
         """
         super(LeviCivitaAlternatingTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name,
         )
         self._order = 4
         if not len(config) == self._order:
@@ -59,22 +61,22 @@ class LeviCivitaAlternatingTensor(BaseRelativityTensor):
 
     def GetDualTensor(self, T):
         """
-        Calculates the dual tensor
+        Calculates the dual tensor of a rank 4 tensor
 
         Parameters
         ----
         T: ~einsteinpy.symbolic.tensor.BaseRelativityTensor
-            The tensor
-        
+            The tensor of rank 4
+
         Returns
         ----
         ~einsteinpy.symbolic.BaseRelativityTensor
             The dual tensor
-        
+
         """
         T = T.change_config("llll")
         eps = self.change_config( "uull")
 
         dual = 1./2. * sympy.tensorproduct(T.arr, eps.arr)
-        dual = sympy.simplify(sympy.tensorcontraction(sympy.tensorcontraction(dual, (2, 4)), (2, 4)))
+        dual = sympy.tensorcontraction(sympy.tensorcontraction(dual, (2, 4)), (2, 4))
         return BaseRelativityTensor(dual, syms=T.syms, config="llll", parent_metric=self.parent_metric)

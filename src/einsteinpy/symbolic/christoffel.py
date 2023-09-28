@@ -26,6 +26,8 @@ class ChristoffelSymbols(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ull'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor from which Christoffel symbol is calculated. Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Christoffel Symbols Tensor. Defaults to "ChristoffelSymbols".
 

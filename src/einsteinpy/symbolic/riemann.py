@@ -33,6 +33,8 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor related to this Riemann Curvature Tensor.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "RiemannCurvatureTensor".
 

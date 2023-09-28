@@ -114,19 +114,13 @@ class GenericVector(BaseRelativityTensor):
         Parameters
         ------
         metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Parent metric tensor for changing indices.
-            Already assumes the value of the metric tensor from which it was initialized if passed with None.
-            Defaults to None.
+            Metric tensor for changing indices.
+            Assumes the parent_spacetime if None. Defaults to None.
 
         Returns
-            ~ImmutableDenseNDimArray
-            The norm
+            ~sympy.core.expr.Expr
+                The norm
         """
-        if self.config == "u":
-            l = self.change_config("l", metric=metric)
-            u = self
-        else:
-            l = self
-            u = self.change_config("u", metric=metric)
-        return tensorcontraction(tensor_product(l, u).tensor(), (0,1))
+        metric = metric or self.parent_metric
+        return tensorcontraction(tensor_product(self.change_config('l', metric=metric), self.change_config('u', metric=metric)).tensor(), (0,1))
 

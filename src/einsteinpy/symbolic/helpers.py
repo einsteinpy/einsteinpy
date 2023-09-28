@@ -44,13 +44,12 @@ def simplify_sympy_array(arr):
         return sympy.simplify(arr)
     except IndexError:
         return sympy.Array(sympy.simplify(sum(arr)))
-        
+
 def discard_terms_sympy_array(arr, discard_terms):
     """
-    Function to expand sympy expression or array.
+    Function to change terms of a sympy expression or array.
 
-    This function is explicitely defined as native ``expand`` function within sympy
-    stopped working with sympy version change.
+    This can be used to perform approximations.
 
     Parameters
     ----------
@@ -60,7 +59,7 @@ def discard_terms_sympy_array(arr, discard_terms):
     Returns
     -------
     sympy.tensor.array.ndim_array.NDimArray or ~sympy.core.expr.Expr
-        Expanded sympy array or expression.
+        Adapted sympy array or expression.
 
     """
     try:

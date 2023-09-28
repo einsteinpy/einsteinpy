@@ -35,6 +35,8 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Stress-Energy Coefficient Tensor.
             Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "StressEnergyMomentumTensor".
 

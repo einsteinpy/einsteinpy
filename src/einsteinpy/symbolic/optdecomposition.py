@@ -15,7 +15,7 @@ class OPTDecompositionTensor(BaseRelativityTensor):
     ----------
     arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
         Raw Tensor in sympy array
-    normal_vector : GenericVector
+    nvec : GenericVector
         The normal unit timelike vector used in the 1+3 decomposition
     syms : list or tuple
         List of symbols denoting space and time axis
@@ -71,6 +71,8 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Calculates in real-time if left blank.
         name : str or None
             Name of the Tensor. Defaults to "GenericTensor".
+        simplify : Bool
+            Whether to call the simplify routine on initiation
 
         Raises
         ------
@@ -86,33 +88,97 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(OPTDecompositionTensor, self).__init__(arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, 
+        super(OPTDecompositionTensor, self).__init__(arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime,
                                                         variables=variables, functions=functions, name=name, simplify=simplify)
 
         # Make sure we have a unit vector ?
-        self.normal_vector = nvec
+        self._nvec = nvec
 
+    @property
+    def NormalVector(self):
+        """
+        Returns the normal vector of the 1+3 decomposition
+
+        Returns
+        ------
+            _nvec : ~einsteinpy.symbolic.tensor.BaseRelativityTensor
+        """
+        return self._nvec
 
     def change_config(self, config, metric=None):
+        """
+        Changes the index configuration(contravariant/covariant)
+        Returns an instance of the current class, so does not need to be changed on inheritance (if constructor doesn't change)
+
+        Parameters
+        ----------
+        config : str
+            Specify the new configuration.
+        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Parent metric tensor for changing indices.
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
+            Compulsory if not initialized with 'parent_metric'. Defaults to None.
+
+        Returns
+        -------
+        Instance of self.__class__
+            New tensor with new configuration.
+
+        Raises
+        ------
+        Exception
+            Raised when a parent metric could not be found.
+
+        """
         cls = self.__class__
         self.__class__ = BaseRelativityTensor
         t = self.change_config(config, metric)
         self.__class__ = cls
-        return self.__class__(t.arr, nvec=self.normal_vector, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
+        return self.__class__(t.arr, nvec=self._nvec, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
 
     def symmetric_part(self, indices=None):
         """
+        Calculates the symmetric part of a tensor
+            T_(ab..) = 1/p!  \Sum_{all permutations sigma} T_{sigma(ab...)}
 
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.optdecomposition.OPTDecompositionTensor
+            Symmetrized Tensor
         """
         t = super(OPTDecompositionTensor, self).symmetric_part(indices=indices)
-        return OPTDecompositionTensor(t.arr, nvec=self.normal_vector, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
+        return OPTDecompositionTensor(t.arr, nvec=self._nvec, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
 
     def antisymmetric_part(self, indices=None):
         """
+        Calculates the antisymmetric part of a tensor
+            T_[ab..] = 1/p!  \Sum_{all permutations sigma} sign(sigma)  T_{sigma(ab...)}
 
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.optdecomposition.OPTDecompositionTensor
+            Symmetrized Tensor
         """
         t = super(OPTDecompositionTensor, self).antisymmetric_part(indices=indices)
-        return OPTDecompositionTensor(t.arr, nvec=self.normal_vector, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
+        return OPTDecompositionTensor(t.arr, nvec=self._nvec, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
 
 
     def subs(self, *args):
@@ -131,12 +197,12 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Tensor with substituted values
 
         """
-        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), nvec=self.normal_vector, syms=self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
+        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), nvec=self._nvec, syms=self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
 
 
 class OPTMetric(OPTDecompositionTensor):
     """
-    Class to define a metric in a 1+3 decomposition
+    Class to describe a metric in a 1+3 decomposition
     """
 
     def __init__(self, arr, nvec, syms, config="ll", name="GenericMetricTensor"):
@@ -169,7 +235,7 @@ class OPTMetric(OPTDecompositionTensor):
         super(OPTMetric, self).__init__(
             arr=arr, nvec=nvec, syms=syms, config=config, parent_metric=self, name=name
         )
-        self.normal_vector._parent_metric = self
+        self._nvec._parent_metric = self
         self._order = 2
         self._invmetric = None
         self._proj_tensor = None
@@ -221,7 +287,7 @@ class OPTMetric(OPTDecompositionTensor):
             newconfig = "ll" if self.config == "uu" else "uu"
             inv_met = OPTMetric(
                 sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
-                nvec=self.normal_vector,
+                nvec=self._nvec,
                 syms=self.syms,
                 config=newconfig,
                 name=_change_name(self.name, context="__" + newconfig),
@@ -247,22 +313,29 @@ class OPTMetric(OPTDecompositionTensor):
 
 
     @property
-    def projector_tensor(self):
+    def ProjectorTensor(self):
         """
+        Returns the projector tensor h for the 1+3 decomposition of the metric
+        If u is the normal unit timelike vector and g the metric, this is given by
+            h_ab = g_ab + u_a u_b
 
+        Returns
+        ------
+            h : ~einsteinpy.symbolic.optdecomposition.OPTDecompositionTensor
+                The projector tensor
         """
         if self._proj_tensor is None:
-            u = self.normal_vector.change_config("l")
+            u = self.NormalVector.change_config("l")
             if self.config == "uu":
                 g = self.change_config("ll").tensor()
             else:
                 g = self.tensor()
             uu = tensorproduct(u.tensor(), u.tensor())
-            self._proj_tensor = OPTDecompositionTensor(g + uu, nvec=self.normal_vector, syms=self.syms, config="ll", parent_metric=self)
+            self._proj_tensor = OPTDecompositionTensor(g + uu, nvec=self._nvec, syms=self.syms, config="ll", parent_metric=self)
         return self._proj_tensor
 
-    @projector_tensor.setter
-    def projector_tensor(self, value):
+    @ProjectorTensor.setter
+    def ProjectorTensor(self, value):
         self._proj_tensor = value
 
     def determinant(self):
@@ -275,7 +348,6 @@ class OPTMetric(OPTDecompositionTensor):
                 Sympy multiplication object
         """
         return sympy.Matrix(self.lower_config().tensor()).det()
-
 
 
 

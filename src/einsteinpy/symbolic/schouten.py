@@ -11,7 +11,7 @@ class SchoutenTensor(BaseRelativityTensor):
     """
 
     def __init__(
-        self, arr, syms, config="ll", parent_metric=None, name="SchoutenTensor"
+        self, arr, syms, config="ll", parent_metric=None, parent_spacetime=None, name="SchoutenTensor"
     ):
         """
         Constructor and Initializer
@@ -26,6 +26,8 @@ class SchoutenTensor(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Corresponding Metric for the Schouten Tensor. Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "SchoutenTensor".
 
@@ -40,7 +42,7 @@ class SchoutenTensor(BaseRelativityTensor):
 
         """
         super(SchoutenTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
         )
         self._order = 2
         if not len(config) == self._order:

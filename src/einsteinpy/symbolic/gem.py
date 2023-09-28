@@ -14,24 +14,6 @@ from .optdecomposition import OPTDecompositionTensor
 class GravitoElectricTensor(OPTDecompositionTensor):
     """
     Class for defining the gravitoelectric tensor as part of a 1+3 decomposition.
-
-    Attributes
-    ----------
-    arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
-        Raw Tensor in sympy array
-    normal_vector : GenericVector
-        The normal unit timelike vector used in the 1+3 decomposition
-    syms : list or tuple
-        List of symbols denoting space and time axis
-    dims : int
-        dimension of the space-time.
-    variables : list
-        free variables in the tensor expression other than the variables describing space-time axis.
-    functions : list
-        Undefined functions in the tensor expression.
-    name : str or None
-        Name of the tensor. Defaults to "GenericTensor".
-
     """
 
     def __init__(
@@ -63,6 +45,8 @@ class GravitoElectricTensor(OPTDecompositionTensor):
             'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Metric Tensor for some particular space-time which is associated with this Tensor.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         variables : tuple or list or set
             List of symbols used in expressing the tensor,
             other than symbols associated with denoting the space-time axis.
@@ -119,24 +103,6 @@ class GravitoElectricTensor(OPTDecompositionTensor):
 class GravitoMagneticTensor(OPTDecompositionTensor):
     """
     Class for defining the gravitomagnetic tensor as part of a 1+3 decomposition.
-
-    Attributes
-    ----------
-    arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
-        Raw Tensor in sympy array
-    normal_vector : GenericVector
-        The normal unit timelike vector used in the 1+3 decomposition
-    syms : list or tuple
-        List of symbols denoting space and time axis
-    dims : int
-        dimension of the space-time.
-    variables : list
-        free variables in the tensor expression other than the variables describing space-time axis.
-    functions : list
-        Undefined functions in the tensor expression.
-    name : str or None
-        Name of the tensor. Defaults to "GenericTensor".
-
     """
 
     def __init__(
@@ -146,7 +112,7 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
         syms,
         config="ll",
         parent_metric=None,
-        parent_spacetime=None, 
+        parent_spacetime=None,
         variables=list(),
         functions=list(),
         name="GravitoMagneticTensor",
@@ -168,6 +134,8 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
             'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Metric Tensor for some particular space-time which is associated with this Tensor.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         variables : tuple or list or set
             List of symbols used in expressing the tensor,
             other than symbols associated with denoting the space-time axis.
@@ -176,7 +144,7 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
             List of symbolic functions used in epressing the tensor.
             Calculates in real-time if left blank.
         name : str or None
-            Name of the Tensor. Defaults to "GenericTensor".
+            Name of the Tensor. Defaults to "GravitoMagneticTensor".
 
         Raises
         ------
@@ -216,6 +184,9 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
         nvec  :  ~einsteinpy.symbolic.vector.GenericVector
             The normal timelike unit vector as part of the 1+3 decomposition
 
+        Returns
+        ------
+            ~einsteinpy.symbolic.gem.GravitoMagneticTensor
         """
         if metric is None:
             metric = weyl.parent_metric if st is None else st.Metric
@@ -229,7 +200,7 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
             C_s = C.DualTensor
         except:
             C_s = levi_civita.GetDualTensor(C)
-        
+
         H = tensor_product(C_s, u, 1, 0)
         H = tensor_product(H, u, 2, 0)
 
@@ -237,6 +208,17 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
 
     @classmethod
     def from_opt_spacetime(cls, st):
+        """
+        Get gravitomagnetic tensor from an OPTSpacetime object
+
+        Parameters
+        ----------
+            st : ~einsteinpy.symbolic.optspacetime.OPTSpacetime
+
+        Returns
+        ------
+            ~einsteinpy.symbolic.gem.GravitoMagneticTensor
+        """
         C = st.WeylTensor.change_config("uull")
         u = st.NormalVector.change_config("u")
         eps = st.ProjectedAlternatingTensor.change_config("lll")
