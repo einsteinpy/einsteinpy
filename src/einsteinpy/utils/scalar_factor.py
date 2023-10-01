@@ -31,14 +31,10 @@ def scalar_factor(t, era="md", tuning_param=1.0):
 
     """
     T = t.to(u.s).value
-    if era == "md":
-        return tuning_param * (T ** (2 / 3))
-    elif era == "rd":
-        return tuning_param * (T ** (0.5))
-    elif era == "ded":
-        hubble_const = (constant.Cosmo_Const / 3) ** 0.5
-        val = np.e ** (hubble_const.value * T)
-        return tuning_param * val
+      if era in era_exponents:
+        exponent = era_exponents[era]
+        return tuning_param * (T ** exponent)
+    
     raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")
 
 
@@ -69,12 +65,8 @@ def scalar_factor_derivative(t, era="md", tuning_param=1.0):
 
     """
     T = t.to(u.s).value
-    if era == "md":
-        return (2 / 3) * tuning_param * (T ** (-1 / 3))
-    elif era == "rd":
-        return 0.5 * tuning_param * (T ** (-0.5))
-    elif era == "ded":
-        hubble_const = (constant.Cosmo_Const / 3) ** 0.5
-        val = hubble_const.value * (np.e ** (hubble_const.value * T))
-        return tuning_param * val
+      if era in era_exponents:
+        exponent = era_exponents[era]
+        return tuning_param * exponent * (T ** (exponent - 1))
+
     raise ValueError("Passed era should be either 'md', 'rd' or 'ded' ")
