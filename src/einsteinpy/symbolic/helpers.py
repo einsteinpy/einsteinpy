@@ -45,6 +45,7 @@ def simplify_sympy_array(arr):
     except IndexError:
         return sympy.Array(sympy.simplify(sum(arr)))
 
+
 def discard_terms_sympy_array(arr, discard_terms):
     """
     Function to change terms of a sympy expression or array.
@@ -70,6 +71,7 @@ def discard_terms_sympy_array(arr, discard_terms):
         return discard_terms(arr)
     except IndexError:
         return sympy.Array(discard_terms(sum(arr)))
+
 
 def expand_sympy_array(arr):
     """

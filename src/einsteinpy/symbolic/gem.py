@@ -2,13 +2,10 @@ import numpy as np
 import sympy
 
 from .helpers import simplify_sympy_array
+from .optdecomposition import OPTDecompositionTensor
+from .spacetime import LeviCivitaAlternatingTensor
 from .tensor import BaseRelativityTensor, Tensor, tensor_product, tensorcontraction
 from .vector import GenericVector
-from .spacetime import LeviCivitaAlternatingTensor
-from .optdecomposition import OPTDecompositionTensor
-
-
-
 
 
 class GravitoElectricTensor(OPTDecompositionTensor):
@@ -71,9 +68,17 @@ class GravitoElectricTensor(OPTDecompositionTensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(GravitoElectricTensor, self).__init__(arr=arr, nvec=nvec, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, variables=variables, functions=functions, name=name)
-
-
+        super(GravitoElectricTensor, self).__init__(
+            arr=arr,
+            nvec=nvec,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            variables=variables,
+            functions=functions,
+            name=name,
+        )
 
     @classmethod
     def from_weyl(cls, weyl, nvec, metric=None):
@@ -160,17 +165,17 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(GravitoMagneticTensor, self).__init__(arr=arr,
-                                                    nvec=nvec,
-                                                    syms=syms,
-                                                    config=config,
-                                                    parent_metric=parent_metric,
-                                                    parent_spacetime=parent_spacetime,
-                                                    variables=variables,
-                                                    functions=functions,
-                                                    name=name)
-
-
+        super(GravitoMagneticTensor, self).__init__(
+            arr=arr,
+            nvec=nvec,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            variables=variables,
+            functions=functions,
+            name=name,
+        )
 
     @classmethod
     def from_weyl(cls, weyl, nvec, metric=None, levi_civita=None, st=None):
@@ -191,7 +196,11 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
         if metric is None:
             metric = weyl.parent_metric if st is None else st.Metric
         if levi_civita is None:
-            levi_civita = LeviCivitaAlternatingTensor.from_metric(metric) if st is None else st.LeviCivitaTensor
+            levi_civita = (
+                LeviCivitaAlternatingTensor.from_metric(metric)
+                if st is None
+                else st.LeviCivitaTensor
+            )
 
         C = weyl.change_config(newconfig="llll", metric=metric)
         u = nvec.change_config("u", metric=metric)
@@ -225,7 +234,11 @@ class GravitoMagneticTensor(OPTDecompositionTensor):
 
         H = tensor_product(eps, C, 1, 0)
         H = tensor_product(H, u, 4, 0)
-        return cls( tensorcontraction(H.arr, (1,2)) / 2 , st.NormalVector, syms=st.Metric.syms, config="ll", parent_metric=st.Metric, parent_spacetime=st)
-
-
-
+        return cls(
+            tensorcontraction(H.arr, (1, 2)) / 2,
+            st.NormalVector,
+            syms=st.Metric.syms,
+            config="ll",
+            parent_metric=st.Metric,
+            parent_spacetime=st,
+        )

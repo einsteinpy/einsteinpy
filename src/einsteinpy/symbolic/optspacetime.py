@@ -2,18 +2,25 @@ import numpy as np
 import sympy
 from sympy import simplify, tensorcontraction, tensorproduct
 
-from .tensor import BaseRelativityTensor, Tensor, tensor_product, _change_name
-from .vector import GenericVector
-from .spacetime import GenericSpacetime, LeviCivitaAlternatingTensor
-from .optdecomposition import OPTDecompositionTensor, OPTMetric
 from .gem import GravitoElectricTensor, GravitoMagneticTensor
+from .optdecomposition import OPTDecompositionTensor, OPTMetric
+from .spacetime import GenericSpacetime, LeviCivitaAlternatingTensor
 from .stress_energy_momentum import StressEnergyMomentumTensor
+from .tensor import BaseRelativityTensor, Tensor, _change_name, tensor_product
+from .vector import GenericVector
 
 
 class ProjectedLeviCivitaAlternatingTensor(OPTDecompositionTensor):
-
-
-    def __init__(self, arr, nvec, syms, config="lll", parent_metric=None, parent_spacetime=None, name="ProjectedAlternatingTensor"):
+    def __init__(
+        self,
+        arr,
+        nvec,
+        syms,
+        config="lll",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="ProjectedAlternatingTensor",
+    ):
         """
         Constructor for the Projected alternating Levi-Civita tensor
 
@@ -44,7 +51,15 @@ class ProjectedLeviCivitaAlternatingTensor(OPTDecompositionTensor):
 
         """
 
-        super(ProjectedLeviCivitaAlternatingTensor, self).__init__(arr,  nvec=nvec, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name)
+        super(ProjectedLeviCivitaAlternatingTensor, self).__init__(
+            arr,
+            nvec=nvec,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
+        )
 
     @classmethod
     def from_metric(cls, optmetric):
@@ -62,7 +77,13 @@ class ProjectedLeviCivitaAlternatingTensor(OPTDecompositionTensor):
         """
         lcat = LeviCivitaAlternatingTensor.from_metric(optmetric)
         eps = tensor_product(lcat, optmetric.NormalVector.change_config("u"), 3, 0)
-        return ProjectedLeviCivitaAlternatingTensor(sympy.Array(eps.tensor()),  nvec=optmetric.NormalVector, syms=optmetric.syms, config="lll", parent_metric=optmetric)
+        return ProjectedLeviCivitaAlternatingTensor(
+            sympy.Array(eps.tensor()),
+            nvec=optmetric.NormalVector,
+            syms=optmetric.syms,
+            config="lll",
+            parent_metric=optmetric,
+        )
 
     @classmethod
     def from_spacetime(cls, optst):
@@ -81,8 +102,14 @@ class ProjectedLeviCivitaAlternatingTensor(OPTDecompositionTensor):
         optmetric = optst.Metric
         lcat = optst.LeviCivitaTensor
         eps = tensor_product(lcat, optmetric.NormalVector.change_config("u"), 3, 0)
-        return ProjectedLeviCivitaAlternatingTensor(sympy.Array(eps.tensor()),
-                                                    nvec=optmetric.NormalVector, syms=optmetric.syms, config="lll", parent_metric=optmetric, parent_spacetime=optst)
+        return ProjectedLeviCivitaAlternatingTensor(
+            sympy.Array(eps.tensor()),
+            nvec=optmetric.NormalVector,
+            syms=optmetric.syms,
+            config="lll",
+            parent_metric=optmetric,
+            parent_spacetime=optst,
+        )
 
 
 class OPTSEMTensor(OPTDecompositionTensor):
@@ -138,7 +165,17 @@ class OPTSEMTensor(OPTDecompositionTensor):
 
 
         """
-        super(OPTSEMTensor, self).__init__(arr, nvec=nvec, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, variables=variables, functions=functions, name=name)
+        super(OPTSEMTensor, self).__init__(
+            arr,
+            nvec=nvec,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            variables=variables,
+            functions=functions,
+            name=name,
+        )
 
         self._rho = None
         self._p = None
@@ -162,7 +199,13 @@ class OPTSEMTensor(OPTDecompositionTensor):
                 The associated SEM tensor
         """
         sem = StressEnergyMomentumTensor.from_einstein(einstein)
-        return cls(sem.arr, nvec=einstein.parent_metric.NormalVector if nvec is None else nvec, syms=sem.syms, config=sem.config, parent_metric=sem.parent_metric)
+        return cls(
+            sem.arr,
+            nvec=einstein.parent_metric.NormalVector if nvec is None else nvec,
+            syms=sem.syms,
+            config=sem.config,
+            parent_metric=sem.parent_metric,
+        )
 
     @property
     def rho(self):
@@ -178,7 +221,12 @@ class OPTSEMTensor(OPTDecompositionTensor):
         """
         if self._rho is None:
             u = self.NormalVector.change_config("u")
-            self._rho = tensorcontraction(tensor_product(tensor_product(self.change_config("ll"), u, 0, 0), u).arr, (0,1))
+            self._rho = tensorcontraction(
+                tensor_product(
+                    tensor_product(self.change_config("ll"), u, 0, 0), u
+                ).arr,
+                (0, 1),
+            )
         return self._rho
 
     @rho.setter
@@ -199,7 +247,12 @@ class OPTSEMTensor(OPTDecompositionTensor):
         """
         if self._p is None:
             h = self.parent_metric.ProjectorTensor.change_config("uu")
-            self._p = tensorcontraction(tensor_product(self.change_config("ll"), h, 0, 0).arr, (0,1))/3
+            self._p = (
+                tensorcontraction(
+                    tensor_product(self.change_config("ll"), h, 0, 0).arr, (0, 1)
+                )
+                / 3
+            )
         return self._p
 
     @p.setter
@@ -221,8 +274,15 @@ class OPTSEMTensor(OPTDecompositionTensor):
         if self._q is None:
             u = self.NormalVector.change_config("u")
             h = self.parent_metric.ProjectorTensor.change_config("lu")
-            self._q = OPTDecompositionTensor( -tensor_product(tensor_product(h, self.change_config("ll"), 1, 0), u, 1, 0).tensor(),
-                                                nvec=self.NormalVector, syms=self.syms, config="l", parent_metric=self.parent_metric)
+            self._q = OPTDecompositionTensor(
+                -tensor_product(
+                    tensor_product(h, self.change_config("ll"), 1, 0), u, 1, 0
+                ).tensor(),
+                nvec=self.NormalVector,
+                syms=self.syms,
+                config="l",
+                parent_metric=self.parent_metric,
+            )
         return self._q
 
     @q.setter
@@ -251,20 +311,23 @@ class OPTSEMTensor(OPTDecompositionTensor):
     def pi(self, value):
         self._pi = value
 
+
 class OPTSpacetime(GenericSpacetime):
     """
     A class that encapsulates the spacetime of the 1+3 decomposition
 
     """
 
-    def __init__( self,
-                    optmetric,
-                    chris=None,
-                    riemann=None,
-                    ricci=None,
-                    einstein=None,
-                    sem_tensor=None,
-                    name = "OPTSpacetime"):
+    def __init__(
+        self,
+        optmetric,
+        chris=None,
+        riemann=None,
+        ricci=None,
+        einstein=None,
+        sem_tensor=None,
+        name="OPTSpacetime",
+    ):
         """
         Constructor for the OPTSpacetime class. Only the OPTMetricTensor is necessary,
         the other tensors can be provided if precomputed.
@@ -288,7 +351,15 @@ class OPTSpacetime(GenericSpacetime):
             The name for the spacetime, default is "OPTSpacetime"
         """
 
-        super(OPTSpacetime, self).__init__(metric=optmetric, chris=chris, riemann=riemann, ricci=ricci, einstein=einstein, sem_tensor=sem_tensor, name=name)
+        super(OPTSpacetime, self).__init__(
+            metric=optmetric,
+            chris=chris,
+            riemann=riemann,
+            ricci=ricci,
+            einstein=einstein,
+            sem_tensor=sem_tensor,
+            name=name,
+        )
 
         self._proj_alt_tensor = None
         self._proj_alt_tensor_dot = None
@@ -301,7 +372,6 @@ class OPTSpacetime(GenericSpacetime):
         self._u_dot = None
         self._Du = None
 
-
     def ProjectedNormalDerivatives(self):
         """
         Returns the projected derivatives of the unit timelike vector u of the 1+3 decomposition
@@ -313,7 +383,9 @@ class OPTSpacetime(GenericSpacetime):
             u_dot : einsteinpy.symbolic.OPTDecompositionTensor
         """
         if self._u_dot is None or self._Du is None:
-            self._u_dot, self._Du = self.projected_covariant_derivative(self.NormalVector.change_config("l"))
+            self._u_dot, self._Du = self.projected_covariant_derivative(
+                self.NormalVector.change_config("l")
+            )
         return self._u_dot, self._Du
 
     @property
@@ -326,7 +398,9 @@ class OPTSpacetime(GenericSpacetime):
             ~einsteinpy.symbolic.optdecomposition.ProjectedLeviCivitaAlternatingTensor
         """
         if self._proj_alt_tensor is None:
-            self._proj_alt_tensor = ProjectedLeviCivitaAlternatingTensor.from_spacetime(self)
+            self._proj_alt_tensor = ProjectedLeviCivitaAlternatingTensor.from_spacetime(
+                self
+            )
         return self._proj_alt_tensor
 
     @ProjectedAlternatingTensor.setter
@@ -343,7 +417,9 @@ class OPTSpacetime(GenericSpacetime):
             ~einsteinpy.symbolic.optdecomposition.OPTDecompositionTensor
         """
         if self._proj_alt_tensor_dot is None:
-            self._proj_alt_tensor_dot, _ = self.projected_covariant_derivative(self.ProjectedAlternatingTensor)
+            self._proj_alt_tensor_dot, _ = self.projected_covariant_derivative(
+                self.ProjectedAlternatingTensor
+            )
         return self._proj_alt_tensor_dot
 
     @ProjectedAlternatingTensorDot.setter
@@ -382,13 +458,14 @@ class OPTSpacetime(GenericSpacetime):
             ~einsteinpy.symbolic.optspacetime.OPTSEMTensor
         """
         if self._sem_tensor is None:
-            self._sem_tensor = OPTSEMTensor.from_einstein(self.EinsteinTensor, nvec=self.Metric.NormalVector)
+            self._sem_tensor = OPTSEMTensor.from_einstein(
+                self.EinsteinTensor, nvec=self.Metric.NormalVector
+            )
         return self._sem_tensor
 
     @SEMTensor.setter
     def SEMTensor(self, value):
         self._sem_tensor = value
-
 
     @property
     def ExpansionScalar(self):
@@ -401,7 +478,11 @@ class OPTSpacetime(GenericSpacetime):
         """
         if self._expansion_scalar is None:
             u_dot, Du = self.ProjectedNormalDerivatives()
-            self._expansion_scalar = tensorcontraction(Du.change_config("ul").tensor(), (0,1)) if self._expansion_scalar is None else self._expansion_scalar
+            self._expansion_scalar = (
+                tensorcontraction(Du.change_config("ul").tensor(), (0, 1))
+                if self._expansion_scalar is None
+                else self._expansion_scalar
+            )
         return self._expansion_scalar
 
     @ExpansionScalar.setter
@@ -437,8 +518,13 @@ class OPTSpacetime(GenericSpacetime):
         """
         if self._vorticity_tensor is None:
             u_dot, Du = self.ProjectedNormalDerivatives()
-            self._vorticity_tensor = OPTDecompositionTensor(Du.antisymmetric_part().tensor(),
-                                                        nvec=self.NormalVector, syms=self.Metric.syms, config="ll", parent_metric=self.Metric)
+            self._vorticity_tensor = OPTDecompositionTensor(
+                Du.antisymmetric_part().tensor(),
+                nvec=self.NormalVector,
+                syms=self.Metric.syms,
+                config="ll",
+                parent_metric=self.Metric,
+            )
         return self._vorticity_tensor
 
     @VorticityTensor.setter
@@ -455,10 +541,22 @@ class OPTSpacetime(GenericSpacetime):
             ~einsteinpy.symbolic.optdecomposition.OPTDecompositionTensor
         """
         if self._vorticity_vector is None:
-             self._vorticity_vector = OPTDecompositionTensor( -tensorcontraction(
-                                                                tensor_product(self.ProjectedAlternatingTensor, self.VorticityTensor.change_config("uu"), 1, 0).arr,
-                                                                (1,2))/2,
-                                                            nvec=self.NormalVector, syms=self.Metric.syms, config="l", parent_metric=self.Metric)
+            self._vorticity_vector = OPTDecompositionTensor(
+                -tensorcontraction(
+                    tensor_product(
+                        self.ProjectedAlternatingTensor,
+                        self.VorticityTensor.change_config("uu"),
+                        1,
+                        0,
+                    ).arr,
+                    (1, 2),
+                )
+                / 2,
+                nvec=self.NormalVector,
+                syms=self.Metric.syms,
+                config="l",
+                parent_metric=self.Metric,
+            )
 
         return self._vorticity_vector
 
@@ -476,7 +574,9 @@ class OPTSpacetime(GenericSpacetime):
             ~einsteinpy.symbolic.gem.GravitoElectricTensor
         """
         if self._E_tensor is None:
-            self._E_tensor = GravitoElectricTensor.from_weyl(self.WeylTensor, self.NormalVector)
+            self._E_tensor = GravitoElectricTensor.from_weyl(
+                self.WeylTensor, self.NormalVector
+            )
         return self._E_tensor
 
     @GravitoElectricTensor.setter
@@ -500,7 +600,6 @@ class OPTSpacetime(GenericSpacetime):
     def GravitoMagneticTensor(self, value):
         self._H_tensor = value
 
-
     def spatial_trace(self, S):
         """
         Calculates the spatial trace of the given rank 2 tensor
@@ -518,9 +617,8 @@ class OPTSpacetime(GenericSpacetime):
         """
         h = self.ProjectorTensor.change_config("uu")
         r = tensor_product(h, S.change_config("ll"), 0, 0)
-        r = tensorcontraction(r.arr, (0,1))
+        r = tensorcontraction(r.arr, (0, 1))
         return r
-
 
     def projection(self, T):
         """
@@ -544,8 +642,14 @@ class OPTSpacetime(GenericSpacetime):
             elif T.config[i] == "u":
                 h = h.change_config("ll")
             T = tensor_product(h, T, 1, i)
-        return OPTDecompositionTensor(T.arr, nvec=self.Metric.NormalVector, syms=T.syms, config=T.config, parent_metric=self.Metric, parent_spacetime=self)
-
+        return OPTDecompositionTensor(
+            T.arr,
+            nvec=self.Metric.NormalVector,
+            syms=T.syms,
+            config=T.config,
+            parent_metric=self.Metric,
+            parent_spacetime=self,
+        )
 
     def projected_vector_dual(self, S):
         """
@@ -566,9 +670,15 @@ class OPTSpacetime(GenericSpacetime):
         S = S.antisymmetric_part()
         eps = self.ProjectedAlternatingTensor
         r = tensor_product(eps, S, 1, 0)
-        r = tensorcontraction(r.arr, (1,2))/2
-        return OPTDecompositionTensor(r, nvec=self.Metric.NormalVector, syms=S.syms, config="l", parent_metric=self.Metric, parent_spacetime=self)
-
+        r = tensorcontraction(r.arr, (1, 2)) / 2
+        return OPTDecompositionTensor(
+            r,
+            nvec=self.Metric.NormalVector,
+            syms=S.syms,
+            config="l",
+            parent_metric=self.Metric,
+            parent_spacetime=self,
+        )
 
     def pstf(self, S):
         """
@@ -591,10 +701,16 @@ class OPTSpacetime(GenericSpacetime):
         l = tensor_product(h_lu, l, 1, 1)
         l = l.symmetric_part().arr
         r = tensor_product(h.change_config("uu"), S, 0, 0)
-        r = tensorcontraction(r.arr, (0,1))
-        r = r* h.change_config("ll").arr
-        return OPTDecompositionTensor( l - r/3, nvec=self.Metric.NormalVector, syms=S.syms, config="ll", parent_metric=self.Metric, parent_spacetime=self)
-
+        r = tensorcontraction(r.arr, (0, 1))
+        r = r * h.change_config("ll").arr
+        return OPTDecompositionTensor(
+            l - r / 3,
+            nvec=self.Metric.NormalVector,
+            syms=S.syms,
+            config="ll",
+            parent_metric=self.Metric,
+            parent_spacetime=self,
+        )
 
     def vector_product(self, V, W):
         """
@@ -623,11 +739,11 @@ class OPTSpacetime(GenericSpacetime):
                 S = W.change_config("lu")
                 r = tensor_product(eps, S, 0, 1)
                 r = tensor_product(r, V.change_config("u"), 1, 0)
-                r =  r.symmetric_part()
+                r = r.symmetric_part()
                 r = r.arr
         elif V.order == 2:
             if W.order == 1:
-                return self.vector_product(W, V) # TODO: Check -
+                return self.vector_product(W, V)  # TODO: Check -
             S = V.change_config("ul")
             Q = W.change_config("uu")
             r = tensor_product(eps, S, 1, 0)
@@ -635,10 +751,14 @@ class OPTSpacetime(GenericSpacetime):
             r = tensorcontraction(r.arr, (1, 2))
         else:
             raise Exception("Higher orders not implemented")
-        return OPTDecompositionTensor( r, nvec=V.NormalVector, syms=V.syms,
-                                        config="ll" if V.order == 1 and W.order == 2 else "l", parent_metric=self.Metric, parent_spacetime=self)
-
-
+        return OPTDecompositionTensor(
+            r,
+            nvec=V.NormalVector,
+            syms=V.syms,
+            config="ll" if V.order == 1 and W.order == 2 else "l",
+            parent_metric=self.Metric,
+            parent_spacetime=self,
+        )
 
     def projected_covariant_derivative(self, T):
         """
@@ -669,11 +789,24 @@ class OPTSpacetime(GenericSpacetime):
             else:
                 DT = tensor_product(DT, h_ul, i, 1)
 
-        return ( OPTDecompositionTensor( Tdot.arr, nvec=self.NormalVector, syms=T.syms,
-                                        config=Tdot.config, parent_metric=self.Metric, parent_spacetime=self),
-                 OPTDecompositionTensor( DT.arr, nvec=self.NormalVector, syms=T.syms,
-                                        config=DT.config, parent_metric=self.Metric, parent_spacetime=self) )
-
+        return (
+            OPTDecompositionTensor(
+                Tdot.arr,
+                nvec=self.NormalVector,
+                syms=T.syms,
+                config=Tdot.config,
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            ),
+            OPTDecompositionTensor(
+                DT.arr,
+                nvec=self.NormalVector,
+                syms=T.syms,
+                config=DT.config,
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            ),
+        )
 
     def div(self, S):
         """
@@ -693,10 +826,16 @@ class OPTSpacetime(GenericSpacetime):
         config = "u" + DS.config[1:]
         DS = DS.change_config(config)
         if S.order == 1:
-            return tensorcontraction(DS.tensor(), (0,1))
+            return tensorcontraction(DS.tensor(), (0, 1))
         else:
-            return OPTDecompositionTensor( tensorcontraction(DS.tensor(), (0, S.order)),
-                                            nvec=self.NormalVector, syms=S.syms, config=config[1:-1], parent_metric=self.Metric, parent_spacetime=self)
+            return OPTDecompositionTensor(
+                tensorcontraction(DS.tensor(), (0, S.order)),
+                nvec=self.NormalVector,
+                syms=S.syms,
+                config=config[1:-1],
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            )
 
     def curl(self, S):
         """
@@ -722,11 +861,29 @@ class OPTSpacetime(GenericSpacetime):
         config = "u" + DS.config[1:]
         DS = DS.change_config(config)
         if S.order == 1:
-            return OPTDecompositionTensor( tensorcontraction( tensor_product( self.ProjectedAlternatingTensor, DS, 1, 0).arr, (1,2)),
-                                            nvec=S.NormalVector, syms=S.syms, config="l", parent_metric=self.Metric, parent_spacetime=self)
+            return OPTDecompositionTensor(
+                tensorcontraction(
+                    tensor_product(self.ProjectedAlternatingTensor, DS, 1, 0).arr,
+                    (1, 2),
+                ),
+                nvec=S.NormalVector,
+                syms=S.syms,
+                config="l",
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            )
         elif S.order == 2:
-            return OPTDecompositionTensor( tensorcontraction( tensor_product( self.ProjectedAlternatingTensor, DS, 0, 0).arr, (0,3)),
-                                            nvec=S.NormalVector, syms=S.syms, config="ll", parent_metric=self.Metric, parent_spacetime=self).symmetric_part()
+            return OPTDecompositionTensor(
+                tensorcontraction(
+                    tensor_product(self.ProjectedAlternatingTensor, DS, 0, 0).arr,
+                    (0, 3),
+                ),
+                nvec=S.NormalVector,
+                syms=S.syms,
+                config="ll",
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            ).symmetric_part()
 
     def temporal_rotation(self, S):
         """
@@ -747,11 +904,24 @@ class OPTSpacetime(GenericSpacetime):
         if S.order == 1:
             r = tensor_product(eps_dot, S.change_config("u"), 1, 0)
             r = tensor_product(u, r, 0, 1)
-            return OPTDecompositionTensor(-r.arr, nvec=u, syms=S.syms, config="l", parent_metric=self.Metric, parent_spacetime=self)
+            return OPTDecompositionTensor(
+                -r.arr,
+                nvec=u,
+                syms=S.syms,
+                config="l",
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            )
         elif S.order == 2:
             r = tensor_product(eps_dot, S.change_config("lu"), 1, 1)
             r = tensor_product(u, r, 0, 0).symmetric_part()
-            return OPTDecompositionTensor(-r.arr, nvec=u, syms=S.syms, config="ll", parent_metric=self.Metric, parent_spacetime=self)
+            return OPTDecompositionTensor(
+                -r.arr,
+                nvec=u,
+                syms=S.syms,
+                config="ll",
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            )
         else:
             raise ValueError("Higher Orders not implemented")
-

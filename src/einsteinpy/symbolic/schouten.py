@@ -11,7 +11,13 @@ class SchoutenTensor(BaseRelativityTensor):
     """
 
     def __init__(
-        self, arr, syms, config="ll", parent_metric=None, parent_spacetime=None, name="SchoutenTensor"
+        self,
+        arr,
+        syms,
+        config="ll",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="SchoutenTensor",
     ):
         """
         Constructor and Initializer
@@ -42,7 +48,12 @@ class SchoutenTensor(BaseRelativityTensor):
 
         """
         super(SchoutenTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 2
         if not len(config) == self._order:

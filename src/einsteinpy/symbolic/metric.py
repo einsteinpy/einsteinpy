@@ -9,7 +9,9 @@ class MetricTensor(BaseRelativityTensor):
     Class to define a metric tensor for a space-time
     """
 
-    def __init__(self, arr, syms, config="ll", parent_spacetime=None, name="GenericMetricTensor"):
+    def __init__(
+        self, arr, syms, config="ll", parent_spacetime=None, name="GenericMetricTensor"
+    ):
         """
         Constructor and Initializer
 
@@ -35,7 +37,12 @@ class MetricTensor(BaseRelativityTensor):
 
         """
         super(MetricTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=self, parent_spacetime=parent_spacetime, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=self,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 2
         self._invmetric = None
@@ -142,4 +149,3 @@ class MetricTensor(BaseRelativityTensor):
                 Sympy multiplication object
         """
         return sympy.Matrix(self.lower_config().tensor()).det()
-

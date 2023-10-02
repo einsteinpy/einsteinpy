@@ -1,22 +1,22 @@
 import numpy as np
 import sympy
-from sympy.functions.special.tensor_functions import LeviCivita
 from sympy import permutedims
 from sympy.combinatorics import Permutation
-#from sympy import simplify, tensorcontraction, tensorproduct
+from sympy.functions.special.tensor_functions import LeviCivita
 
+from .christoffel import ChristoffelSymbols
+from .einstein import EinsteinTensor
 from .helpers import _change_name
+from .levicivita import LeviCivitaAlternatingTensor
+from .metric import MetricTensor
+from .ricci import RicciScalar, RicciTensor
+from .riemann import RiemannCurvatureTensor
+from .stress_energy_momentum import StressEnergyMomentumTensor
 from .tensor import BaseRelativityTensor, _change_config, tensor_product
 from .vector import GenericVector
-from .metric import MetricTensor
-from .levicivita import LeviCivitaAlternatingTensor
-from .christoffel import ChristoffelSymbols
-from .riemann import RiemannCurvatureTensor
-from .ricci import RicciScalar, RicciTensor
-from .einstein import EinsteinTensor
-from .stress_energy_momentum import StressEnergyMomentumTensor
-from .weyl import WeylTensor, BelRobinsonTensor
+from .weyl import BelRobinsonTensor, WeylTensor
 
+# from sympy import simplify, tensorcontraction, tensorproduct
 
 
 class GenericSpacetime:
@@ -26,14 +26,16 @@ class GenericSpacetime:
     The properties can also be set, in case approximations are to be made along the way.
     """
 
-    def __init__( self,
-                    metric,
-                    chris=None,
-                    riemann=None,
-                    ricci=None,
-                    einstein=None,
-                    sem_tensor=None,
-                    name = "GenericSpacetime"):
+    def __init__(
+        self,
+        metric,
+        chris=None,
+        riemann=None,
+        ricci=None,
+        einstein=None,
+        sem_tensor=None,
+        name="GenericSpacetime",
+    ):
         """
         Constructor for the Generic Spacetime class. Only the MetricTensor is necessary,
         the other tensors can be provided if precomputed.
@@ -80,7 +82,9 @@ class GenericSpacetime:
                 The Einstein tensor of the spacetime
         """
         if self._einstein is None:
-            self._einstein = EinsteinTensor.from_ricci(self.RicciTensor, self.RicciScalar)
+            self._einstein = EinsteinTensor.from_ricci(
+                self.RicciTensor, self.RicciScalar
+            )
         return self._einstein
 
     @EinsteinTensor.setter
@@ -137,7 +141,9 @@ class GenericSpacetime:
                 The Riemann tensor of the spacetime
         """
         if self._riemann is None:
-            self._riemann = RiemannCurvatureTensor.from_christoffels(self.ChristoffelSymbols)
+            self._riemann = RiemannCurvatureTensor.from_christoffels(
+                self.ChristoffelSymbols
+            )
         return self._riemann
 
     @RiemannTensor.setter
@@ -156,7 +162,9 @@ class GenericSpacetime:
                 The Weyl tensor of the spacetime
         """
         if self._weyl is None:
-            self._weyl = WeylTensor.from_tensors(self.Metric, self.RiemannTensor, self.RicciTensor, self.RicciScalar)
+            self._weyl = WeylTensor.from_tensors(
+                self.Metric, self.RiemannTensor, self.RicciTensor, self.RicciScalar
+            )
             self._weyl._parent_spacetime = self
         return self._weyl
 
@@ -250,8 +258,6 @@ class GenericSpacetime:
         """
         return self._metric
 
-
-
     def geodesic_equation(self, wline, apar):
         """
         Returns the geodesic equation for a given wline x(apar) with the affine parameter apar
@@ -273,8 +279,7 @@ class GenericSpacetime:
         dx_ds = GenericVector(wline.tensor().diff(apar), syms=wline.syms, config="u")
         rhs = tensor_product(tensor_product(chris, dx_ds, 1, 0), dx_ds, 1, 0)
         d2x_ds2 = dx_ds.tensor().diff(apar)
-        return sympy.Eq(d2x_ds2, - rhs.tensor())
-
+        return sympy.Eq(d2x_ds2, -rhs.tensor())
 
     def covariant_derivative(self, T):
         """
@@ -304,23 +309,34 @@ class GenericSpacetime:
         try:
             for s in syms:
                 Td.append(T.tensor().diff(s))
-            Td = BaseRelativityTensor(Td, syms=syms, config="l" + T.config, parent_metric=self.Metric, parent_spacetime=self)
+            Td = BaseRelativityTensor(
+                Td,
+                syms=syms,
+                config="l" + T.config,
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            )
 
             for i in range(T.order):
-                p = Permutation(size=T.order+1)
-                if T.config[i] == 'u':
-                    for j in range(i+1):
-                        p = Permutation(j, j+1, size=T.order+1)*p
+                p = Permutation(size=T.order + 1)
+                if T.config[i] == "u":
+                    for j in range(i + 1):
+                        p = Permutation(j, j + 1, size=T.order + 1) * p
                     Td.arr += permutedims(tensor_product(chris, T, 2, i).arr, p)
-                if T.config[i] == 'l':
-                    p = Permutation(1, i+1, size=T.order+1) if i > 0 else p
+                if T.config[i] == "l":
+                    p = Permutation(1, i + 1, size=T.order + 1) if i > 0 else p
                     Td.arr -= permutedims(tensor_product(chris, T, 0, i).arr, p)
 
             Td.simplify()
-        except AttributeError: # In case T is a scalar
+        except AttributeError:  # In case T is a scalar
             for s in syms:
                 Td.append(T.diff(s))
-            Td = BaseRelativityTensor(Td, syms=syms, config="l", parent_metric=self.Metric, parent_spacetime=self)
+            Td = BaseRelativityTensor(
+                Td,
+                syms=syms,
+                config="l",
+                parent_metric=self.Metric,
+                parent_spacetime=self,
+            )
 
         return Td
-

@@ -1,15 +1,15 @@
 import numpy as np
 import sympy
-from sympy import simplify, tensorcontraction, tensorproduct, permutedims
+from sympy import permutedims, simplify, tensorcontraction, tensorproduct
+from sympy.combinatorics import Permutation, PermutationGroup
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
-from sympy.combinatorics import Permutation, PermutationGroup
 
 from einsteinpy.symbolic.helpers import (
     _change_name,
-    simplify_sympy_array,
-    expand_sympy_array,
     discard_terms_sympy_array,
+    expand_sympy_array,
+    simplify_sympy_array,
     sympy_to_np_array,
 )
 
@@ -261,15 +261,15 @@ class Tensor:
         """
         t = self.tensor()
         if not discard_terms is None:
-            t = discard_terms_sympy_array(self.tensor(), discard_terms) # TODO: Use applyfunc() ?
+            t = discard_terms_sympy_array(
+                self.tensor(), discard_terms
+            )  # TODO: Use applyfunc() ?
         t = simplify_sympy_array(t)
         if set_self:
             self.arr = t
             return self.tensor()
         # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
         return t
-
-
 
     def _get_permutations(self, indices):
         """
@@ -294,10 +294,11 @@ class Tensor:
         for i in range(0, len(indices)):
             for j in range(0, len(indices)):
                 if not i == j:
-                    permutations.append(Permutation(indices[i], indices[j], size=self.order))
+                    permutations.append(
+                        Permutation(indices[i], indices[j], size=self.order)
+                    )
 
         return PermutationGroup(permutations)
-
 
     def symmetric_part(self, indices=None):
         """
@@ -327,14 +328,10 @@ class Tensor:
 
         arr = self.tensor()
         base_indices = np.arange(self.order, dtype=int)
-        for p in permutations._elements[1:]: # skip identity
+        for p in permutations._elements[1:]:  # skip identity
             arr += permutedims(self.tensor(), p(base_indices))
 
-        return Tensor( arr /permutations.order() ,
-                                        config=self.config,
-                                        name=self.name
-                                    )
-
+        return Tensor(arr / permutations.order(), config=self.config, name=self.name)
 
     def antisymmetric_part(self, indices=None):
         """
@@ -364,13 +361,10 @@ class Tensor:
 
         arr = self.tensor()
         base_indices = np.arange(self.order, dtype=int)
-        for p in permutations._elements[1:]: # skip identity
+        for p in permutations._elements[1:]:  # skip identity
             arr += p.signature() * permutedims(self.tensor(), p(base_indices))
 
-        return Tensor( arr / permutations.order() ,
-                                        config=self.config,
-                                        name=self.name
-                                    )
+        return Tensor(arr / permutations.order(), config=self.config, name=self.name)
 
 
 class BaseRelativityTensor(Tensor):
@@ -450,7 +444,9 @@ class BaseRelativityTensor(Tensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(BaseRelativityTensor, self).__init__(arr=arr, config=config, name=name, simplify=simplify)
+        super(BaseRelativityTensor, self).__init__(
+            arr=arr, config=config, name=name, simplify=simplify
+        )
 
         if len(self.arr.shape) != 0 and self.arr.shape[0] != len(syms):
             raise ValueError("invalid shape of argument arr for syms: {}".format(syms))
@@ -647,9 +643,14 @@ class BaseRelativityTensor(Tensor):
             Tensor with substituted values
 
         """
-        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), self.syms,
-                              config=self.config, parent_metric=self._parent_metric, parent_spacetime=self._parent_spacetime, name=self.name)
-
+        return self.__class__(
+            expand_sympy_array(self.tensor()).subs(*args),
+            self.syms,
+            config=self.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            name=self.name,
+        )
 
     def symmetric_part(self, indices=None):
         """
@@ -670,9 +671,14 @@ class BaseRelativityTensor(Tensor):
         ~einsteinpy.symbolic.tensor.BaseRelativityTensor
             Symmetrized Tensor
         """
-        return BaseRelativityTensor( super().symmetric_part(indices).arr, syms=self.syms, config=self.config, parent_metric=self._parent_metric,
-                                        parent_spacetime=self._parent_spacetime, simplify=False)
-
+        return BaseRelativityTensor(
+            super().symmetric_part(indices).arr,
+            syms=self.syms,
+            config=self.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            simplify=False,
+        )
 
     def antisymmetric_part(self, indices=None):
         """
@@ -693,8 +699,11 @@ class BaseRelativityTensor(Tensor):
         ~einsteinpy.symbolic.tensor.BaseRelativityTensor
             Antisymmetrized Tensor
         """
-        return BaseRelativityTensor( super().antisymmetric_part(indices).arr, syms=self.syms, config=self.config, parent_metric=self._parent_metric,
-                                        parent_spacetime=self._parent_spacetime, simplify=False)
-
-
-
+        return BaseRelativityTensor(
+            super().antisymmetric_part(indices).arr,
+            syms=self.syms,
+            config=self.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            simplify=False,
+        )

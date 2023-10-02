@@ -11,7 +11,13 @@ class EinsteinTensor(BaseRelativityTensor):
     """
 
     def __init__(
-        self, arr, syms, config="ll", parent_metric=None, parent_spacetime=None, name="EinsteinTensor"
+        self,
+        arr,
+        syms,
+        config="ll",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="EinsteinTensor",
     ):
         """
         Constructor and Initializer
@@ -43,7 +49,12 @@ class EinsteinTensor(BaseRelativityTensor):
 
         """
         super(EinsteinTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 2
         if not len(config) == self._order:
@@ -54,7 +65,8 @@ class EinsteinTensor(BaseRelativityTensor):
         t_ricci = RicciTensor.from_metric(metric)
         r_scalar = RicciScalar.from_riccitensor(t_ricci, t_ricci.parent_metric)
         einstein_tensor = (
-            t_ricci.change_config("ll").tensor() - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
+            t_ricci.change_config("ll").tensor()
+            - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
         )
         return cls(
             einstein_tensor,
@@ -66,9 +78,14 @@ class EinsteinTensor(BaseRelativityTensor):
     @classmethod
     def from_ricci(cls, ricci, ricci_scalar=None):
         metric = ricci.parent_metric
-        r_scalar = RicciScalar.from_riccitensor(ricci, metric) if ricci_scalar is None else ricci_scalar
+        r_scalar = (
+            RicciScalar.from_riccitensor(ricci, metric)
+            if ricci_scalar is None
+            else ricci_scalar
+        )
         einstein_tensor = (
-            ricci.change_config("ll").tensor() - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
+            ricci.change_config("ll").tensor()
+            - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
         )
         return cls(
             einstein_tensor,

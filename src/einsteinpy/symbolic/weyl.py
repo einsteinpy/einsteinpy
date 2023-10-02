@@ -5,7 +5,11 @@ from sympy import simplify, tensorcontraction, tensorproduct
 from einsteinpy.symbolic.helpers import _change_name
 from einsteinpy.symbolic.ricci import RicciScalar, RicciTensor
 from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config, tensor_product
+from einsteinpy.symbolic.tensor import (
+    BaseRelativityTensor,
+    _change_config,
+    tensor_product,
+)
 
 
 class WeylTensor(BaseRelativityTensor):
@@ -13,7 +17,16 @@ class WeylTensor(BaseRelativityTensor):
     Class for defining Weyl Tensor
     """
 
-    def __init__(self, arr, syms, config="ulll", parent_metric=None, parent_spacetime=None, name="WeylTensor", simplify=True):
+    def __init__(
+        self,
+        arr,
+        syms,
+        config="ulll",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="WeylTensor",
+        simplify=True,
+    ):
         """
         Constructor and Initializer
 
@@ -43,7 +56,13 @@ class WeylTensor(BaseRelativityTensor):
 
         """
         super(WeylTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name, simplify=simplify
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
+            simplify=simplify,
         )
         self._order = 4
         if not len(config) == self._order:
@@ -130,7 +149,7 @@ class WeylTensor(BaseRelativityTensor):
         """
         if metric.dims > 3:
             metric_cov = metric.lower_config()
-            t_riemann  = riemann
+            t_riemann = riemann
             t_riemann_cov = t_riemann.change_config("llll", metric=None)
             t_ricci = ricci
             r_scalar = ricci_scalar
@@ -171,7 +190,6 @@ class WeylTensor(BaseRelativityTensor):
                 parent_metric=metric,
             )
         raise ValueError("Dimension of the space/space-time should be 3 or more")
-
 
     @property
     def DualTensor(self):
@@ -222,7 +240,16 @@ class BelRobinsonTensor(BaseRelativityTensor):
     Class for defining Bel-Robinson Tensor
     """
 
-    def __init__(self, arr, syms, config="ulll", parent_metric=None, parent_spacetime=None, simplify=True, name="BelRobinsonTensor"):
+    def __init__(
+        self,
+        arr,
+        syms,
+        config="ulll",
+        parent_metric=None,
+        parent_spacetime=None,
+        simplify=True,
+        name="BelRobinsonTensor",
+    ):
         """
         Constructor and Initializer
 
@@ -250,7 +277,13 @@ class BelRobinsonTensor(BaseRelativityTensor):
 
         """
         super(BelRobinsonTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, simplify=simplify, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            simplify=simplify,
+            name=name,
         )
         self._order = 4
         if not len(config) == self._order:
@@ -274,12 +307,26 @@ class BelRobinsonTensor(BaseRelativityTensor):
         """
         C_dual = C.DualTensor
 
-        l = tensorcontraction(tensor_product(C.change_config("llll"), C.change_config("ullu"), 0, 0).tensor(), (2, 5))
-        r = tensorcontraction(tensor_product(C_dual.change_config("llll"), C_dual.change_config("ullu"), 0, 0).tensor(), (2, 5))
+        l = tensorcontraction(
+            tensor_product(
+                C.change_config("llll"), C.change_config("ullu"), 0, 0
+            ).tensor(),
+            (2, 5),
+        )
+        r = tensorcontraction(
+            tensor_product(
+                C_dual.change_config("llll"), C_dual.change_config("ullu"), 0, 0
+            ).tensor(),
+            (2, 5),
+        )
 
-        return cls( (l + r) / 4, syms=C.parent_metric.syms, config="llll", parent_metric=C.parent_metric, simplify=False)
-
-
+        return cls(
+            (l + r) / 4,
+            syms=C.parent_metric.syms,
+            config="llll",
+            parent_metric=C.parent_metric,
+            simplify=False,
+        )
 
     def lorentz_transform(self, transformation_matrix):
         """

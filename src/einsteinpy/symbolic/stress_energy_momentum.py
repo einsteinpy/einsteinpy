@@ -51,7 +51,12 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
 
         """
         super(StressEnergyMomentumTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 2
         if not len(config) == self._order:
@@ -71,11 +76,11 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
     def from_einstein(cls, einstein):
         metric = einstein.parent_metric
         stress_tensor = einstein.change_config("ll").tensor()
-        #(
+        # (
         #    c**4
         #    / (8 * sympy.pi * G)
         #    * (einstein.tensor() - Cosmo_Const * metric.lower_config().tensor())
-        #)
+        # )
         return cls(stress_tensor, metric.syms, config="ll", parent_metric=metric)
 
     def lorentz_transform(self, transformation_matrix):

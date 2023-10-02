@@ -1,5 +1,10 @@
 from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config, tensor_product, tensorcontraction
+from einsteinpy.symbolic.tensor import (
+    BaseRelativityTensor,
+    _change_config,
+    tensor_product,
+    tensorcontraction,
+)
 
 
 class GenericVector(BaseRelativityTensor):
@@ -8,7 +13,15 @@ class GenericVector(BaseRelativityTensor):
 
     """
 
-    def __init__(self, arr, syms, config="u", parent_metric=None, parent_spacetime=None, name="GenericVector"):
+    def __init__(
+        self,
+        arr,
+        syms,
+        config="u",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="GenericVector",
+    ):
         """
         Constructor and Initializer
 
@@ -35,7 +48,12 @@ class GenericVector(BaseRelativityTensor):
 
         """
         super(GenericVector, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         if self.arr.rank() == 1:
             self._order = 1
@@ -122,5 +140,10 @@ class GenericVector(BaseRelativityTensor):
                 The norm
         """
         metric = metric or self.parent_metric
-        return tensorcontraction(tensor_product(self.change_config('l', metric=metric), self.change_config('u', metric=metric)).tensor(), (0,1))
-
+        return tensorcontraction(
+            tensor_product(
+                self.change_config("l", metric=metric),
+                self.change_config("u", metric=metric),
+            ).tensor(),
+            (0, 1),
+        )

@@ -49,7 +49,12 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
 
         """
         super(RiemannCurvatureTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 4
         if not len(config) == self._order:

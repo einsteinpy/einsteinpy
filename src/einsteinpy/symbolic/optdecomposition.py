@@ -3,7 +3,7 @@ import sympy
 from sympy import simplify, tensorcontraction, tensorproduct
 
 from .helpers import expand_sympy_array
-from .tensor import BaseRelativityTensor, Tensor, tensor_product, _change_name
+from .tensor import BaseRelativityTensor, Tensor, _change_name, tensor_product
 from .vector import GenericVector
 
 
@@ -88,8 +88,17 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(OPTDecompositionTensor, self).__init__(arr=arr, syms=syms, config=config, parent_metric=parent_metric, parent_spacetime=parent_spacetime,
-                                                        variables=variables, functions=functions, name=name, simplify=simplify)
+        super(OPTDecompositionTensor, self).__init__(
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            variables=variables,
+            functions=functions,
+            name=name,
+            simplify=simplify,
+        )
 
         # Make sure we have a unit vector ?
         self._nvec = nvec
@@ -134,7 +143,13 @@ class OPTDecompositionTensor(BaseRelativityTensor):
         self.__class__ = BaseRelativityTensor
         t = self.change_config(config, metric)
         self.__class__ = cls
-        return self.__class__(t.arr, nvec=self._nvec, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
+        return self.__class__(
+            t.arr,
+            nvec=self._nvec,
+            syms=t.syms,
+            config=t.config,
+            parent_metric=t.parent_metric,
+        )
 
     def symmetric_part(self, indices=None):
         """
@@ -156,7 +171,13 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Symmetrized Tensor
         """
         t = super(OPTDecompositionTensor, self).symmetric_part(indices=indices)
-        return OPTDecompositionTensor(t.arr, nvec=self._nvec, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
+        return OPTDecompositionTensor(
+            t.arr,
+            nvec=self._nvec,
+            syms=t.syms,
+            config=t.config,
+            parent_metric=t.parent_metric,
+        )
 
     def antisymmetric_part(self, indices=None):
         """
@@ -178,8 +199,13 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Symmetrized Tensor
         """
         t = super(OPTDecompositionTensor, self).antisymmetric_part(indices=indices)
-        return OPTDecompositionTensor(t.arr, nvec=self._nvec, syms=t.syms, config=t.config, parent_metric=t.parent_metric)
-
+        return OPTDecompositionTensor(
+            t.arr,
+            nvec=self._nvec,
+            syms=t.syms,
+            config=t.config,
+            parent_metric=t.parent_metric,
+        )
 
     def subs(self, *args):
         """
@@ -197,7 +223,14 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             Tensor with substituted values
 
         """
-        return self.__class__(expand_sympy_array(self.tensor()).subs(*args), nvec=self._nvec, syms=self.syms, config=self.config, parent_metric=self._parent_metric, name=self.name)
+        return self.__class__(
+            expand_sympy_array(self.tensor()).subs(*args),
+            nvec=self._nvec,
+            syms=self.syms,
+            config=self.config,
+            parent_metric=self._parent_metric,
+            name=self.name,
+        )
 
 
 class OPTMetric(OPTDecompositionTensor):
@@ -293,7 +326,7 @@ class OPTMetric(OPTDecompositionTensor):
                 name=_change_name(self.name, context="__" + newconfig),
             )
             inv_met._invmetric = self
-            self._invmetric =  inv_met
+            self._invmetric = inv_met
         return self._invmetric
 
     def lower_config(self):
@@ -310,7 +343,6 @@ class OPTMetric(OPTDecompositionTensor):
         if self.config == "ll":
             return self
         return self.inv()
-
 
     @property
     def ProjectorTensor(self):
@@ -331,7 +363,9 @@ class OPTMetric(OPTDecompositionTensor):
             else:
                 g = self.tensor()
             uu = tensorproduct(u.tensor(), u.tensor())
-            self._proj_tensor = OPTDecompositionTensor(g + uu, nvec=self._nvec, syms=self.syms, config="ll", parent_metric=self)
+            self._proj_tensor = OPTDecompositionTensor(
+                g + uu, nvec=self._nvec, syms=self.syms, config="ll", parent_metric=self
+            )
         return self._proj_tensor
 
     @ProjectorTensor.setter
@@ -348,6 +382,3 @@ class OPTMetric(OPTDecompositionTensor):
                 Sympy multiplication object
         """
         return sympy.Matrix(self.lower_config().tensor()).det()
-
-
-
