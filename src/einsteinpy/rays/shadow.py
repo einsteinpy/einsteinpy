@@ -24,7 +24,6 @@ class Shadow:
         self.b = self._compute_B()
         self.z = list()
         self.bfin = list()
-        warnings.filterwarnings("ignore")
         for i in self.b:
             root = newton(self._root_equation, 0.1, args=(i,))
             if np.isreal(root):
@@ -48,7 +47,8 @@ class Shadow:
         """
         Returns the root of the equation for ``r_tp`` (turning points) for some impact parameter
         """
-        return r_tp / ((1 - (2 * int(self.mass.value) / r_tp))) ** 0.5 - i
+        # emath.sqrt is domain-agnostic and this is a complex equation
+        return r_tp / np.emath.sqrt(1 - (2 * int(self.mass.value) / r_tp)) - i
 
     def _intensity_blue_sch(self, r, b):
         """
