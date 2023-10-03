@@ -16,11 +16,9 @@ Data references can be found in :py:mod:`~einsteinpy.constant`
 """
 
 from astropy import units as u
-
 from einsteinpy import constant
 
 __all__ = ["Body"]
-
 
 class Body:
     """
@@ -77,133 +75,66 @@ class Body:
             Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
 
 
-class _Sun(Body):
-    def __init__(self):
-        parent = None
-        name = "Sun"
-        R = constant.R_sun
-        mass = constant.Solar_Mass
-        super(_Sun, self).__init__(name=name, mass=mass, R=R, parent=parent)
+# Define a dictionary of predefined bodies
+predefined_bodies = {
+    "Sun": {
+        "parent": None,
+        "R": constant.R_sun,
+        "mass": constant.Solar_Mass,
+    },
+    "Earth": {
+        "parent": "Sun",
+        "R": 6731 * u.km,
+        "mass": 5.97219e24 * u.kg,
+    },
+    "Moon": {
+        "parent": "Earth",
+        "R": 1737.5 * u.km,
+        "mass": 7.34767309e22 * u.kg,
+    },
+    "Mercury": {
+        "parent": "Sun",
+        "R": 2439.7 * u.km,
+        "mass": 3.285e23 * u.kg,
+    },
+    "Venus": {
+        "parent": "Sun",
+        "R": 6051.8 * u.km,
+        "mass": 4.867e24 * u.kg,
+    },
+    "Mars": {
+        "parent": "Sun",
+        "R": 3389.5 * u.km,
+        "mass": 6.39e23 * u.kg,
+    },
+    "Jupiter": {
+        "parent": "Sun",
+        "R": 69911 * u.km,
+        "mass": 1.89813e27 * u.kg,
+    },
+    "Saturn": {
+        "parent": "Sun",
+        "R": 58232 * u.km,
+        "mass": 5.683e26 * u.kg,
+    },
+    "Uranus": {
+        "parent": "Sun",
+        "R": 25362 * u.km,
+        "mass": 8.681e25 * u.kg,
+    },
+    "Neptune": {
+        "parent": "Sun",
+        "R": 24622 * u.km,
+        "mass": 1.024e26 * u.kg,
+    },
+    "Pluto": {
+        "parent": "Sun",
+        "R": 1183.3 * u.km,
+        "mass": 1.309e22 * u.kg,
+    },
+}
 
-
-Sun = _Sun()
-
-
-class _Earth(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Earth"
-        R = 6731 * u.km
-        mass = 5.97219e24 * u.kg
-        super(_Earth, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Earth = _Earth()
-
-
-class _Moon(Body):
-    def __init__(self):
-        parent = Earth
-        name = "Moon"
-        R = 1737.5 * u.km
-        mass = 7.34767309e22 * u.kg
-        super(_Moon, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Moon = _Moon()
-
-
-class _Mercury(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Mercury"
-        R = 2439.7 * u.km
-        mass = 3.285e23 * u.kg
-        super(_Mercury, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Mercury = _Mercury()
-
-
-class _Venus(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Venus"
-        R = 6051.8 * u.km
-        mass = 4.867e24 * u.kg
-        super(_Venus, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Venus = _Venus()
-
-
-class _Mars(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Mars"
-        R = 3389.5 * u.km
-        mass = 6.39e23 * u.kg
-        super(_Mars, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Mars = _Mars()
-
-
-class _Jupiter(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Jupiter"
-        R = 69911 * u.km
-        mass = 1.89813e27 * u.kg
-        super(_Jupiter, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Jupiter = _Jupiter()
-
-
-class _Saturn(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Saturn"
-        R = 58232 * u.km
-        mass = 5.683e26 * u.kg
-        super(_Saturn, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Saturn = _Saturn()
-
-
-class _Uranus(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Uranus"
-        R = 25362 * u.km
-        mass = 8.681e25 * u.kg
-        super(_Uranus, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Uranus = _Uranus()
-
-
-class _Neptune(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Neptune"
-        R = 24622 * u.km
-        mass = 1.024e26 * u.kg
-        super(_Neptune, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Neptune = _Neptune()
-
-
-class _Pluto(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Pluto"
-        R = 1183.3 * u.km
-        mass = 1.309e22 * u.kg
-        super(_Pluto, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Pluto = _Pluto()
+# Create instances of predefined bodies
+for body_name, body_info in predefined_bodies.items():
+    body_instance = Body(name=body_name, parent=body_info["parent"], R=body_info["R"], mass=body_info["mass"])
+    globals()[body_name] = body_instance
