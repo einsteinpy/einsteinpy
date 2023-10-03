@@ -457,15 +457,15 @@ class OPTSpacetime(GenericSpacetime):
         ------
             ~einsteinpy.symbolic.optspacetime.OPTSEMTensor
         """
-        if self._sem_tensor is None:
-            self._sem_tensor = OPTSEMTensor.from_einstein(
+        if self._sem is None:
+            self._sem = OPTSEMTensor.from_einstein(
                 self.EinsteinTensor, nvec=self.Metric.NormalVector
             )
-        return self._sem_tensor
+        return self._sem
 
     @SEMTensor.setter
     def SEMTensor(self, value):
-        self._sem_tensor = value
+        self._sem = value
 
     @property
     def ExpansionScalar(self):

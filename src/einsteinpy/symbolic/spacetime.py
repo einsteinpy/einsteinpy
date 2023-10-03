@@ -305,12 +305,12 @@ class GenericSpacetime:
 
         syms = self.Metric.symbols()
 
-        Td = []
+        Tdel = []
         try:
             for s in syms:
-                Td.append(T.tensor().diff(s))
+                Tdel.append(T.tensor().diff(s))
             Td = BaseRelativityTensor(
-                Td,
+                Tdel,
                 syms=syms,
                 config="l" + T.config,
                 parent_metric=self.Metric,
@@ -330,9 +330,9 @@ class GenericSpacetime:
             Td.simplify()
         except AttributeError:  # In case T is a scalar
             for s in syms:
-                Td.append(T.diff(s))
+                Tdel.append(T.diff(s))
             Td = BaseRelativityTensor(
-                Td,
+                Tdel,
                 syms=syms,
                 config="l",
                 parent_metric=self.Metric,
