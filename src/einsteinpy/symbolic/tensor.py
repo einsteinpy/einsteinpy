@@ -124,7 +124,7 @@ class Tensor:
     Base Class for Tensor manipulation
     """
 
-    def __init__(self, arr, config="ll", name=None, simplify=True):
+    def __init__(self, arr, config="ll", name=None, simplify=False):
         """
         Constructor and Initializer
 
@@ -401,7 +401,7 @@ class BaseRelativityTensor(Tensor):
         variables=list(),
         functions=list(),
         name="GenericTensor",
-        simplify=True,
+        simplify=False,
     ):
         """
         Constructor and Initializer
