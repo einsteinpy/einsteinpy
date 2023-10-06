@@ -297,7 +297,6 @@ class StaticGeodesicPlotter:
         self.fig, self.ax = plt.subplots(figsize=figsize)
         fontsize = max(figsize) + 3
         self.fig.set_size_inches(figsize)
-        self.ax = plt.axes()
         self.ax.set_xlabel(r"Affine Paramter, $\lambda$", fontsize=fontsize)
         self.ax.set_ylabel("Coordinates", fontsize=fontsize)
 
