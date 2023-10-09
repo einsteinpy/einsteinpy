@@ -17,7 +17,9 @@ Data references can be found in :py:mod:`~einsteinpy.constant`
 
 from astropy import units as u
 
-from einsteinpy import constant
+from einsteinpy.constant import R_sun, Solar_Mass
+
+from einsteinpy.coordinates.differential import BaseDifferential
 
 from dataclasses import dataclass
 
@@ -35,7 +37,23 @@ class Body:
     R: u.km = 0 * u.km
     differential: BaseDifferential = None
     parent: 'Body' = None
-
+    """
+    Parameters
+    ----------
+    name : string
+        Name or ID of the body
+    mass : ~astropy.units.kg
+        Mass of the body
+    q : ~astropy.units.C, optional
+        Charge on the body
+    R : ~astropy.units
+        Radius of the body
+    differential : ~einsteinpy.coordinates.differential.*, optional
+        Complete coordinates of the body
+    parent : Body, optional
+        The parent object of the body
+        Useful in case of multibody systems
+    """
     def __post_init__(self):
         if self.differential:
             if self.differential.system == "Cartesian":
@@ -69,7 +87,7 @@ class _Earth(Body):
     name: str = "Earth"
     R: u.km = 6731 * u.km
     mass: u.kg = 5.97219e24 * u.kg
-    
+
 
 Earth = _Earth()
 
