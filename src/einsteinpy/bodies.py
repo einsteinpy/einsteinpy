@@ -20,7 +20,6 @@ from dataclasses import dataclass
 from astropy import units as u
 
 from einsteinpy.constant import R_sun, Solar_Mass
-from einsteinpy.coordinates.differential import CartesianDifferential
 
 __all__ = ["Body"]
 
