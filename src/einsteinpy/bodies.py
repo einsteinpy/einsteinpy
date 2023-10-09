@@ -20,7 +20,6 @@ from dataclasses import dataclass
 from astropy import units as u
 
 from einsteinpy.constant import R_sun, Solar_Mass
-from einsteinpy.coordinates.differential import BaseDifferential
 
 __all__ = ["Body"]
 
@@ -35,7 +34,7 @@ class Body:
     mass: u.kg = 0 * u.kg
     q: u.C = 0 * u.C
     R: u.km = 0 * u.km
-    differential: BaseDifferential = None
+    differential: str = None
     parent: "Body" = None
     """
     Parameters
