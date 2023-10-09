@@ -19,191 +19,146 @@ from astropy import units as u
 
 from einsteinpy import constant
 
+from dataclasses import dataclass
+
 __all__ = ["Body"]
 
 
+@dataclass
 class Body:
     """
     Class to create a generic Body
     """
+    name: str = "Generic Body"
+    mass: u.kg = 0 * u.kg
+    q: u.C = 0 * u.C
+    R: u.km = 0 * u.km
+    differential: BaseDifferential = None
+    parent: 'Body' = None
 
-    @u.quantity_input(mass=u.kg, R=u.km)
-    def __init__(
-        self,
-        name="Generic Body",
-        mass=0 * u.kg,
-        q=0 * u.C,
-        R=0 * u.km,
-        differential=None,
-        parent=None,
-    ):
-        """
-        Parameters
-        ----------
-        name : string
-            Name or ID of the body
-        mass : ~astropy.units.kg
-            Mass of the body
-        q : ~astropy.units.C, optional
-            Charge on the body
-        R : ~astropy.units
-            Radius of the body
-        differential : ~einsteinpy.coordinates.differential.*, optional
-            Complete coordinates of the body
-        parent : Body, optional
-            The parent object of the body
-            Useful in case of multibody systems
-        """
-        if differential:
-            if differential.system == "Cartesian":
-                self.pos_vec = [differential.x, differential.y, differential.z]
-                self.vel_vec = [differential.v_x, differential.v_y, differential.v_z]
+    def __post_init__(self):
+        if self.differential:
+            if self.differential.system == "Cartesian":
+                self.pos_vec = [self.differential.x, self.differential.y, self.differential.z]
+                self.vel_vec = [self.differential.v_x, self.differential.v_y, self.differential.v_z]
             else:
-                self.pos_vec = [differential.r, differential.theta, differential.phi]
-                self.vel_vec = [differential.v_r, differential.v_th, differential.v_p]
-        self.name = name
-        self.mass = mass
-        self.q = q
-        self.R = R
-        self.coords = differential
-        self.parent = parent
+                self.pos_vec = [self.differential.r, self.differential.theta, self.differential.phi]
+                self.vel_vec = [self.differential.v_r, self.differential.v_th, self.differential.v_p]
 
     def __str__(self):
-        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
-            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
+        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q}), Radius: ({self.R}), \n \
+            Initial Coordinates: ({self.differential}), Parent Body: ({self.parent}) )"
 
-    def __repr__(self):
-        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
-            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
+    __repr__ = __str__
 
 
+@dataclass
 class _Sun(Body):
-    def __init__(self):
-        parent = None
-        name = "Sun"
-        R = constant.R_sun
-        mass = constant.Solar_Mass
-        super(_Sun, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = None
+    name: str = "Sun"
+    R: u.km = R_sun
+    mass: u.kg = Solar_Mass
 
 
 Sun = _Sun()
 
 
+@dataclass
 class _Earth(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Earth"
-        R = 6731 * u.km
-        mass = 5.97219e24 * u.kg
-        super(_Earth, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
+    parent: Body = Sun
+    name: str = "Earth"
+    R: u.km = 6731 * u.km
+    mass: u.kg = 5.97219e24 * u.kg
+    
 
 Earth = _Earth()
 
 
 class _Moon(Body):
-    def __init__(self):
-        parent = Earth
-        name = "Moon"
-        R = 1737.5 * u.km
-        mass = 7.34767309e22 * u.kg
-        super(_Moon, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Earth
+    name: str = "Moon"
+    R: u.km = 1737.5 * u.km
+    mass: u.kg = 7.34767309e22 * u.kg
 
 
 Moon = _Moon()
 
 
 class _Mercury(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Mercury"
-        R = 2439.7 * u.km
-        mass = 3.285e23 * u.kg
-        super(_Mercury, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Mercury"
+    R: u.km = 2439.7 * u.km
+    mass: u.kg = 3.285e23 * u.kg
 
 
 Mercury = _Mercury()
 
 
 class _Venus(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Venus"
-        R = 6051.8 * u.km
-        mass = 4.867e24 * u.kg
-        super(_Venus, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Venus"
+    R: u.km = 6051.8 * u.km
+    mass: u.kg = 4.867e24 * u.kg
 
 
 Venus = _Venus()
 
 
 class _Mars(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Mars"
-        R = 3389.5 * u.km
-        mass = 6.39e23 * u.kg
-        super(_Mars, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Mars"
+    R: u.km = 3389.5 * u.km
+    mass: u.kg = 6.39e23 * u.kg
 
 
 Mars = _Mars()
 
 
 class _Jupiter(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Jupiter"
-        R = 69911 * u.km
-        mass = 1.89813e27 * u.kg
-        super(_Jupiter, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Jupiter"
+    R: u.km = 69911 * u.km
+    mass: u.kg = 1.89813e27 * u.kg
 
 
 Jupiter = _Jupiter()
 
 
 class _Saturn(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Saturn"
-        R = 58232 * u.km
-        mass = 5.683e26 * u.kg
-        super(_Saturn, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Saturn"
+    R: u.km = 58232 * u.km
+    mass: u.kg = 5.683e26 * u.kg
 
 
 Saturn = _Saturn()
 
 
 class _Uranus(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Uranus"
-        R = 25362 * u.km
-        mass = 8.681e25 * u.kg
-        super(_Uranus, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Uranus"
+    R: u.km = 25362 * u.km
+    mass: u.kg = 8.681e25 * u.kg
 
 
 Uranus = _Uranus()
 
 
 class _Neptune(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Neptune"
-        R = 24622 * u.km
-        mass = 1.024e26 * u.kg
-        super(_Neptune, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Neptune"
+    R: u.km = 24622 * u.km
+    mass: u.kg = 1.024e26 * u.kg
 
 
 Neptune = _Neptune()
 
 
 class _Pluto(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Pluto"
-        R = 1183.3 * u.km
-        mass = 1.309e22 * u.kg
-        super(_Pluto, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    parent: Body = Sun
+    name: str = "Pluto"
+    R: u.km = 1183.3 * u.km
+    mass: u.kg = 1.309e22 * u.kg
 
 
 Pluto = _Pluto()
