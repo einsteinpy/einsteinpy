@@ -15,13 +15,12 @@ and a way to define new bodies (:py:class:`~Body` class).
 Data references can be found in :py:mod:`~einsteinpy.constant`
 """
 
+from dataclasses import dataclass
+
 from astropy import units as u
 
 from einsteinpy.constant import R_sun, Solar_Mass
-
 from einsteinpy.coordinates.differential import BaseDifferential
-
-from dataclasses import dataclass
 
 __all__ = ["Body"]
 
@@ -31,12 +30,13 @@ class Body:
     """
     Class to create a generic Body
     """
+
     name: str = "Generic Body"
     mass: u.kg = 0 * u.kg
     q: u.C = 0 * u.C
     R: u.km = 0 * u.km
     differential: BaseDifferential = None
-    parent: 'Body' = None
+    parent: "Body" = None
     """
     Parameters
     ----------
@@ -54,14 +54,31 @@ class Body:
         The parent object of the body
         Useful in case of multibody systems
     """
+
     def __post_init__(self):
         if self.differential:
             if self.differential.system == "Cartesian":
-                self.pos_vec = [self.differential.x, self.differential.y, self.differential.z]
-                self.vel_vec = [self.differential.v_x, self.differential.v_y, self.differential.v_z]
+                self.pos_vec = [
+                    self.differential.x,
+                    self.differential.y,
+                    self.differential.z,
+                ]
+                self.vel_vec = [
+                    self.differential.v_x,
+                    self.differential.v_y,
+                    self.differential.v_z,
+                ]
             else:
-                self.pos_vec = [self.differential.r, self.differential.theta, self.differential.phi]
-                self.vel_vec = [self.differential.v_r, self.differential.v_th, self.differential.v_p]
+                self.pos_vec = [
+                    self.differential.r,
+                    self.differential.theta,
+                    self.differential.phi,
+                ]
+                self.vel_vec = [
+                    self.differential.v_r,
+                    self.differential.v_th,
+                    self.differential.v_p,
+                ]
 
     def __str__(self):
         return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q}), Radius: ({self.R}), \n \
