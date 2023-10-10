@@ -16,6 +16,7 @@ Data references can be found in :py:mod:`~einsteinpy.constant`
 """
 
 from dataclasses import dataclass
+from textwrap import dedent
 
 from astropy import units as u
 
@@ -28,15 +29,7 @@ __all__ = ["Body"]
 class Body:
     """
     Class to create a generic Body
-    """
 
-    name: str = "Generic Body"
-    mass: u.kg = 0 * u.kg
-    q: u.C = 0 * u.C
-    R: u.km = 0 * u.km
-    differential = None
-    parent: "Body" = None
-    """
     Parameters
     ----------
     name : string
@@ -54,34 +47,49 @@ class Body:
         Useful in case of multibody systems
     """
 
+    name: str = "Generic Body"
+    mass: u.kg = 0 * u.kg
+    q: u.C = 0 * u.C
+    R: u.km = 0 * u.km
+    differential: coords = None
+    parent: "Body" = None
+
     def __post_init__(self):
-        if self.differential:
-            if self.differential.system == "Cartesian":
+        diff = self.differential
+        if diff:
+            if diff.system == "Cartesian":
                 self.pos_vec = [
-                    self.differential.x,
-                    self.differential.y,
-                    self.differential.z,
+                    diff.x,
+                    diff.y,
+                    diff.z,
                 ]
                 self.vel_vec = [
-                    self.differential.v_x,
-                    self.differential.v_y,
-                    self.differential.v_z,
+                    diff.v_x,
+                    diff.v_y,
+                    diff.v_z,
                 ]
             else:
                 self.pos_vec = [
-                    self.differential.r,
-                    self.differential.theta,
-                    self.differential.phi,
+                    diff.r,
+                    diff.theta,
+                    diff.phi,
                 ]
                 self.vel_vec = [
-                    self.differential.v_r,
-                    self.differential.v_th,
-                    self.differential.v_p,
+                    diff.v_r,
+                    diff.v_th,
+                    diff.v_p,
                 ]
 
     def __str__(self):
-        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q}), Radius: ({self.R}), \n \
-            Initial Coordinates: ({self.differential}), Parent Body: ({self.parent}) )"
+        return dedent(
+            f"""
+         Body(
+            {self.name},
+            {self.parent.name},
+            {self.mass}, {self.q}, {self.R},
+            {self.coords}
+        )"""
+        )
 
     __repr__ = __str__
 
@@ -94,7 +102,7 @@ class _Sun(Body):
     mass: u.kg = Solar_Mass
 
 
-Sun = _Sun()
+Sun = Body(name="Sun", mass=Solar_Mass, R=R_sun, parent=None)
 
 
 @dataclass
@@ -105,7 +113,7 @@ class _Earth(Body):
     mass: u.kg = 5.97219e24 * u.kg
 
 
-Earth = _Earth()
+Earth = Body(name="Earth", mass=5.97219e24 * u.kg, R=6731 * u.km, parent=Sun)
 
 
 class _Moon(Body):
@@ -115,7 +123,7 @@ class _Moon(Body):
     mass: u.kg = 7.34767309e22 * u.kg
 
 
-Moon = _Moon()
+Moon = Body(name="Moon", mass=7.34767309e22 * u.kg, R=1737.5 * u.km, parent=Sun)
 
 
 class _Mercury(Body):
@@ -125,7 +133,7 @@ class _Mercury(Body):
     mass: u.kg = 3.285e23 * u.kg
 
 
-Mercury = _Mercury()
+Mercury = Body(name="Mercury", mass=3.285e23 * u.kg, R=2439.7 * u.km, parent=Sun)
 
 
 class _Venus(Body):
@@ -135,7 +143,7 @@ class _Venus(Body):
     mass: u.kg = 4.867e24 * u.kg
 
 
-Venus = _Venus()
+Venus = Body(name="Venus", mass=4.867e24 * u.kg, R=6051.8 * u.km, parent=Sun)
 
 
 class _Mars(Body):
@@ -145,7 +153,7 @@ class _Mars(Body):
     mass: u.kg = 6.39e23 * u.kg
 
 
-Mars = _Mars()
+Mars = Body(name="Mars", mass=6.39e23 * u.kg, R=3389.5 * u.km, parent=Sun)
 
 
 class _Jupiter(Body):
@@ -155,7 +163,7 @@ class _Jupiter(Body):
     mass: u.kg = 1.89813e27 * u.kg
 
 
-Jupiter = _Jupiter()
+Jupiter = Body(name="Jupiter", mass=1.89813e27 * u.kg, R=69911 * u.kmm, parent=Sun)
 
 
 class _Saturn(Body):
@@ -165,7 +173,7 @@ class _Saturn(Body):
     mass: u.kg = 5.683e26 * u.kg
 
 
-Saturn = _Saturn()
+Saturn = Body(name="Saturn", mass=5.683e26 * u.kg, R=58232 * u.km, parent=Sun)
 
 
 class _Uranus(Body):
@@ -175,7 +183,7 @@ class _Uranus(Body):
     mass: u.kg = 8.681e25 * u.kg
 
 
-Uranus = _Uranus()
+Uranus = Body(name="Uranus", mass=8.681e25 * u.kg, R=25362 * u.km, parent=Sun)
 
 
 class _Neptune(Body):
@@ -185,7 +193,7 @@ class _Neptune(Body):
     mass: u.kg = 1.024e26 * u.kg
 
 
-Neptune = _Neptune()
+Neptune = Body(name="Neptune", mass=1.024e26 * u.kg, R=24622 * u.km, parent=Sun)
 
 
 class _Pluto(Body):
@@ -195,4 +203,4 @@ class _Pluto(Body):
     mass: u.kg = 1.309e22 * u.kg
 
 
-Pluto = _Pluto()
+Pluto = Body(name="Pluto", mass=1.309e22 * u.kg, R=1183.3 * u.km, parent=Sun)
