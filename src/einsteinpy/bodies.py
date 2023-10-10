@@ -51,7 +51,7 @@ class Body:
     mass: u.kg = 0 * u.kg
     q: u.C = 0 * u.C
     R: u.km = 0 * u.km
-    differential: coords = None
+    coords = None
     parent: "Body" = None
 
     def __post_init__(self):
