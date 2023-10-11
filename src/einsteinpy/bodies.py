@@ -17,10 +17,16 @@ Data references can be found in :py:mod:`~einsteinpy.constant`
 
 from dataclasses import dataclass
 from textwrap import dedent
+from typing import Union
 
 from astropy import units as u
 
 from einsteinpy.constant import R_sun, Solar_Mass
+from einsteinpy.coordinates.differential import (
+    BoyerLindquistDifferential,
+    CartesianDifferential,
+    SphericalDifferential,
+)
 
 __all__ = ["Body"]
 
@@ -40,7 +46,7 @@ class Body:
         Charge on the body
     R : ~astropy.units
         Radius of the body
-    differential : ~einsteinpy.coordinates.differential.*, optional
+    coords : ~einsteinpy.coordinates.differential.*, optional
         Complete coordinates of the body
     parent : Body, optional
         The parent object of the body
@@ -55,7 +61,12 @@ class Body:
     parent: "Body" = None
 
     def __post_init__(self):
-        diff = self.differential
+        @u.quantity_input(mass=u.kg, q=u.C, R=u.km)
+        def check_units(mass, q, R):
+            return mass, q, R
+
+        check_units(self.mass, self.q, self.R)
+        diff = self.coords
         if diff:
             if diff.system == "Cartesian":
                 self.pos_vec = [
@@ -81,15 +92,14 @@ class Body:
                 ]
 
     def __str__(self):
-        return dedent(
-            f"""
-         Body(
-            {self.name},
-            {self.parent.name},
-            {self.mass}, {self.q}, {self.R},
-            {self.coords}
-        )"""
-        )
+        return dedent(f"""
+                 Body(
+                    {self.name},
+                    {self.parent.name if self.parent else None},
+                    {self.mass}, {self.q}, {self.R},
+                    {self.coords}
+                )"""
+            )
 
     __repr__ = __str__
 
@@ -123,7 +133,7 @@ class _Moon(Body):
     mass: u.kg = 7.34767309e22 * u.kg
 
 
-Moon = Body(name="Moon", mass=7.34767309e22 * u.kg, R=1737.5 * u.km, parent=Sun)
+Moon = Body(name="Moon", mass=7.34767309e22 * u.kg, R=1737.5 * u.km, parent=Earth)
 
 
 class _Mercury(Body):
@@ -163,7 +173,7 @@ class _Jupiter(Body):
     mass: u.kg = 1.89813e27 * u.kg
 
 
-Jupiter = Body(name="Jupiter", mass=1.89813e27 * u.kg, R=69911 * u.kmm, parent=Sun)
+Jupiter = Body(name="Jupiter", mass=1.89813e27 * u.kg, R=69911 * u.km, parent=Sun)
 
 
 class _Saturn(Body):
