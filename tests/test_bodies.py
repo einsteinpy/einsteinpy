@@ -17,7 +17,6 @@ from einsteinpy.bodies import (
 )
 from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
 
-
 @pytest.mark.parametrize(
     "obj, parent, R, mass",
     [
@@ -84,8 +83,8 @@ def test_initial_states():
         0. * u.rad / u.s,
         0. * u.rad / u.s
     )
-    a = Body(name=name, mass=mass, R=R, differential=differential1, parent=parent)
-    b = Body(name=name, mass=mass, R=R, differential=differential2, parent=parent)
+    a = Body(name=name, mass=mass, R=R, coords=differential1, parent=parent)
+    b = Body(name=name, mass=mass, R=R, coords=differential2, parent=parent)
 
     assert isinstance(a.pos_vec, list)
     assert isinstance(a.vel_vec, list)
@@ -97,8 +96,7 @@ def test_body_str_return():
     body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
 
     assert (
-        body.__str__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
-            Initial Coordinates: (None), Parent Body: (None) )"
+        body.__str__() == '\n Body(\n    BodyTest,\n    None,\n    1.989e+30 kg, 0.0 C, 30.0 km,\n    None\n)'
     )
 
 
@@ -106,6 +104,5 @@ def test_body_repr_return():
     body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
 
     assert (
-        body.__repr__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
-            Initial Coordinates: (None), Parent Body: (None) )"
+        body.__repr__() == '\n Body(\n    BodyTest,\n    None,\n    1.989e+30 kg, 0.0 C, 30.0 km,\n    None\n)'
     )

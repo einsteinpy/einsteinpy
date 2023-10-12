@@ -15,195 +15,117 @@ and a way to define new bodies (:py:class:`~Body` class).
 Data references can be found in :py:mod:`~einsteinpy.constant`
 """
 
+from dataclasses import dataclass
+from textwrap import dedent
+from typing import Union
+
 from astropy import units as u
 
-from einsteinpy import constant
+from einsteinpy.constant import R_sun, Solar_Mass
+from einsteinpy.coordinates.differential import (
+    BoyerLindquistDifferential,
+    CartesianDifferential,
+    SphericalDifferential,
+)
 
 __all__ = ["Body"]
 
 
+@dataclass
 class Body:
     """
     Class to create a generic Body
+
+    Parameters
+    ------------
+    name : str, optional
+        Name or ID of the body
+        Defaults to ``Generic Body``
+    mass : ~astropy.units.kg, optional
+        Mass of the body
+        Defaults to ``0 * u.kg``
+    q : ~astropy.units.C, optional
+        Charge on the body
+        Defaults to ``0 * u.C``
+    R : ~astropy.units.km, optional
+        Radius of the body
+        Defaults to ``0 * u.km``
+    coords : ~einsteinpy.coordinates.differential.*, optional
+        Complete coordinates of the body
+        Defaults to ``None``
+    parent : Body, optional
+        The parent object of the body
+        Useful in case of multibody systems
+        Defaults to ``None``
+
     """
 
-    @u.quantity_input(mass=u.kg, R=u.km)
-    def __init__(
-        self,
-        name="Generic Body",
-        mass=0 * u.kg,
-        q=0 * u.C,
-        R=0 * u.km,
-        differential=None,
-        parent=None,
-    ):
-        """
-        Parameters
-        ----------
-        name : string
-            Name or ID of the body
-        mass : ~astropy.units.kg
-            Mass of the body
-        q : ~astropy.units.C, optional
-            Charge on the body
-        R : ~astropy.units
-            Radius of the body
-        differential : ~einsteinpy.coordinates.differential.*, optional
-            Complete coordinates of the body
-        parent : Body, optional
-            The parent object of the body
-            Useful in case of multibody systems
-        """
-        if differential:
-            if differential.system == "Cartesian":
-                self.pos_vec = [differential.x, differential.y, differential.z]
-                self.vel_vec = [differential.v_x, differential.v_y, differential.v_z]
-            else:
-                self.pos_vec = [differential.r, differential.theta, differential.phi]
-                self.vel_vec = [differential.v_r, differential.v_th, differential.v_p]
-        self.name = name
-        self.mass = mass
-        self.q = q
-        self.R = R
-        self.coords = differential
-        self.parent = parent
+    name: str = "Generic Body"
+    mass: u.kg = 0 * u.kg
+    q: u.C = 0 * u.C
+    R: u.km = 0 * u.km
+    coords: Union[
+        CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential, None
+    ] = None
+    parent: Union["Body", None] = None
+
+    def __post_init__(self):
+        @u.quantity_input(mass=u.kg, q=u.C, R=u.km)
+        def check_units(mass, q, R):
+            return mass, q, R
+
+        check_units(self.mass, self.q, self.R)
+        diff = self.coords
+        if diff:
+            if isinstance(diff, CartesianDifferential):
+                self.pos_vec = [diff.x, diff.y, diff.z]
+                self.vel_vec = [diff.v_x, diff.v_y, diff.v_z]
+            elif isinstance(diff, (SphericalDifferential, BoyerLindquistDifferential)):
+                self.pos_vec = [diff.r, diff.theta, diff.phi]
+                self.vel_vec = [diff.v_r, diff.v_th, diff.v_p]
 
     def __str__(self):
-        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
-            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
+        return dedent(
+            f"""
+                 Body(
+                    {self.name},
+                    {self.parent.name if self.parent else None},
+                    {self.mass}, {self.q}, {self.R},
+                    {self.coords}
+                )"""
+        )
 
-    def __repr__(self):
-        return f"Body: ( Name: ({self.name}), Mass: ({self.mass}), Charge: ({self.q})', Radius: ({self.R}), \n \
-            Initial Coordinates: ({self.coords}), Parent Body: ({self.parent}) )"
-
-
-class _Sun(Body):
-    def __init__(self):
-        parent = None
-        name = "Sun"
-        R = constant.R_sun
-        mass = constant.Solar_Mass
-        super(_Sun, self).__init__(name=name, mass=mass, R=R, parent=parent)
+    __repr__ = __str__
 
 
-Sun = _Sun()
+Sun = Body(name="Sun", mass=Solar_Mass, R=R_sun, parent=None)
 
 
-class _Earth(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Earth"
-        R = 6731 * u.km
-        mass = 5.97219e24 * u.kg
-        super(_Earth, self).__init__(name=name, mass=mass, R=R, parent=parent)
+Earth = Body(name="Earth", mass=5.97219e24 * u.kg, R=6731 * u.km, parent=Sun)
 
 
-Earth = _Earth()
+Moon = Body(name="Moon", mass=7.34767309e22 * u.kg, R=1737.5 * u.km, parent=Earth)
 
 
-class _Moon(Body):
-    def __init__(self):
-        parent = Earth
-        name = "Moon"
-        R = 1737.5 * u.km
-        mass = 7.34767309e22 * u.kg
-        super(_Moon, self).__init__(name=name, mass=mass, R=R, parent=parent)
+Mercury = Body(name="Mercury", mass=3.285e23 * u.kg, R=2439.7 * u.km, parent=Sun)
 
 
-Moon = _Moon()
+Venus = Body(name="Venus", mass=4.867e24 * u.kg, R=6051.8 * u.km, parent=Sun)
 
 
-class _Mercury(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Mercury"
-        R = 2439.7 * u.km
-        mass = 3.285e23 * u.kg
-        super(_Mercury, self).__init__(name=name, mass=mass, R=R, parent=parent)
+Mars = Body(name="Mars", mass=6.39e23 * u.kg, R=3389.5 * u.km, parent=Sun)
 
 
-Mercury = _Mercury()
+Jupiter = Body(name="Jupiter", mass=1.89813e27 * u.kg, R=69911 * u.km, parent=Sun)
 
 
-class _Venus(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Venus"
-        R = 6051.8 * u.km
-        mass = 4.867e24 * u.kg
-        super(_Venus, self).__init__(name=name, mass=mass, R=R, parent=parent)
+Saturn = Body(name="Saturn", mass=5.683e26 * u.kg, R=58232 * u.km, parent=Sun)
 
 
-Venus = _Venus()
+Uranus = Body(name="Uranus", mass=8.681e25 * u.kg, R=25362 * u.km, parent=Sun)
 
 
-class _Mars(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Mars"
-        R = 3389.5 * u.km
-        mass = 6.39e23 * u.kg
-        super(_Mars, self).__init__(name=name, mass=mass, R=R, parent=parent)
+Neptune = Body(name="Neptune", mass=1.024e26 * u.kg, R=24622 * u.km, parent=Sun)
 
 
-Mars = _Mars()
-
-
-class _Jupiter(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Jupiter"
-        R = 69911 * u.km
-        mass = 1.89813e27 * u.kg
-        super(_Jupiter, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Jupiter = _Jupiter()
-
-
-class _Saturn(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Saturn"
-        R = 58232 * u.km
-        mass = 5.683e26 * u.kg
-        super(_Saturn, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Saturn = _Saturn()
-
-
-class _Uranus(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Uranus"
-        R = 25362 * u.km
-        mass = 8.681e25 * u.kg
-        super(_Uranus, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Uranus = _Uranus()
-
-
-class _Neptune(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Neptune"
-        R = 24622 * u.km
-        mass = 1.024e26 * u.kg
-        super(_Neptune, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Neptune = _Neptune()
-
-
-class _Pluto(Body):
-    def __init__(self):
-        parent = Sun
-        name = "Pluto"
-        R = 1183.3 * u.km
-        mass = 1.309e22 * u.kg
-        super(_Pluto, self).__init__(name=name, mass=mass, R=R, parent=parent)
-
-
-Pluto = _Pluto()
+Pluto = Body(name="Pluto", mass=1.309e22 * u.kg, R=1183.3 * u.km, parent=Sun)
