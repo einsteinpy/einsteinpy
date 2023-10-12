@@ -37,20 +37,27 @@ class Body:
     Class to create a generic Body
 
     Parameters
-    ----------
-    name : string
+    ------------
+    name : str, optional
         Name or ID of the body
-    mass : ~astropy.units.kg
+        Defaults to ``Generic Body``
+    mass : ~astropy.units.kg, optional
         Mass of the body
+        Defaults to ``0 * u.kg``
     q : ~astropy.units.C, optional
         Charge on the body
-    R : ~astropy.units
+        Defaults to ``0 * u.C``
+    R : ~astropy.units.km, optional
         Radius of the body
+        Defaults to ``0 * u.km``
     coords : ~einsteinpy.coordinates.differential.*, optional
         Complete coordinates of the body
+        Defaults to ``None``
     parent : Body, optional
         The parent object of the body
         Useful in case of multibody systems
+        Defaults to ``None``
+
     """
 
     name: str = "Generic Body"
