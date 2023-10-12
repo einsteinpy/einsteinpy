@@ -28,6 +28,11 @@ from einsteinpy.coordinates.differential import (
     SphericalDifferential,
 )
 
+coords: Union[
+    CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential, None
+] = None
+parent: Union["Body", None] = None
+
 __all__ = ["Body"]
 
 

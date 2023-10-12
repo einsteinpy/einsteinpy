@@ -1,5 +1,6 @@
 import astropy.units as u
 import pytest
+from typing import Union
 
 from einsteinpy.bodies import (
     Body,
@@ -15,7 +16,9 @@ from einsteinpy.bodies import (
     Uranus,
     Venus,
 )
-from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
+from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential
+
+coords: Union[CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential, None] = None
 
 
 @pytest.mark.parametrize(
@@ -84,8 +87,8 @@ def test_initial_states():
         0. * u.rad / u.s,
         0. * u.rad / u.s
     )
-    a = Body(name=name, mass=mass, R=R, differential=differential1, parent=parent)
-    b = Body(name=name, mass=mass, R=R, differential=differential2, parent=parent)
+    a = Body(name=name, mass=mass, R=R, coords=differential1, parent=parent)
+    b = Body(name=name, mass=mass, R=R, coords=differential2, parent=parent)
 
     assert isinstance(a.pos_vec, list)
     assert isinstance(a.vel_vec, list)
@@ -97,8 +100,7 @@ def test_body_str_return():
     body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
 
     assert (
-        body.__str__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
-            Initial Coordinates: (None), Parent Body: (None) )"
+        body.__str__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n             Initial Coordinates: (None), Parent Body: (None) )"
     )
 
 
@@ -106,6 +108,5 @@ def test_body_repr_return():
     body = Body(name="BodyTest", mass=1.989e30 * u.kg, R=30 * u.km)
 
     assert (
-        body.__repr__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n \
-            Initial Coordinates: (None), Parent Body: (None) )"
+        body.__repr__() == "Body: ( Name: (BodyTest), Mass: (1.989e+30 kg), Charge: (0.0 C)', Radius: (30.0 km), \n             Initial Coordinates: (None), Parent Body: (None) )"
     )
