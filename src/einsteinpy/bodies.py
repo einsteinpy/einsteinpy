@@ -73,7 +73,7 @@ class Body:
             if isinstance(diff, CartesianDifferential):
                 self.pos_vec = [diff.x, diff.y, diff.z]
                 self.vel_vec = [diff.v_x, diff.v_y, diff.v_z]
-            else:
+            elif isinstance(diff, (SphericalDifferential, BoyerLindquistDifferential)):
                 self.pos_vec = [diff.r, diff.theta, diff.phi]
                 self.vel_vec = [diff.v_r, diff.v_th, diff.v_p]
 
