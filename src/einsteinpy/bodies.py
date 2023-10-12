@@ -28,11 +28,6 @@ from einsteinpy.coordinates.differential import (
     SphericalDifferential,
 )
 
-coords: Union[
-    CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential, None
-] = None
-parent: Union["Body", None] = None
-
 __all__ = ["Body"]
 
 
@@ -62,8 +57,10 @@ class Body:
     mass: u.kg = 0 * u.kg
     q: u.C = 0 * u.C
     R: u.km = 0 * u.km
-    coords = None
-    parent: "Body" = None
+    coords: Union[
+        CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential, None
+    ] = None
+    parent: Union["Body", None] = None
 
     def __post_init__(self):
         @u.quantity_input(mass=u.kg, q=u.C, R=u.km)

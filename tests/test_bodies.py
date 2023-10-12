@@ -1,6 +1,5 @@
 import astropy.units as u
 import pytest
-from typing import Union
 
 from einsteinpy.bodies import (
     Body,
@@ -16,10 +15,7 @@ from einsteinpy.bodies import (
     Uranus,
     Venus,
 )
-from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential
-
-coords: Union[CartesianDifferential, SphericalDifferential, BoyerLindquistDifferential, None] = None
-
+from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
 
 @pytest.mark.parametrize(
     "obj, parent, R, mass",
