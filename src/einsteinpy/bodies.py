@@ -70,7 +70,7 @@ class Body:
         check_units(self.mass, self.q, self.R)
         diff = self.coords
         if diff:
-            if diff.system == "Cartesian":
+            if isinstance(diff, CartesianDifferential):
                 self.pos_vec = [diff.x, diff.y, diff.z]
                 self.vel_vec = [diff.v_x, diff.v_y, diff.v_z]
             else:
