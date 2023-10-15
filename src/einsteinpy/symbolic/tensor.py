@@ -7,7 +7,6 @@ from sympy.core.function import AppliedUndef, UndefinedFunction
 
 from einsteinpy.symbolic.helpers import (
     _change_name,
-    discard_terms_sympy_array,
     expand_sympy_array,
     simplify_sympy_array,
     sympy_to_np_array,
@@ -243,7 +242,7 @@ class Tensor:
         """
         return Tensor(self.tensor().subs(*args))
 
-    def simplify(self, set_self=True, discard_terms=None):
+    def simplify(self, set_self=True, applyfunc=None):
         """
         Returns a simplified Tensor
 
@@ -252,6 +251,8 @@ class Tensor:
         set_self : bool
             Replaces the tensor contained the class with its simplified version, if ``True``.
             Defaults to ``True``.
+        applyfunc : function(sympy.core.expr.Expr) -> sympy.core.expr.Expr
+            Applies a function to each element of the tensor
 
         Returns
         -------
@@ -260,10 +261,11 @@ class Tensor:
 
         """
         t = self.tensor()
-        if not discard_terms is None:
-            t = discard_terms_sympy_array(
-                self.tensor(), discard_terms
-            )  # TODO: Use applyfunc() ?
+        if not applyfunc is None:
+            if t.rank() > 0:
+                t = t.applyfunc(applyfunc)
+            else:
+                t = sympy.Array(applyfunc(sum(t)))
         t = simplify_sympy_array(t)
         if set_self:
             self.arr = t

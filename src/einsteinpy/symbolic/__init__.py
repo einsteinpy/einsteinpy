@@ -4,7 +4,6 @@ from .einstein import EinsteinTensor
 from .gem import GravitoElectricTensor, GravitoMagneticTensor
 from .helpers import (
     TransformationMatrix,
-    discard_terms_sympy_array,
     expand_sympy_array,
     simplify_sympy_array,
 )
