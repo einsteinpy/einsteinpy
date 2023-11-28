@@ -43,7 +43,7 @@ class OPTDecompositionTensor(BaseRelativityTensor):
         variables=list(),
         functions=list(),
         name="GenericOPTDecompositionTensor",
-        simplify=True,
+        simplify=False,
     ):
         """
         Constructor and Initializer
@@ -205,6 +205,41 @@ class OPTDecompositionTensor(BaseRelativityTensor):
             syms=t.syms,
             config=t.config,
             parent_metric=t.parent_metric,
+        )
+
+    def contract(self, i, j):
+        """
+        Tensor contraction of i-th and j-th index
+
+	   Parameters
+	   ----------
+	   i : int
+	       contract ``i``th index
+	   j : int
+	       with the ``j``th index
+
+
+	   Returns
+	   -------
+	   ~einsteinpy.symbolic.OPTDecompositionTensor
+	       tensor of appropriate rank
+
+	   Raises
+	   ------
+	   ValueError
+	       Raised when ``i`` and ``j`` both indicate 'u' or 'l' indices
+        """
+        c = super().contract(i,j)
+        if not isinstance(c, BaseRelativityTensor):
+            return c
+
+        return OPTDecompositionTensor(
+            c.arr,
+            nvec=self._nvec,
+            syms=self.syms,
+            config=c.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
         )
 
     def subs(self, *args):

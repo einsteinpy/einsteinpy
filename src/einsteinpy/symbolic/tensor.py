@@ -368,6 +368,45 @@ class Tensor:
 
         return Tensor(arr / permutations.order(), config=self.config, name=self.name)
 
+    def contract(self, i, j):
+        """
+        Tensor contraction of i-th and j-th index
+
+	   Parameters
+	   ----------
+	   i : int
+	       contract ``i``th index
+	   j : int
+	       with the ``j``th index
+
+
+	   Returns
+	   -------
+	   ~einsteinpy.symbolic.Tensor
+	       tensor of appropriate rank
+
+	   Raises
+	   ------
+	   ValueError
+	       Raised when ``i`` and ``j`` both indicate 'u' or 'l' indices
+        """
+        if i > j:
+            return self.contract(j, i)
+
+        if self.config[i] == self.config[j]:
+            raise ValueError(
+                    "Index summation not allowed between %s and %s indices"
+                    % (self.config[i], self.config[j]))
+
+        contracted = tensorcontraction(self.arr, (i,j))
+
+        if self.order <= 2:
+            return contracted
+
+        config = self.config[:i] + self.config[i+1:j] + self.config[j+1:]
+
+        return Tensor(contracted, config=config)
+
 
 class BaseRelativityTensor(Tensor):
     """
@@ -705,6 +744,41 @@ class BaseRelativityTensor(Tensor):
             super().antisymmetric_part(indices).arr,
             syms=self.syms,
             config=self.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            simplify=False,
+        )
+
+    def contract(self, i, j):
+        """
+        Tensor contraction of i-th and j-th index
+
+	   Parameters
+	   ----------
+	   i : int
+	       contract ``i``th index
+	   j : int
+	       with the ``j``th index
+
+
+	   Returns
+	   -------
+	   ~einsteinpy.symbolic.BaseRelativityTensor
+	       tensor of appropriate rank
+
+	   Raises
+	   ------
+	   ValueError
+	       Raised when ``i`` and ``j`` both indicate 'u' or 'l' indices
+        """
+        c = super().contract(i,j)
+        if not isinstance(c, Tensor):
+            return c
+
+        return BaseRelativityTensor(
+            c.arr,
+            syms=self.syms,
+            config=c.config,
             parent_metric=self._parent_metric,
             parent_spacetime=self._parent_spacetime,
             simplify=False,
