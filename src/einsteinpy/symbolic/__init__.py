@@ -1,8 +1,15 @@
 from .christoffel import ChristoffelSymbols
 from .constants import SymbolicConstant, get_constant
 from .einstein import EinsteinTensor
-from .helpers import TransformationMatrix, simplify_sympy_array
+from .gem import GravitoElectricTensor, GravitoMagneticTensor
+from .helpers import (
+    TransformationMatrix,
+    expand_sympy_array,
+    simplify_sympy_array,
+)
 from .metric import MetricTensor
+from .optdecomposition import OPTDecompositionTensor, OPTMetric
+from .optspacetime import OPTSEMTensor, OPTSpacetime
 from .predefined.alcubierre_warp import AlcubierreWarp
 from .predefined.barriola_vilenkin import BarriolaVilekin
 from .predefined.bertotti_kasner import BertottiKasner
@@ -24,10 +31,11 @@ from .predefined.vacuum_solutions import (
 from .ricci import RicciScalar, RicciTensor
 from .riemann import RiemannCurvatureTensor
 from .schouten import SchoutenTensor
+from .spacetime import GenericSpacetime
 from .stress_energy_momentum import StressEnergyMomentumTensor
 from .tensor import BaseRelativityTensor, Tensor
 from .vector import GenericVector
-from .weyl import WeylTensor
+from .weyl import BelRobinsonTensor, WeylTensor
 
 __all__ = [
     "ChristoffelSymbols",
@@ -36,6 +44,8 @@ __all__ = [
     "EinsteinTensor",
     "TransformationMatrix",
     "simplify_sympy_array",
+    "expand_sympy_array",
+    "discard_terms_sympy_array",
     "MetricTensor",
     "RicciScalar",
     "RicciTensor",
@@ -46,6 +56,14 @@ __all__ = [
     "Tensor",
     "GenericVector",
     "WeylTensor",
+    "BelRobinsonTensor",
+    "GenericSpacetime",
+    "OPTDecompositionTensor",
+    "OPTMetric",
+    "OPTSEMTensor",
+    "OPTSpacetime",
+    "GravitoElectricTensor",
+    "GravitoMagneticTensor",
     "AlcubierreWarp",
     "BarriolaVilekin",
     "BertottiKasner",
