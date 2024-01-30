@@ -419,15 +419,15 @@ class SphericalDifferential(SphericalConversion):
 
         """
         M, a = kwargs["M"], kwargs["a"]
-        t, r, theta, phi, v_r, v_th, v_p = self.convert_bl(M=M, a=a)
+        e0, e1, e2, e3, u0, u1, u2 = self.convert_bl(M=M, a=a)
         return BoyerLindquistDifferential(
-            t * u.s,
-            r * u.m,
-            theta * u.rad,
-            phi * u.rad,
-            v_r * u.m / u.s,
-            v_th * u.rad / u.s,
-            v_p * u.rad / u.s,
+            e0 * u.s,
+            e1 * u.m,
+            e2 * u.rad,
+            e3 * u.rad,
+            u0 * u.m / u.s,
+            u1 * u.rad / u.s,
+            u2 * u.rad / u.s,
         )
 
 

@@ -344,7 +344,7 @@ class BoyerLindquistConversion:
                 self.u2_si,
             )
 
-        return self.t_si, self.r_si, self.th_si, self.p_si
+        return self.e0_si, self.e1_si, self.e2_si, self.e3_si
 
     def convert_cartesian(self, **kwargs):
         """
