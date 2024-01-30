@@ -12,39 +12,39 @@ from einsteinpy.coordinates import (
 @pytest.fixture()
 def cartesian_coords():
     return CartesianConversion(
-        t=0.,
-        x=10 / np.sqrt(2),
-        y=10 / np.sqrt(2),
-        z=0.,
-        v_x=-190 / np.sqrt(2),
-        v_y=210 / np.sqrt(2),
-        v_z=200.
+        e0=0.,
+        e1=10 / np.sqrt(2),
+        e2=10 / np.sqrt(2),
+        e3=0.,
+        u0=-190 / np.sqrt(2),
+        u1=210 / np.sqrt(2),
+        u2=200.
     )
 
 
 @pytest.fixture()
 def spherical_coords():
     return SphericalConversion(
-        t=0.,
-        r=10.,
-        theta=np.pi / 2,
-        phi=np.pi / 4,
-        v_r=10.,
-        v_th=-20.,
-        v_p=20.
+        e0=0.,
+        e1=10.,
+        e2=np.pi / 2,
+        e3=np.pi / 4,
+        u0=10.,
+        u1=-20.,
+        u2=20.
     )
 
 
 @pytest.fixture()
 def bl_coords():
     return BoyerLindquistConversion(
-        t=0.,
-        r=10.,
-        theta=np.pi / 2,
-        phi=np.pi / 4,
-        v_r=10.,
-        v_th=-20.,
-        v_p=20.
+        e0=0.,
+        e1=10.,
+        e2=np.pi / 2,
+        e3=np.pi / 4,
+        u0=10.,
+        u1=-20.,
+        u2=20.
     )
 
 

@@ -134,7 +134,7 @@ def test_electromagnetic_potential_from_em_potential_vector(test_input):
     Q = 15.5 * u.C
 
     x_vec = bl.position()
-    r = x_vec[1]
+    e1 = x_vec[1]
 
     # Using function from module (for a = 0)
     mkn = KerrNewman(coords=bl, M=M, a=0. * u.one, Q=Q)
@@ -142,7 +142,7 @@ def test_electromagnetic_potential_from_em_potential_vector(test_input):
 
     # Calculated using formula (for a = 0)
     calc_pot = np.zeros((4,), dtype=float)
-    calc_pot[0] = (Q.value / ((_c ** 2) * r)) * np.sqrt(_G * _Cc)
+    calc_pot[0] = (Q.value / ((_c ** 2) * e1)) * np.sqrt(_G * _Cc)
 
     assert_allclose(mkn_pot, calc_pot, rtol=1e-8)
 
@@ -156,7 +156,7 @@ def test_electromagnetic_potential_contravariant(test_input):
     bl, M, a = test_input
     Q = 15.5 * u.C
     x_vec = bl.position()
-    r, theta = x_vec[1], x_vec[2]
+    e1, e2 = x_vec[1], x_vec[2]
 
     mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q)
     mkn_contra_mat = mkn.metric_contravariant(x_vec)
@@ -166,10 +166,10 @@ def test_electromagnetic_potential_contravariant(test_input):
 
     # Calculated using formula
     alpha = mkn.alpha(M, a)
-    rho2 = mkn.rho(r, theta, M, a) ** 2
+    rho2 = mkn.rho(e1, e2, M, a) ** 2
     r_Q = np.sqrt((Q.value ** 2 * _G * _Cc) / _c ** 4)
-    fac = r * r_Q / rho2
-    calc_pot_cov = np.array([fac, 0., 0., -alpha * np.sin(theta)**2 * fac], dtype=float)
+    fac = e1 * r_Q / rho2
+    calc_pot_cov = np.array([fac, 0., 0., -alpha * np.sin(e2)**2 * fac], dtype=float)
 
     calc_pot_contra = mkn_contra_mat @ calc_pot_cov
 
@@ -214,7 +214,7 @@ def test_em_tensor_covariant():
     # Electric and Magnetic Fields
     D_r = (scale_Q * Q.value * (r2 - (alpha * np.cos(th)) ** 2)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
     D_th = ((alpha2) * (-(scale_Q * Q.value)) * np.sin(2 * th)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
-    H_r = (2 * alpha * (scale_Q * Q.value) * (r2 + alpha2) * np.cos(th)) / (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+    H_r = (2 * alpha * (scale_Q * Q.value) * (r2 + alpha2) * np.cos(th)) / (e1 * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
     H_th = (
         (alpha * (scale_Q * Q.value) * np.sin(th) * (r2 - (alpha * np.cos(th)) ** 2)) /
         (e1 * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
