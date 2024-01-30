@@ -818,13 +818,13 @@ def test_calculate_trajectory_iterator_RuntimeWarning_kerrnewman():
     q = 0. * u.C / u.kg
 
     bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=306.0 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=np.pi / 2 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=-0.01 * u.rad / u.s,
-        v_p=10.0 * u.rad / u.s,
+        e0=0.0 * u.s,
+        e1=306.0 * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=np.pi / 2 * u.rad,
+        u0=0.0 * u.m / u.s,
+        u1=-0.01 * u.rad / u.s,
+        u2=10.0 * u.rad / u.s,
     )
 
     mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
@@ -854,13 +854,13 @@ def test_calculate_state_raises_TypeError():
     speed_at_perihelion = 29290
 
     x_sph = CartesianDifferential(
-        t=0.0 * u.s,
-        x=distance_at_perihelion / np.sqrt(2) * u.m,
-        y=distance_at_perihelion / np.sqrt(2) * u.m,
-        z=0. * u.m,
-        v_x=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
-        v_y=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
-        v_z=0 * u.m / u.s
+        e0=0.0 * u.s,
+        e1=distance_at_perihelion / np.sqrt(2) * u.m,
+        e2=distance_at_perihelion / np.sqrt(2) * u.m,
+        e3=0. * u.m,
+        u0=-speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        u1=speed_at_perihelion / np.sqrt(2) * u.m / u.s,
+        u2=0 * u.m / u.s
     )  # .spherical_differential()
 
     metric = Schwarzschild(coords=x_sph.spherical_differential(), M=1.989e30 * u.kg)

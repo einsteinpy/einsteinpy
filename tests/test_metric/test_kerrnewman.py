@@ -214,7 +214,10 @@ def test_em_tensor_covariant():
     # Electric and Magnetic Fields
     D_r = (scale_Q * Q.value * (r2 - (alpha * np.cos(th)) ** 2)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
     D_th = ((alpha2) * (-(scale_Q * Q.value)) * np.sin(2 * th)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
-    H_r = (2 * alpha * (scale_Q * Q.value) * (r2 + alpha2) * np.cos(th)) / (e1 * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+    H_r = (
+        (2 * alpha * (scale_Q * Q.value) * (r2 + alpha2) * np.cos(th)) / 
+        (e1 * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+    )
     H_th = (
         (alpha * (scale_Q * Q.value) * np.sin(th) * (r2 - (alpha * np.cos(th)) ** 2)) /
         (e1 * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))

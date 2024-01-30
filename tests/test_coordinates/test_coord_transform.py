@@ -189,8 +189,8 @@ def test_coordinate_subscripting(cartesian, spherical, boyerlindquist):
     assert cartesian["e1"] == cartesian.e1 == cartesian[1] == cartesian[-3]
     assert spherical["e2"] == spherical.e2 == spherical[2] == spherical[-2]
     assert (
-        boyerlindquist["e3"]
-        == boyerlindquist.e3
-        == boyerlindquist[3]
-        == boyerlindquist[-1]
+        boyerlindquist["e3"] == 
+        boyerlindquist.e3 == 
+        boyerlindquist[3] == 
+        boyerlindquist[-1]
     )
