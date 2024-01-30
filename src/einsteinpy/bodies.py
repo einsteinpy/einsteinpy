@@ -78,11 +78,11 @@ class Body:
         diff = self.coords
         if diff:
             if isinstance(diff, CartesianDifferential):
-                self.pos_vec = [diff.x, diff.y, diff.z]
+                self.pos_vec = [diff.u0, diff.u1, diff.u2]
                 self.vel_vec = [diff.v_x, diff.v_y, diff.v_z]
             elif isinstance(diff, (SphericalDifferential, BoyerLindquistDifferential)):
-                self.pos_vec = [diff.r, diff.theta, diff.phi]
-                self.vel_vec = [diff.v_r, diff.v_th, diff.v_p]
+                self.pos_vec = [diff.e1, diff.e2, diff.e3]
+                self.vel_vec = [diff.u0, diff.u1, diff.u2]
 
     def __str__(self):
         return dedent(
