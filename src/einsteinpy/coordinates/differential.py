@@ -382,15 +382,15 @@ class SphericalDifferential(SphericalConversion):
             Cartesian representation of velocity
 
         """
-        t, x, y, z, v_x, v_y, v_z = self.convert_cartesian()
+        e0, e1, e2, e3, u0, u1, u2 = self.convert_cartesian()
         return CartesianDifferential(
-            t * u.s,
-            x * u.m,
-            y * u.m,
-            z * u.m,
-            v_x * u.m / u.s,
-            v_y * u.m / u.s,
-            v_z * u.m / u.s,
+            e0 * u.s,
+            e1 * u.m,
+            e2 * u.m,
+            e3 * u.m,
+            u0 * u.m / u.s,
+            u1 * u.m / u.s,
+            u2 * u.m / u.s,
         )
 
     def bl_differential(self, **kwargs):
