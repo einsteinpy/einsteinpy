@@ -299,8 +299,8 @@ class SphericalDifferential(SphericalConversion):
         return (
             _c * self.e0.si.value,
             self.e1.si.value,
-            self.theta.si.value,
-            self.phi.si.value,
+            self.e2.si.value,
+            self.e3.si.value,
         )
 
     @property
@@ -338,7 +338,7 @@ class SphericalDifferential(SphericalConversion):
 
         g_cov_mat = g.metric_covariant(self.position())
 
-        v_t = v0(g_cov_mat, self.v_r.si.value, self.v_th.si.value, self.v_p.si.value)
+        v_t = v0(g_cov_mat, self.u0.si.value, self.u1.si.value, self.u2.si.value)
 
         self._v_t = v_t * u.m / u.s
 
@@ -362,9 +362,9 @@ class SphericalDifferential(SphericalConversion):
 
         return (
             self._v_t.value,
-            self.v_r.si.value,
-            self.v_th.si.value,
-            self.v_p.si.value,
+            self.u0.si.value,
+            self.u1.si.value,
+            self.u2.si.value,
         )
 
     def cartesian_differential(self, **kwargs):
