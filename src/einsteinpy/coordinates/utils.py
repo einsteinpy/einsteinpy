@@ -6,6 +6,15 @@ from einsteinpy.ijit import jit
 _c = constant.c.value
 
 
+def calculate_coordinates(r, th, p, alpha):
+    xa = np.sqrt(r**2 + alpha**2)
+    sin_norm = xa * np.sin(th)
+    e0 = sin_norm * np.cos(p)
+    e1 = sin_norm * np.sin(p)
+    e2 = r * np.cos(th)
+    return xa, e0, e1, e2
+
+
 def cartesian_to_spherical_fast(e0, e1, e2, e3, u0=None, u1=None, u2=None):
     vel = [u0, u1, u2]
     if all(u is not None for u in vel) and any(u != 0 for u in vel):
@@ -252,12 +261,3 @@ def v0(g_cov_mat, v1, v2, v3):
     v_t = (-B + np.sqrt(D)) / (2 * A)
 
     return v_t
-
-
-def calculate_coordinates(r, th, p, alpha):
-    xa = np.sqrt(r**2 + alpha**2)
-    sin_norm = xa * np.sin(th)
-    e0 = sin_norm * np.cos(p)
-    e1 = sin_norm * np.sin(p)
-    e2 = r * np.cos(th)
-    return xa, e0, e1, e2
