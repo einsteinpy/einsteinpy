@@ -1,4 +1,7 @@
+from typing import Tuple
+
 import numpy as np
+from numba import float64, jit
 
 from einsteinpy import constant
 from einsteinpy.ijit import jit
@@ -6,7 +9,9 @@ from einsteinpy.ijit import jit
 _c = constant.c.value
 
 
-def calculate_coordinates(r, th, p, alpha):
+def calculate_coordinates(
+    r: float64, th: float64, p: float64, alpha: float64
+) -> Tuple[float64, float64, float64, float64]:
     xa = np.sqrt(r**2 + alpha**2)
     sin_norm = xa * np.sin(th)
     e0 = sin_norm * np.cos(p)
