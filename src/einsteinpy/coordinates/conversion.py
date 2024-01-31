@@ -93,7 +93,6 @@ class CartesianConversion:
             self.u0_si,
             self.u1_si,
             self.u2_si,
-            self._velocities_provided,
         )
 
     def convert_bl(self, **kwargs):
@@ -146,7 +145,6 @@ class CartesianConversion:
             self.u0_si,
             self.u1_si,
             self.u2_si,
-            self._velocities_provided,
         )
 
 
@@ -236,7 +234,6 @@ class SphericalConversion:
             self.u0_si,
             self.u1_si,
             self.u2_si,
-            self._velocities_provided,
         )
 
     def convert_bl(self, **kwargs):
@@ -396,7 +393,6 @@ class BoyerLindquistConversion:
             self.u0_si,
             self.u1_si,
             self.u2_si,
-            self._velocities_provided,
         )
 
     def convert_spherical(self, **kwargs):
