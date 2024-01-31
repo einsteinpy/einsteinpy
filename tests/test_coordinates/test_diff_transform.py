@@ -220,8 +220,8 @@ def test_velocity2(spherical_differential, bl_differential):
     mk = Kerr(coords=bl_differential, M=M, a=a)
 
     sd, bd = spherical_differential, bl_differential
-    assert_allclose(sd.velocity(metric=ms)[1:], [sd.v_r.value, sd.v_th.value, sd.v_p.value])
-    assert_allclose(bd.velocity(metric=mk)[1:], [bd.v_r.value, bd.v_th.value, bd.v_p.value])
+    assert_allclose(sd.velocity(metric=ms)[1:], [sd.u0.value, sd.u1.value, sd.u2.value])
+    assert_allclose(bd.velocity(metric=mk)[1:], [bd.u0.value, bd.u1.value, bd.u2.value])
 
 
 def test_v_t_raises_CoordinateError(cartesian_differential, spherical_differential, bl_differential):
