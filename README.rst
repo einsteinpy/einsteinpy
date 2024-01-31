@@ -103,7 +103,7 @@ EinsteinPy requires the following Python packages:
 * ``Plotly``, for producing interactive visualizations
 * ``Numba``, for accelerating the code
 
-EinsteinPy is currently tested on Linux, Windows and macOS on Python 3.7 and 3.8, against the latest ``NumPy``.
+EinsteinPy is currently tested on Linux, Windows and macOS on Python 3.9 and 3.10, against the latest ``NumPy``.
 
 ==============  ===============  ===================
 Platform        Site             Status

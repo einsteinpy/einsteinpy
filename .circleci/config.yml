@@ -2,7 +2,7 @@ version: 2
 jobs:
   quality:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.9
     parallelism: 4
     working_directory: ~/repo
 
@@ -14,7 +14,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install --upgrade pip --quiet
+            pip install --upgrade pip setuptools wheel --quiet
             pip install black isort mypy --quiet
       - run:
           name: Check Code Style
@@ -29,9 +29,9 @@ jobs:
           command: |
             . venv/bin/activate
             mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
-  test_py38: &test-template
+  test_py39: &test-template
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.9
 
     working_directory: ~/repo
 
@@ -43,7 +43,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install --upgrade pip --quiet
+            pip install --upgrade pip setuptools wheel --quiet
             pip install numpy --quiet
             pip install . --quiet
             pip install .[dev] --quiet
@@ -52,18 +52,18 @@ jobs:
           command: |
             . venv/bin/activate
             MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
-  test_py39:
-    <<: *test-template
-    docker:
-      - image: cimg/python:3.9
   test_py310:
     <<: *test-template
     docker:
       - image: cimg/python:3.10
+  test_py311:
+    <<: *test-template
+    docker:
+      - image: cimg/python:3.11
 
   coverage:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.9
 
     working_directory: ~/repo
 
@@ -90,7 +90,7 @@ jobs:
             codecov
   docs:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.9
 
     working_directory: ~/repo
 
@@ -119,13 +119,13 @@ workflows:
   build_and_test:
     jobs:
       - quality
-      - test_py38:
-          requires:
-            - quality
       - test_py39:
           requires:
             - quality
       - test_py310:
+          requires:
+            - quality
+      - test_py311:
           requires:
             - quality
       - coverage:
@@ -133,6 +133,6 @@ workflows:
             - quality
       - docs:
           requires:
-            - test_py38
             - test_py39
             - test_py310
+            - test_py311
