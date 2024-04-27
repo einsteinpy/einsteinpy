@@ -3,6 +3,7 @@ from astropy import units as u
 
 from einsteinpy import constant
 from einsteinpy.coordinates.conversion import (
+    BaseCoordinateConversion,
     BoyerLindquistConversion,
     CartesianConversion,
     SphericalConversion,
@@ -11,14 +12,12 @@ from einsteinpy.coordinates.conversion import (
 _c = constant.c.value
 
 
-class Cartesian(CartesianConversion):
+class BaseCoordinate(BaseCoordinateConversion):
     """
-    Class for defining 3-Position & 4-Position in Cartesian Coordinates \
-    using SI units
+    Base Coordinate class
 
     """
 
-    @u.quantity_input(e0=u.s, e1=u.m, e2=u.m, e3=u.m)
     def __init__(self, e0, e1, e2, e3):
         """
         Constructor
@@ -40,6 +39,18 @@ class Cartesian(CartesianConversion):
         self.e1 = e1
         self.e2 = e2
         self.e3 = e3
+
+
+class Cartesian(BaseCoordinate, CartesianConversion):
+    """
+    Class for defining 3-Position & 4-Position in Cartesian Coordinates
+    using SI units
+
+    """
+
+    @u.quantity_input(e0=u.s, e1=u.m, e2=u.m, e3=u.m)
+    def __init__(self, e0, e1, e2, e3):
+        super().__init__(e0, e1, e2, e3)
         self.system = "Cartesian"
         self._dimension = {
             "e0": self.e0,
@@ -54,9 +65,7 @@ class Cartesian(CartesianConversion):
         return f"Cartesian Coordinates: \n \
             e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
 
-    def __repr__(self):
-        return f"Cartesian Coordinates: \n \
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
+    __repr__ = __str__
 
     def __getitem__(self, item):
         """
@@ -146,7 +155,7 @@ class Cartesian(CartesianConversion):
         return BoyerLindquist(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)
 
 
-class Spherical(SphericalConversion):
+class Spherical(BaseCoordinate, SphericalConversion):
     """
     Class for defining 3-Position & 4-Position in Spherical Polar Coordinates \
     using SI units
@@ -155,26 +164,7 @@ class Spherical(SphericalConversion):
 
     @u.quantity_input(e0=u.s, e1=u.m, e2=u.rad, e3=u.rad)
     def __init__(self, e0, e1, e2, e3):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        e0 : float
-            Time
-        e1 : float
-            r-Component of 3-Position
-        e2 : float
-            theta-Component of 3-Position
-        e3 : float
-            phi-Component of 3-Position
-
-        """
-        super().__init__(e0.si.value, e1.si.value, e2.si.value, e3.si.value)
-        self.e0 = e0
-        self.e1 = e1
-        self.e2 = e2
-        self.e3 = e3
+        super().__init__(e0, e1, e2, e3)
         self.system = "Spherical"
         self._dimension = {
             "e0": self.e0,
@@ -189,9 +179,7 @@ class Spherical(SphericalConversion):
         return f"Spherical Polar Coordinates: \n \
             e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
 
-    def __repr__(self):
-        return f"Spherical Polar Coordinates: \n \
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
+    __repr__ = __str__
 
     def __getitem__(self, item):
         """
@@ -282,7 +270,7 @@ class Spherical(SphericalConversion):
         return BoyerLindquist(e0 * u.s, e1 * u.m, e2 * u.rad, e3 * u.rad)
 
 
-class BoyerLindquist(BoyerLindquistConversion):
+class BoyerLindquist(BaseCoordinate, BoyerLindquistConversion):
     """
     Class for defining 3-Position & 4-Position in Boyer-Lindquist Coordinates \
     using SI units
@@ -291,26 +279,7 @@ class BoyerLindquist(BoyerLindquistConversion):
 
     @u.quantity_input(e0=u.s, e1=u.m, e2=u.rad, e3=u.rad)
     def __init__(self, e0, e1, e2, e3):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        e0 : float
-            Time
-        e1 : float
-            r-Component of 3-Position
-        e2 : float
-            theta-Component of 3-Position
-        e3 : float
-            phi-Component of 3-Position
-
-        """
-        super().__init__(e0.si.value, e1.si.value, e2.si.value, e3.si.value)
-        self.e0 = e0
-        self.e1 = e1
-        self.e2 = e2
-        self.e3 = e3
+        super().__init__(e0, e1, e2, e3)
         self.system = "BoyerLindquist"
         self._dimension = {
             "e0": self.e0,
@@ -325,9 +294,7 @@ class BoyerLindquist(BoyerLindquistConversion):
         return f"Boyer-Lindquist Coordinates: \n \
             e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
 
-    def __repr__(self):
-        return f"Boyer-Lindquist Coordinates: \n \
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
+    __repr__ = __str__
 
     def __getitem__(self, item):
         """

@@ -7,9 +7,9 @@ from einsteinpy.coordinates.utils import (
 from einsteinpy.metric import BaseMetric
 
 
-class CartesianConversion:
+class BaseCoordinateConversion:
     """
-    Class for conversion to and from Cartesian Coordinates in SI units
+    Base Coordinate conversion class
 
     """
 
@@ -68,6 +68,13 @@ class CartesianConversion:
             )
 
         return self.e0_si, self.e1_si, self.e2_si, self.e3_si
+
+
+class CartesianConversion(BaseCoordinateConversion):
+    """
+    Class for conversion to and from Cartesian Coordinates in SI units
+
+    """
 
     def convert_spherical(self, **kwargs):
         """
@@ -148,67 +155,11 @@ class CartesianConversion:
         )
 
 
-class SphericalConversion:
+class SphericalConversion(BaseCoordinateConversion):
     """
     Class for conversion to and from Spherical Polar Coordinates in SI units
 
     """
-
-    def __init__(self, e0, e1, e2, e3, u0=None, u1=None, u2=None):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        e0 : float
-            Time
-        e1 : float
-            r-Component of 3-Position
-        e2 : float
-            theta-Component of 3-Position
-        e3 : float
-            phi-Component of 3-Position
-        u0 : float, optional
-            r-Component of 3-Velocity
-        u1 : float, optional
-            theta-Component of 3-Velocity
-        u2 : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        self.e0_si = e0
-        self.e1_si = e1
-        self.e2_si = e2
-        self.e3_si = e3
-        self.u0_si = u0
-        self.u1_si = u1
-        self.u2_si = u2
-        self._velocities_provided = not ((u0 is None) or (u1 is None) or (u2 is None))
-
-    def values(self):
-        """
-        Returns components of the coordinates
-
-        Returns
-        -------
-        tuple
-            4-Tuple containing ``t, r, theta, phi`` in SI units
-            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
-            in SI units
-
-        """
-        if self._velocities_provided:
-            return (
-                self.e0_si,
-                self.e1_si,
-                self.e2_si,
-                self.e3_si,
-                self.u0_si,
-                self.u1_si,
-                self.u2_si,
-            )
-
-        return self.e0_si, self.e1_si, self.e2_si, self.e3_si
 
     def convert_cartesian(self, **kwargs):
         """
@@ -281,67 +232,11 @@ class SphericalConversion:
         return cart.convert_bl(M=M, a=a)
 
 
-class BoyerLindquistConversion:
+class BoyerLindquistConversion(BaseCoordinateConversion):
     """
     Class for conversion to and from Boyer-Lindquist Coordinates in SI units
 
     """
-
-    def __init__(self, e0, e1, e2, e3, u0=None, u1=None, u2=None):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        e0 : float
-            Time
-        e1 : float
-            r-Component of 3-Position
-        e2 : float
-            theta-Component of 3-Position
-        e3 : float
-            phi-Component of 3-Position
-        u0 : float, optional
-            r-Component of 3-Velocity
-        u1 : float, optional
-            theta-Component of 3-Velocity
-        u2 : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        self.e0_si = e0
-        self.e1_si = e1
-        self.e2_si = e2
-        self.e3_si = e3
-        self.u0_si = u0
-        self.u1_si = u1
-        self.u2_si = u2
-        self._velocities_provided = not ((u0 is None) or (u1 is None) or (u2 is None))
-
-    def values(self):
-        """
-        Returns components of the coordinates
-
-        Returns
-        -------
-        tuple
-            4-Tuple containing ``t, r, theta, phi`` in SI units
-            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
-            in SI units
-
-        """
-        if self._velocities_provided:
-            return (
-                self.e0_si,
-                self.e1_si,
-                self.e2_si,
-                self.e3_si,
-                self.u0_si,
-                self.u1_si,
-                self.u2_si,
-            )
-
-        return self.e0_si, self.e1_si, self.e2_si, self.e3_si
 
     def convert_cartesian(self, **kwargs):
         """

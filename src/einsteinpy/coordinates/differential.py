@@ -3,6 +3,7 @@ from astropy import units as u
 
 from einsteinpy import constant, metric
 from einsteinpy.coordinates.conversion import (
+    BaseCoordinateConversion,
     BoyerLindquistConversion,
     CartesianConversion,
     SphericalConversion,
@@ -13,16 +14,12 @@ from einsteinpy.utils import CoordinateError
 _c = constant.c.value
 
 
-class CartesianDifferential(CartesianConversion):
+class BaseDifferential(BaseCoordinateConversion):
     """
-    Class for defining 3-Velocity & 4-Velocity in Cartesian Coordinates \
-    using SI units
+    Base Differential Class
 
     """
 
-    @u.quantity_input(
-        e0=u.s, e1=u.m, e2=u.m, e3=u.m, u0=u.m / u.s, u1=u.m / u.s, u2=u.m / u.s
-    )
     def __init__(self, e0, e1, e2, e3, u0, u1, u2):
         """
         Constructor
@@ -62,6 +59,20 @@ class CartesianDifferential(CartesianConversion):
         self.u0 = u0
         self.u1 = u1
         self.u2 = u2
+
+
+class CartesianDifferential(BaseDifferential, CartesianConversion):
+    """
+    Class for defining 3-Velocity & 4-Velocity in Cartesian Coordinates \
+    using SI units
+
+    """
+
+    @u.quantity_input(
+        e0=u.s, e1=u.m, e2=u.m, e3=u.m, u0=u.m / u.s, u1=u.m / u.s, u2=u.m / u.s
+    )
+    def __init__(self, e0, e1, e2, e3, u0, u1, u2):
+        super().__init__(e0, e1, e2, e3, u0, u1, u2)
         self.system = "Cartesian"
 
     def __str__(self):
@@ -69,10 +80,7 @@ class CartesianDifferential(CartesianConversion):
             e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})\n\
             v_t: {self.v_t}, u0: {self.u0}, u1: {self.u1}, u2: {self.u2}"
 
-    def __repr__(self):
-        return f"Cartesian Coordinates: \n\
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})\n\
-            v_t: {self.v_t}, u0: {self.u0}, u1: {self.u1}, u2: {self.u2}"
+    __repr__ = __str__
 
     def position(self):
         """
@@ -219,7 +227,7 @@ class CartesianDifferential(CartesianConversion):
         )
 
 
-class SphericalDifferential(SphericalConversion):
+class SphericalDifferential(BaseDifferential, SphericalConversion):
     """
     Class for defining 3-Velocity & 4-Velocity in Spherical Polar Coordinates \
     using SI units
@@ -236,44 +244,7 @@ class SphericalDifferential(SphericalConversion):
         u2=u.rad / u.s,
     )
     def __init__(self, e0, e1, e2, e3, u0, u1, u2):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        e0 : float
-            Time
-        e1 : float
-            r-Component of 3-Position
-        e2 : float
-            theta-Component of 3-Position
-        e3 : float
-            phi-Component of 3-Position
-        u0 : float, optional
-            r-Component of 3-Velocity
-        u1 : float, optional
-            theta-Component of 3-Velocity
-        u2 : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        super().__init__(
-            e0.si.value,
-            e1.si.value,
-            e2.si.value,
-            e3.si.value,
-            u0.si.value,
-            u1.si.value,
-            u2.si.value,
-        )
-        self.e0 = e0
-        self.e1 = e1
-        self.e2 = e2
-        self.e3 = e3
-        self._v_t = None
-        self.u0 = u0
-        self.u1 = u1
-        self.u2 = u2
+        super().__init__(e0, e1, e2, e3, u0, u1, u2)
         self.system = "Spherical"
 
     def __str__(self):
@@ -281,10 +252,7 @@ class SphericalDifferential(SphericalConversion):
             e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})\n\
             v_t: {self.v_t}, u0: {self.u0}, u1: {self.u1}, u2: {self.u2}"
 
-    def __repr__(self):
-        return f"Spherical Polar Coordinates: \n\
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})\n\
-            v_t: {self.v_t}, v_r: {self.u0}, v_th: {self.u1}, v_p: {self.u2}"
+    __repr__ = __str__
 
     def position(self):
         """
@@ -431,7 +399,7 @@ class SphericalDifferential(SphericalConversion):
         )
 
 
-class BoyerLindquistDifferential(BoyerLindquistConversion):
+class BoyerLindquistDifferential(BaseDifferential, BoyerLindquistConversion):
     """
     Class for defining 3-Velocity & 4-Velocity in Boyer-Lindquist Coordinates \
     using SI units
@@ -448,44 +416,7 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         u2=u.rad / u.s,
     )
     def __init__(self, e0, e1, e2, e3, u0, u1, u2):
-        """
-        Constructor.
-
-        Parameters
-        ----------
-        e0 : float
-            Time
-        e1 : float
-            r-Component of 3-Position
-        e2 : float
-            theta-Component of 3-Position
-        e3 : float
-            phi-Component of 3-Position
-        u0 : float, optional
-            r-Component of 3-Velocity
-        u1 : float, optional
-            theta-Component of 3-Velocity
-        u2 : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        super().__init__(
-            e0.si.value,
-            e1.si.value,
-            e2.si.value,
-            e3.si.value,
-            u0.si.value,
-            u1.si.value,
-            u2.si.value,
-        )
-        self.e0 = e0
-        self.e1 = e1
-        self.e2 = e2
-        self.e3 = e3
-        self._v_t = None
-        self.u0 = u0
-        self.u1 = u1
-        self.u2 = u2
+        super().__init__(e0, e1, e2, e3, u0, u1, u2)
         self.system = "BoyerLindquist"
 
     def __str__(self):
@@ -493,10 +424,7 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
             e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})\n\
             v_t: {self.v_t}, u0: {self.u0}, u1: {self.u1}, u2: {self.u2}"
 
-    def __repr__(self):
-        return f"Boyer-Lindquist Coordinates: \n\
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})\n\
-            v_t: {self.v_t}, u0: {self.u0}, u1: {self.u1}, u2: {self.u2}"
+    __repr__ = __str__
 
     def position(self):
         """
