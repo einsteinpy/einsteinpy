@@ -5,15 +5,24 @@ from einsteinpy.coordinates.utils import (
     spherical_to_cartesian_fast,
 )
 from einsteinpy.metric import BaseMetric
+from typing import Union, Tuple, Optional, Dict
 
 
-class CartesianConversion:
+class CoordinateConversionBase:
     """
-    Class for conversion to and from Cartesian Coordinates in SI units
-
+    Base class for conversion to and from different coordinate systems in SI units
     """
 
-    def __init__(self, t, x, y, z, v_x=None, v_y=None, v_z=None):
+    def __init__(
+        self,
+        t: float,
+        x: float,
+        y: float,
+        z: float,
+        v_x: Optional[float] = None,
+        v_y: Optional[float] = None,
+        v_z: Optional[float] = None,
+    ):
         """
         Constructor
 
@@ -33,7 +42,6 @@ class CartesianConversion:
             y-Component of 3-Velocity
         v_z : float, optional
             z-Component of 3-Velocity
-
         """
         self.t_si = t
         self.x_si = x
@@ -46,7 +54,7 @@ class CartesianConversion:
             (v_x is None) or (v_y is None) or (v_z is None)
         )
 
-    def values(self):
+    def values(self) -> Union[Tuple[float, float, float, float], Tuple[float, float, float, float, float, float, float]]:
         """
         Returns components of the coordinates in SI units
 
@@ -56,7 +64,6 @@ class CartesianConversion:
             4-Tuple, containing ``t, x, y, z`` in SI units
             or 7-tuple, containing ``t, x, y, z, v_x, v_y, v_z`` \
             in SI units
-
         """
         if self._velocities_provided:
             return (
@@ -71,380 +78,120 @@ class CartesianConversion:
 
         return self.t_si, self.x_si, self.y_si, self.z_si
 
-    def convert_spherical(self, **kwargs):
+
+class CartesianConversion(CoordinateConversionBase):
+    """
+    Class for conversion to and from Cartesian Coordinates in SI units
+    """
+
+    def convert_spherical(self) -> Tuple[float, float, float, float]:
         """
         Converts to Spherical Polar Coordinates
 
-        Other Parameters
-        ----------------
-        **kwargs : dict
-            Keyword Arguments
-
         Returns
         -------
         tuple
-            4-Tuple or 7-Tuple, containing the components in \
-            Spherical Polar Coordinates
-
+            4-Tuple containing the components in Spherical Polar Coordinates
         """
-        return cartesian_to_spherical_fast(
-            self.t_si,
-            self.x_si,
-            self.y_si,
-            self.z_si,
-            self.v_x_si,
-            self.v_y_si,
-            self.v_z_si,
-            self._velocities_provided,
-        )
+        return cartesian_to_spherical_fast(*self.values())
 
-    def convert_bl(self, **kwargs):
+    def convert_bl(self, M: float, a: float) -> Tuple[float, float, float, float]:
         """
         Converts to Boyer-Lindquist Coordinates
 
         Parameters
         ----------
-        **kwargs : dict
-            Keyword Arguments
-            Expects two arguments, ``M and ``a``, as described below
-
-        Other Parameters
-        ----------------
         M : float
-            Mass of the gravitating body, \
-            around which, spacetime has been defined
+            Mass of the gravitating body
         a : float
-            Spin Parameter of the gravitating body, \
-            around which, spacetime has been defined
+            Spin Parameter of the gravitating body
 
         Returns
         -------
         tuple
-            4-Tuple or 7-Tuple, containing the components in \
-            Boyer-Lindquist Coordinates
-
-        Raises
-        ------
-        KeyError
-            If ``kwargs`` does not contain both ``M`` \
-            and ``a`` as keyword arguments
-
+            4-Tuple containing the components in Boyer-Lindquist Coordinates
         """
-        try:
-            M, a = kwargs["M"], kwargs["a"]
-        except KeyError:
-            raise KeyError(
-                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
-            )
-
         alpha = BaseMetric.alpha(M=M, a=a)
-
-        return cartesian_to_bl_fast(
-            self.t_si,
-            self.x_si,
-            self.y_si,
-            self.z_si,
-            alpha,
-            self.v_x_si,
-            self.v_y_si,
-            self.v_z_si,
-            self._velocities_provided,
-        )
+        return cartesian_to_bl_fast(*self.values(), alpha)
 
 
-class SphericalConversion:
+class SphericalConversion(CoordinateConversionBase):
     """
     Class for conversion to and from Spherical Polar Coordinates in SI units
-
     """
 
-    def __init__(self, t, r, theta, phi, v_r=None, v_th=None, v_p=None):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        t : float
-            Time
-        r : float
-            r-Component of 3-Position
-        theta : float
-            theta-Component of 3-Position
-        phi : float
-            phi-Component of 3-Position
-        v_r : float, optional
-            r-Component of 3-Velocity
-        v_th : float, optional
-            theta-Component of 3-Velocity
-        v_p : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        self.t_si = t
-        self.r_si = r
-        self.th_si = theta
-        self.p_si = phi
-        self.v_r_si = v_r
-        self.v_th_si = v_th
-        self.v_p_si = v_p
-        self._velocities_provided = not (
-            (v_r is None) or (v_th is None) or (v_p is None)
-        )
-
-    def values(self):
-        """
-        Returns components of the coordinates
-
-        Returns
-        -------
-        tuple
-            4-Tuple containing ``t, r, theta, phi`` in SI units
-            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
-            in SI units
-
-        """
-        if self._velocities_provided:
-            return (
-                self.t_si,
-                self.r_si,
-                self.th_si,
-                self.p_si,
-                self.v_r_si,
-                self.v_th_si,
-                self.v_p_si,
-            )
-
-        return self.t_si, self.r_si, self.th_si, self.p_si
-
-    def convert_cartesian(self, **kwargs):
+    def convert_cartesian(self) -> Tuple[float, float, float, float]:
         """
         Converts to Cartesian Coordinates
 
-        Other Parameters
-        ----------------
-        **kwargs : dict
-            Keyword Arguments
-
         Returns
         -------
         tuple
-            4-Tuple or 7-Tuple, containing the components in \
-            Cartesian Coordinates
-
+            4-Tuple containing the components in Cartesian Coordinates
         """
-        return spherical_to_cartesian_fast(
-            self.t_si,
-            self.r_si,
-            self.th_si,
-            self.p_si,
-            self.v_r_si,
-            self.v_th_si,
-            self.v_p_si,
-            self._velocities_provided,
-        )
+        return spherical_to_cartesian_fast(*self.values())
 
-    def convert_bl(self, **kwargs):
+    def convert_bl(self, M: float, a: float) -> Tuple[float, float, float, float]:
         """
         Converts to Boyer-Lindquist Coordinates
 
         Parameters
         ----------
-        **kwargs : dict
-            Keyword Arguments
-            Expects two arguments, ``M and ``a``, as described below
-
-        Other Parameters
-        ----------------
         M : float
-            Mass of the gravitating body, \
-            around which, spacetime has been defined
+            Mass of the gravitating body
         a : float
-            Spin Parameter of the gravitating body, \
-            around which, spacetime has been defined
+            Spin Parameter of the gravitating body
 
         Returns
         -------
         tuple
-            4-Tuple or 7-Tuple, containing the components in \
-            Boyer-Lindquist Coordinates
-
-        Raises
-        ------
-        KeyError
-            If ``kwargs`` does not contain both ``M`` \
-            and ``a`` as keyword arguments
-
+            4-Tuple containing the components in Boyer-Lindquist Coordinates
         """
-        try:
-            M, a = kwargs["M"], kwargs["a"]
-        except KeyError:
-            raise KeyError(
-                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
-            )
-
         transformed_cartesian = self.convert_cartesian()
         cart = CartesianConversion(*transformed_cartesian)
-
         return cart.convert_bl(M=M, a=a)
 
 
-class BoyerLindquistConversion:
+class BoyerLindquistConversion(CoordinateConversionBase):
     """
     Class for conversion to and from Boyer-Lindquist Coordinates in SI units
-
     """
 
-    def __init__(self, t, r, theta, phi, v_r=None, v_th=None, v_p=None):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        t : float
-            Time
-        r : float
-            r-Component of 3-Position
-        theta : float
-            theta-Component of 3-Position
-        phi : float
-            phi-Component of 3-Position
-        v_r : float, optional
-            r-Component of 3-Velocity
-        v_th : float, optional
-            theta-Component of 3-Velocity
-        v_p : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        self.t_si = t
-        self.r_si = r
-        self.th_si = theta
-        self.p_si = phi
-        self.v_r_si = v_r
-        self.v_th_si = v_th
-        self.v_p_si = v_p
-        self._velocities_provided = not (
-            (v_r is None) or (v_th is None) or (v_p is None)
-        )
-
-    def values(self):
-        """
-        Returns components of the coordinates
-
-        Returns
-        -------
-        tuple
-            4-Tuple containing ``t, r, theta, phi`` in SI units
-            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
-            in SI units
-
-        """
-        if self._velocities_provided:
-            return (
-                self.t_si,
-                self.r_si,
-                self.th_si,
-                self.p_si,
-                self.v_r_si,
-                self.v_th_si,
-                self.v_p_si,
-            )
-
-        return self.t_si, self.r_si, self.th_si, self.p_si
-
-    def convert_cartesian(self, **kwargs):
+    def convert_cartesian(self, M: float, a: float) -> Tuple[float, float, float, float]:
         """
         Converts to Cartesian Coordinates
 
         Parameters
         ----------
-        **kwargs : dict
-            Keyword Arguments
-            Expects two arguments, ``M and ``a``, as described below
-
-        Other Parameters
-        ----------------
         M : float
-            Mass of the gravitating body, \
-            around which, spacetime has been defined
+            Mass of the gravitating body
         a : float
-            Spin Parameter of the gravitating body, \
-            around which, spacetime has been defined
+            Spin Parameter of the gravitating body
 
         Returns
         -------
         tuple
-            4-Tuple or 7-Tuple, containing the components in \
-            Cartesian Coordinates
-
-        Raises
-        ------
-        KeyError
-            If ``kwargs`` does not contain both ``M`` \
-            and ``a`` as keyword arguments
-
+            4-Tuple containing the components in Cartesian Coordinates
         """
-        try:
-            M, a = kwargs["M"], kwargs["a"]
-        except KeyError:
-            raise KeyError(
-                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
-            )
-
         alpha = BaseMetric.alpha(M=M, a=a)
+        return bl_to_cartesian_fast(*self.values(), alpha)
 
-        return bl_to_cartesian_fast(
-            self.t_si,
-            self.r_si,
-            self.th_si,
-            self.p_si,
-            alpha,
-            self.v_r_si,
-            self.v_th_si,
-            self.v_p_si,
-            self._velocities_provided,
-        )
-
-    def convert_spherical(self, **kwargs):
+    def convert_spherical(self, M: float, a: float) -> Tuple[float, float, float, float]:
         """
         Converts to Spherical Polar Coordinates
 
         Parameters
         ----------
-        **kwargs : dict
-            Keyword Arguments
-            Expects two arguments, ``M and ``a``, as described below
-
-        Other Parameters
-        ----------------
         M : float
-            Mass of the gravitating body, \
-            around which, spacetime has been defined
+            Mass of the gravitating body
         a : float
-            Spin Parameter of the gravitating body, \
-            around which, spacetime has been defined
+            Spin Parameter of the gravitating body
 
         Returns
         -------
         tuple
-            4-Tuple or 7-Tuple, containing the components in \
-            Spherical Polar Coordinates
-
-        Raises
-        ------
-        KeyError
-            If ``kwargs`` does not contain both ``M`` \
-            and ``a`` as keyword arguments
-
+            4-Tuple containing the components in Spherical Polar Coordinates
         """
-        try:
-            M, a = kwargs["M"], kwargs["a"]
-        except KeyError:
-            raise KeyError(
-                "Two keyword arguments are expected: Mass, 'M' and Spin Parameter, 'a'."
-            )
-
         transformed_cartesian = self.convert_cartesian(M=M, a=a)
         cart = CartesianConversion(*transformed_cartesian)
-
         return cart.convert_spherical()
