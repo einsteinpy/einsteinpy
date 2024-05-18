@@ -80,15 +80,38 @@ can be used to lower indices.
 
 Notion of Curved Space
 ----------------------
-Imagine a bug traveling on a sheet of paper folded into a cone. The 
-bug can't see up and down. So, it lives in a 2D world. But it still 
-experiences the curvature of the surface (space), as, after a long journey, 
-it would return to the starting position.
+Imagine a bug traveling on a sphere, like a large ball. The bug cannot travel up or
+down, so it lives in a 2D world. However, it still experiences the curvature of the
+surface, in the sense that flat geometry does not apply to the space it lives in, in
+a very measurable way.
 
-Mathematically, the curvature of space is characterized by the rank-4 
-Riemann Curvature tensor, whose *contraction* gives the rank-2 Ricci 
-tensor. Taking the trace of the Ricci tensor yields the rank-0 Ricci 
-Scalar or Scalar Curvature.
+Let's look at two examples of that.
+
+Example 1:
+
+If the bug travels half the sphere's circumference in a straight line, makes a right
+turn, and then travels half the circumference again, it will return to its starting
+point, having only made a single right turn.
+
+Example 2:
+
+If the bug travels one-quarter of the way around the sphere in a straight line, then
+takes a right turn, and repeats this two more times, it will return to its starting
+point, having traveled over a 2D triangle with internal angles summing to 270 degrees,
+rather than the 180 degrees of a Euclidean triangle.
+
+Both examples are impossible in the Euclidean geometry of a flat space and are a
+consequence of the curvature of the space the bug lives in.
+
+
+Mathematically, the curvature of space is characterized by the rank-4 Riemann Curvature
+tensor, whose *contraction* gives the rank-2 Ricci tensor. Taking the trace of the
+Ricci tensor yields the rank-0 Ricci Scalar or Scalar Curvature.
+
+For example, the Ricci Scalar curvature for a sphere of radius :math:`r` is given by:
+
+.. math::
+  R = \frac{2}{r^2}
 
 Straight lines in Curved Space
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
