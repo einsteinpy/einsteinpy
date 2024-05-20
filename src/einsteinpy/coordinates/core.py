@@ -39,19 +39,7 @@ class BaseCoordinate(BaseCoordinateConversion):
         self.e1 = e1
         self.e2 = e2
         self.e3 = e3
-
-
-class Cartesian(BaseCoordinate, CartesianConversion):
-    """
-    Class for defining 3-Position & 4-Position in Cartesian Coordinates
-    using SI units
-
-    """
-
-    @u.quantity_input(e0=u.s, e1=u.m, e2=u.m, e3=u.m)
-    def __init__(self, e0, e1, e2, e3):
-        super().__init__(e0, e1, e2, e3)
-        self.system = "Cartesian"
+        self.system = f"{self.__class__.__name__}"
         self._dimension = {
             "e0": self.e0,
             "e1": self.e1,
@@ -62,7 +50,7 @@ class Cartesian(BaseCoordinate, CartesianConversion):
         self._dimension_order = ("e0", "e1", "e2", "e3")
 
     def __str__(self):
-        return f"Cartesian Coordinates: \n \
+        return f"{self.__class__.__name__} Coordinates: \n \
             e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
 
     __repr__ = __str__
@@ -101,6 +89,18 @@ class Cartesian(BaseCoordinate, CartesianConversion):
             self.e2.si.value,
             self.e3.si.value,
         )
+
+
+class Cartesian(BaseCoordinate, CartesianConversion):
+    """
+    Class for defining 3-Position & 4-Position in Cartesian Coordinates
+    using SI units
+
+    """
+
+    @u.quantity_input(e0=u.s, e1=u.m, e2=u.m, e3=u.m)
+    def __init__(self, e0, e1, e2, e3):
+        super().__init__(e0, e1, e2, e3)
 
     def to_spherical(self, **kwargs):
         """
@@ -165,56 +165,6 @@ class Spherical(BaseCoordinate, SphericalConversion):
     @u.quantity_input(e0=u.s, e1=u.m, e2=u.rad, e3=u.rad)
     def __init__(self, e0, e1, e2, e3):
         super().__init__(e0, e1, e2, e3)
-        self.system = "Spherical"
-        self._dimension = {
-            "e0": self.e0,
-            "e1": self.e1,
-            "e2": self.e2,
-            "e3": self.e3,
-            "system": self.system,
-        }
-        self._dimension_order = ("e0", "e1", "e2", "e3")
-
-    def __str__(self):
-        return f"Spherical Polar Coordinates: \n \
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
-
-    __repr__ = __str__
-
-    def __getitem__(self, item):
-        """
-        Method to return coordinates
-        Objects are subscriptable with both explicit names of \
-        parameters and integer indices
-
-        Parameters
-        ----------
-        item : str or int
-            Name of the parameter or its index
-            If ``system`` is provided, while initializing, \
-            name of the coordinate is returned
-
-        """
-        if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple :
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.e0.si.value,
-            self.e1.si.value,
-            self.e2.si.value,
-            self.e3.si.value,
-        )
 
     def to_cartesian(self, **kwargs):
         """
@@ -280,56 +230,6 @@ class BoyerLindquist(BaseCoordinate, BoyerLindquistConversion):
     @u.quantity_input(e0=u.s, e1=u.m, e2=u.rad, e3=u.rad)
     def __init__(self, e0, e1, e2, e3):
         super().__init__(e0, e1, e2, e3)
-        self.system = "BoyerLindquist"
-        self._dimension = {
-            "e0": self.e0,
-            "e1": self.e1,
-            "e2": self.e2,
-            "e3": self.e3,
-            "system": self.system,
-        }
-        self._dimension_order = ("e0", "e1", "e2", "e3")
-
-    def __str__(self):
-        return f"Boyer-Lindquist Coordinates: \n \
-            e0 = ({self.e0}), e1 = ({self.e1}), e2 = ({self.e2}), e3 = ({self.e3})"
-
-    __repr__ = __str__
-
-    def __getitem__(self, item):
-        """
-        Method to return coordinates
-        Objects are subscriptable with both explicit names of \
-        parameters and integer indices
-
-        Parameters
-        ----------
-        item : str or int
-            Name of the parameter or its index
-            If ``system`` is provided, while initializing, \
-            name of the coordinate is returned
-
-        """
-        if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple :
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.e0.si.value,
-            self.e1.si.value,
-            self.e2.si.value,
-            self.e3.si.value,
-        )
 
     def to_cartesian(self, **kwargs):
         """
