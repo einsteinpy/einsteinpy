@@ -370,23 +370,6 @@ class BoyerLindquistDifferential(BaseDifferential, BoyerLindquistConversion):
         super().__init__(e0, e1, e2, e3, u0, u1, u2)
         self.system = "BoyerLindquist"
 
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.e0.si.value,
-            self.e1.si.value,
-            self.e2.si.value,
-            self.e3.si.value,
-        )
-
     @property
     def v_t(self):
         """
