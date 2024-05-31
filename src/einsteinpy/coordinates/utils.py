@@ -4,6 +4,7 @@ from einsteinpy import constant
 from einsteinpy.ijit import jit
 
 _c = constant.c.value
+_G = constant.G.value
 
 
 def cartesian_to_spherical_fast(
@@ -193,6 +194,152 @@ def bl_to_cartesian_novel(t, r, th, p, alpha):
     z = r * np.cos(th)
 
     return t, x, y, z
+
+
+def spherical_to_ief_fast(
+    t, r, th, p, M, v_r=None, v_th=None, v_p=None, velocities_provided=False
+):
+    if velocities_provided:
+        return spherical_to_ief(t, r, th, p, M, v_r, v_th, v_p)
+    return spherical_to_ief_novel(t, r, th, p, M)
+
+
+@jit
+def spherical_to_ief(t, r, th, p, M, v_r, v_th, v_p):
+    """
+    Utility function (jitted) to convert spherical to ief.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    return None
+
+
+@jit
+def spherical_to_ief_novel(t, r, th, p, M):
+    """
+    Utility function (jitted) to convert spherical to ief.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    v = (
+        t
+        + (r / _c)
+        + ((2 * _G * M) / (_c ** 3))
+        * np.log(np.absolute(r - ((2 * _G * M) / (_c ** 2))))
+    )
+
+    return v, r, th, p
+
+
+def ief_to_spherical_fast(
+    v, r, th, p, M, v_r=None, v_th=None, v_p=None, velocities_provided=False
+):
+    if velocities_provided:
+        return ief_to_spherical(v, r, th, p, M, v_r, v_th, v_p)
+    return ief_to_spherical_novel(v, r, th, p, M)
+
+
+@jit
+def ief_to_spherical(v, r, th, p, M, v_r, v_th, v_p):
+    """
+    Utility function (jitted) to convert ief to spehrical.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    return None
+
+
+@jit
+def ief_to_spherical_novel(v, r, th, p, M):
+    """
+    Utility function (jitted) to convert ief to spherical.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    t = (
+        v
+        - (r / _c)
+        - ((2 * _G * M) / (_c ** 3))
+        * np.log(np.absolute(r - ((2 * _G * M) / (_c ** 2))))
+    )
+
+    return t, r, th, p
+
+
+def ief_to_ks_fast(
+    v, r, th, p, alpha, v_r=None, v_th=None, v_p=None, velocities_provided=False
+):
+    if velocities_provided:
+        return ief_to_ks(v, r, th, p, alpha, v_r, v_th, v_p)
+    return ief_to_ks_novel(v, r, th, p, alpha)
+
+
+@jit
+def ief_to_ks(v, r, th, p, alpha, v_r, v_th, v_p):
+    """
+    Utility function (jitted) to convert ief to ks.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    return None
+
+
+@jit
+def ief_to_ks_novel(v, r, th, p, alpha):
+    """
+    Utility function (jitted) to convert ief to ks.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    t = v - r
+    x = (r * np.cos(p) + alpha * np.sin(p)) * np.sin(th)
+    y = (r * np.sin(p) - alpha * np.cos(p)) * np.sin(th)
+    z = r * np.cos(th)
+
+    return t, x, y, z
+
+
+def ks_to_ief_fast(
+    t, x, y, z, alpha, v_x=None, v_y=None, v_z=None, velocities_provided=False
+):
+    if velocities_provided:
+        return ks_to_ief(t, x, y, z, v_x, v_y, v_z)
+    return ks_to_ief(t, x, y, z, alpha)
+
+
+@jit
+def ks_to_ief(t, x, y, z, alpha, v_x, v_y, v_z):
+    """
+    Utility function (jitted) to convert ks to ief.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    return None
+
+
+@jit
+def ks_to_ief_novel(t, x, y, z, alpha):
+    """
+    Utility function (jitted) to convert ks to ief.
+    This function should eventually result in Coordinate Transformation Graph!
+
+    """
+    R = np.sqrt(x ** 2 + y ** 2 + z ** 2)
+    r = np.sqrt(
+        (
+            R ** 2
+            - alpha ** 2
+            + np.sqrt(4 * (alpha ** 2) * (z ** 2) + ((R ** 2 - alpha ** 2) ** 2))
+        )
+        / 2
+    )
+    v = t + r
+    th = np.arccos(z / r)
+    p = np.arccos(x / ((np.sqrt(r ** 2 + alpha ** 2) * np.sin(th)))) + np.arctan2(
+        alpha, r
+    )
+
+    return v, r, th, p
 
 
 def lorentz_factor(v1, v2, v3):
