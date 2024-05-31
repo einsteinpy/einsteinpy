@@ -1,11 +1,13 @@
 import numpy as np
 import sympy
-from sympy import simplify, tensorcontraction, tensorproduct
+from sympy import permutedims, simplify, tensorcontraction, tensorproduct
+from sympy.combinatorics import Permutation, PermutationGroup
 from sympy.core.expr import Expr
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
 from einsteinpy.symbolic.helpers import (
     _change_name,
+    expand_sympy_array,
     simplify_sympy_array,
     sympy_to_np_array,
 )
@@ -121,7 +123,7 @@ class Tensor:
     Base Class for Tensor manipulation
     """
 
-    def __init__(self, arr, config="ll", name=None):
+    def __init__(self, arr, config="ll", name=None, simplify=False):
         """
         Constructor and Initializer
 
@@ -133,6 +135,8 @@ class Tensor:
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
         name : str or None
             Name of the tensor.
+        simplify : Bool
+            Whether to call the simplify routine on initiation
 
         Raises
         ------
@@ -164,6 +168,8 @@ class Tensor:
                     config
                 )
             )
+        if simplify:
+            self.simplify()
         self.name = name
 
     @property
@@ -236,7 +242,7 @@ class Tensor:
         """
         return Tensor(self.tensor().subs(*args))
 
-    def simplify(self, set_self=True):
+    def simplify(self, set_self=True, applyfunc=None):
         """
         Returns a simplified Tensor
 
@@ -245,6 +251,8 @@ class Tensor:
         set_self : bool
             Replaces the tensor contained the class with its simplified version, if ``True``.
             Defaults to ``True``.
+        applyfunc : function(sympy.core.expr.Expr) -> sympy.core.expr.Expr
+            Applies a function to each element of the tensor
 
         Returns
         -------
@@ -252,11 +260,152 @@ class Tensor:
             Simplified Tensor
 
         """
+        t = self.tensor()
+        if not applyfunc is None:
+            if t.rank() > 0:
+                t = t.applyfunc(applyfunc)
+            else:
+                t = sympy.Array(applyfunc(sum(t)))
+        t = simplify_sympy_array(t)
         if set_self:
-            self.arr = simplify_sympy_array(self.tensor())
+            self.arr = t
             return self.tensor()
         # return sympy.simplify(self.tensor())  # this used to work with older sympy versions
-        return simplify_sympy_array(self.tensor())
+        return t
+
+    def _get_permutations(self, indices):
+        """
+        Creates a PermutationGroup for all permutations of the given indices
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~sympy.combinatorics.PermutationGroup
+            The permutation group created by the possible permutations of the indices
+        """
+        if len(np.unique(indices)) < len(indices):
+            raise Exception("Cannot specify the same index twice")
+        if np.max(indices) >= self.order:
+            raise Exception("Indices out of bounds")
+
+        permutations = []
+        for i in range(0, len(indices)):
+            for j in range(0, len(indices)):
+                if not i == j:
+                    permutations.append(
+                        Permutation(indices[i], indices[j], size=self.order)
+                    )
+
+        return PermutationGroup(permutations)
+
+    def symmetric_part(self, indices=None):
+        """
+        Calculates the symmetric part of a tensor
+            T_(ab..) = 1/p!  \Sum_{all permutations sigma} T_{sigma(ab...)}
+
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.Tensor
+            Symmetrized Tensor
+        """
+        if self.order < 2:
+            raise Exception("Cannot symmetrize vector")
+        if indices is None:
+            indices = np.arange(self.order, dtype=int)
+
+        permutations = self._get_permutations(indices)
+
+        arr = self.tensor()
+        base_indices = np.arange(self.order, dtype=int)
+        for p in permutations._elements[1:]:  # skip identity
+            arr += permutedims(self.tensor(), p(base_indices))
+
+        return Tensor(arr / permutations.order(), config=self.config, name=self.name)
+
+    def antisymmetric_part(self, indices=None):
+        """
+        Calculates the antisymmetric part of a tensor
+            T_[ab..] = 1/p!  \Sum_{all permutations sigma} sign(sigma)  T_{sigma(ab...)}
+
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.Tensor
+            Antisymmetrized Tensor
+        """
+        if self.order < 2:
+            raise Exception("Cannot symmetrize vector")
+        if indices is None:
+            indices = np.arange(self.order, dtype=int)
+
+        permutations = self._get_permutations(indices)
+
+        arr = self.tensor()
+        base_indices = np.arange(self.order, dtype=int)
+        for p in permutations._elements[1:]:  # skip identity
+            arr += p.signature() * permutedims(self.tensor(), p(base_indices))
+
+        return Tensor(arr / permutations.order(), config=self.config, name=self.name)
+
+    def contract(self, i, j):
+        """
+        Tensor contraction of i-th and j-th index
+
+	   Parameters
+	   ----------
+	   i : int
+	       contract ``i``th index
+	   j : int
+	       with the ``j``th index
+
+
+	   Returns
+	   -------
+	   ~einsteinpy.symbolic.Tensor
+	       tensor of appropriate rank
+
+	   Raises
+	   ------
+	   ValueError
+	       Raised when ``i`` and ``j`` both indicate 'u' or 'l' indices
+        """
+        if i > j:
+            return self.contract(j, i)
+
+        if self.config[i] == self.config[j]:
+            raise ValueError(
+                    "Index summation not allowed between %s and %s indices"
+                    % (self.config[i], self.config[j]))
+
+        contracted = tensorcontraction(self.arr, (i,j))
+
+        if self.order <= 2:
+            return contracted
+
+        config = self.config[:i] + self.config[i+1:j] + self.config[j+1:]
+
+        return Tensor(contracted, config=config)
 
 
 class BaseRelativityTensor(Tensor):
@@ -278,6 +427,8 @@ class BaseRelativityTensor(Tensor):
         Undefined functions in the tensor expression.
     name : str or None
         Name of the tensor. Defaults to "GenericTensor".
+    simplify : Bool
+            Whether to call the simplify routine on initiation
 
     """
 
@@ -287,9 +438,11 @@ class BaseRelativityTensor(Tensor):
         syms,
         config="ll",
         parent_metric=None,
+        parent_spacetime=None,
         variables=list(),
         functions=list(),
         name="GenericTensor",
+        simplify=False,
     ):
         """
         Constructor and Initializer
@@ -306,6 +459,8 @@ class BaseRelativityTensor(Tensor):
             'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Metric Tensor for some particular space-time which is associated with this Tensor.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         variables : tuple or list or set
             List of symbols used in expressing the tensor,
             other than symbols associated with denoting the space-time axis.
@@ -330,7 +485,9 @@ class BaseRelativityTensor(Tensor):
             Raised when argument ``syms`` does not agree with shape of argument ``arr``
 
         """
-        super(BaseRelativityTensor, self).__init__(arr=arr, config=config, name=name)
+        super(BaseRelativityTensor, self).__init__(
+            arr=arr, config=config, name=name, simplify=simplify
+        )
 
         if len(self.arr.shape) != 0 and self.arr.shape[0] != len(syms):
             raise ValueError("invalid shape of argument arr for syms: {}".format(syms))
@@ -338,6 +495,12 @@ class BaseRelativityTensor(Tensor):
         # Cannot implement the check that parent metric belongs to the class MetricTensor
         # Due to the issue of cyclic imports, would find a workaround
         self._parent_metric = parent_metric
+        self._parent_spacetime = parent_spacetime
+        if (self._parent_metric is None) and (not parent_spacetime is None):
+            self._parent_metric = parent_spacetime.Metric
+        if (self._parent_spacetime is None) and (not parent_metric is None):
+            self._parent_spacetime = parent_metric.parent_spacetime
+
         if isinstance(syms, (list, tuple)):
             self.syms = syms
             self.dims = len(self.syms)
@@ -376,6 +539,13 @@ class BaseRelativityTensor(Tensor):
         Returns the Metric from which Tensor was derived/associated, if available.
         """
         return self._parent_metric
+
+    @property
+    def parent_spacetime(self):
+        """
+        Returns the Spacetime from which Tensor was derived/associated, if available.
+        """
+        return self._parent_spacetime
 
     def symbols(self):
         """
@@ -456,4 +626,160 @@ class BaseRelativityTensor(Tensor):
             variables=self.variables,
             functions=self.functions,
             name=_change_name(self.name, context="__lt"),
+        )
+
+    def change_config(self, newconfig="llll", metric=None):
+        """
+        Changes the index configuration(contravariant/covariant)
+
+        Parameters
+        ----------
+        newconfig : str
+            Specify the new configuration. Defaults to 'llll'
+        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Parent metric tensor for changing indices.
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
+            Compulsory if not initialized with 'from_metric'. Defaults to None.
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.riemann.BaseRelativityTensor
+            New tensor with new configuration. Configuration defaults to 'llll'
+
+        Raises
+        ------
+        Exception
+            Raised when a parent metric could not be found.
+
+        """
+        if self.config == newconfig:
+            return self
+        if metric is None:
+            metric = self._parent_metric
+        if metric is None:
+            raise Exception("Parent Metric not found, can't do configuration change")
+        new_tensor = _change_config(self, metric, newconfig)
+        new_obj = self.__class__(
+            new_tensor,
+            self.syms,
+            config=newconfig,
+            parent_metric=metric,
+            name=_change_name(self.name, context="__" + newconfig),
+        )
+        return new_obj
+
+    def subs(self, *args):
+        """
+        Substitute the variables/expressions in a Tensor with other sympy variables/expressions.
+
+        Parameters
+        ----------
+        args : one argument or two argument
+            - two arguments, e.g foo.subs(old, new)
+            - one iterable argument, e.g foo.subs([(old1, new1), (old2, new2)]) for multiple substitutions at once.
+
+        Returns
+        -------
+        ~Instance of self:
+            Tensor with substituted values
+
+        """
+        return self.__class__(
+            expand_sympy_array(self.tensor()).subs(*args),
+            self.syms,
+            config=self.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            name=self.name,
+        )
+
+    def symmetric_part(self, indices=None):
+        """
+        Calculates the symmetric part of a tensor
+            T_(ab..) = 1/p!  \Sum_{all permutations sigma} T_{sigma(ab...)}
+
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.BaseRelativityTensor
+            Symmetrized Tensor
+        """
+        return BaseRelativityTensor(
+            super().symmetric_part(indices).arr,
+            syms=self.syms,
+            config=self.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            simplify=False,
+        )
+
+    def antisymmetric_part(self, indices=None):
+        """
+        Calculates the antisymmetric part of a tensor
+            T_[ab..] = 1/p!  \Sum_{all permutations sigma} sign(sigma)  T_{sigma(ab...)}
+
+            where p is the number of indices that are being permuted.
+            For a subset of indices specifiy the indices parameter
+                i.e. [1,2] for T_a(bc)d
+
+        Parameters
+        ----------
+        indices : array
+            Array of the indices that should be permuted
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.BaseRelativityTensor
+            Antisymmetrized Tensor
+        """
+        return BaseRelativityTensor(
+            super().antisymmetric_part(indices).arr,
+            syms=self.syms,
+            config=self.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            simplify=False,
+        )
+
+    def contract(self, i, j):
+        """
+        Tensor contraction of i-th and j-th index
+
+	   Parameters
+	   ----------
+	   i : int
+	       contract ``i``th index
+	   j : int
+	       with the ``j``th index
+
+
+	   Returns
+	   -------
+	   ~einsteinpy.symbolic.BaseRelativityTensor
+	       tensor of appropriate rank
+
+	   Raises
+	   ------
+	   ValueError
+	       Raised when ``i`` and ``j`` both indicate 'u' or 'l' indices
+        """
+        c = super().contract(i,j)
+        if not isinstance(c, Tensor):
+            return c
+
+        return BaseRelativityTensor(
+            c.arr,
+            syms=self.syms,
+            config=c.config,
+            parent_metric=self._parent_metric,
+            parent_spacetime=self._parent_spacetime,
+            simplify=False,
         )
