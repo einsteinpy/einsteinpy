@@ -20,8 +20,8 @@ matrix:
   fast_finish: true
 
 install:
-  - "set PYTHON_BIN=C:\\Python38-x64\\python.exe"
-  - "set PIP_BIN=C:\\Python38-x64\\Scripts\\pip.exe"
+  - "set PYTHON_BIN=C:\\Python39-x64\\python.exe"
+  - "set PIP_BIN=C:\\Python39-x64\\Scripts\\pip.exe"
 
   # Check that we have the expected version of Python
   - "%PYTHON_BIN% --version"
