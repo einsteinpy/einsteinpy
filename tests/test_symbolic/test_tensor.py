@@ -281,3 +281,50 @@ def test_lambdify_with_args():
     assert_allclose(arr, cmp_arr, rtol=0.0, atol=1e-7)
     for e1, e2 in zip(args, (y, x)):
         assert simplify(e1 - e2) == 0
+
+
+def test_derivative():
+    x, y = symbols("x y")
+    test_list = [[x, y], [y, x]]
+    obj1 = BaseRelativityTensor(test_list, syms=[x, y], config="ll")
+
+    test_list = [[1, 0], [0, 1]]
+    obj2 = BaseRelativityTensor(test_list, syms=[x, y], config="ll")
+    # call using symbol
+    derived = obj1.derivative(x)
+    assert derived.arr == obj2.arr
+    # call using list
+    derived = obj1.derivative([1, 0])
+    assert derived.arr == obj2.arr
+    # call using BaseRelativityTensor
+    test_list = [1, 0]
+    vec = BaseRelativityTensor(test_list, syms=[x, y], config="u")
+    derived = obj1.derivative(vec)
+    assert derived.arr == obj2.arr
+
+@xfail(raises=ValueError, strict=True)
+def test_derivative_ValueError1():
+    x, y = symbols("x y")
+    test_list = [[x, y], [y, x]]
+    obj1 = BaseRelativityTensor(test_list, syms=[x, y], config="ll")
+
+    obj1.derivative([1, 2, 0])
+
+
+@xfail(raises=ValueError, strict=True)
+def test_derivative_ValueError2():
+    x, y = symbols("x y")
+    test_list = [[x, y], [y, x]]
+    obj1 = BaseRelativityTensor(test_list, syms=[x, y], config="ll")
+    obj2 = BaseRelativityTensor(test_list[0], syms=[x, y], config="l")
+
+    obj1.derivative(obj2)
+
+
+@xfail(raises=TypeError, strict=True)
+def test_derivative_TypeError():
+    x, y = symbols("x y")
+    test_list = [[x, y], [y, x]]
+    obj1 = BaseRelativityTensor(test_list, syms=[x, y], config="ll")
+
+    obj1.derivative("x")
