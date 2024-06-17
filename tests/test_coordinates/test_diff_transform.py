@@ -220,11 +220,11 @@ def test_velocity2(spherical_differential, bl_differential):
     mk = Kerr(coords=bl_differential, M=M, a=a)
 
     sd, bd = spherical_differential, bl_differential
-    assert_allclose(sd.velocity(metric=ms)[1:], [sd.u0.value, sd.u1.value, sd.u2.value])
-    assert_allclose(bd.velocity(metric=mk)[1:], [bd.u0.value, bd.u1.value, bd.u2.value])
+    assert_allclose(sd.velocity(metric=ms)[1:], [sd.u1.value, sd.u2.value, sd.u3.value])
+    assert_allclose(bd.velocity(metric=mk)[1:], [bd.u1.value, bd.u2.value, bd.u3.value])
 
 
-def test_v_t_raises_CoordinateError(cartesian_differential, spherical_differential, bl_differential):
+def test_u0_raises_CoordinateError(cartesian_differential, spherical_differential, bl_differential):
     M = 1e24 * u.kg
     a = 0. * u.one
     ms = Schwarzschild(coords=spherical_differential, M=M)
@@ -257,21 +257,21 @@ def test_v_t_raises_CoordinateError(cartesian_differential, spherical_differenti
         sd_k(sd, mk)
 
 
-def test_v_t_getter_setter0(cartesian_differential, spherical_differential, bl_differential):
+def test_u0_getter_setter0(cartesian_differential, spherical_differential, bl_differential):
     M = 1e24 * u.kg
     a = 0. * u.one
     ms = Schwarzschild(coords=spherical_differential, M=M)
     mk = Kerr(coords=bl_differential, M=M, a=a)
 
     def cd_vt(cartesian_differential, ms):
-        cartesian_differential.v_t = (ms,)
+        cartesian_differential.u0 = (ms,)
 
     def sd_vt(spherical_differential, mk):
-        spherical_differential.v_t = (mk,)
+        spherical_differential.u0 = (mk,)
 
     # This should not raise CoordinateError
     try:
-        spherical_differential.v_t = (ms,)
+        spherical_differential.u0 = (ms,)
     except CoordinateError:
         pytest.fail("Unexpected TypeError!")
 
@@ -283,18 +283,18 @@ def test_v_t_getter_setter0(cartesian_differential, spherical_differential, bl_d
         sd_vt(spherical_differential, mk)
 
 
-def test_v_t_getter_setter1(cartesian_differential, spherical_differential, bl_differential):
+def test_u0_getter_setter1(cartesian_differential, spherical_differential, bl_differential):
     M = 1e24 * u.kg
     a = 0. * u.one
     ms = Schwarzschild(coords=spherical_differential, M=M)
     mk = Kerr(coords=bl_differential, M=M, a=a)
 
     def bd_vt(bl_differential, ms):
-        bl_differential.v_t = (ms,)
+        bl_differential.u0 = (ms,)
 
     # This should not raise CoordinateError
     try:
-        bl_differential.v_t = (mk,)
+        bl_differential.u0 = (mk,)
     except CoordinateError:
         pytest.fail("Unexpected TypeError!")
 
@@ -303,9 +303,9 @@ def test_v_t_getter_setter1(cartesian_differential, spherical_differential, bl_d
         bd_vt(bl_differential, ms)
 
 
-def test_cartesian_differential_v_t(cartesian_differential):
+def test_cartesian_differential_u0(cartesian_differential):
     """
-    Tests v_t for CartesianDifferential specifically
+    Tests u0 for CartesianDifferential specifically
 
     """
     # Defining Minkowski Metric

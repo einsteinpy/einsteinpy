@@ -58,11 +58,11 @@ def cartesian_to_spherical_novel(e0, e1, e2, e3):
     return e0, e5, e6, e7
 
 
-def cartesian_to_bl_fast(e0, e1, e2, e3, e4, u0=None, u1=None, u2=None):
+def cartesian_to_bl_fast(e0, e1, e2, e3, u0, u1=None, u2=None, u3=None):
     vel = [u0, u1, u2]
     if all(u is not None for u in vel) and any(u != 0 for u in vel):
-        return cartesian_to_bl(e0, e1, e2, e3, e4, u0, u1, u2)
-    return cartesian_to_bl_novel(e0, e1, e2, e3, e4)
+        return cartesian_to_bl(e0, e1, e2, e3, u0, u1, u2, u3)
+    return cartesian_to_bl_novel(e0, e1, e2, e3, u0)
 
 
 @jit

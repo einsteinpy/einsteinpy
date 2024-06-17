@@ -23,9 +23,9 @@ def test_input():
         e1=0.1 * u.m,
         e2=4 * np.pi / 5 * u.rad,
         e3=0. * u.rad,
-        u0=0. * u.m / u.s,
-        u1=0. * u.rad / u.s,
-        u2=0. * u.rad / u.s
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=0. * u.rad / u.s
     )
 
     M = 1e23 * u.kg
@@ -89,9 +89,9 @@ def test_f_vec_bl_kerrnewman():
         e1=1e6 * u.m,
         e2=4 * np.pi / 5 * u.rad,
         e3=0. * u.rad,
-        u0=0. * u.m / u.s,
-        u1=0. * u.rad / u.s,
-        u2=2e6 * u.rad / u.s
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=2e6 * u.rad / u.s
     )
     f_vec_expected = np.array(
         [
@@ -189,9 +189,9 @@ def test_em_tensor_covariant():
         e1=1.5 * u.m,
         e2=3 * np.pi / 5 * u.rad,
         e3=0. * u.rad,
-        u0=0. * u.m / u.s,
-        u1=0. * u.rad / u.s,
-        u2=0. * u.rad / u.s
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=0. * u.rad / u.s
     )
 
     x_vec = bl.position()
@@ -244,9 +244,9 @@ def test_em_tensor_contravariant():
         e1=5.5 * u.m,
         e2=2 * np.pi / 5 * u.rad,
         e3=0. * u.rad,
-        u0=200. * u.m / u.s,
-        u1=9. * u.rad / u.s,
-        u2=10. * u.rad / u.s
+        u1=200. * u.m / u.s,
+        u2=9. * u.rad / u.s,
+        u3=10. * u.rad / u.s
     )
 
     x_vec = bl.position()

@@ -22,9 +22,9 @@ def sph():
         e1=130.0 * u.m,
         e2=np.pi / 2 * u.rad,
         e3=-np.pi / 8 * u.rad,
-        u0=0.0 * u.m / u.s,
-        u1=0.0 * u.rad / u.s,
+        u1=0.0 * u.m / u.s,
         u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
 
@@ -35,9 +35,9 @@ def bl():
         e1=130.0 * u.m,
         e2=np.pi / 2 * u.rad,
         e3=-np.pi / 8 * u.rad,
-        u0=0.0 * u.m / u.s,
-        u1=0.0 * u.rad / u.s,
+        u1=0.0 * u.m / u.s,
         u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
 
@@ -75,9 +75,9 @@ def test_wrong_or_no_units_in_init(M, a, Q, q):
         e1=130.0 * u.m,
         e2=np.pi / 2 * u.rad,
         e3=-np.pi / 8 * u.rad,
-        u0=0.0 * u.m / u.s,
-        u1=0.0 * u.rad / u.s,
+        u1=0.0 * u.m / u.s,
         u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
     bl = BoyerLindquistDifferential(
@@ -85,9 +85,9 @@ def test_wrong_or_no_units_in_init(M, a, Q, q):
         e1=130.0 * u.m,
         e2=np.pi / 2 * u.rad,
         e3=-np.pi / 8 * u.rad,
-        u0=0.0 * u.m / u.s,
-        u1=0.0 * u.rad / u.s,
+        u1=0.0 * u.m / u.s,
         u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
     try:

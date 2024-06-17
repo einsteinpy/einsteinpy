@@ -13,9 +13,9 @@ def test_f_vec_bl_schwarzschild():
         e1=1e6 * u.m,
         e2=4 * np.pi / 5 * u.rad,
         e3=0. * u.rad,
-        u0=0. * u.m / u.s,
-        u1=0. * u.rad / u.s,
-        u2=2e6 * u.rad / u.s
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=2e6 * u.rad / u.s
     )
     f_vec_expected = np.array(
         [
