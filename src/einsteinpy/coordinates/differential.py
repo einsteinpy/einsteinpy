@@ -20,7 +20,7 @@ class BaseDifferential(BaseCoordinateConversion):
 
     """
 
-    def __init__(self, e0, e1, e2, e3, u1, u2, u3):
+    def __init__(self, e0, e1, e2, e3, u1, u2, u3, system="Base"):
         """
         Constructor
 
@@ -59,6 +59,7 @@ class BaseDifferential(BaseCoordinateConversion):
         self.u1 = u1
         self.u2 = u2
         self.u3 = u3
+        self.system = system
 
     def __str__(self):
         return f"{self.__class__.__name__} Coordinates: \n\
@@ -160,8 +161,7 @@ class CartesianDifferential(BaseDifferential, CartesianConversion):
         e0=u.s, e1=u.m, e2=u.m, e3=u.m, u1=u.m / u.s, u2=u.m / u.s, u3=u.m / u.s
     )
     def __init__(self, e0, e1, e2, e3, u1, u2, u3):
-        super().__init__(e0, e1, e2, e3, u1, u2, u3)
-        self.system = "Cartesian"
+        super().__init__(e0, e1, e2, e3, u1, u2, u3, "Cartesian")
 
     def spherical_differential(self, **kwargs):
         """
@@ -244,8 +244,7 @@ class SphericalDifferential(BaseDifferential, SphericalConversion):
         u3=u.rad / u.s,
     )
     def __init__(self, e0, e1, e2, e3, u1, u2, u3):
-        super().__init__(e0, e1, e2, e3, u1, u2, u3)
-        self.system = "Spherical"
+        super().__init__(e0, e1, e2, e3, u1, u2, u3, "Spherical")
 
     def cartesian_differential(self, **kwargs):
         """
@@ -328,8 +327,7 @@ class BoyerLindquistDifferential(BaseDifferential, BoyerLindquistConversion):
         u3=u.rad / u.s,
     )
     def __init__(self, e0, e1, e2, e3, u1, u2, u3):
-        super().__init__(e0, e1, e2, e3, u1, u2, u3)
-        self.system = "BoyerLindquist"
+        super().__init__(e0, e1, e2, e3, u1, u2, u3, "BoyerLindquist")
 
     def cartesian_differential(self, **kwargs):
         """
