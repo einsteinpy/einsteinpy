@@ -110,8 +110,8 @@ def test_compare_vt_schwarzschild():
     ms_mat = ms.metric_covariant(x_vec)
     v_vec = sph.velocity(ms)
 
-    sph.v_t = (ms,)  # Setting v_t
-    vt_s = sph.v_t  # Getting v_t
+    sph.u0 = (ms,)  # Setting u0
+    vt_s = sph.u0  # Getting u0
 
     # Calculated by brute force
     A = ms_mat[0, 0]

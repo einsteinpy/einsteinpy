@@ -104,9 +104,7 @@ class DualNumber:
         return DualNumber(-self.val, -self.deriv)
 
     def __pow__(self, power):
-        return DualNumber(
-            self.val**power, self.deriv * power * self.val ** (power - 1)
-        )
+        return DualNumber(self.val**power, self.deriv * power * self.val ** (power - 1))
 
     def sin(self):
         return DualNumber(np.sin(self.val), self.deriv * np.cos(self.val))

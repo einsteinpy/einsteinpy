@@ -25,13 +25,13 @@ def test_nonzero_christoffels():
 @pytest.fixture
 def bl():
     return BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=0.1 * u.m,
-        theta=4 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=0. * u.rad / u.s
+        e0=0. * u.s,
+        e1=0.1 * u.m,
+        e2=4 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=0. * u.rad / u.s
     )
 
 
@@ -70,13 +70,13 @@ def test_christoffels(bl):
 def test_f_vec_bl_kerr():
     M, a = 6.73317655e26 * u.kg, 0.2 * u.one
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=1e6 * u.m,
-        theta=4 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=2e6 * u.rad / u.s
+        e0=0. * u.s,
+        e1=1e6 * u.m,
+        e2=4 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=2e6 * u.rad / u.s
     )
     f_vec_expected = np.array(
         [
