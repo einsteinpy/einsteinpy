@@ -40,7 +40,7 @@ def AlcubierreWarp(
     """
     coords = symbols("t x y z")
     t, x, y, z = coords
-    r_s = sqrt((x - x_s) ** 2 + y ** 2 + z ** 2)
+    r_s = sqrt((x - x_s) ** 2 + y**2 + z**2)
     f = (tanh(sigma * (r_s + R)) - tanh(sigma * (r_s - R))) / (2 * tanh(sigma * R))
 
     v2 = v**2
