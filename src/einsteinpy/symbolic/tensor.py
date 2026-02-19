@@ -421,6 +421,44 @@ class BaseRelativityTensor(Tensor):
             arg_list = tuple(args)
         return arg_list, numeric_arr
 
+    def change_config(self, newconfig="ul", metric=None):
+        """
+        Changes the index configuration(contravariant/covariant)
+
+        Parameters
+        ----------
+        newconfig : str
+            Specify the new configuration. Defaults to 'ul'
+        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Parent metric tensor for changing indices.
+            Already assumes the value of the metric tensor from which it was initialized if passed with None.
+            Compulsory if somehow does not have a parent metric. Defaults to None.
+
+        Returns
+        -------
+        ~einsteinpy.symbolic.tensor.BaseRelativityTensor
+            New tensor with new configuration. Defaults to 'ul'
+
+        Raises
+        ------
+        Exception
+            Raised when a parent metric could not be found.
+
+        """
+        if metric is None:
+            metric = self._parent_metric
+        if metric is None:
+            raise Exception("Parent Metric not found, can't do configuration change")
+        new_tensor = _change_config(self, metric, newconfig)
+        new_obj = self.__class__(
+            new_tensor,
+            self.syms,
+            config=newconfig,
+            parent_metric=metric,
+            name=_change_name(self.name, context="__" + newconfig),
+        )
+        return new_obj
+
     def lorentz_transform(self, transformation_matrix):
         """
         Performs a Lorentz transform on the tensor.
