@@ -21,7 +21,6 @@ class GeodesicIntegrator:
 
     """
 
-    # TODO: Update arXiv attributions to ApJ (See #572)
     def __init__(
         self,
         metric,

@@ -39,7 +39,7 @@ def _change_config(tensor, metric, newconfig):
     if not (len(newconfig) == len(tensor.config) and _config_checker(newconfig)):
         raise ValueError
 
-    # seperate the contravariant & covariant metric tensors
+    # separate the contravariant & covariant metric tensors
     met_dict = {
         -1: metric.lower_config().tensor(),
         1: metric.lower_config().inv().tensor(),

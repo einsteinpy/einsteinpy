@@ -13,10 +13,7 @@ def AlcubierreWarp(
     .. [1] Classical and Quantum Gravity,
     "The warp drive: hyper-fast travel within general relativity",
     Miguel Alcubierre, 1994, **11(5)**, pp. 73-77
-
-    arXiv: `<https://arxiv.org/abs/gr-qc/0009013>`_)
-
-    Journal: `<https://doi.org/10.1088%2F0264-9381%2F11%2F5%2F001>`_
+    `<https://doi.org/10.1088%2F0264-9381%2F11%2F5%2F001>`_
 
     Parameters
     ----------
