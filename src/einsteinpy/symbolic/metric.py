@@ -56,12 +56,6 @@ class MetricTensor(BaseRelativityTensor):
         ~einsteinpy.symbolic.metric.MetricTensor
             New Metric with new configuration. Defaults to 'uu'
 
-        Raises
-        ------
-        ValueError
-            Raised when new configuration is not 'll' or 'uu'.
-            This constraint is in place because we are dealing with Metric Tensor.
-
         """
         if newconfig == self.config:
             return self
@@ -75,9 +69,27 @@ class MetricTensor(BaseRelativityTensor):
             inv_met._invmetric = self
             return inv_met
 
-        raise ValueError(
-            "Configuration can't have one upper and one lower index in Metric Tensor."
-        )
+        # For 'ul' and 'lu' configurations, return a mixed tensor
+        # For a diagonal metric, this would be the identity tensor
+        if newconfig == "ul" or newconfig == "lu":
+            # Create identity-like mixed tensor
+            # For diagonal metric, g^i_j = delta^i_j (Kronecker delta)
+            size = self.arr.shape[0]
+            identity_matrix = sympy.eye(size)
+            # Get the appropriate slice based on config
+            if newconfig == "ul":
+                # Upper index first, then lower - take rows
+                arr_slice = [list(row) for row in identity_matrix.tolist()]
+            else:
+                # Lower index first, then upper - take columns (same for identity)
+                arr_slice = [list(row) for row in identity_matrix.tolist()]
+            
+            return MetricTensor(
+                arr_slice,
+                self.syms,
+                config=newconfig,
+                name=_change_name(self.name, context="__" + newconfig),
+            )
 
     def inv(self):
         """
