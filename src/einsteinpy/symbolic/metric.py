@@ -59,25 +59,19 @@ class MetricTensor(BaseRelativityTensor):
         Raises
         ------
         ValueError
-            Raised when new configuration is not 'll' or 'uu'.
-            This constraint is in place because we are dealing with Metric Tensor.
+            Raised when new configuration length doesn't match tensor order.
 
         """
         if newconfig == self.config:
             return self
-        if newconfig == "uu" or newconfig == "ll":
-            inv_met = MetricTensor(
-                sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
-                self.syms,
-                config=newconfig,
-                name=_change_name(self.name, context="__" + newconfig),
-            )
-            inv_met._invmetric = self
-            return inv_met
-
-        raise ValueError(
-            "Configuration can't have one upper and one lower index in Metric Tensor."
+        inv_met = MetricTensor(
+            sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
+            self.syms,
+            config=newconfig,
+            name=_change_name(self.name, context="__" + newconfig),
         )
+        inv_met._invmetric = self
+        return inv_met
 
     def inv(self):
         """
