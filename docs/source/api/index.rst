@@ -1,10 +1,19 @@
 EinsteinPy API
 ==============
 
-Welcome to the API documentation of EinsteinPy. Please navigate through the given modules to get to
-know the API of the classes and methods. If you find anything missing, please open an `issue in the repo`_ .
+Welcome to the API documentation for EinsteinPy. This reference guide provides detailed 
+information about the classes, methods, and modules available in EinsteinPy. Navigate 
+through the module sections below to learn about the API.
+
+If you find anything missing or have suggestions for improvement, please open an 
+`issue in the repo`_.
 
 .. _`issue in the repo` : https://github.com/einsteinpy/einsteinpy/issues
+
+Module Overview
+---------------
+
+The following graph shows the main modules available in EinsteinPy and their relationships:
 
 .. graphviz::
 

@@ -124,3 +124,21 @@ def test_lorentz_transform():
     t0 = get_tensor()
     t1 = t0.lorentz_transform(tm)
     assert isinstance(t1, ChristoffelSymbols)
+
+
+def test_matrix_method():
+    """Test that matrix() method works correctly and returns the same as tensor()"""
+    sch = schwarzschild_metric()
+    chl = ChristoffelSymbols.from_metric(sch)
+    
+    # Test that matrix() method exists and returns an array
+    matrix_result = chl.matrix()
+    assert matrix_result is not None
+    
+    # Test that matrix() returns the same underlying array as the tensor
+    tensor_result = chl.tensor()
+    # The matrix() method should return the same data as accessing arr directly
+    for i in range(4):
+        for j in range(4):
+            for k in range(4):
+                assert sympy.simplify(matrix_result[i, j, k] - tensor_result[i, j, k]) == 0

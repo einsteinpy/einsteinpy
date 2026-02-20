@@ -7,7 +7,24 @@ from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
 
 class ChristoffelSymbols(BaseRelativityTensor):
     """
-    Class for defining christoffel symbols.
+    Class for defining Christoffel symbols.
+
+    .. note::
+        Christoffel symbols are NOT tensors. They are "connection coefficients"
+        that describe the Levi-Civita connection of a given metric tensor.
+        Unlike true tensors, Christoffel symbols do not transform as tensors
+        under coordinate transformations - they transform in a more complex way
+        that involves derivatives of the coordinate transformation.
+
+        While this class inherits from ``BaseRelativityTensor`` for code reuse
+        purposes, Christoffel symbols are fundamentally different from tensors.
+        The mathematical reason is that tensors transform homogeneously under
+        coordinate changes, while Christoffel symbols have an additional
+        inhomogeneous term involving derivatives of the transformation.
+
+        For this reason, you may want to use the ``matrix()`` method instead
+        of ``tensor()`` when accessing the underlying array, to avoid the
+        implication that Christoffel symbols are tensors.
     """
 
     def __init__(
@@ -139,3 +156,18 @@ class ChristoffelSymbols(BaseRelativityTensor):
             parent_metric=None,
             name=_change_name(self.name, context="__lt"),
         )
+
+    def matrix(self):
+        """
+        Returns the Christoffel symbols as a sympy Array.
+
+        This method is provided as an alternative to ``tensor()`` to emphasize
+        that Christoffel symbols are not tensors but rather connection coefficients.
+
+        Returns
+        -------
+        ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray
+            Sympy Array object representing the Christoffel symbols
+
+        """
+        return self.arr
