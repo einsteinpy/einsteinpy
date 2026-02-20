@@ -75,9 +75,18 @@ class MetricTensor(BaseRelativityTensor):
             inv_met._invmetric = self
             return inv_met
 
-        raise ValueError(
-            "Configuration can't have one upper and one lower index in Metric Tensor."
+        # For configurations with mixed upper and lower indices (e.g., 'ul' or 'lu'),
+        # we compute the inverse and use identity-like transformation.
+        # Note: This will result in loss of information as the transformation to
+        # identity tensor is involved.
+        inv_met = MetricTensor(
+            sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
+            self.syms,
+            config=newconfig,
+            name=_change_name(self.name, context="__" + newconfig),
         )
+        inv_met._invmetric = self
+        return inv_met
 
     def inv(self):
         """
