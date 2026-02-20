@@ -195,6 +195,7 @@ def bl_to_cartesian_novel(t, r, th, p, alpha):
     return t, x, y, z
 
 
+@jit
 def lorentz_factor(v1, v2, v3):
     """
     Returns the Lorentz Factor, ``gamma``

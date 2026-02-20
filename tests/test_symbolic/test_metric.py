@@ -53,13 +53,17 @@ def test_inv():
         assert sympy.simplify(sch[i, i] * sch_inv[i, i]) == 1
 
 
-def test_change_config_ValueError():
+def test_change_config_mixed_indices():
+    """Test that mixed index configurations ('ul', 'lu') are now allowed.
+    
+    Note: These transformations will lose information as they involve
+    transformation to identity tensor.
+    """
     sch = schwarzschild_metric()
-    try:
-        sch_new = sch.change_config("ul")
-        assert False
-    except ValueError:
-        assert True
+    # This should no longer raise a ValueError
+    sch_new = sch.change_config("ul")
+    assert sch_new is not None
+    assert sch_new.config == "ul"
 
 
 def test_check_ValueError_on_incorrect_config_length():
