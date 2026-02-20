@@ -56,12 +56,6 @@ class MetricTensor(BaseRelativityTensor):
         ~einsteinpy.symbolic.metric.MetricTensor
             New Metric with new configuration. Defaults to 'uu'
 
-        Raises
-        ------
-        ValueError
-            Raised when new configuration is not 'll' or 'uu'.
-            This constraint is in place because we are dealing with Metric Tensor.
-
         """
         if newconfig == self.config:
             return self
@@ -75,9 +69,22 @@ class MetricTensor(BaseRelativityTensor):
             inv_met._invmetric = self
             return inv_met
 
-        raise ValueError(
-            "Configuration can't have one upper and one lower index in Metric Tensor."
+        # For mixed configurations ('ul' or 'lu'), use the base class method
+        from einsteinpy.symbolic.tensor import _change_config
+
+        new_arr = _change_config(self, self, newconfig)
+        new_metric = MetricTensor(
+            sympy.simplify(new_arr).tolist(),
+            self.syms,
+            config=newconfig,
+            name=_change_name(self.name, context="__" + newconfig),
         )
+        # Set inverse relationship if transforming to/from 'uu' or 'll'
+        if newconfig == "uu":
+            new_metric._invmetric = self
+        elif self.config == "uu":
+            new_metric._invmetric = self
+        return new_metric
 
     def inv(self):
         """

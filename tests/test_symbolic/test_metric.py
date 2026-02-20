@@ -53,13 +53,25 @@ def test_inv():
         assert sympy.simplify(sch[i, i] * sch_inv[i, i]) == 1
 
 
-def test_change_config_ValueError():
+def test_change_config_mixed():
+    """Test that mixed configurations ('ul' and 'lu') work correctly after removing the restriction."""
     sch = schwarzschild_metric()
-    try:
-        sch_new = sch.change_config("ul")
-        assert False
-    except ValueError:
-        assert True
+
+    # Test conversion to 'ul'
+    sch_ul = sch.change_config("ul")
+    assert sch_ul.config == "ul"
+
+    # Test conversion to 'lu'
+    sch_lu = sch.change_config("lu")
+    assert sch_lu.config == "lu"
+
+    # Test conversion from 'uu' to mixed
+    sch_uu = sch.change_config("uu")
+    sch_uu_ul = sch_uu.change_config("ul")
+    assert sch_uu_ul.config == "ul"
+
+    sch_uu_lu = sch_uu.change_config("lu")
+    assert sch_uu_lu.config == "lu"
 
 
 def test_check_ValueError_on_incorrect_config_length():
