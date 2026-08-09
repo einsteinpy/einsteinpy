@@ -41,13 +41,8 @@ def _P(g, g_prms, q, p, time_like=True):
     P = np.array([0.0, *p])
 
     A = guu[0, 0]
-    B = 2 * guu[0, 3] * P[3]
-    C = (
-        guu[1, 1] * P[1] * P[1]
-        + guu[2, 2] * P[2] * P[2]
-        + guu[3, 3] * P[3] * P[3]
-        + int(time_like)
-    )
+    B = 2 * np.sum(guu[0, 1:] * P[1:])
+    C = np.sum(guu[1:, 1:] * np.outer(P[1:], P[1:])) + int(time_like)
 
     P[0] = (-B + np.sqrt(B**2 - 4 * A * C)) / (2 * A)
 
