@@ -2,7 +2,7 @@ version: 2
 jobs:
   quality:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.12
     parallelism: 4
     working_directory: ~/repo
 
@@ -15,7 +15,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip --quiet
-            pip install black isort mypy --quiet
+            pip install black==26.10.1 isort==9.0.2 mypy==2.4.0 --quiet
       - run:
           name: Check Code Style
           command: |
