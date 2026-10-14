@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import sympy
 from sympy import cos, sin, sinh
 
@@ -71,11 +72,8 @@ def test_SchoutenTensor_with_arbritary_config():
     assert ch.parent_metric == ch._parent_metric
     # test change_config, should raise ValueError
     ch._parent_metric = None
-    try:
-        ch_new = ch.change_config("lll")
-        assert False
-    except Exception:
-        return True
+    with pytest.raises(Exception, match="Parent Metric not found"):
+        ch.change_config("uu")
 
 
 def test_SchoutenTensor_config_change():
