@@ -9,6 +9,7 @@ CONTRIBUTORS
 
 CHANGES
 - [#691]: Pinned code style tools and moved the quality CI job to Python 3.12
+- [#694]: Added support for Python 3.11, 3.12, 3.13 and 3.14, dropped support for Python 3.8, 3.9 and 3.10, and raised the numba floor to 0.57.0
 
 0.5.0
 -----
