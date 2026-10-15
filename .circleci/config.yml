@@ -29,9 +29,9 @@ jobs:
           command: |
             . venv/bin/activate
             mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
-  test_py38: &test-template
+  test_py311: &test-template
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.11
 
     working_directory: ~/repo
 
@@ -52,18 +52,22 @@ jobs:
           command: |
             . venv/bin/activate
             MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
-  test_py39:
+  test_py312:
     <<: *test-template
     docker:
-      - image: cimg/python:3.9
-  test_py310:
+      - image: cimg/python:3.12
+  test_py313:
     <<: *test-template
     docker:
-      - image: cimg/python:3.10
+      - image: cimg/python:3.13
+  test_py314:
+    <<: *test-template
+    docker:
+      - image: cimg/python:3.14
 
   coverage:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.12
 
     working_directory: ~/repo
 
@@ -90,7 +94,7 @@ jobs:
             codecov
   docs:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.12
 
     working_directory: ~/repo
 
@@ -119,13 +123,16 @@ workflows:
   build_and_test:
     jobs:
       - quality
-      - test_py38:
+      - test_py311:
           requires:
             - quality
-      - test_py39:
+      - test_py312:
           requires:
             - quality
-      - test_py310:
+      - test_py313:
+          requires:
+            - quality
+      - test_py314:
           requires:
             - quality
       - coverage:
@@ -133,6 +140,7 @@ workflows:
             - quality
       - docs:
           requires:
-            - test_py38
-            - test_py39
-            - test_py310
+            - test_py311
+            - test_py312
+            - test_py313
+            - test_py314
