@@ -85,9 +85,9 @@ Usually, the branch name should be kept similar to the issue/topic you are worki
 
 If you are facing issues with any of the above steps, please feel free to ask for help on `Element`_ or `Gitter`_.
 
-.. _`Pull Request`: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request?tool=webui>`_ 
+.. _`Pull Request`: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request?tool=webui
 .. _`Fork`: https://docs.github.com/en/get-started/quickstart/fork-a-repo?tool=webui
-.. _`Clone`: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository?tool=webui>
+.. _`Clone`: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository?tool=webui
 .. _`push`: https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository
 .. _`request a review`: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/requesting-a-pull-request-review
 .. _`CHANGELOG`: https://github.com/einsteinpy/einsteinpy/blob/main/CHANGELOG

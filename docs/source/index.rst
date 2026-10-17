@@ -64,7 +64,9 @@ EinsteinPy is developed by an open community. Hence, all contributions are more 
 welcome! Visit our `GitHub`_ to view EinsteinPy's source code and to `report errors or suggest 
 improvements`_. For information on contributing code to the project, head to the `developer guide`_.
 
-|element| |gitter|
+.. only:: html
+
+   |element| |gitter|
 
 Please join our `Element`_ channel or `Gitter`_ chat room for general discussions 
 and further queries. Release announcements take place on our `mailing list`_.

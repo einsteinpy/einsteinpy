@@ -8,7 +8,9 @@ on the web, please use the binder link provided below.
 .. |mybinder| image:: https://img.shields.io/badge/launch-binder-e66581.svg?style=flat-square
    :target: https://mybinder.org/v2/gh/einsteinpy/einsteinpy/main?filepath=docs/source/examples/index.ipynb
 
-|mybinder|
+.. only:: html
+
+   |mybinder|
 
 
 Symbolic computations
@@ -54,15 +56,17 @@ solutions to Einstein's field equations. You can also calculate and view manifol
 in these cases or calculate black hole shadows and hypersurface embeddings for certain spacetimes. 
 EinsteinPy's plotting module also enables making animations like these:
 
-.. image:: ./_static/kerr_singularities.gif
-   :alt: Kerr Singularities for different values of spin parameter
-   :width: 400px
-   :align: center
+.. only:: html
 
-.. image:: ./_static/anim.gif
-   :alt: Geodesic Animation in extremal Kerr Spacetime
-   :width: 540px
-   :align: center
+   .. image:: ./_static/kerr_singularities.gif
+      :alt: Kerr Singularities for different values of spin parameter
+      :width: 400px
+      :align: center
+
+   .. image:: ./_static/anim.gif
+      :alt: Geodesic Animation in extremal Kerr Spacetime
+      :width: 540px
+      :align: center
 
 .. toctree::
    :hidden:

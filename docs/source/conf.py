@@ -79,6 +79,29 @@ html_static_path = ["_static"]
 
 htmlhelp_basename = "einsteinpydoc"
 
+# pdflatex (used for the Read the Docs PDF) cannot print these characters
+# on its own. They appear in the bodies module docstring, a notebook title and
+# the developer guide.
+latex_elements = {
+    "preamble": r"""
+\usepackage[nointegrals]{wasysym}
+\DeclareUnicodeCharacter{039B}{\ensuremath{\Lambda}}
+\DeclareUnicodeCharacter{2609}{\astrosun}
+\DeclareUnicodeCharacter{2641}{\earth}
+\DeclareUnicodeCharacter{263E}{\leftmoon}
+\DeclareUnicodeCharacter{263F}{\mercury}
+\DeclareUnicodeCharacter{2640}{\venus}
+\DeclareUnicodeCharacter{2642}{\mars}
+\DeclareUnicodeCharacter{2643}{\jupiter}
+\DeclareUnicodeCharacter{2644}{\saturn}
+\DeclareUnicodeCharacter{26E2}{\uranus}
+\DeclareUnicodeCharacter{2646}{\neptune}
+\DeclareUnicodeCharacter{2647}{\pluto}
+\DeclareUnicodeCharacter{1F38A}{}
+\DeclareUnicodeCharacter{1F600}{:)}
+""",
+}
+
 html_sidebars = {
     "**": [
         "about.html",
