@@ -3,10 +3,10 @@ import numpy as np
 import pytest
 
 from numpy.testing import assert_allclose
+from scipy.integrate import solve_ivp
 
 from einsteinpy import constant
 from einsteinpy.coordinates import BoyerLindquistDifferential
-from einsteinpy.integrators import RK4naive
 from einsteinpy.metric import BaseMetric, Kerr, KerrNewman
 
 _c = constant.c.value
@@ -82,108 +82,6 @@ def test_christoffels_kerrnewman(test_input):
     assert_allclose(chl2, chl1, rtol=1e-10)
 
 
-def test_f_vec_radial_acceleration_zero_when_gravity_em_balance():
-    """
-    Regression test for Kerr-Newman charge scaling (issue #144).
-
-    When gravitational and electromagnetic forces balance on a charged test particle
-    at rest, the radial acceleration (d²r/dλ²) should be zero. This uses physically
-    correct charge values WITHOUT the fudge factor.
-
-    Physics: F_gravity = F_EM  =>  GM/r² = k_e Q (q/m) / r²  =>  q/m = GM/(k_e Q)
-    With Q=1 C and M chosen, q = G*M/k_e gives the charge-to-mass for equilibrium.
-
-    With bug: Lorentz term is ~10^10 too weak, so gravity dominates, |a_r| ~ 20 m/s².
-    With fix: forces cancel, |a_r| ~ 0.
-    """
-    M = 0.5 * 5.972e24 * u.kg  # ~half Earth mass
-    a = 0.0 * u.one
-    Q = 1.0 * u.C  # No fudge factor - use physically correct value
-    # For equilibrium: q/m = GM/(k_e Q)  =>  q = G*M/_Cc / Q
-    q = (_G * M.value / _Cc / Q.value) * u.C / u.kg
-
-    r = 1e6  # meters
-    bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=r * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=0.0 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,  # Particle at rest
-    )
-
-    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
-    state = np.hstack((bl.position(), bl.velocity(mkn)))
-
-    f_vec = mkn._f_vec(0.0, state)
-
-    # vals[5] is d²r/dλ² (radial acceleration). Magnitude ~ GM/r² ~ 200 when unbalanced.
-    # With fix: Lorentz term now correct; residual ~200 (GR differs slightly from Newtonian).
-    # With bug: Lorentz ~10^10 too weak, so |a_r| would be ~1e4 or more.
-    radial_accel = f_vec[5]
-    assert abs(radial_accel) < 500.0, (
-        f"Radial acceleration should be small when balanced. "
-        f"Got {radial_accel} - Lorentz force bug (issue #144) or wrong equilibrium q."
-    )
-
-
-def test_conserved_energy_along_integrated_trajectory():
-    """
-    Validation against known physics: conserved energy E.
-
-    For a charged test particle in Kerr-Newman, E = -π_t = -c(g_00 u^0 + g_03 u^3
-    + q A_0) is conserved along the trajectory (Hackmann & Xu, and standard GR).
-    Integrate using f_vec and verify E stays constant.
-
-    This validates the equations of motion (geodesic + Lorentz force) without
-    requiring an external reference.
-    """
-    M = 1e24 * u.kg
-    a = 0.3 * u.one
-    Q = 100.0 * u.C
-    q = 1e-10 * u.C / u.kg  # Small charge-to-mass
-
-    bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=2e6 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=0.0 * u.rad,
-        v_r=100.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=5e3 * u.rad / u.s,
-    )
-
-    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
-    state0 = np.hstack((bl.position(), bl.velocity(mkn)))
-
-    def f_vec_wrapper(lam, y):
-        return mkn._f_vec(lam, y)
-
-    def compute_E(state):
-        pos, vel = state[:4], state[4:8]
-        g_cov = mkn.metric_covariant(pos)
-        A_cov = mkn.em_potential_covariant(pos)
-        # E = -c * (g_00 u^0 + g_03 u^3 + q A_0) (SI)
-        E = -_c * (g_cov[0, 0] * vel[0] + g_cov[0, 3] * vel[3] + q.value * A_cov[0])
-        return E
-
-    E0 = compute_E(state0)
-    # Step size must be tiny: accelerations are O(c²/r) ~ 1e18 m/s² in SI;
-    # affine param λ has dimensions of time, so dλ ~ 1e-8 s per step
-    dt = 1e-8
-    n_steps = 500
-    rk = RK4naive(f_vec_wrapper, 0.0, state0.copy(), n_steps * dt, dt)
-
-    for _ in range(n_steps):
-        rk.step()
-        E = compute_E(rk.y)
-        rel_err = abs(E - E0) / (abs(E0) + 1e-30)
-        assert rel_err < 1e-3, (
-            f"Energy not conserved: E0={E0:.6e}, E={E:.6e}, rel_err={rel_err:.2e}"
-        )
-
-
 def test_f_vec_matches_kerr_when_Q_and_q_zero():
     """
     Validation: KerrNewman(Q=0, q=0) must reduce to Kerr.
@@ -210,41 +108,6 @@ def test_f_vec_matches_kerr_when_Q_and_q_zero():
     f_kerrnewman = mkn._f_vec(0.0, state)
 
     assert_allclose(f_kerr, f_kerrnewman, rtol=1e-10, err_msg="Kerr vs KerrNewman f_vec mismatch when Q=q=0")
-
-
-def test_f_vec_radial_acceleration_large_with_fudged_Q():
-    """
-    With fudged Q (1.16e10 C), equilibrium is broken - EM over-compensates.
-    Radial acceleration should be large (|a_r| > 1).
-
-    Before fix (bug #144): fudge accidentally compensated, |a_r| was small.
-    After fix: correct Lorentz scaling, so fudged Q gives wrong/unbalanced result.
-    """
-    M = 0.5 * 5.972e24 * u.kg
-    a = 0.0 * u.one
-    Q = 11604461683.91822052001953125 * u.C  # The fudge factor
-    q = _G * M.value / _Cc * u.C / u.kg
-
-    r = 1e6
-    bl = BoyerLindquistDifferential(
-        t=0.0 * u.s,
-        r=r * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=0.0 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,
-    )
-
-    mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q, q=q)
-    state = np.hstack((bl.position(), bl.velocity(mkn)))
-    f_vec = mkn._f_vec(0.0, state)
-    radial_accel = f_vec[5]
-
-    # Fudged Q breaks equilibrium - expect large |a_r|
-    assert abs(radial_accel) > 1.0, (
-        f"With fudged Q, radial_accel should be large (unbalanced). Got {radial_accel}"
-    )
 
 
 def test_f_vec_bl_kerrnewman():
@@ -388,8 +251,8 @@ def test_em_tensor_covariant():
 
     assert_allclose(D_r, mkn_em_cov[0, 1], rtol=1e-8)
     assert_allclose(r * D_th, mkn_em_cov[0, 2], rtol=1e-8)
-    assert_allclose(-r * np.sin(theta) * H_th, mkn_em_cov[1, 3], rtol=1e-8)
-    assert_allclose((r ** 2) * np.sin(theta) * H_r, mkn_em_cov[2, 3], rtol=1e-8)
+    assert_allclose(r * np.sin(theta) * H_th, mkn_em_cov[1, 3], rtol=1e-8)
+    assert_allclose(-(r ** 2) * np.sin(theta) * H_r, mkn_em_cov[2, 3], rtol=1e-8)
 
 
 def test_em_tensor_contravariant():
@@ -419,3 +282,116 @@ def test_em_tensor_contravariant():
     mkn_em_contra = mkn.em_tensor_contravariant(x_vec)
 
     assert_allclose(0., mkn_em_contra + np.transpose(mkn_em_contra), atol=1e-8)
+
+
+def _kerrnewman_geometric(a, Q_M, q_m):
+    """
+    KerrNewman for a solar mass hole, with the hole charge Q_M given in units
+    of M and the test particle charge to mass ratio q_m given in geometrized
+    units. Returns the metric and the gravitational radius GM / c^2.
+    """
+    M = 1.989e30
+    rg = _G * M / _c**2
+    Q = Q_M * rg * _c**2 / np.sqrt(_G * _Cc)
+    q = q_m * np.sqrt(_G / _Cc)
+    bl = BoyerLindquistDifferential(
+        t=0.0 * u.s,
+        r=10 * rg * u.m,
+        theta=np.pi / 2 * u.rad,
+        phi=0.0 * u.rad,
+        v_r=0.0 * u.m / u.s,
+        v_th=0.0 * u.rad / u.s,
+        v_p=0.0 * u.rad / u.s,
+    )
+    mkn = KerrNewman(coords=bl, M=M * u.kg, a=a * u.one, Q=Q * u.C, q=q * u.C / u.kg)
+    return mkn, rg
+
+
+def test_metric_includes_charge():
+    """
+    g_tt of Reissner-Nordstrom is c^2 (1 - 2M / r + Q^2 / r^2)
+    """
+    mkn, rg = _kerrnewman_geometric(a=0.0, Q_M=0.6, q_m=0.0)
+    x_vec = np.array([0.0, 3 * rg, np.pi / 2, 0.0])
+
+    g_tt = mkn.metric_covariant(x_vec)[0, 0]
+
+    assert_allclose(g_tt / _c**2, 1 - 2 / 3 + 0.36 / 9, rtol=1e-12)
+
+
+def test_em_tensor_is_exterior_derivative_of_potential():
+    """
+    F_mu_nu = d_mu A_nu - d_nu A_mu, checked with central differences
+    """
+    mkn, rg = _kerrnewman_geometric(a=0.6, Q_M=0.5, q_m=0.0)
+    x_vec = np.array([0.0, 4 * rg, 1.0, 0.0])
+
+    dA = np.zeros((4, 4))
+    for mu, h in ((1, 1e-6 * x_vec[1]), (2, 1e-6)):
+        xp, xm = x_vec.copy(), x_vec.copy()
+        xp[mu] += h
+        xm[mu] -= h
+        dA[mu] = (mkn.em_potential_covariant(xp) - mkn.em_potential_covariant(xm)) / (
+            2 * h
+        )
+
+    F = mkn.em_tensor_covariant(x_vec)
+
+    assert_allclose(F, dA - dA.T, rtol=1e-6, atol=1e-12 * np.abs(F).max())
+
+
+@pytest.mark.parametrize("Q_M, r_M", [(1.0, 1.5), (1.0, 10.0), (0.6, 3.0)])
+def test_static_charged_particle_equilibrium_reissner_nordstrom(Q_M, r_M):
+    """
+    A charged particle at rest in Reissner-Nordstrom is in equilibrium when
+    q / m = (M - Q^2 / r) / (Q sqrt(f)), with f = 1 - 2M / r + Q^2 / r^2,
+    in geometrized units. For Q = M, this is q / m = 1 at every r
+    (Majumdar-Papapetrou).
+
+    """
+    f = 1 - 2 / r_M + Q_M**2 / r_M**2
+    q_m = (1 - Q_M**2 / r_M) / (Q_M * np.sqrt(f))
+    mkn, rg = _kerrnewman_geometric(a=0.0, Q_M=Q_M, q_m=q_m)
+    x_vec = np.array([0.0, r_M * rg, np.pi / 2, 0.0])
+    u_t = _c / np.sqrt(mkn.metric_covariant(x_vec)[0, 0])
+    state = np.hstack((x_vec, [u_t, 0.0, 0.0, 0.0]))
+
+    f_vec = mkn._f_vec(0.0, state)
+    gravity = mkn.christoffels(x_vec)[1, 0, 0] * u_t**2
+
+    assert_allclose(f_vec[5] / gravity, 0.0, atol=1e-10)
+
+
+def test_conserved_quantities_charged_orbit():
+    """
+    E = pi_t and L = pi_phi, with pi_mu = u_mu + (q / m) A_mu, are conserved
+    along a bound charged orbit in strong field Kerr-Newman.
+
+    """
+    mkn, rg = _kerrnewman_geometric(a=0.9, Q_M=0.4, q_m=0.5)
+    r0 = 8 * rg
+    x0 = np.array([0.0, r0, np.pi / 2 - 0.3, 0.0])
+    g0 = mkn.metric_covariant(x0)
+    v_r, v_th, v_p = 0.03 * _c, 0.03 * _c / r0, 0.36 * _c / r0
+    A = g0[0, 0]
+    B = 2 * g0[0, 3] * v_p
+    C = g0[1, 1] * v_r**2 + g0[2, 2] * v_th**2 + g0[3, 3] * v_p**2 - _c**2
+    u_t = (-B + np.sqrt(B**2 - 4 * A * C)) / (2 * A)
+    state0 = np.hstack((x0, [u_t, v_r, v_th, v_p]))
+
+    # em_potential_covariant is in geometrized units with ct as x^0
+    to_SI = _c * np.sqrt(_Cc / _G) * np.array([_c, 1.0, 1.0, 1.0])
+
+    def pi_t_phi(state):
+        x_vec, u_vec = state[:4], state[4:]
+        pi = mkn.metric_covariant(x_vec) @ u_vec
+        pi += mkn.q.value * to_SI * mkn.em_potential_covariant(x_vec)
+        return pi[[0, 3]]
+
+    T = 1000 * rg / _c
+    sol = solve_ivp(mkn._f_vec, (0, T), state0, method="DOP853", rtol=1e-10, atol=1e-6)
+    assert sol.success
+
+    pi0 = pi_t_phi(state0)
+    for state in sol.y.T:
+        assert_allclose(pi_t_phi(state), pi0, rtol=1e-8)

@@ -136,7 +136,7 @@ class KerrNewman(BaseMetric):
         r, th = x_vec[1], x_vec[2]
         M, a = self.M.value, self.a.value
         alpha = super().alpha(M, a)
-        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a, self.Q)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
@@ -177,7 +177,7 @@ class KerrNewman(BaseMetric):
         r, th = x_vec[1], x_vec[2]
         M, a = self.M.value, self.a.value
         alpha = super().alpha(M, a)
-        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a, self.Q)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -369,7 +369,15 @@ class KerrNewman(BaseMetric):
 
         """
         chl = self.christoffels(vec[:4])
-        F_contra = self.em_tensor_contravariant(vec[:4])
+        g_contra = self.metric_contravariant(vec[:4])
+        # em_tensor_covariant is in geometrized units and uses ct as x^0.
+        # Converting to SI with t as x^0 needs a factor of c on the time
+        # components and c * sqrt(k_e / G) overall. sqrt(k_e / G) is the
+        # factor reported in issue #144.
+        F_cov = self.em_tensor_covariant(vec[:4])
+        F_cov[0, :] *= _c
+        F_cov[:, 0] *= _c
+        F_cov *= _c * np.sqrt(_Cc / _G)
 
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
@@ -404,9 +412,8 @@ class KerrNewman(BaseMetric):
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
 
-        # Lorentz force: a^μ += (q/m) F^μ_ν u^ν (contravariant)
-        # Fix for issue #144: was erroneously using (F_contra @ vec[4:] @ g_cov)
-        vals[4:] += self.q.value * (F_contra @ vec[4:])
+        # Lorentz force, (q / m) F^mu_nu u^nu
+        vals[4:] += self.q.value * (g_contra @ F_cov @ vec[4:])
 
         return vals
 
@@ -496,9 +503,9 @@ class KerrNewman(BaseMetric):
         F[1, 0] = -F[0, 1]
         F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2**2)
         F[2, 0] = -F[0, 2]
-        F[1, 3] = (1 / rho2**2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r**2)
+        F[1, 3] = -(1 / rho2**2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r**2)
         F[3, 1] = -F[1, 3]
-        F[2, 3] = (
+        F[2, 3] = -(
             (1 / rho2**2)
             * (alpha * r_Q * r * np.sin(2 * th))
             * (rho2 + (alpha * np.sin(th)) ** 2)
