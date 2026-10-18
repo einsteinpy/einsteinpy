@@ -1,197 +1,118 @@
-# Kerr-Newman Charge Scaling: Analysis of Issue #144
+# Kerr–Newman charge scaling and Lorentz force
+
+This note records the unit conventions, the source of the charge-scaling problem in issue [#144](https://github.com/einsteinpy/einsteinpy/issues/144), the implementation changes in [PR #687](https://github.com/einsteinpy/einsteinpy/pull/687) and its follow-up revision, and the remaining caveats.
 
 ## Summary
 
-The mysterious factor **11604461683.91822052001953125** that must be applied to charge values for correct Kerr-Newman trajectory calculations in einsteinpy appears to stem from a **unit conversion inconsistency** between:
+The numerical factor reported in issue #144 is connected to converting a specific charge between SI and geometrized conventions. It is not a dimensionless correction factor that can be applied indiscriminately to either charge parameter.
 
-1. **Geometrized / natural units** (used in the GR literature, with \(G = c = M = 1\) and often \(4\pi\epsilon_0 = 1\) or \(k_e = 1\))
-2. **SI units** (used throughout einsteinpy for user-facing inputs: \(M\) in kg, \(Q\) in Coulombs, positions in meters, etc.)
+The implementation changes address several distinct problems:
 
-The metric and electromagnetic tensor in einsteinpy are implemented correctly according to the standard Kerr-Newman formulae. The anomaly arises when combining these with the Lorentz force term and the specific affine parameterization used in the geodesic integration.
+1. The Lorentz-force term must contract one index of the field tensor with the inverse metric before acting on the contravariant four-velocity.
+2. The Kerr–Newman metric must include the source charge through the \(r_Q^2\) term in \(\Delta\).
+3. The listed electromagnetic tensor components must agree with \(F=dA\) for the implemented potential.
+4. The field used in the SI-coordinate equation of motion must be converted consistently from the geometrized field convention.
 
----
+The electromagnetic potential and field must preserve the sign of \(Q\), while the metric depends only on \(Q^2\). The follow-up implementation uses signed \(r_Q=Q\sqrt{Gk_e}/c^2\) in the potential and field and retains \(r_Q^2\) in the metric. Reversal tests and opposite-sign force tests protect that distinction.
 
-## Theoretical Background
+## Conventions used by the metric class
 
-### Kerr-Newman Metric and Charge Length Scale
+The metric class accepts SI quantities: mass \(M\) in kilograms, source charge \(Q\) in coulombs, and Boyer–Lindquist radius \(r\) in metres. Its coordinate vector uses \((t,r,\theta,\phi)\), with \(t\) in seconds. This is why the metric components include \(g_{tt}\propto c^2\) and \(g_{t\phi}\propto c\).
 
-From the [Kerr-Newman metric](https://en.wikipedia.org/wiki/Kerr%E2%80%93Newman_metric), the charge enters through the length scale
-
-\[
-r_Q^2 = \frac{Q^2 G}{4\pi\epsilon_0\,c^4}
-\]
-
-einsteinpy implements this correctly in `base_metric.py` and `kerrnewman.py`:
-
-```python
-r_Q2 = (Q**2) * _G * _Cc / _c**4   # base_metric.delta, kerrnewman.em_tensor_covariant
-```
-
-with `_Cc = 1/(4\pi\epsilon_0)` (Coulomb's constant \(k_e\)). This matches the standard formula.
-
-### Equations of Motion for Charged Test Particles
-
-The equation of motion is
+The standard geometrized Kerr–Newman expressions are commonly written with \(x^0=ct\), and with \(G=c=k_e=1\), where \(k_e=1/(4\pi\epsilon_0)\). In those expressions, mass and charge are represented by lengths. For SI inputs, the relevant scales are
 
 \[
-\frac{d^2 x^\mu}{d\lambda^2} + \Gamma^\mu_{\alpha\beta} \frac{dx^\alpha}{d\lambda}\frac{dx^\beta}{d\lambda} = \frac{q}{m} F^\mu{}_\nu u^\nu
+r_s=\frac{2GM}{c^2},\qquad
+\alpha=\frac{GMa}{c^2},\qquad
+r_Q=\frac{Q\sqrt{Gk_e}}{c^2}.
 \]
 
-where \(q\) is the test particle charge, \(m\) its mass, and \(u^\nu = dx^\nu/d\lambda\) the 4-velocity. The Lorentz 4-force is
+The metric uses
 
 \[
-f^\mu = \frac{q}{m} F^\mu{}_\nu u^\nu \quad \text{with} \quad F^\mu{}_\nu = g^{\mu\alpha} F_{\alpha\nu}
+\Delta=r^2-r_s r+\alpha^2+r_Q^2.
 \]
 
-In many GR references (e.g., Reissner–Nordström, Hackmann & Xu on Kerr-Newman orbits), quantities are given in **geometrized units** where \(G = M = c = K = 1\), with \(K = 1/(4\pi\epsilon_0)\). In these units, \(Q\) and \(q\) are dimensionless and the scaling factors are absorbed into the definitions.
+Only \(r_Q^2\) belongs in the metric. The electromagnetic potential and field are linear in the source charge and therefore require the sign of \(Q\) to be preserved.
 
----
+## Specific-charge conversion and the reported factor
 
-## Unit Systems in einsteinpy
-
-### 1. Metric Module (KerrNewman, BaseMetric)
-
-- Uses **SI units** consistently.
-- \(M\) in kg, \(Q\) in C, \(q\) in C/kg (charge-to-mass ratio).
-- Positions in meters (\(x^0 = ct\), \(r\), \(\theta\), \(\phi\)).
-- Metric components include explicit factors of \(c\), \(G\), and \(\epsilon_0\) (via `_Cc = 1/(4\pi\epsilon_0)`).
-- The charge length scale is implemented as \(r_Q^2 = Q^2 G/(4\pi\epsilon_0 c^4)\).
-
-### 2. Geodesic Module (GeodesicIntegrator, `_kerrnewman` in utils)
-
-- `geodesic/utils.py` documents: **“Uses natural units, with \(c = G = M = k_e = 1\)”**.
-- The low-level `_kerrnewman` metric uses \(\Delta = r^2 - 2r + a^2 + Q^2\) (i.e. \(r_s = 2\), \(r_Q^2 = Q^2\)).
-- This implies **geometrized charge** for this code path.
-
-### 3. Two Integration Paths
-
-- **Path A (metric object + f_vec):** Uses `KerrNewman.f_vec`, which includes the Lorentz force and operates in SI. This is the path used when passing a metric instance (e.g. `Timelike(metric=mkn, coords=bl, ...)`).
-- **Path B (string metric + GeodesicIntegrator):** Uses `_kerrnewman` from utils, which is in geometrized units and **does not include** the Lorentz force. Used when passing `metric="KerrNewman"` and `metric_params=(a, Q)`.
-
-The problematic scaling appears when Path A is used with SI charges, and the Lorentz term or its normalization does not match the rest of the ODE system.
-
----
-
-## Origin of the Factor 11604461683.918…
-
-### Conversion Between Charge Units
-
-In geometrized units (\(G = c = 1\), \(4\pi\epsilon_0 = 1\)):
+For a source mass \(M\), the geometrized mass length is \(GM/c^2\), while the geometrized charge length is \(Q\sqrt{Gk_e}/c^2\). Their dimensionless ratio is
 
 \[
-r_Q^2 = Q_{\text{geom}}^2
+\frac{r_Q}{GM/c^2}=\frac{Q}{M}\sqrt{\frac{k_e}{G}}.
 \]
 
-In SI:
+The same factor converts a test particle's SI specific charge to its dimensionless geometrized value:
 
 \[
-r_Q^2 = \frac{Q_{\text{SI}}^2\,G}{4\pi\epsilon_0\,c^4}
+\left(\frac{q}{m}\right)_{\rm geom}
+=\left(\frac{q}{m}\right)_{\rm SI}\sqrt{\frac{k_e}{G}}.
 \]
 
-So the conversion is
+Here \(\sqrt{k_e/G}\) has units of kg/C; its numerical value is about \(1.16\times10^{10}\) for the constants used when the original value in issue #144 was recorded. It is not dimensionless. In particular, converting a charge \(Q\) in coulombs to a geometric length requires \(\sqrt{Gk_e}/c^2\), not multiplication by \(\sqrt{k_e/G}\) alone. The factor in issue #144 is evidence of a mixed unit convention in the force calculation, not a universal charge fudge factor.
+
+## Lorentz force in the SI-coordinate equation
+
+For a particle with SI specific charge \(\eta=(q/m)_{\rm SI}\), the contravariant equation of motion is
 
 \[
-Q_{\text{geom}} = Q_{\text{SI}} \sqrt{\frac{G}{4\pi\epsilon_0\,c^4}} = Q_{\text{SI}} \sqrt{\frac{G\,k_e}{c^4}}
+\frac{d^2x^\mu}{d\tau^2}
+=-\Gamma^\mu{}_{\alpha\beta}u^\alpha u^\beta
++\eta\,g^{\mu\alpha}F_{\alpha\nu}u^\nu,
+\qquad u^\mu=\frac{dx^\mu}{d\tau}.
 \]
 
-with \(k_e = 1/(4\pi\epsilon_0) \approx 8.98755\times10^9\,\mathrm{N}\cdot\mathrm{m}^2/\mathrm{C}^2\). The numerical factor \(\sqrt{G\,k_e/c^4}\) is on the order of \(10^{-21}\), so \(Q_{\text{geom}}\) is tiny for typical SI charges. The inverse factor \(Q_{\text{SI}}/Q_{\text{geom}} \sim \sqrt{c^4/(G\,k_e)}\) is on the order of \(10^{21}\), i.e. far larger than \(1.16\times10^{10}\).
+The contraction \(g^{\mu\alpha}F_{\alpha\nu}u^\nu\) is essential: it raises the first index of the covariant field tensor and leaves the second index available to contract with the contravariant four-velocity. A bare matrix product \(F^{\mu\nu}u^\nu\) repeats an upper index and is not the required tensor contraction. Appending the covariant metric to that product does not repair the index structure.
 
-### Interpretation of the Empirical Factor
+The electromagnetic expressions are naturally written in the geometrized \(x^0=ct\) convention, while the metric class's ODE state uses \(t\) in seconds. Pulling a covector or two-form back to the \(t\) coordinate contributes a factor of \(c\) for each time index. In addition, converting the geometrized field scale for use with SI \(q/m\) contributes the specific-charge conversion above and the factor of \(c\) associated with the proper-time parametrization. The follow-up implementation applies these factors before evaluating the mixed-index Lorentz term.
 
-The empirical factor \(1.16\times10^{10}\) does **not** match a full SI ↔ geometrized charge conversion. It likely reflects one or more of:
+This conversion should be kept together with its derivation in code comments and tests. The conversion of a time-index component and the overall unit conversion are separate operations; they should not be collapsed into an unexplained numeric constant.
 
-1. **Incomplete or inconsistent SI normalization** in the Lorentz term compared with the metric and Christoffel terms.
-2. **Mixing conventions:** Some parts of the metric/EM tensor normalized as in one convention (e.g. with \(c\) in the time coordinate) while the Lorentz term uses a different convention.
-3. **Missing or redundant factors of \(c\) or \(4\pi\epsilon_0\)** in the Lorentz force implementation.
+## Electromagnetic field consistency
 
-The test in `bin/geodesics_units/old_test_geodesics.py` sets:
-
-```python
-q = _G * M.value / _Cc * u.C / u.kg   # For GM = k_e Q q balance
-Q = 11604461683.91822052001953125 * u.C
-```
-
-For equilibrium between gravity and Coulomb force:
+The Kerr–Newman potential implemented by the class has the geometrized form
 
 \[
-\frac{GM}{r^2} = \frac{k_e Q q}{r^2} \implies q/m = \frac{GM}{k_e Q}
+A=\frac{r r_Q}{\rho^2}\left(dx^0-a\sin^2\theta\,d\phi\right),
+\qquad \rho^2=r^2+a^2\cos^2\theta,
 \]
 
-So \(Q = GM/(k_e (q/m))\). With the chosen \(q\), the “correct” \(Q\) for balance would be 1 C; the large factor on \(Q\) is used to compensate for the EM term in the code being effectively too weak by that factor.
+up to the code's chosen overall sign convention. The covariant field tensor must be its exterior derivative, \(F=dA\), using that same convention. The follow-up revision corrects the signs of \(F_{r\phi}\) and \(F_{\theta\phi}\) so they agree with the implemented potential. A derivative-based regression test checks this relation.
 
----
+The potential and every field component reverse sign under \(Q\mapsto -Q\). The metric remains unchanged under that transformation. Regression tests check both properties and, in the weak-field Reissner–Nordström limit, verify the Lorentz-force direction for all source/test charge sign combinations.
 
-## Potential Bugs Identified
+## Changes and regression checks
 
-### 1. Lorentz Force Index Structure (Most Likely Root Cause)
+The implementation represented by the follow-up revision:
 
-In `kerrnewman.py` line 408:
+- passes the source charge to \(\Delta\) in both the metric and its radial derivatives;
+- forms the Lorentz term as \(g^{-1}F u\), after the field conversion;
+- corrects the two field-component signs that disagreed with \(F=dA\);
+- adds checks for the Reissner–Nordström metric, the exterior derivative of the potential, static charged-particle equilibrium, and conservation of the stationary and axial canonical momenta along an integrated orbit.
 
-```python
-vals[4:] -= self.q.value * (F_contra @ vec[4:] @ g_cov)
-```
-
-**Index analysis:**
-
-- `F_contra` is \(F^{\mu\nu}\) (contravariant EM tensor).
-- `vec[4:]` is \(u^\nu\) (contravariant 4-velocity).
-- `F_contra @ vec[4:]` → \(F^{\mu\nu} u^\nu\) → contravariant Lorentz 4-force \(f^\mu\) ✓
-- The extra `@ g_cov` contracts: \((F^{\mu\nu} u^\nu)\, g_{\mu\sigma}\) → a **covariant** vector \(f_\sigma\).
-
-The geodesic equation gives **contravariant** acceleration:
+Those tests are useful, but most of their relativistic reference values are expressed using the same geometrization relations as the implementation. Add an independent weak-field SI check so that a shared conversion error cannot pass on both sides of the comparison. For example, at rest at \(r=10^3\,\mathrm m\), use \(Q=+1\,\mathrm C\), \(q/m=+1\,\mathrm{C/kg}\), and a source mass small enough that gravity is negligible. The radial coordinate acceleration should approach
 
 \[
-a^\mu = -\Gamma^\mu_{\alpha\beta} u^\alpha u^\beta + \frac{q}{m} F^\mu{}_\nu u^\nu
+\ddot r\simeq \frac{k_e Q(q/m)}{r^2}
 \]
 
-So `vals[4:]` stores \(a^\mu\) (contravariant). The code subtracts a **covariant** vector from it, which is a tensor type error.
+or about \(+8.99\times10^3\,\mathrm{m/s^2}\). Repeating with \(Q=-1\,\mathrm C\) should reverse the sign. A relative tolerance near \(10^{-6}\) is reasonable in this weak-field setup, but the test should use the library's own Coulomb constant and should confirm the initial state is normalized for proper-time evolution.
 
-**Proposed fix:** Use only the contravariant Lorentz term:
+The canonical momentum components are conserved in a stationary, axisymmetric Kerr–Newman field. With the usual energy convention, \(E=-\pi_t\), while the axial angular momentum is \(L=\pi_\phi\). A test that checks constancy of \(\pi_t\) is valid; its comment should call it the conserved time component or use \(-\pi_t\) when naming it energy.
 
-```python
-vals[4:] += self.q.value * (F_contra @ vec[4:])  # Note: + not -, and no @ g_cov
-```
+## Public electromagnetic-method unit contract
 
-(Whether it is `+` or `−` depends on the sign convention of \(F_{\mu\nu}\); the Lorentz force should oppose or add to the geodesic acceleration consistently with the chosen convention.)
+The force implementation converts the field locally in the ODE, but the public methods `em_potential_covariant` and `em_tensor_covariant` continue to return the geometrized expressions. Their docstrings should say which coordinate convention and units they use.
 
-The erroneous `@ g_cov` effectively multiplies the Lorentz term by metric components. For a metric with \(|g_{00}| \sim c^2\) and \(g_{ii} \sim 1\), this can introduce factors of order \(c^2 \approx 9\times10^{16}\) or \(1/c^2 \approx 10^{-17}\). Combined with other conventions (e.g., \(x^0 = ct\)), such mismatches can produce correction factors of the order of the observed \(10^{10}\).
+The contravariant methods currently obtain their outputs by raising those covariant results with the metric class's SI-coordinate inverse metric. That combines conventions and does not define a consistent geometrized or SI contravariant tensor. Documenting the covariant methods alone does not fix this. The contravariant methods should either convert to a consistent SI-coordinate covariant quantity before raising, raise using a metric in the geometrized convention, or be revised/deprecated so callers are not offered a hybrid result as a physical tensor.
 
-### 2. 4-Velocity and Affine Parameter
-
-The position 4-vector uses \(x^0 = c\,t\) (length). The affine parameter \(\lambda\) and the 4-velocity \(u^\mu = dx^\mu/d\lambda\) must have compatible units. If \(\lambda\) or the ODE normalization implicitly assumes a certain unit convention, mismatches can introduce scaling factors similar to powers of \(c\).
-
-### 3. CHANGELOG Note
-
-CHANGELOG records: *“Fixed #508, Removed a stray scaling factor in metric.KerrNewman class”*. That fix may have altered the normalization without fully resolving the SI ↔ geometrized charge consistency for the Lorentz term.
-
----
-
-## Recommendations
-
-1. **Clarify unit conventions**  
-   Document explicitly for all Kerr-Newman–related code:
-   - Affine parameter units.
-   - 4-position and 4-velocity units.
-   - Whether \(Q\) and \(q\) are intended as SI or geometrized.
-
-2. **Check the Lorentz force contraction**  
-   - Ensure \(a^\mu = (q/m) F^\mu{}_\nu u^\nu\) is used in contravariant form.
-   - Remove the extra `@ g_cov` if it is incorrect.
-
-3. **Validate against a known solution**  
-   - Compare with analytical or published results (e.g., Hackmann & Xu) in a well-defined unit system, then add explicit conversions for SI.
-   - **Implemented**: `test_conserved_energy_along_integrated_trajectory` integrates a charged trajectory and verifies that the conserved energy \(E = -\pi_t = -c(g_{00} u^0 + g_{03} u^3 + q A_0)\) stays constant (from Hackmann & Xu). `test_f_vec_matches_kerr_when_Q_and_q_zero` verifies that KerrNewman reduces to Kerr when \(Q = q = 0\).
-
-4. **Add unit tests**  
-   - Include a test with gravitational and electromagnetic forces balanced in a clearly specified unit system, so future changes do not reintroduce scaling errors.
-
----
+The Kerr–Newman call sites normalize `Q` with `to_value(u.C)` before passing it to the metric helper or using it in \(r_Q\). This matters because `BaseMetric.delta` accepts `Quantity` objects through `primitive`, but `primitive` strips `.value` without converting to coulombs; a direct call with `1 * u.mC` would otherwise be treated as `1 C`. The same broader review should be applied to mass inputs, since `.value` is used elsewhere with an implicit kilogram assumption.
 
 ## References
 
-- [Kerr–Newman metric (Wikipedia)](https://en.wikipedia.org/wiki/Kerr%E2%80%93Newman_metric)
-- [Reissner–Nordström metric (Wikipedia)](https://en.wikipedia.org/wiki/Reissner%E2%80%93Nordstr%C3%B6m_metric)
-- Hackmann, E. & Xu, H., “Charged particle motion in Kerr–Newman space–times,” Phys. Rev. D **87**, 124030 (2013), [arXiv:1304.2142](https://arxiv.org/abs/1304.2142)
-- Lynden-Bell, D., “Electromagnetic magic: The relativistically rotating disk,” Phys. Rev. D **70**, 105017 (2004)
-- [EinsteinPy Kerr-Newman implementation](https://github.com/einsteinpy/einsteinpy)
-- [GitHub Issue #144](https://github.com/einsteinpy/einsteinpy/issues/144)
+- Issue [#144](https://github.com/einsteinpy/einsteinpy/issues/144): reported charge-scaling problem.
+- [PR #687](https://github.com/einsteinpy/einsteinpy/pull/687) and its follow-up revision: implementation changes.
+- Hackmann, E. and Xu, H., [“Charged particle motion in Kerr–Newman space-times”](https://arxiv.org/abs/1304.2142), *Physical Review D* 87, 124030 (2013).
+- Liang, J. and Zhou, S., charged-particle equations and conserved quantities in Kerr–Newman spacetime, summarized in [“On neutralization of charged black holes”](https://academic.oup.com/mnras/article/488/2/2722/5531777).
+- The extremal Reissner–Nordström / Majumdar–Papapetrou equilibrium is discussed in [“Charged massive particle at rest in the field of a Reissner–Nordström black hole”](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.75.044012).
