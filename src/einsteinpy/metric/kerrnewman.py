@@ -439,7 +439,7 @@ class KerrNewman(BaseMetric):
 
         alpha = super().alpha(M, a)
         # Geometrized Charge
-        r_Q = np.sqrt((Q**2 * _G * _Cc) / _c**4)
+        r_Q = self.geometrized_charge(Q)
         rho2 = super().rho(r, th, M, a) ** 2
 
         A = np.zeros((4,), dtype=float)
@@ -447,6 +447,11 @@ class KerrNewman(BaseMetric):
         A[3] = -r * alpha * r_Q * np.sin(th) ** 2 / rho2
 
         return A
+
+# Convert charge in columbs to a signed geometric length expressed in meters.
+    def geometrized_charge(self, Q):
+        r_Q = Q * np.sqrt(_G * _Cc) / _c**2
+        return r_Q
 
     def em_potential_contravariant(self, x_vec):
         """
@@ -491,7 +496,7 @@ class KerrNewman(BaseMetric):
         M, a, Q = self.M.value, self.a.value, self.Q.value
 
         alpha = super().alpha(M, a)
-        r_Q = np.sqrt((Q**2 * _G * _Cc) / _c**4)
+        r_Q = self.geometrized_charge(Q)
         rho2 = super().rho(r, th, M, a) ** 2
         # Partial derivatives of rho2
         drho2_dr = 2 * r
