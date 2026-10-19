@@ -2,7 +2,6 @@
 Utilities for Integration Module
 
 """
-
 import numpy as np
 
 from einsteinpy.utils.dual import _jacobian_g

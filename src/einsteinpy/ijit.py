@@ -4,7 +4,6 @@ Wraps numba if it is available as a module, uses an identity
 decorator instead.
 
 """
-
 import inspect
 import warnings
 
