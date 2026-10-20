@@ -1,5 +1,6 @@
 """Important Bodies.
 Contains some predefined bodies of the Solar System:
+
 * Sun (☉)
 * Earth (♁)
 * Moon (☾)
@@ -11,6 +12,7 @@ Contains some predefined bodies of the Solar System:
 * Uranus (⛢)
 * Neptune (♆)
 * Pluto (♇)
+
 and a way to define new bodies (:py:class:`~Body` class).
 Data references can be found in :py:mod:`~einsteinpy.constant`
 """
@@ -101,7 +103,7 @@ class Body:
 Sun = Body(name="Sun", mass=Solar_Mass, R=R_sun, parent=None)
 
 
-Earth = Body(name="Earth", mass=5.97219e24 * u.kg, R=6731 * u.km, parent=Sun)
+Earth = Body(name="Earth", mass=5.97219e24 * u.kg, R=6371.0 * u.km, parent=Sun)
 
 
 Moon = Body(name="Moon", mass=7.34767309e22 * u.kg, R=1737.5 * u.km, parent=Earth)
@@ -128,4 +130,4 @@ Uranus = Body(name="Uranus", mass=8.681e25 * u.kg, R=25362 * u.km, parent=Sun)
 Neptune = Body(name="Neptune", mass=1.024e26 * u.kg, R=24622 * u.km, parent=Sun)
 
 
-Pluto = Body(name="Pluto", mass=1.309e22 * u.kg, R=1183.3 * u.km, parent=Sun)
+Pluto = Body(name="Pluto", mass=1.309e22 * u.kg, R=1188.3 * u.km, parent=Sun)
