@@ -8,11 +8,14 @@ from einsteinpy.utils import CoordinateError
 _c = constant.c.value
 _G = constant.G.value
 _Cc = constant.coulombs_const.value
+# Geometrization Factors
+_m_per_C_geom = np.sqrt(_G * _Cc) / _c**2   # charge (C) -> length (m)
+_kg_per_C_geom = np.sqrt(_Cc / _G)          # specific charge (C/kg) -> dimensionless
 
 
 class KerrNewman(BaseMetric):
     """
-    Class for defining Kerr-Newman Goemetry
+    Class for defining Kerr-Newman Geometry
 
     """
 
@@ -377,7 +380,7 @@ class KerrNewman(BaseMetric):
         F_cov = self.em_tensor_covariant(vec[:4])
         F_cov[0, :] *= _c
         F_cov[:, 0] *= _c
-        F_cov *= _c * np.sqrt(_Cc / _G)
+        F_cov *= _c * _kg_per_C_geom
 
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
@@ -448,9 +451,9 @@ class KerrNewman(BaseMetric):
 
         return A
 
-# Convert charge in columbs to a signed geometric length expressed in meters.
+    # Convert charge in columbs to a signed geometric length expressed in meters.
     def geometrized_charge(self, Q):
-        r_Q = Q * np.sqrt(_G * _Cc) / _c**2
+        r_Q = Q * _m_per_C_geom
         return r_Q
 
     def em_potential_contravariant(self, x_vec):
