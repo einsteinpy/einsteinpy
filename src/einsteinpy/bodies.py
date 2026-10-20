@@ -85,15 +85,13 @@ class Body:
                 self.vel_vec = [diff.v_r, diff.v_th, diff.v_p]
 
     def __str__(self):
-        return dedent(
-            f"""
+        return dedent(f"""
                  Body(
                     {self.name},
                     {self.parent.name if self.parent else None},
                     {self.mass}, {self.q}, {self.R},
                     {self.coords}
-                )"""
-        )
+                )""")
 
     __repr__ = __str__
 
