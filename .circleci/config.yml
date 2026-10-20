@@ -1,8 +1,29 @@
-version: 2
+version: 2.1
+
+commands:
+  install_and_test:
+    description: Install einsteinpy with dev extras and run the test suite
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip --quiet
+            pip install numpy --quiet
+            pip install . --quiet
+            pip install .[dev] --quiet
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
+
 jobs:
   quality:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.15
     parallelism: 4
     working_directory: ~/repo
 
@@ -29,41 +50,20 @@ jobs:
           command: |
             . venv/bin/activate
             mypy --ignore-missing-imports --check-untyped-defs --no-strict-optional src/
-  test_py38: &test-template
-    docker:
-      - image: cimg/python:3.8
 
+  test:
+    parameters:
+      python_version:
+        type: string
+    docker:
+      - image: cimg/python:<< parameters.python_version >>
     working_directory: ~/repo
-
     steps:
-      - checkout
-
-      - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install --upgrade pip --quiet
-            pip install numpy --quiet
-            pip install . --quiet
-            pip install .[dev] --quiet
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            MPLBACKEND=Agg pytest -n 8 -vv  # Test against installed code (Can use --doctest-modules)
-  test_py39:
-    <<: *test-template
-    docker:
-      - image: cimg/python:3.9
-  test_py310:
-    <<: *test-template
-    docker:
-      - image: cimg/python:3.10
+      - install_and_test
 
   coverage:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.15
 
     working_directory: ~/repo
 
@@ -88,9 +88,10 @@ jobs:
             . venv/bin/activate
             pip install codecov --quiet
             codecov
+
   docs:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.15
 
     working_directory: ~/repo
 
@@ -115,17 +116,14 @@ jobs:
           destination: docs-html
 
 workflows:
-  version: 2
   build_and_test:
     jobs:
       - quality
-      - test_py38:
-          requires:
-            - quality
-      - test_py39:
-          requires:
-            - quality
-      - test_py310:
+      - test:
+          name: test_py<< matrix.python_version >>
+          matrix:
+            parameters:
+              python_version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
           requires:
             - quality
       - coverage:
@@ -133,6 +131,4 @@ workflows:
             - quality
       - docs:
           requires:
-            - test_py38
-            - test_py39
-            - test_py310
+            - test

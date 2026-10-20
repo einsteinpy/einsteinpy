@@ -4,6 +4,7 @@ This module was added before ``0.3.0`` release as an Easter Egg.
 Contains a simple implementation of fractal.
 
 """
+
 import numpy as np
 from plotly import graph_objects as go
 
