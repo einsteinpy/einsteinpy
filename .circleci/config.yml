@@ -24,7 +24,6 @@ jobs:
   quality:
     docker:
       - image: cimg/python:3.15
-    parallelism: 4
     working_directory: ~/repo
 
     steps:
