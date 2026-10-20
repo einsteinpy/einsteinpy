@@ -4,7 +4,11 @@ commands:
   install_and_test:
     description: Install einsteinpy with dev extras and run the test suite
     steps:
-      - checkout
+      - run:
+          name: Checkout code
+          command: |
+            git clone --filter=blob:none https://github.com/einsteinpy/einsteinpy.git .
+            git checkout "$CIRCLE_SHA1"
       - run:
           name: install dependencies
           command: |
@@ -27,7 +31,11 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      - checkout
+      - run:
+          name: Checkout code
+          command: |
+            git clone --filter=blob:none https://github.com/einsteinpy/einsteinpy.git .
+            git checkout "$CIRCLE_SHA1"
 
       - run:
           name: install dependencies
@@ -67,7 +75,11 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      - checkout
+      - run:
+          name: Checkout code
+          command: |
+            git clone --filter=blob:none https://github.com/einsteinpy/einsteinpy.git .
+            git checkout "$CIRCLE_SHA1"
 
       - run:
           name: install dependencies
@@ -95,7 +107,11 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      - checkout
+      - run:
+          name: Checkout code
+          command: |
+            git clone --filter=blob:none https://github.com/einsteinpy/einsteinpy.git .
+            git checkout "$CIRCLE_SHA1"
 
       - run:
           name: install dependencies
