@@ -18,6 +18,7 @@ For unperturbed underlying metric, users should call ``metric_cov``, which retur
 supplied.
 
 """
+
 import warnings
 
 import numpy as np

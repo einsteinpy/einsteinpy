@@ -113,7 +113,7 @@ class DualNumber:
         return DualNumber(np.cos(self.val), -self.deriv * np.sin(self.val))
 
     def tan(self):
-        return np.sin(self) / np.cos(self)
+        return np.sin(self) / np.cos(self)  # type: ignore[call-overload]
 
     def log(self):
         return DualNumber(np.log(self.val), self.deriv / self.val)

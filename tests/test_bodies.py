@@ -1,5 +1,6 @@
 import astropy.units as u
 import pytest
+from astropy.constants import G
 
 from einsteinpy.bodies import (
     Body,
@@ -17,26 +18,41 @@ from einsteinpy.bodies import (
 )
 from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
 
+
 @pytest.mark.parametrize(
     "obj, parent, R, mass",
     [
         (Mercury, Sun, 2439.7 * u.km, 3.285e23 * u.kg),
         (Venus, Sun, 6051.8 * u.km, 4.867e24 * u.kg),
         (Sun, None, 695510 * u.km, 1.9891e30 * u.kg),
-        (Earth, Sun, 6731 * u.km, 5.97219e24 * u.kg),
+        (Earth, Sun, 6371.0 * u.km, 5.97219e24 * u.kg),
         (Moon, Earth, 1737.5 * u.km, 7.34767309e22 * u.kg),
         (Mars, Sun, 3389.5 * u.km, 6.39e23 * u.kg),
         (Jupiter, Sun, 69911 * u.km, 1.89813e27 * u.kg),
         (Saturn, Sun, 58232 * u.km, 5.683e26 * u.kg),
         (Uranus, Sun, 25362 * u.km, 8.681e25 * u.kg),
         (Neptune, Sun, 24622 * u.km, 1.024e26 * u.kg),
-        (Pluto, Sun, 1183.3 * u.km, 1.309e22 * u.kg),
+        (Pluto, Sun, 1188.3 * u.km, 1.309e22 * u.kg),
     ],
 )
 def test_predefined_bodies_base_properties(obj, parent, R, mass):
     assert obj.parent == parent
     assert obj.R == R
     assert obj.mass == mass
+
+
+@pytest.mark.parametrize(
+    "obj, g",
+    [
+        (Earth, 9.81 * u.m / u.s**2),
+        (Moon, 1.62 * u.m / u.s**2),
+        (Mars, 3.71 * u.m / u.s**2),
+    ],
+)
+def test_predefined_bodies_surface_gravity(obj, g):
+    # GM / R^2 checks the mass and radius together against the measured
+    # surface gravity, which does not come from the values in bodies.py
+    assert u.allclose(G * obj.mass / obj.R**2, g, rtol=0.01)
 
 
 @pytest.mark.parametrize(
@@ -63,7 +79,7 @@ def test_predefined_bodies_extra(obj, name, q):
 def test_initial_states():
     parent = Sun
     name = "Earth"
-    R = 6731 * u.km
+    R = 6371.0 * u.km
     mass = 5.97219e24 * u.kg
     differential1 = CartesianDifferential(
         0. * u.s,
