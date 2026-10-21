@@ -3,7 +3,7 @@ Introduction
 
 This page gives a brief overview of some of the features of EinsteinPy. For more complete hands-on tutorials, please refer to the Jupyter notebooks in `Examples`_.
 
-.. _Examples: https://docs.einsteinpy.org/en/latest/jupyter.html
+.. _Examples: https://docs.einsteinpy.com/en/latest/jupyter.html
 
 :py:class:`~einsteinpy.metric` Module
 *************************************

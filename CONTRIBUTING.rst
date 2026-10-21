@@ -34,7 +34,7 @@ EinsteinPy supports.
 
 .. _`"good first issue"`: https://github.com/einsteinpy/einsteinpy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
 .. _`GitHub Quickstart`: https://docs.github.com/en/get-started/quickstart/hello-world
-.. _`mailing`: all@einsteinpy.org
+.. _`mailing`: all@einsteinpy.com
 .. _`Element`: https://app.element.io/#/room/#einsteinpy:matrix.org
 .. _`Gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
 
@@ -179,7 +179,7 @@ If you come across any inconsistency or opportunity for improvement, feel free t
 edit the docstrings and submit a PR.
 
 We use `Sphinx`_ to generate the overall API + non-API documentation, which is then 
-`hosted here <https://docs.einsteinpy.org/en/latest/>`_, courtesy of `Read the Docs`_. To 
+`hosted here <https://docs.einsteinpy.com/en/latest/>`_, courtesy of `Read the Docs`_. To 
 build the docs locally, you can run the following commands:
 
 .. code:: bash

@@ -2,7 +2,7 @@
 # Windows
 # File shamelessly inspired by Astropy
 
-version: 0.5.dev0-{build}
+version: 0.6.dev0-{build}
 
 image: Visual Studio 2022
 
@@ -17,6 +17,7 @@ branches:
     - 0.2.x
     - 0.3.x
     - 0.4.x
+    - 0.5.x
 
 matrix:
   fast_finish: true
