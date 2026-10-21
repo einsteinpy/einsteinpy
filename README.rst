@@ -166,12 +166,12 @@ Release announcements take place on our `mailing list`_. Feel free to join!
 
 .. _`mailing list`: https://groups.io/g/einsteinpy-dev
 
-If you still have a doubt, write to us directly at `all@einsteinpy.org <mailto:all@einsteinpy.org>`_.
+If you still have a doubt, write to us directly at `all@einsteinpy.com <mailto:all@einsteinpy.com>`_.
 
 Citing
 ======
 
-If you use EinsteinPy in your project, please `drop us a line <mailto:all@einsteinpy.org>`_. 
+If you use EinsteinPy in your project, please `drop us a line <mailto:all@einsteinpy.com>`_. 
 You can also use the DOI to cite it in your publications. This is the latest one:
 
 |doi|
