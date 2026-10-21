@@ -8,11 +8,14 @@ from einsteinpy.utils import CoordinateError
 _c = constant.c.value
 _G = constant.G.value
 _Cc = constant.coulombs_const.value
+# Geometrization Factors
+_m_per_C_geom = np.sqrt(_G * _Cc) / _c**2  # charge (C) -> length (m)
+_kg_per_C_geom = np.sqrt(_Cc / _G)  # specific charge (C/kg) -> dimensionless
 
 
 class KerrNewman(BaseMetric):
     """
-    Class for defining Kerr-Newman Goemetry
+    Class for defining Kerr-Newman Geometry
 
     """
 
@@ -136,7 +139,7 @@ class KerrNewman(BaseMetric):
         r, th = x_vec[1], x_vec[2]
         M, a = self.M.value, self.a.value
         alpha = super().alpha(M, a)
-        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a, self.Q)
 
         g_cov_bl = np.zeros(shape=(4, 4), dtype=float)
 
@@ -177,7 +180,7 @@ class KerrNewman(BaseMetric):
         r, th = x_vec[1], x_vec[2]
         M, a = self.M.value, self.a.value
         alpha = super().alpha(M, a)
-        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a)
+        rho2, dl = super().rho(r, th, M, a) ** 2, super().delta(r, M, a, self.Q)
 
         dgdx = np.zeros(shape=(4, 4, 4), dtype=float)
 
@@ -369,8 +372,15 @@ class KerrNewman(BaseMetric):
 
         """
         chl = self.christoffels(vec[:4])
-        F_contra = self.em_tensor_contravariant(vec[:4])
-        g_cov = self.metric_covariant(vec[:4])
+        g_contra = self.metric_contravariant(vec[:4])
+        # em_tensor_covariant is in geometrized units and uses ct as x^0.
+        # Converting to SI with t as x^0 needs a factor of c on the time
+        # components and c * sqrt(k_e / G) overall. sqrt(k_e / G) is the
+        # factor reported in issue #144.
+        F_cov = self.em_tensor_covariant(vec[:4])
+        F_cov[0, :] *= _c
+        F_cov[:, 0] *= _c
+        F_cov *= _c * _kg_per_C_geom
 
         vals = np.zeros(shape=vec.shape, dtype=vec.dtype)
 
@@ -405,7 +415,8 @@ class KerrNewman(BaseMetric):
             + chl[3, 2, 3] * vec[6] * vec[7]
         )
 
-        vals[4:] -= self.q.value * (F_contra @ vec[4:] @ g_cov)
+        # Lorentz force, (q / m) F^mu_nu u^nu
+        vals[4:] += self.q.value * (g_contra @ F_cov @ vec[4:])
 
         return vals
 
@@ -431,7 +442,7 @@ class KerrNewman(BaseMetric):
 
         alpha = super().alpha(M, a)
         # Geometrized Charge
-        r_Q = np.sqrt((Q**2 * _G * _Cc) / _c**4)
+        r_Q = self.geometrized_charge(Q)
         rho2 = super().rho(r, th, M, a) ** 2
 
         A = np.zeros((4,), dtype=float)
@@ -439,6 +450,11 @@ class KerrNewman(BaseMetric):
         A[3] = -r * alpha * r_Q * np.sin(th) ** 2 / rho2
 
         return A
+
+    # Convert charge in columbs to a signed geometric length expressed in meters.
+    def geometrized_charge(self, Q):
+        r_Q = Q * _m_per_C_geom
+        return r_Q
 
     def em_potential_contravariant(self, x_vec):
         """
@@ -483,7 +499,7 @@ class KerrNewman(BaseMetric):
         M, a, Q = self.M.value, self.a.value, self.Q.value
 
         alpha = super().alpha(M, a)
-        r_Q = np.sqrt((Q**2 * _G * _Cc) / _c**4)
+        r_Q = self.geometrized_charge(Q)
         rho2 = super().rho(r, th, M, a) ** 2
         # Partial derivatives of rho2
         drho2_dr = 2 * r
@@ -495,9 +511,9 @@ class KerrNewman(BaseMetric):
         F[1, 0] = -F[0, 1]
         F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2**2)
         F[2, 0] = -F[0, 2]
-        F[1, 3] = (1 / rho2**2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r**2)
+        F[1, 3] = -(1 / rho2**2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r**2)
         F[3, 1] = -F[1, 3]
-        F[2, 3] = (
+        F[2, 3] = -(
             (1 / rho2**2)
             * (alpha * r_Q * r * np.sin(2 * th))
             * (rho2 + (alpha * np.sin(th)) ** 2)
