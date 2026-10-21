@@ -28,8 +28,8 @@ from einsteinpy.utils import scalar_factor, scalar_factor_derivative
             10 * u.yr,
             "ded",
             1.,
-            1.0000000008221144,
-            2.6051231598190325e-18,
+            1.0000000005743104,
+            1.819879425905945e-18,
         ),
     ],
 )
@@ -44,3 +44,13 @@ def test_scalar_factor_and_derivative_raise_ValueError():
 
     with pytest.raises(ValueError):
         sf = scalar_factor_derivative(1 * u.s, "era")
+
+
+def test_scalar_factor_dark_energy_era_grows_at_de_Sitter_rate():
+    # a'/a in the dark energy era is H = sqrt(Lambda / 3), about 56 km/s/Mpc
+    # for Planck 2018. The parametrized test above cannot see this, because
+    # its atol is much larger than a'.
+    t = 10 * u.yr
+    H = scalar_factor_derivative(t, "ded") / scalar_factor(t, "ded")
+    H_expected = (67.66 * 0.6889**0.5 * u.km / u.s / u.Mpc).to_value(u.s**-1)
+    assert_allclose(H, H_expected, rtol=1e-3, atol=0)
