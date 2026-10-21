@@ -495,9 +495,7 @@ class KerrNewman(BaseMetric):
         F[1, 0] = -F[0, 1]
         F[0, 2] = (r * r_Q * drho2_dtheta) / (rho2**2)
         F[2, 0] = -F[0, 2]
-        F[1, 3] = (
-            (1 / rho2**2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r**2)
-        )
+        F[1, 3] = (1 / rho2**2) * (alpha * r_Q * np.sin(th) ** 2) * (rho2 - 2 * r**2)
         F[3, 1] = -F[1, 3]
         F[2, 3] = (
             (1 / rho2**2)

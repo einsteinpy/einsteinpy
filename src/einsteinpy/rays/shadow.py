@@ -29,7 +29,7 @@ class Shadow:
             if np.isreal(root):
                 self.bfin.append(i)
                 self.z.append([i, np.real(root)])
-        self.z = np.array(self.z)
+        self.z = np.array(self.z)  # type: ignore[assignment]
         self.k0 = self._intensity()
         self.k1 = self._intensity_from_event_horizon()
         self.intensity = self.k1 + self.k0
@@ -120,6 +120,6 @@ class Shadow:
         b_new = np.linspace(np.min(self.fb1), np.max(self.fb1), points)
         interpolation = interp1d(self.fb1, self.intensity, kind="cubic")
         smoothened = interpolation(b_new)
-        self.intensity = smoothened
-        self.fb1 = b_new
+        self.intensity = smoothened  # type: ignore[assignment]
+        self.fb1 = b_new  # type: ignore[assignment]
         self.fb2 = -1 * b_new

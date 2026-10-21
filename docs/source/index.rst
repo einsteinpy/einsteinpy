@@ -1,8 +1,8 @@
 EinsteinPy - Making Einstein possible in Python
 ===============================================
 
-.. image:: https://einsteinpy.org/img/wordmark.png
-   :target: https://einsteinpy.org/
+.. image:: https://einsteinpy.com/img/wordmark.png
+   :target: https://einsteinpy.com/
    :alt: EinsteinPy logo
    :width: 675px
    :align: center
@@ -48,7 +48,7 @@ research community.
 
 .. _`GitHub`: https://github.com/einsteinpy/einsteinpy
 .. _`report errors or suggest improvements`: https://github.com/einsteinpy/einsteinpy/issues
-.. _`developer guide`: https://docs.einsteinpy.org/en/latest/dev_guide.html
+.. _`developer guide`: https://docs.einsteinpy.com/en/latest/dev_guide.html
 .. _`Gitter`: https://gitter.im/EinsteinPy-Project/EinsteinPy
 .. _`Element`: https://app.element.io/#/room/#einsteinpy:matrix.org
 .. _`mailing list`: https://groups.io/g/einsteinpy-dev
@@ -71,7 +71,7 @@ and further queries. Release announcements take place on our `mailing list`_.
 
 .. include:: form.rst
 
-If you still have a doubt, write to us directly at `all@einsteinpy.org <mailto:all@einsteinpy.org>`_.
+If you still have a doubt, write to us directly at `all@einsteinpy.com <mailto:all@einsteinpy.com>`_.
 
 Please use the links below or on the navigation bar to explore some examples or the API 
 documentation. If you want to view the documentation for a specific version, please use the

@@ -1,7 +1,7 @@
 .. einsteinpy
 
-.. image:: https://blog.einsteinpy.org/img/logo.png?
-   :target: https://einsteinpy.org/
+.. image:: https://blog.einsteinpy.com/img/logo.png?
+   :target: https://einsteinpy.com/
    :alt: EinsteinPy logo
    :width: 675px
    :align: center
@@ -26,10 +26,10 @@
    :target: https://github.com/einsteinpy/einsteinpy/raw/main/COPYING
 
 .. |docslatest| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
-   :target: https://docs.einsteinpy.org/en/latest/?badge=latest
+   :target: https://docs.einsteinpy.com/en/latest/?badge=latest
 
 .. |docsstable| image:: https://img.shields.io/badge/docs-stable-brightgreen.svg?style=flat-square
-   :target: https://docs.einsteinpy.org/en/stable/?badge=stable
+   :target: https://docs.einsteinpy.com/en/stable/?badge=stable
 
 .. |circleci| image:: https://img.shields.io/circleci/project/github/einsteinpy/einsteinpy/main.svg?style=flat-square&logo=circleci
    :target: https://circleci.com/gh/einsteinpy/einsteinpy
@@ -47,8 +47,8 @@
    :target: https://orcid.org/0000-0002-0870-4665
 
 :Name: EinsteinPy
-:Website: https://einsteinpy.org/
-:Version: 0.5.dev0
+:Website: https://einsteinpy.com/
+:Version: 0.6.dev0
 
 |astropy| |docslatest| |gitter| |riotchat| |mailing| |license| 
 
@@ -73,7 +73,7 @@ Documentation
 Complete documentation, including a user guide and an API reference, can be perused on
 the wonderful `Read the Docs`_.
 
-.. _`Read the Docs`: https://docs.einsteinpy.org/en/latest/
+.. _`Read the Docs`: https://docs.einsteinpy.com/en/latest/
 
 Examples
 ========
@@ -103,7 +103,7 @@ EinsteinPy requires the following Python packages:
 * ``Plotly``, for producing interactive visualizations
 * ``Numba``, for accelerating the code
 
-EinsteinPy is currently tested on Linux, Windows and macOS on Python 3.7 and 3.8, against the latest ``NumPy``.
+EinsteinPy is currently tested on Linux, Windows and macOS on Python 3.10 to 3.15, against the latest ``NumPy``.
 
 ==============  ===============  ===================
 Platform        Site             Status
@@ -132,7 +132,7 @@ For Debian/Ubuntu/Mint users, the package is installable via `apt <https://packa
   $ sudo apt install python3-einsteinpy
 
 If you prefer to install from source to stay on the latest but likely unstable version, 
-you can do so using the method described `here <https://docs.einsteinpy.org/en/latest/installation.html#latest-version>`_.
+you can do so using the method described `here <https://docs.einsteinpy.com/en/latest/installation.html#latest-version>`_.
 
 
 Problems
@@ -150,7 +150,7 @@ EinsteinPy is a community project. Hence, all contributions are more than
 welcome! For more information, head to `CONTRIBUTING`_ or see the `developer guide`_.
 
 .. _`CONTRIBUTING`: https://github.com/einsteinpy/einsteinpy/blob/main/CONTRIBUTING.rst
-.. _`developer guide`: https://docs.einsteinpy.org/en/latest/dev_guide.html
+.. _`developer guide`: https://docs.einsteinpy.com/en/latest/dev_guide.html
 
 Support
 =======
@@ -166,12 +166,12 @@ Release announcements take place on our `mailing list`_. Feel free to join!
 
 .. _`mailing list`: https://groups.io/g/einsteinpy-dev
 
-If you still have a doubt, write to us directly at `all@einsteinpy.org <mailto:all@einsteinpy.org>`_.
+If you still have a doubt, write to us directly at `all@einsteinpy.com <mailto:all@einsteinpy.com>`_.
 
 Citing
 ======
 
-If you use EinsteinPy in your project, please `drop us a line <mailto:all@einsteinpy.org>`_. 
+If you use EinsteinPy in your project, please `drop us a line <mailto:all@einsteinpy.com>`_. 
 You can also use the DOI to cite it in your publications. This is the latest one:
 
 |doi|
