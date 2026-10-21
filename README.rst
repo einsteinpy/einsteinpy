@@ -48,7 +48,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.5.dev0
+:Version: 0.6.dev0
 
 |astropy| |docslatest| |gitter| |riotchat| |mailing| |license| 
 
@@ -103,7 +103,7 @@ EinsteinPy requires the following Python packages:
 * ``Plotly``, for producing interactive visualizations
 * ``Numba``, for accelerating the code
 
-EinsteinPy is currently tested on Linux, Windows and macOS on Python 3.7 and 3.8, against the latest ``NumPy``.
+EinsteinPy is currently tested on Linux, Windows and macOS on Python 3.10 to 3.15, against the latest ``NumPy``.
 
 ==============  ===============  ===================
 Platform        Site             Status

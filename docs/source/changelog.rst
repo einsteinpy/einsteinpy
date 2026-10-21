@@ -1,6 +1,37 @@
 What's New
 ==========
 
+einsteinpy 0.5.0 - 2026-10-21
+-----------------------------
+
+This release adds support for Python 3.10 to 3.15 and drops support for Python 3.7, 3.8 and 3.9.
+It also adds the ability to compute geodesics for arbitrary metrics.
+
+Changes
+.......
+
+* [#607]: Fixed #586 #598 #599 #600 #601, Fixed a bug in tensor_lambdify
+* [#609]: Fixed #608, Fixed notebook preview errors in documentation
+* [#615]: Partially fixed #613, Updated README and CONTRIBUTING
+* [#617]: Fixed #616, Dropped support for Python 3.7, Added support for Python 3.10
+* [#612]: Partially addressed #610, Added support for setting plot aspect ratio and title via API
+* [#619]: General codebase maintenance
+* [#620]: Fixed #540, #541, Partially addressed #614, Updated documentation
+* [#625]: Add ability to compute geodesics for arbitrary metrics
+* [#628]: Fix compatibility with NumPy 1.24
+* [#640], [#642]: Fix Read the Docs PDF/notebook build issues; changes to Matplotlib animations in notebooks (#636, #637)
+* [#648], [#649]: ``bodies`` now uses dataclasses
+* [#652], [#660]: Documentation updates, including curved space documentation and examples
+* [#699]: Dropped support for Python 3.8 and 3.9, added support for Python 3.10-3.15; migrated CircleCI to config 2.1, updated GitHub Actions and AppVeyor
+
+Contributors
+............
+
+* shreyasbapat
+* JeS24
+* mshumayl
+* a3ahmad
+
 einsteinpy 0.4.0 - 2021-05-06
 -----------------------------
 
