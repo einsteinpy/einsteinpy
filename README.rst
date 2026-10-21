@@ -48,7 +48,7 @@
 
 :Name: EinsteinPy
 :Website: https://einsteinpy.org/
-:Version: 0.5.dev0
+:Version: 0.5.0
 
 |astropy| |docslatest| |gitter| |riotchat| |mailing| |license| 
 
