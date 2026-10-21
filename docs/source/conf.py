@@ -43,7 +43,7 @@ html_theme_options = {
     "github_banner": True,
     "donate_url": "https://opencollective.com/einsteinpy",
     "github_button": True,
-    "extra_nav_links": {"Blog": "https://blog.einsteinpy.org/"},
+    "extra_nav_links": {"Blog": "https://blog.einsteinpy.com/"},
 }
 
 add_function_parentheses = True

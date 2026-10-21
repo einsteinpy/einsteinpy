@@ -223,7 +223,7 @@ Part of this release is sponsored by ESA/ESTEC - Adv. Concepts & Studies Office
 (European Space Agency), through Summer of Code in Space (SOCIS) 2019 program.
 
 This is a short-term supported version and will be supported only until December 2019. 
-For any feature request, write a mail to developers@einsteinpy.org describing what you need.
+For any feature request, write a mail to developers@einsteinpy.com describing what you need.
 
 Features
 ........
