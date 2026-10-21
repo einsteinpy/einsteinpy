@@ -9,8 +9,8 @@ _c = constant.c.value
 _G = constant.G.value
 _Cc = constant.coulombs_const.value
 # Geometrization Factors
-_m_per_C_geom = np.sqrt(_G * _Cc) / _c**2   # charge (C) -> length (m)
-_kg_per_C_geom = np.sqrt(_Cc / _G)          # specific charge (C/kg) -> dimensionless
+_m_per_C_geom = np.sqrt(_G * _Cc) / _c**2  # charge (C) -> length (m)
+_kg_per_C_geom = np.sqrt(_Cc / _G)  # specific charge (C/kg) -> dimensionless
 
 
 class KerrNewman(BaseMetric):
