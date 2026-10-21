@@ -5,7 +5,10 @@ File for tracking changes in EinsteinPy from v0.3.0. This file should be dumped 
 0.6.0
 -----
 CONTRIBUTORS
+- pragyaangaur
+
 CHANGES
+- [#697]: Fixed the radii of Earth and Pluto in bodies
 
 0.5.0 - 2026-10-21
 -----
