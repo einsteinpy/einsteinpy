@@ -6,7 +6,7 @@ project = "EinsteinPy"
 year = datetime.now().year
 copyright = "%d EinsteinPy Development Team" % year
 
-version = "0.4"
+version = "0.5"
 release = "0.5.0"
 highlight_language = "python"
 pygments_style = "sphinx"
