@@ -11,7 +11,13 @@ class ChristoffelSymbols(BaseRelativityTensor):
     """
 
     def __init__(
-        self, arr, syms, config="ull", parent_metric=None, name="ChristoffelSymbols"
+        self,
+        arr,
+        syms,
+        config="ull",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="ChristoffelSymbols",
     ):
         """
         Constructor and Initializer
@@ -26,6 +32,8 @@ class ChristoffelSymbols(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ull'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor from which Christoffel symbol is calculated. Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Christoffel Symbols Tensor. Defaults to "ChristoffelSymbols".
 
@@ -40,7 +48,12 @@ class ChristoffelSymbols(BaseRelativityTensor):
 
         """
         super(ChristoffelSymbols, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 3
         if not len(self.config) == self._order:
@@ -59,8 +72,9 @@ class ChristoffelSymbols(BaseRelativityTensor):
         """
         dims = metric.dims
         tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
-        mat, syms = metric.lower_config().tensor(), metric.symbols()
-        matinv = sympy.Matrix(mat.tolist()).inv()
+        metric = metric.change_config("ll")
+        mat, syms = metric.tensor(), metric.symbols()
+        matinv = metric.inv().tensor()
         for t in range(dims**3):
             # i,j,k each goes from 0 to (dims-1)
             # hack for codeclimate. Could be done with 3 nested for loops

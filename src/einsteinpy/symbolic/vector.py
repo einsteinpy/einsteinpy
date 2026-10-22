@@ -1,5 +1,10 @@
 from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
+from einsteinpy.symbolic.tensor import (
+    BaseRelativityTensor,
+    _change_config,
+    tensor_product,
+    tensorcontraction,
+)
 
 
 class GenericVector(BaseRelativityTensor):
@@ -8,7 +13,15 @@ class GenericVector(BaseRelativityTensor):
 
     """
 
-    def __init__(self, arr, syms, config="u", parent_metric=None, name="GenericVector"):
+    def __init__(
+        self,
+        arr,
+        syms,
+        config="u",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="GenericVector",
+    ):
         """
         Constructor and Initializer
 
@@ -35,7 +48,12 @@ class GenericVector(BaseRelativityTensor):
 
         """
         super(GenericVector, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         if self.arr.rank() == 1:
             self._order = 1
@@ -105,4 +123,27 @@ class GenericVector(BaseRelativityTensor):
             config=self.config,
             parent_metric=None,
             name=_change_name(self.name, context="__lt"),
+        )
+
+    def norm(self, metric=None):
+        """
+        Returns the norm of the vector wrt the metric
+
+        Parameters
+        ------
+        metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Metric tensor for changing indices.
+            Assumes the parent_spacetime if None. Defaults to None.
+
+        Returns
+            ~sympy.core.expr.Expr
+                The norm
+        """
+        metric = metric or self.parent_metric
+        return tensorcontraction(
+            tensor_product(
+                self.change_config("l", metric=metric),
+                self.change_config("u", metric=metric),
+            ).tensor(),
+            (0, 1),
         )

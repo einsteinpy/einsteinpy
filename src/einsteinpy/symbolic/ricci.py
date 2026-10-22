@@ -13,7 +13,15 @@ class RicciTensor(BaseRelativityTensor):
     Class for defining Ricci Tensor
     """
 
-    def __init__(self, arr, syms, config="ll", parent_metric=None, name="RicciTensor"):
+    def __init__(
+        self,
+        arr,
+        syms,
+        config="ll",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="RicciTensor",
+    ):
         """
         Constructor and Initializer
 
@@ -28,6 +36,8 @@ class RicciTensor(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Ricci Tensor.
             Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "RicciTensor".
 
@@ -42,7 +52,12 @@ class RicciTensor(BaseRelativityTensor):
 
         """
         super(RicciTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 2
         if not len(config) == self._order:
