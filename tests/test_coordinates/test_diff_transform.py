@@ -10,8 +10,9 @@ from numpy.testing import assert_allclose
 from einsteinpy.coordinates import (
     BoyerLindquistDifferential,
     CartesianDifferential,
-    SphericalDifferential
+    SphericalDifferential,
 )
+from einsteinpy.coordinates.base import BaseCoordinateDifferential
 from einsteinpy.metric import BaseMetric, Kerr, Schwarzschild
 from einsteinpy import constant
 from einsteinpy.utils import CoordinateError
@@ -328,3 +329,21 @@ def test_cartesian_differential_v_t(cartesian_differential):
     v4 = cartesian_differential.velocity(mink)
 
     assert_allclose(v4 @ mink.metric_covariant(np.ones(4)) @ v4, _c ** 2, rtol=1e-8)
+
+
+def test_base_differential_velocity_si_values_raises_not_implemented():
+    """BaseCoordinateDifferential._velocity_si_values raises NotImplementedError if not overridden."""
+    # Subclass that does not implement _velocity_si_values
+    class IncompleteDifferential(BaseCoordinateDifferential):
+        _spatial_component_names = ("x", "y", "z")
+
+    instance = object.__new__(IncompleteDifferential)
+    instance.t = 0 * u.s
+    instance.x = 1 * u.m
+    instance.y = 2 * u.m
+    instance.z = 3 * u.m
+    instance.system = "Cartesian"
+    instance._v_t = None
+
+    with pytest.raises(NotImplementedError):
+        instance._velocity_si_values()

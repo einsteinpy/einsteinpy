@@ -1,24 +1,24 @@
-import numpy as np
 from astropy import units as u
 
-from einsteinpy import constant, metric
+from einsteinpy import constant
+from einsteinpy.coordinates.base import BaseCoordinateDifferential
 from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
     SphericalConversion,
 )
-from einsteinpy.coordinates.utils import v0
-from einsteinpy.utils import CoordinateError
 
 _c = constant.c.value
 
 
-class CartesianDifferential(CartesianConversion):
+class CartesianDifferential(CartesianConversion, BaseCoordinateDifferential):
     """
     Class for defining 3-Velocity & 4-Velocity in Cartesian Coordinates \
     using SI units
 
     """
+
+    _spatial_component_names = ("x", "y", "z")
 
     @u.quantity_input(
         t=u.s, x=u.m, y=u.m, z=u.m, v_x=u.m / u.s, v_y=u.m / u.s, v_z=u.m / u.s
@@ -64,6 +64,9 @@ class CartesianDifferential(CartesianConversion):
         self.v_z = v_z
         self.system = "Cartesian"
 
+    def _velocity_si_values(self):
+        return (self.v_x.si.value, self.v_y.si.value, self.v_z.si.value)
+
     def __str__(self):
         return f"Cartesian Coordinates: \n\
             t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n\
@@ -73,82 +76,6 @@ class CartesianDifferential(CartesianConversion):
         return f"Cartesian Coordinates: \n\
             t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})\n\
             v_t: {self.v_t}, v_x: {self.v_x}, v_y: {self.v_y}, v_z: {self.v_z}"
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (_c * self.t.si.value, self.x.si.value, self.y.si.value, self.z.si.value)
-
-    @property
-    def v_t(self):
-        """
-        Returns the Timelike component of 4-Velocity
-
-        """
-        return self._v_t
-
-    @v_t.setter
-    def v_t(self, args):
-        """
-        Sets the value of the Time-like component of 4-Velocity
-
-        Parameters
-        ----------
-        args : tuple
-            1-tuple containing the ~einsteinpy.metric.* object, \
-            in which the coordinates are defined
-
-        Raises
-        ------
-        CoordinateError
-            If ``metric`` object has been instantiated with a coordinate system, \
-            other than Cartesian Coordinates.
-
-        """
-        g = args[0]
-        if self.system != g.coords.system:
-            raise CoordinateError(
-                f"Metric object has been instantiated with a coordinate system, ( {g.coords.system} )"
-                " other than Cartesian Coordinates."
-            )
-
-        g_cov_mat = g.metric_covariant(self.position())
-
-        v_t = v0(g_cov_mat, self.v_x.si.value, self.v_y.si.value, self.v_z.si.value)
-
-        self._v_t = v_t * u.m / u.s
-
-    def velocity(self, metric):
-        """
-        Returns Velocity 4-Vector in SI units
-
-        Parameters
-        ----------
-        metric : ~einsteinpy.metric.*
-            Metric object, in which the coordinates are defined
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Velocity 4-Vector in SI units
-
-        """
-        # Setting _v_t
-        self.v_t = (metric,)
-
-        return (
-            self._v_t.value,
-            self.v_x.si.value,
-            self.v_y.si.value,
-            self.v_z.si.value,
-        )
 
     def spherical_differential(self, **kwargs):
         """
@@ -214,12 +141,14 @@ class CartesianDifferential(CartesianConversion):
         )
 
 
-class SphericalDifferential(SphericalConversion):
+class SphericalDifferential(SphericalConversion, BaseCoordinateDifferential):
     """
     Class for defining 3-Velocity & 4-Velocity in Spherical Polar Coordinates \
     using SI units
 
     """
+
+    _spatial_component_names = ("r", "theta", "phi")
 
     @u.quantity_input(
         t=u.s,
@@ -271,6 +200,9 @@ class SphericalDifferential(SphericalConversion):
         self.v_p = v_p
         self.system = "Spherical"
 
+    def _velocity_si_values(self):
+        return (self.v_r.si.value, self.v_th.si.value, self.v_p.si.value)
+
     def __str__(self):
         return f"Spherical Polar Coordinates: \n\
             t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
@@ -280,87 +212,6 @@ class SphericalDifferential(SphericalConversion):
         return f"Spherical Polar Coordinates: \n\
             t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
             v_t: {self.v_t}, v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.t.si.value,
-            self.r.si.value,
-            self.theta.si.value,
-            self.phi.si.value,
-        )
-
-    @property
-    def v_t(self):
-        """
-        Returns the Timelike component of 4-Velocity
-
-        """
-        return self._v_t
-
-    @v_t.setter
-    def v_t(self, args):
-        """
-        Sets the value of the Time-like component of 4-Velocity
-
-        Parameters
-        ----------
-        args : tuple
-            1-tuple containing the ~einsteinpy.metric.* object, \
-            in which the coordinates are defined
-
-        Raises
-        ------
-        CoordinateError
-            If ``metric`` object has been instantiated with a coordinate system, \
-            other than Sperical Polar Coordinates.
-
-        """
-        g = args[0]
-        if self.system != g.coords.system:
-            raise CoordinateError(
-                f"Metric object has been instantiated with a coordinate system, ( {g.coords.system} )"
-                " other than Spherical Polar Coordinates."
-            )
-
-        g_cov_mat = g.metric_covariant(self.position())
-
-        v_t = v0(g_cov_mat, self.v_r.si.value, self.v_th.si.value, self.v_p.si.value)
-
-        self._v_t = v_t * u.m / u.s
-
-    def velocity(self, metric):
-        """
-        Returns Velocity 4-Vector in SI units
-
-        Parameters
-        ----------
-        metric : ~einsteinpy.metric.*
-            Metric object, in which the coordinates are defined
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Velocity 4-Vector in SI units
-
-        """
-        # Setting _v_t
-        self.v_t = (metric,)
-
-        return (
-            self._v_t.value,
-            self.v_r.si.value,
-            self.v_th.si.value,
-            self.v_p.si.value,
-        )
 
     def cartesian_differential(self, **kwargs):
         """
@@ -426,12 +277,14 @@ class SphericalDifferential(SphericalConversion):
         )
 
 
-class BoyerLindquistDifferential(BoyerLindquistConversion):
+class BoyerLindquistDifferential(BoyerLindquistConversion, BaseCoordinateDifferential):
     """
     Class for defining 3-Velocity & 4-Velocity in Boyer-Lindquist Coordinates \
     using SI units
 
     """
+
+    _spatial_component_names = ("r", "theta", "phi")
 
     @u.quantity_input(
         t=u.s,
@@ -483,6 +336,9 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         self.v_p = v_p
         self.system = "BoyerLindquist"
 
+    def _velocity_si_values(self):
+        return (self.v_r.si.value, self.v_th.si.value, self.v_p.si.value)
+
     def __str__(self):
         return f"Boyer-Lindquist Coordinates: \n\
             t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
@@ -492,87 +348,6 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
         return f"Boyer-Lindquist Coordinates: \n\
             t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})\n\
             v_t: {self.v_t}, v_r: {self.v_r}, v_th: {self.v_th}, v_p: {self.v_p}"
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.t.si.value,
-            self.r.si.value,
-            self.theta.si.value,
-            self.phi.si.value,
-        )
-
-    @property
-    def v_t(self):
-        """
-        Returns the Timelike component of 4-Velocity
-
-        """
-        return self._v_t
-
-    @v_t.setter
-    def v_t(self, args):
-        """
-        Sets the value of the Time-like component of 4-Velocity
-
-        Parameters
-        ----------
-        args : tuple
-            1-tuple containing the ~einsteinpy.metric.* object, \
-            in which the coordinates are defined
-
-        Raises
-        ------
-        CoordinateError
-            If ``metric`` object has been instantiated with a coordinate system, \
-            other than Boyer-Lindquist Coordinates.
-
-        """
-        g = args[0]
-        if self.system != g.coords.system:
-            raise CoordinateError(
-                "Metric object has been instantiated with a coordinate system, ( {g.coords.system} )"
-                " other than Boyer-Lindquist Coordinates."
-            )
-
-        g_cov_mat = g.metric_covariant(self.position())
-
-        v_t = v0(g_cov_mat, self.v_r.si.value, self.v_th.si.value, self.v_p.si.value)
-
-        self._v_t = v_t * u.m / u.s
-
-    def velocity(self, metric):
-        """
-        Returns Velocity 4-Vector in SI units
-
-        Parameters
-        ----------
-        metric : ~einsteinpy.metric.*
-            Metric object, in which the coordinates are defined
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Velocity 4-Vector in SI units
-
-        """
-        # Setting _v_t
-        self.v_t = (metric,)
-
-        return (
-            self._v_t.value,
-            self.v_r.si.value,
-            self.v_th.si.value,
-            self.v_p.si.value,
-        )
 
     def cartesian_differential(self, **kwargs):
         """
@@ -595,7 +370,7 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
 
         Returns
         -------
-        ~einsteinpy.coordinates.differentia.CartesianDifferential
+        ~einsteinpy.coordinates.differential.CartesianDifferential
             Cartesian representation of velocity
 
         """
@@ -632,7 +407,7 @@ class BoyerLindquistDifferential(BoyerLindquistConversion):
 
         Returns
         -------
-        ~einsteinpy.coordinates.differentia.SphericalDifferential
+        ~einsteinpy.coordinates.differential.SphericalDifferential
             Spherical representation of velocity
 
         """

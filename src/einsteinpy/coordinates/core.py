@@ -1,7 +1,7 @@
-import numpy as np
 from astropy import units as u
 
 from einsteinpy import constant
+from einsteinpy.coordinates.base import BaseSpatialCoordinate
 from einsteinpy.coordinates.conversion import (
     BoyerLindquistConversion,
     CartesianConversion,
@@ -11,7 +11,7 @@ from einsteinpy.coordinates.conversion import (
 _c = constant.c.value
 
 
-class Cartesian(CartesianConversion):
+class Cartesian(CartesianConversion, BaseSpatialCoordinate):
     """
     Class for defining 3-Position & 4-Position in Cartesian Coordinates \
     using SI units
@@ -57,36 +57,6 @@ class Cartesian(CartesianConversion):
     def __repr__(self):
         return f"Cartesian Coordinates: \n \
             t = ({self.t}), x = ({self.x}), y = ({self.y}), z = ({self.z})"
-
-    def __getitem__(self, item):
-        """
-        Method to return coordinates
-        Objects are subscriptable with both explicit names of \
-        parameters and integer indices
-
-        Parameters
-        ----------
-        item : str or int
-            Name of the parameter or its index
-            If ``system`` is provided, while initializing, \
-            name of the coordinate is returned
-
-        """
-        if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (_c * self.t.si.value, self.x.si.value, self.y.si.value, self.z.si.value)
 
     def to_spherical(self, **kwargs):
         """
@@ -141,7 +111,7 @@ class Cartesian(CartesianConversion):
         return BoyerLindquist(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
 
 
-class Spherical(SphericalConversion):
+class Spherical(SphericalConversion, BaseSpatialCoordinate):
     """
     Class for defining 3-Position & 4-Position in Spherical Polar Coordinates \
     using SI units
@@ -187,41 +157,6 @@ class Spherical(SphericalConversion):
     def __repr__(self):
         return f"Spherical Polar Coordinates: \n \
             t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
-
-    def __getitem__(self, item):
-        """
-        Method to return coordinates
-        Objects are subscriptable with both explicit names of \
-        parameters and integer indices
-
-        Parameters
-        ----------
-        item : str or int
-            Name of the parameter or its index
-            If ``system`` is provided, while initializing, \
-            name of the coordinate is returned
-
-        """
-        if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple :
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.t.si.value,
-            self.r.si.value,
-            self.theta.si.value,
-            self.phi.si.value,
-        )
 
     def to_cartesian(self, **kwargs):
         """
@@ -277,7 +212,7 @@ class Spherical(SphericalConversion):
         return BoyerLindquist(t * u.s, r * u.m, theta * u.rad, phi * u.rad)
 
 
-class BoyerLindquist(BoyerLindquistConversion):
+class BoyerLindquist(BoyerLindquistConversion, BaseSpatialCoordinate):
     """
     Class for defining 3-Position & 4-Position in Boyer-Lindquist Coordinates \
     using SI units
@@ -323,41 +258,6 @@ class BoyerLindquist(BoyerLindquistConversion):
     def __repr__(self):
         return f"Boyer-Lindquist Coordinates: \n \
             t = ({self.t}), r = ({self.r}), theta = ({self.theta}), phi = ({self.phi})"
-
-    def __getitem__(self, item):
-        """
-        Method to return coordinates
-        Objects are subscriptable with both explicit names of \
-        parameters and integer indices
-
-        Parameters
-        ----------
-        item : str or int
-            Name of the parameter or its index
-            If ``system`` is provided, while initializing, \
-            name of the coordinate is returned
-
-        """
-        if isinstance(item, (int, np.integer)):
-            return self._dimension[self._dimension_order[item]]
-        return self._dimension[item]
-
-    def position(self):
-        """
-        Returns Position 4-Vector in SI units
-
-        Returns
-        -------
-        tuple :
-            4-Tuple, containing Position 4-Vector in SI units
-
-        """
-        return (
-            _c * self.t.si.value,
-            self.r.si.value,
-            self.theta.si.value,
-            self.phi.si.value,
-        )
 
     def to_cartesian(self, **kwargs):
         """
