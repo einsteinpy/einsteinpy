@@ -7,44 +7,42 @@ from einsteinpy.coordinates.utils import (
 from einsteinpy.metric import BaseMetric
 
 
-class CartesianConversion:
+class BaseCoordinateConversion:
     """
-    Class for conversion to and from Cartesian Coordinates in SI units
+    Base Coordinate conversion class
 
     """
 
-    def __init__(self, t, x, y, z, v_x=None, v_y=None, v_z=None):
+    def __init__(self, e0, e1, e2, e3, u0=None, u1=None, u2=None):
         """
         Constructor
 
         Parameters
         ----------
-        t : float
+        e0 : float
             Time
-        x : float
+        e1 : float
             x-Component of 3-Position
-        y : float
+        e2 : float
             y-Component of 3-Position
-        z : float
+        e3 : float
             z-Component of 3-Position
-        v_x : float, optional
+        u0 : float, optional
             x-Component of 3-Velocity
-        v_y : float, optional
+        u1 : float, optional
             y-Component of 3-Velocity
-        v_z : float, optional
+        u2 : float, optional
             z-Component of 3-Velocity
 
         """
-        self.t_si = t
-        self.x_si = x
-        self.y_si = y
-        self.z_si = z
-        self.v_x_si = v_x
-        self.v_y_si = v_y
-        self.v_z_si = v_z
-        self._velocities_provided = not (
-            (v_x is None) or (v_y is None) or (v_z is None)
-        )
+        self.e0_si = e0
+        self.e1_si = e1
+        self.e2_si = e2
+        self.e3_si = e3
+        self.u0_si = u0
+        self.u1_si = u1
+        self.u2_si = u2
+        self._velocities_provided = not ((u0 is None) or (u1 is None) or (u2 is None))
 
     def values(self):
         """
@@ -53,23 +51,30 @@ class CartesianConversion:
         Returns
         -------
         tuple
-            4-Tuple, containing ``t, x, y, z`` in SI units
-            or 7-tuple, containing ``t, x, y, z, v_x, v_y, v_z`` \
+            4-Tuple, containing ``e0, e1, e2, e3`` in SI units
+            or 7-tuple, containing ``e0, e1, e2, e3, u0, u1, u2`` \
             in SI units
 
         """
         if self._velocities_provided:
             return (
-                self.t_si,
-                self.x_si,
-                self.y_si,
-                self.z_si,
-                self.v_x_si,
-                self.v_y_si,
-                self.v_z_si,
+                self.e0_si,
+                self.e1_si,
+                self.e2_si,
+                self.e3_si,
+                self.u0_si,
+                self.u1_si,
+                self.u2_si,
             )
 
-        return self.t_si, self.x_si, self.y_si, self.z_si
+        return self.e0_si, self.e1_si, self.e2_si, self.e3_si
+
+
+class CartesianConversion(BaseCoordinateConversion):
+    """
+    Class for conversion to and from Cartesian Coordinates in SI units
+
+    """
 
     def convert_spherical(self, **kwargs):
         """
@@ -88,14 +93,13 @@ class CartesianConversion:
 
         """
         return cartesian_to_spherical_fast(
-            self.t_si,
-            self.x_si,
-            self.y_si,
-            self.z_si,
-            self.v_x_si,
-            self.v_y_si,
-            self.v_z_si,
-            self._velocities_provided,
+            self.e0_si,
+            self.e1_si,
+            self.e2_si,
+            self.e3_si,
+            self.u0_si,
+            self.u1_si,
+            self.u2_si,
         )
 
     def convert_bl(self, **kwargs):
@@ -140,81 +144,22 @@ class CartesianConversion:
         alpha = BaseMetric.alpha(M=M, a=a)
 
         return cartesian_to_bl_fast(
-            self.t_si,
-            self.x_si,
-            self.y_si,
-            self.z_si,
+            self.e0_si,
+            self.e1_si,
+            self.e2_si,
+            self.e3_si,
             alpha,
-            self.v_x_si,
-            self.v_y_si,
-            self.v_z_si,
-            self._velocities_provided,
+            self.u0_si,
+            self.u1_si,
+            self.u2_si,
         )
 
 
-class SphericalConversion:
+class SphericalConversion(BaseCoordinateConversion):
     """
     Class for conversion to and from Spherical Polar Coordinates in SI units
 
     """
-
-    def __init__(self, t, r, theta, phi, v_r=None, v_th=None, v_p=None):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        t : float
-            Time
-        r : float
-            r-Component of 3-Position
-        theta : float
-            theta-Component of 3-Position
-        phi : float
-            phi-Component of 3-Position
-        v_r : float, optional
-            r-Component of 3-Velocity
-        v_th : float, optional
-            theta-Component of 3-Velocity
-        v_p : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        self.t_si = t
-        self.r_si = r
-        self.th_si = theta
-        self.p_si = phi
-        self.v_r_si = v_r
-        self.v_th_si = v_th
-        self.v_p_si = v_p
-        self._velocities_provided = not (
-            (v_r is None) or (v_th is None) or (v_p is None)
-        )
-
-    def values(self):
-        """
-        Returns components of the coordinates
-
-        Returns
-        -------
-        tuple
-            4-Tuple containing ``t, r, theta, phi`` in SI units
-            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
-            in SI units
-
-        """
-        if self._velocities_provided:
-            return (
-                self.t_si,
-                self.r_si,
-                self.th_si,
-                self.p_si,
-                self.v_r_si,
-                self.v_th_si,
-                self.v_p_si,
-            )
-
-        return self.t_si, self.r_si, self.th_si, self.p_si
 
     def convert_cartesian(self, **kwargs):
         """
@@ -233,14 +178,13 @@ class SphericalConversion:
 
         """
         return spherical_to_cartesian_fast(
-            self.t_si,
-            self.r_si,
-            self.th_si,
-            self.p_si,
-            self.v_r_si,
-            self.v_th_si,
-            self.v_p_si,
-            self._velocities_provided,
+            self.e0_si,
+            self.e1_si,
+            self.e2_si,
+            self.e3_si,
+            self.u0_si,
+            self.u1_si,
+            self.u2_si,
         )
 
     def convert_bl(self, **kwargs):
@@ -288,69 +232,11 @@ class SphericalConversion:
         return cart.convert_bl(M=M, a=a)
 
 
-class BoyerLindquistConversion:
+class BoyerLindquistConversion(BaseCoordinateConversion):
     """
     Class for conversion to and from Boyer-Lindquist Coordinates in SI units
 
     """
-
-    def __init__(self, t, r, theta, phi, v_r=None, v_th=None, v_p=None):
-        """
-        Constructor
-
-        Parameters
-        ----------
-        t : float
-            Time
-        r : float
-            r-Component of 3-Position
-        theta : float
-            theta-Component of 3-Position
-        phi : float
-            phi-Component of 3-Position
-        v_r : float, optional
-            r-Component of 3-Velocity
-        v_th : float, optional
-            theta-Component of 3-Velocity
-        v_p : float, optional
-            phi-Component of 3-Velocity
-
-        """
-        self.t_si = t
-        self.r_si = r
-        self.th_si = theta
-        self.p_si = phi
-        self.v_r_si = v_r
-        self.v_th_si = v_th
-        self.v_p_si = v_p
-        self._velocities_provided = not (
-            (v_r is None) or (v_th is None) or (v_p is None)
-        )
-
-    def values(self):
-        """
-        Returns components of the coordinates
-
-        Returns
-        -------
-        tuple
-            4-Tuple containing ``t, r, theta, phi`` in SI units
-            or 7-tuple, containing ``t, r, theta, phi, v_r, v_th, v_p`` \
-            in SI units
-
-        """
-        if self._velocities_provided:
-            return (
-                self.t_si,
-                self.r_si,
-                self.th_si,
-                self.p_si,
-                self.v_r_si,
-                self.v_th_si,
-                self.v_p_si,
-            )
-
-        return self.t_si, self.r_si, self.th_si, self.p_si
 
     def convert_cartesian(self, **kwargs):
         """
@@ -394,15 +280,14 @@ class BoyerLindquistConversion:
         alpha = BaseMetric.alpha(M=M, a=a)
 
         return bl_to_cartesian_fast(
-            self.t_si,
-            self.r_si,
-            self.th_si,
-            self.p_si,
+            self.e0_si,
+            self.e1_si,
+            self.e2_si,
+            self.e3_si,
             alpha,
-            self.v_r_si,
-            self.v_th_si,
-            self.v_p_si,
-            self._velocities_provided,
+            self.u0_si,
+            self.u1_si,
+            self.u2_si,
         )
 
     def convert_spherical(self, **kwargs):

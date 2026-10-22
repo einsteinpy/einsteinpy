@@ -19,13 +19,13 @@ def test_input():
     Test input for some functions below
     """
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=0.1 * u.m,
-        theta=4 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=0. * u.rad / u.s
+        e0=0. * u.s,
+        e1=0.1 * u.m,
+        e2=4 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=0. * u.rad / u.s
     )
 
     M = 1e23 * u.kg
@@ -85,13 +85,13 @@ def test_f_vec_bl_kerrnewman():
     M, a = 6.73317655e26 * u.kg, 0.2 * u.one
     Q, q = 0. * u.C, 0. * u.C / u.kg
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=1e6 * u.m,
-        theta=4 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=2e6 * u.rad / u.s
+        e0=0. * u.s,
+        e1=1e6 * u.m,
+        e2=4 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=2e6 * u.rad / u.s
     )
     f_vec_expected = np.array(
         [
@@ -134,7 +134,7 @@ def test_electromagnetic_potential_from_em_potential_vector(test_input):
     Q = 15.5 * u.C
 
     x_vec = bl.position()
-    r = x_vec[1]
+    e1 = x_vec[1]
 
     # Using function from module (for a = 0)
     mkn = KerrNewman(coords=bl, M=M, a=0. * u.one, Q=Q)
@@ -142,7 +142,7 @@ def test_electromagnetic_potential_from_em_potential_vector(test_input):
 
     # Calculated using formula (for a = 0)
     calc_pot = np.zeros((4,), dtype=float)
-    calc_pot[0] = (Q.value / ((_c ** 2) * r)) * np.sqrt(_G * _Cc)
+    calc_pot[0] = (Q.value / ((_c ** 2) * e1)) * np.sqrt(_G * _Cc)
 
     assert_allclose(mkn_pot, calc_pot, rtol=1e-8)
 
@@ -156,7 +156,7 @@ def test_electromagnetic_potential_contravariant(test_input):
     bl, M, a = test_input
     Q = 15.5 * u.C
     x_vec = bl.position()
-    r, theta = x_vec[1], x_vec[2]
+    e1, e2 = x_vec[1], x_vec[2]
 
     mkn = KerrNewman(coords=bl, M=M, a=a, Q=Q)
     mkn_contra_mat = mkn.metric_contravariant(x_vec)
@@ -166,10 +166,10 @@ def test_electromagnetic_potential_contravariant(test_input):
 
     # Calculated using formula
     alpha = mkn.alpha(M, a)
-    rho2 = mkn.rho(r, theta, M, a) ** 2
+    rho2 = mkn.rho(e1, e2, M, a) ** 2
     r_Q = np.sqrt((Q.value ** 2 * _G * _Cc) / _c ** 4)
-    fac = r * r_Q / rho2
-    calc_pot_cov = np.array([fac, 0., 0., -alpha * np.sin(theta)**2 * fac], dtype=float)
+    fac = e1 * r_Q / rho2
+    calc_pot_cov = np.array([fac, 0., 0., -alpha * np.sin(e2)**2 * fac], dtype=float)
 
     calc_pot_contra = mkn_contra_mat @ calc_pot_cov
 
@@ -185,17 +185,17 @@ def test_em_tensor_covariant():
     M, a, Q = 2e22 * u.kg, 0.5 * u.one, 10.0 * u.C
 
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=1.5 * u.m,
-        theta=3 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=0. * u.m / u.s,
-        v_th=0. * u.rad / u.s,
-        v_p=0. * u.rad / u.s
+        e0=0. * u.s,
+        e1=1.5 * u.m,
+        e2=3 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=0. * u.m / u.s,
+        u2=0. * u.rad / u.s,
+        u3=0. * u.rad / u.s
     )
 
     x_vec = bl.position()
-    r, theta = x_vec[1], x_vec[2]
+    e1, e2 = x_vec[1], x_vec[2]
 
     alpha = BaseMetric.alpha(M, a)
 
@@ -206,7 +206,7 @@ def test_em_tensor_covariant():
     # Checking Skew-Symmetry of Covariant Maxwell Tensor
     assert_allclose(0., mkn_em_cov + np.transpose(mkn_em_cov), atol=1e-8)
 
-    th, r2, alpha2 = theta, r ** 2, alpha ** 2
+    th, r2, alpha2 = e2, e1 ** 2, alpha ** 2
 
     # Unit Scaling factor for Charge
     scale_Q = np.sqrt(_G * _Cc) / _c ** 2
@@ -214,16 +214,19 @@ def test_em_tensor_covariant():
     # Electric and Magnetic Fields
     D_r = (scale_Q * Q.value * (r2 - (alpha * np.cos(th)) ** 2)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
     D_th = ((alpha2) * (-(scale_Q * Q.value)) * np.sin(2 * th)) / ((r2 + (alpha * np.cos(th)) ** 2) ** 2)
-    H_r = (2 * alpha * (scale_Q * Q.value) * (r2 + alpha2) * np.cos(th)) / (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+    H_r = (
+        (2 * alpha * (scale_Q * Q.value) * (r2 + alpha2) * np.cos(th)) /
+        (e1 * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+    )
     H_th = (
         (alpha * (scale_Q * Q.value) * np.sin(th) * (r2 - (alpha * np.cos(th)) ** 2)) /
-        (r * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
+        (e1 * ((r2 + (alpha * np.cos(th)) ** 2) ** 2))
     )
 
     assert_allclose(D_r, mkn_em_cov[0, 1], rtol=1e-8)
-    assert_allclose(r * D_th, mkn_em_cov[0, 2], rtol=1e-8)
-    assert_allclose(-r * np.sin(theta) * H_th, mkn_em_cov[1, 3], rtol=1e-8)
-    assert_allclose((r ** 2) * np.sin(theta) * H_r, mkn_em_cov[2, 3], rtol=1e-8)
+    assert_allclose(e1 * D_th, mkn_em_cov[0, 2], rtol=1e-8)
+    assert_allclose(-e1 * np.sin(e2) * H_th, mkn_em_cov[1, 3], rtol=1e-8)
+    assert_allclose((e1 ** 2) * np.sin(e2) * H_r, mkn_em_cov[2, 3], rtol=1e-8)
 
 
 def test_em_tensor_contravariant():
@@ -237,13 +240,13 @@ def test_em_tensor_contravariant():
     M, a, Q = 1e22 * u.kg, 0.7 * u.one, 45.0 * u.C
 
     bl = BoyerLindquistDifferential(
-        t=0. * u.s,
-        r=5.5 * u.m,
-        theta=2 * np.pi / 5 * u.rad,
-        phi=0. * u.rad,
-        v_r=200. * u.m / u.s,
-        v_th=9. * u.rad / u.s,
-        v_p=10. * u.rad / u.s
+        e0=0. * u.s,
+        e1=5.5 * u.m,
+        e2=2 * np.pi / 5 * u.rad,
+        e3=0. * u.rad,
+        u1=200. * u.m / u.s,
+        u2=9. * u.rad / u.s,
+        u3=10. * u.rad / u.s
     )
 
     x_vec = bl.position()

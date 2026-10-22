@@ -18,26 +18,26 @@ _c = constant.c.value
 @pytest.fixture
 def sph():
     return SphericalDifferential(
-        t=10000.0 * u.s,
-        r=130.0 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=-np.pi / 8 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,
+        e0=10000.0 * u.s,
+        e1=130.0 * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=-np.pi / 8 * u.rad,
+        u1=0.0 * u.m / u.s,
+        u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
 
 @pytest.fixture
 def bl():
     return BoyerLindquistDifferential(
-        t=10000.0 * u.s,
-        r=130.0 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=-np.pi / 8 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,
+        e0=10000.0 * u.s,
+        e1=130.0 * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=-np.pi / 8 * u.rad,
+        u1=0.0 * u.m / u.s,
+        u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
 
@@ -71,23 +71,23 @@ def test_wrong_or_no_units_in_init(M, a, Q, q):
 
     """
     sph = SphericalDifferential(
-        t=10000.0 * u.s,
-        r=130.0 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=-np.pi / 8 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,
+        e0=10000.0 * u.s,
+        e1=130.0 * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=-np.pi / 8 * u.rad,
+        u1=0.0 * u.m / u.s,
+        u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
     bl = BoyerLindquistDifferential(
-        t=10000.0 * u.s,
-        r=130.0 * u.m,
-        theta=np.pi / 2 * u.rad,
-        phi=-np.pi / 8 * u.rad,
-        v_r=0.0 * u.m / u.s,
-        v_th=0.0 * u.rad / u.s,
-        v_p=0.0 * u.rad / u.s,
+        e0=10000.0 * u.s,
+        e1=130.0 * u.m,
+        e2=np.pi / 2 * u.rad,
+        e3=-np.pi / 8 * u.rad,
+        u1=0.0 * u.m / u.s,
+        u2=0.0 * u.rad / u.s,
+        u3=0.0 * u.rad / u.s,
     )
 
     try:
