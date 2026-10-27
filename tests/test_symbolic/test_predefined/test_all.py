@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-from sympy import Array
+from sympy import Array, simplify, symbols
 
-from einsteinpy.symbolic import MetricTensor, simplify_sympy_array
+from einsteinpy.symbolic import MetricTensor, RicciScalar, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
     AlcubierreWarp,
     AntiDeSitter,
@@ -73,6 +73,13 @@ def test_all_predefined_metrics(metric_instance):
 def test_check_two_metrics_are_equal(m1, m2):
     zero_arr = Array(np.zeros(shape=m1.tensor().shape, dtype=int))
     assert simplify_sympy_array(m1.tensor() - m2.tensor()) == zero_arr
+
+
+def test_DeSitter_has_constant_ricci_scalar():
+    metric = DeSitter()
+    al = symbols("alpha")
+    R = RicciScalar.from_metric(metric).expr
+    assert simplify(R - 12 / al**2) == 0
 
 
 def test_Minkowski_equality():
