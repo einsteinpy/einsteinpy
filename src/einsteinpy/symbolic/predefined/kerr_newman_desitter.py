@@ -1,5 +1,7 @@
-from sympy import symbols, sin, cos
+from sympy import cos, sin, symbols
+
 from einsteinpy.symbolic.metric import MetricTensor
+
 
 def KerrNewmanDeSitter():
     """
@@ -20,24 +22,28 @@ def KerrNewmanDeSitter():
     a, Q, Lambda = symbols("a Q Lambda", real=True)
 
     # Abbreviations
-    lam = Lambda/3
-    chi = 1 + lam*a**2
-    Sigma = r**2 + a**2*cos(th)**2
-    Delta_r = (1 - lam*r**2)*(r**2 + a**2) - 2*r + Q**2   # M=1 in natural units
-    Delta_th = 1 + lam*a**2*cos(th)**2
+    lam = Lambda / 3
+    chi = 1 + lam * a**2
+    Sigma = r**2 + a**2 * cos(th) ** 2
+    Delta_r = (1 - lam * r**2) * (r**2 + a**2) - 2 * r + Q**2  # M=1 in natural units
+    Delta_th = 1 + lam * a**2 * cos(th) ** 2
 
     # Metric components g_{μν} in order (t, r, theta, phi)
-    g_tt  = (a**2*sin(th)**2*Delta_th - Delta_r) / (chi**2 * Sigma)
-    g_rr  = Sigma / Delta_r
+    g_tt = (a**2 * sin(th) ** 2 * Delta_th - Delta_r) / (chi**2 * Sigma)
+    g_rr = Sigma / Delta_r
     g_tht = Sigma / Delta_th
-    g_tph = a*sin(th)**2 * (Delta_r - (r**2 + a**2)*Delta_th) / (chi**2 * Sigma)
-    g_phph = sin(th)**2 * ((r**2 + a**2)**2 * Delta_th - a**2*sin(th)**2 * Delta_r) / (chi**2 * Sigma)
+    g_tph = a * sin(th) ** 2 * (Delta_r - (r**2 + a**2) * Delta_th) / (chi**2 * Sigma)
+    g_phph = (
+        sin(th) ** 2
+        * ((r**2 + a**2) ** 2 * Delta_th - a**2 * sin(th) ** 2 * Delta_r)
+        / (chi**2 * Sigma)
+    )
 
     metric = [
-        [g_tt,   0,     0,     g_tph],
-        [0,      g_rr,  0,     0    ],
-        [0,      0,     g_tht, 0    ],
-        [g_tph,  0,     0,     g_phph],
+        [g_tt, 0, 0, g_tph],
+        [0, g_rr, 0, 0],
+        [0, 0, g_tht, 0],
+        [g_tph, 0, 0, g_phph],
     ]
 
     coords = (t, r, th, ph)

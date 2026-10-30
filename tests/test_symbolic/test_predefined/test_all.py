@@ -14,10 +14,12 @@ from einsteinpy.symbolic.predefined import (
     Davidson,
     DeSitter,
     Ernst,
+    FriedmannLemaitreRobertsonWalker,
     Godel,
     JanisNewmanWinicour,
     Kerr,
     KerrNewman,
+    KerrNewmanDeSitter,
     Minkowski,
     MinkowskiCartesian,
     MinkowskiPolar,
@@ -49,6 +51,8 @@ from einsteinpy.symbolic.predefined import (
         Ernst(),
         JanisNewmanWinicour(),
         ReissnerNordstorm(),
+        FriedmannLemaitreRobertsonWalker(),
+        KerrNewmanDeSitter(),
     ],
 )
 def test_all_predefined_metrics(metric_instance):

@@ -6,11 +6,13 @@ File for tracking changes in EinsteinPy from v0.3.0. This file should be dumped 
 -----
 CONTRIBUTORS
 - pragyaangaur
+- harry353
 
 CHANGES
 - [#697]: Fixed the radii of Earth and Pluto in bodies
 - [#704]: Fixed #698, Solar mass, solar radius and the cosmological constant now come from astropy (IAU 2015 and Planck 2018)
 - [#706]: Fixed the Bessel function arguments in BesselGravitationalWave
+- [#672]: Added the Friedmann-Lemaître-Robertson-Walker and Kerr-Newman-de Sitter metrics under predefined symbolic metrics
 
 0.5.0 - 2026-10-21
 -----
