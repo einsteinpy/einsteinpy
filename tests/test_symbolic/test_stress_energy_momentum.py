@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import sympy
 from sympy import cos, sin, sinh
 
@@ -40,11 +41,8 @@ def test_StressEnergyMomentumTensor_change_config_no_parent_metric():
     testarr = np.ones((4, 4), dtype=int).tolist()
     syms = sympy.symbols("t x y z")
     obj = StressEnergyMomentumTensor(testarr, syms, config="ll")
-    try:
-        obj2 = obj.change_config("lu")
-        assert False
-    except Exception:
-        assert True
+    with pytest.raises(Exception, match="Parent Metric not found"):
+        obj.change_config("lu")
 
 
 def test_StressEnergyMomentumTensor_cyclic_config_change():
