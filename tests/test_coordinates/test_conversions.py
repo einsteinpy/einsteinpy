@@ -171,6 +171,33 @@ def test_convert_kwargs_raises_KeyError0(
         s_b(spherical_coords)
 
 
+def test_cartesian_conversion_values_without_velocities():
+    """CartesianConversion.values() returns 4-tuple when velocities not provided."""
+    coords = CartesianConversion(t=0.0, x=1.0, y=2.0, z=3.0)
+    vals = coords.values()
+    assert len(vals) == 4
+    assert vals == (0.0, 1.0, 2.0, 3.0)
+
+
+def test_base_curvilinear_values_without_velocities():
+    """BaseCurvilinearConversion.values() returns 4-tuple when velocities not provided."""
+    coords = SphericalConversion(t=0.0, r=10.0, theta=np.pi / 2, phi=np.pi / 4)
+    vals = coords.values()
+    assert len(vals) == 4
+    assert vals == (0.0, 10.0, np.pi / 2, np.pi / 4)
+
+
+def test_base_curvilinear_values_with_velocities():
+    """BaseCurvilinearConversion.values() returns 7-tuple when velocities provided."""
+    coords = SphericalConversion(
+        t=0.0, r=10.0, theta=np.pi / 2, phi=np.pi / 4,
+        v_r=10.0, v_th=-20.0, v_p=20.0
+    )
+    vals = coords.values()
+    assert len(vals) == 7
+    assert vals == (0.0, 10.0, np.pi / 2, np.pi / 4, 10.0, -20.0, 20.0)
+
+
 def test_convert_kwargs_raises_KeyError1(
     cartesian_coords, spherical_coords, bl_coords
 ):
