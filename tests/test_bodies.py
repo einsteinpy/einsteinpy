@@ -1,6 +1,6 @@
 import astropy.units as u
 import pytest
-from astropy.constants import G
+from astropy.constants import G, M_sun, R_sun
 
 from einsteinpy.bodies import (
     Body,
@@ -24,7 +24,7 @@ from einsteinpy.coordinates import CartesianDifferential, SphericalDifferential
     [
         (Mercury, Sun, 2439.7 * u.km, 3.285e23 * u.kg),
         (Venus, Sun, 6051.8 * u.km, 4.867e24 * u.kg),
-        (Sun, None, 695510 * u.km, 1.9891e30 * u.kg),
+        (Sun, None, R_sun, M_sun),
         (Earth, Sun, 6371.0 * u.km, 5.97219e24 * u.kg),
         (Moon, Earth, 1737.5 * u.km, 7.34767309e22 * u.kg),
         (Mars, Sun, 3389.5 * u.km, 6.39e23 * u.kg),
@@ -44,6 +44,7 @@ def test_predefined_bodies_base_properties(obj, parent, R, mass):
 @pytest.mark.parametrize(
     "obj, g",
     [
+        (Sun, 274.0 * u.m / u.s**2),
         (Earth, 9.81 * u.m / u.s**2),
         (Moon, 1.62 * u.m / u.s**2),
         (Mars, 3.71 * u.m / u.s**2),
