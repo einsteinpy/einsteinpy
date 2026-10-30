@@ -12,8 +12,12 @@ from .predefined.davidson import Davidson
 from .predefined.de_sitter import AntiDeSitter, AntiDeSitterStatic, DeSitter
 from .predefined.ernst import Ernst
 from .predefined.find import find
+from .predefined.friedmann_lemaitre_robertson_walker import (
+    FriedmannLemaitreRobertsonWalker,
+)
 from .predefined.godel import Godel
 from .predefined.janis_newman_winicour import JanisNewmanWinicour
+from .predefined.kerr_newman_desitter import KerrNewmanDeSitter
 from .predefined.minkowski import Minkowski, MinkowskiCartesian, MinkowskiPolar
 from .predefined.vacuum_solutions import (
     Kerr,
@@ -57,8 +61,10 @@ __all__ = [
     "DeSitter",
     "Ernst",
     "find",
+    "FriedmannLemaitreRobertsonWalker",
     "Godel",
     "JanisNewmanWinicour",
+    "KerrNewmanDeSitter",
     "Minkowski",
     "MinkowskiCartesian",
     "MinkowskiPolar",
