@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
-from sympy import Array
+from sympy import Array, symbols
 
-from einsteinpy.symbolic import MetricTensor, simplify_sympy_array
+from einsteinpy.symbolic import MetricTensor, RicciTensor, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
     AlcubierreWarp,
     AntiDeSitter,
@@ -80,3 +80,12 @@ def test_Minkowski_equality():
     assert simplify_sympy_array(MinkowskiCartesian().tensor()) == simplify_sympy_array(
         Minkowski().tensor()
     )
+
+
+def test_BesselGravitationalWave_is_vacuum():
+    # Kramer (1999) is a vacuum solution, so the Ricci tensor must vanish
+    metric = BesselGravitationalWave()
+    zero_arr = Array(np.zeros(shape=metric.tensor().shape, dtype=int))
+    assert RicciTensor.from_metric(metric).tensor() == zero_arr
+    # The wave depends on time through U = C J0(rho) cos(t)
+    assert symbols("t") in metric.tensor()[3, 3].free_symbols

@@ -10,6 +10,7 @@ CONTRIBUTORS
 CHANGES
 - [#697]: Fixed the radii of Earth and Pluto in bodies
 - [#704]: Fixed #698, Solar mass, solar radius and the cosmological constant now come from astropy (IAU 2015 and Planck 2018)
+- [#706]: Fixed the Bessel function arguments in BesselGravitationalWave
 
 0.5.0 - 2026-10-21
 -----
