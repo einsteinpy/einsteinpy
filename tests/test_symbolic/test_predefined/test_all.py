@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from sympy import Array, symbols
+from sympy import Array, Rational, diff, simplify, symbols, tanh
 
 from einsteinpy.symbolic import MetricTensor, RicciTensor, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
@@ -93,3 +93,17 @@ def test_BesselGravitationalWave_is_vacuum():
     assert RicciTensor.from_metric(metric).tensor() == zero_arr
     # The wave depends on time through U = C J0(rho) cos(t)
     assert symbols("t") in metric.tensor()[3, 3].free_symbols
+
+
+def test_AlcubierreWarp_shape_function():
+    # Alcubierre (1994) uses r_s = sqrt((x - x_s)^2 + y^2 + z^2), so the
+    # bubble is symmetric under rotations about the x axis
+    t, x, y, z = symbols("t x y z")
+    sigma, R, v = 2, 1, Rational(1, 2)
+    metric = AlcubierreWarp(x_s=0, sigma=sigma, R=R, v=v).tensor()
+    for i, j in [(0, 0), (0, 1)]:
+        assert simplify(y * diff(metric[i, j], z) - z * diff(metric[i, j], y)) == 0
+    # On the bubble wall r_s = R, f = tanh(2 sigma R) / (2 tanh(sigma R))
+    f_wall = tanh(2 * sigma * R) / (2 * tanh(sigma * R))
+    point = {x: 0, y: Rational(3, 5), z: Rational(4, 5)}
+    assert simplify(metric[0, 1].subs(point) + v * f_wall) == 0
