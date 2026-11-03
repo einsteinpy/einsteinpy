@@ -120,6 +120,12 @@ class ChristoffelSymbols(BaseRelativityTensor):
         """
         Performs a Lorentz transform on the tensor.
 
+        Christoffel symbols are not tensors under general coordinate changes,
+        but the extra term in their transformation law contains
+        :math:`\\partial^2 x'^{\\mu} / \\partial x^{\\nu} \\partial x^{\\rho}`,
+        which vanishes for a constant matrix. So they transform like a
+        :math:`(1, 2)` tensor under a Lorentz transform.
+
         Parameters
         ----------
             transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
