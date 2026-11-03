@@ -142,6 +142,6 @@ class ChristoffelSymbols(BaseRelativityTensor):
             t.tensor(),
             syms=self.syms,
             config=self._config,
-            parent_metric=None,
+            parent_metric=t.parent_metric,
             name=_change_name(self.name, context="__lt"),
         )

@@ -457,11 +457,15 @@ class BaseRelativityTensor(Tensor):
             dest.insert(i, 0)
             t = sympy.permutedims(t, dest)
 
+        parent_metric = None
+        if self._parent_metric is not None and self._parent_metric is not self:
+            parent_metric = self._parent_metric.lorentz_transform(transformation_matrix)
+
         return BaseRelativityTensor(
             t,
             syms=self.syms,
             config=self.config,
-            parent_metric=None,
+            parent_metric=parent_metric,
             variables=self.variables,
             functions=self.functions,
             name=_change_name(self.name, context="__lt"),
