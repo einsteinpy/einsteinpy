@@ -13,6 +13,7 @@ CHANGES
 - [#704]: Fixed #698, Solar mass, solar radius and the cosmological constant now come from astropy (IAU 2015 and Planck 2018)
 - [#706]: Fixed the Bessel function arguments in BesselGravitationalWave
 - [#672]: Added the Friedmann-Lemaître-Robertson-Walker and Kerr-Newman-de Sitter metrics under predefined symbolic metrics
+- [#709]: Fixed the bubble radius in AlcubierreWarp, which now uses y**2 + z**2 as in Alcubierre (1994)
 
 0.5.0 - 2026-10-21
 -----
