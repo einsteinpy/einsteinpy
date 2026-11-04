@@ -7,7 +7,9 @@ from .davidson import Davidson
 from .de_sitter import AntiDeSitter, AntiDeSitterStatic, DeSitter
 from .ernst import Ernst
 from .find import find
+from .friedmann_lemaitre_robertson_walker import FriedmannLemaitreRobertsonWalker
 from .godel import Godel
 from .janis_newman_winicour import JanisNewmanWinicour
+from .kerr_newman_desitter import KerrNewmanDeSitter
 from .minkowski import Minkowski, MinkowskiCartesian, MinkowskiPolar
 from .vacuum_solutions import Kerr, KerrNewman, ReissnerNordstorm, Schwarzschild

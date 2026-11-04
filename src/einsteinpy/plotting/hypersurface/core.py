@@ -33,9 +33,9 @@ class HypersurfacePlotter:
         shape_tuple = X.shape
         Z = Z.reshape((shape_tuple[0], shape_tuple[1]))
         if self.plot_type == "wireframe":
-            ax.plot_wireframe(X, Y, Z, color="black")
+            ax.plot_wireframe(X, Y, Z, color="black")  # type: ignore[attr-defined]
         elif self.plot_type == "surface":
-            ax.plot_surface(
+            ax.plot_surface(  # type: ignore[attr-defined]
                 X, Y, Z, rstride=1, cstride=1, cmap="cubehelix", edgecolor="none"
             )
 

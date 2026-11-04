@@ -157,14 +157,14 @@ class SchwarzschildEmbedding:
             z = z + self.gradient(r) * r_step
             r = r + r_step
 
-        R_values = np.array(R_values)
+        R_values = np.array(R_values)  # type: ignore[assignment]
         R_values, phi_values = np.meshgrid(R_values, phi_values)
 
         X = R_values * np.cos(phi_values)
         Y = R_values * np.sin(phi_values)
         x_len = X.shape[0]
         Z = np.array(z_values)
-        z_values = np.array(z_values)
+        z_values = np.array(z_values)  # type: ignore[assignment]
         for i in range(0, x_len - 1):
             Z = np.concatenate((Z, z_values), axis=0)
 

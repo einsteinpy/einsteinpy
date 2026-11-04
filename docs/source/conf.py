@@ -6,8 +6,8 @@ project = "EinsteinPy"
 year = datetime.now().year
 copyright = "%d EinsteinPy Development Team" % year
 
-version = "0.4"
-release = "0.4.dev0"
+version = "0.6"
+release = "0.6.dev0"
 highlight_language = "python"
 pygments_style = "sphinx"
 autoclass_content = "both"
@@ -43,7 +43,7 @@ html_theme_options = {
     "github_banner": True,
     "donate_url": "https://opencollective.com/einsteinpy",
     "github_button": True,
-    "extra_nav_links": {"Blog": "https://blog.einsteinpy.org/"},
+    "extra_nav_links": {"Blog": "https://blog.einsteinpy.com/"},
 }
 
 add_function_parentheses = True

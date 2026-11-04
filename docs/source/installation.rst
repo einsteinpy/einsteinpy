@@ -49,7 +49,7 @@ If you want to contribute to EinsteinPy, please see the `Developer Guide`_
 for instructions on how to set up your development environment and start 
 contributing.
 
-.. _Developer Guide: https://docs.einsteinpy.org/en/latest/dev_guide.html
+.. _Developer Guide: https://docs.einsteinpy.com/en/latest/dev_guide.html
 
 ----
 
@@ -60,7 +60,7 @@ Now that you have EinsteinPy installed, you can try out some of the
 examples listed in the `Examples`_ section. Below, we demonstrate a simple 
 example of plotting a precessing timelike geodesic in Schwarzschild spacetime.
 
-.. _`Examples` : https://docs.einsteinpy.org/en/latest/jupyter.html
+.. _`Examples` : https://docs.einsteinpy.com/en/latest/jupyter.html
 
 .. code-block:: python
 

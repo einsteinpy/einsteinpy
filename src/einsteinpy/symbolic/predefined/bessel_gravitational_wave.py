@@ -1,4 +1,4 @@
-from sympy import Function, Symbol, besselj, cos, diag, exp, sin, sqrt, symbols
+from sympy import Rational, besselj, cos, diag, exp, symbols
 
 from einsteinpy.symbolic import constants
 from einsteinpy.symbolic.metric import MetricTensor
@@ -24,14 +24,14 @@ def BesselGravitationalWave(C=symbols("C")):
     t, rho, ph, z = coords
 
     # Useful helper functions, these wrap the Bessel functions that are used. C is some constant here
-    U = C * besselj(rho, 0) * cos(t)
+    U = C * besselj(0, rho) * cos(t)
     K = (
-        (1 / 2)
+        Rational(1, 2)
         * (C**2)
         * rho
         * (
-            (rho * ((besselj(rho, 0) ** 2) + (besselj(rho, 1) ** 2)))
-            - (2 * besselj(rho, 0) * besselj(rho, 1) * (cos(t) ** 2))
+            (rho * ((besselj(0, rho) ** 2) + (besselj(1, rho) ** 2)))
+            - (2 * besselj(0, rho) * besselj(1, rho) * (cos(t) ** 2))
         )
     )
 

@@ -251,12 +251,10 @@ class StaticGeodesicPlotter:
         B = coordinates[1]
 
         if A not in (1, 2, 3) or B not in (1, 2, 3):
-            raise IndexError(
-                """
+            raise IndexError("""
                 Please ensure, that indices in `coordinates` take two of these values: `(1, 2, 3)`.
                 Indices for `X1, X2, X3` are `(1, 2, 3)`.
-                """
-            )
+                """)
 
         fontsize = max(figsize) + 3
         self.ax.set_xlabel(f"$X{coordinates[0]}\\:(GM/c^2)$", fontsize=fontsize)
