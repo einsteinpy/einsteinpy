@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from sympy import Array, symbols
+from sympy import Array, sqrt, symbols, tanh
 
 from einsteinpy.symbolic import MetricTensor, RicciTensor, simplify_sympy_array
 from einsteinpy.symbolic.predefined import (
@@ -77,6 +77,24 @@ def test_all_predefined_metrics(metric_instance):
 def test_check_two_metrics_are_equal(m1, m2):
     zero_arr = Array(np.zeros(shape=m1.tensor().shape, dtype=int))
     assert simplify_sympy_array(m1.tensor() - m2.tensor()) == zero_arr
+
+
+def test_AlcubierreWarp_metric():
+    # Regression test to ensure metric is same as in paper (Alcubierre 1994).
+    x_s, sigma, R, v = symbols("x_s sigma R v")
+    metric = AlcubierreWarp(x_s=x_s, sigma=sigma, R=R, v=v)
+    _, x, y, z = metric.symbols()
+    r_s = sqrt((x - x_s) ** 2 + y**2 + z**2)
+    f = (tanh(sigma * (r_s + R)) - tanh(sigma * (r_s - R))) / (2 * tanh(sigma * R))
+    expected = Array(
+        [
+            [v**2 * f**2 - 1, -v * f, 0, 0],
+            [-v * f, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+        ]
+    )
+    assert metric.tensor() == expected
 
 
 def test_Minkowski_equality():
