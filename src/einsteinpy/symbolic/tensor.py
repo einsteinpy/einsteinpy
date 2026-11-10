@@ -425,6 +425,13 @@ class BaseRelativityTensor(Tensor):
         """
         Performs a Lorentz transform on the tensor.
 
+        The transformation matrix is :math:`\\Lambda^{\\mu}{}_{\\nu}`, with
+        :math:`x'^{\\mu} = \\Lambda^{\\mu}{}_{\\nu} x^{\\nu}`. Upper indices are
+        transformed with :math:`\\Lambda` and lower indices with its inverse.
+        The components of the result are still written in terms of the old
+        coordinates ``syms``. To get them as functions of the new coordinates,
+        substitute the old coordinates in terms of the new ones.
+
         Parameters
         ----------
             transformation_matrix : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
@@ -437,22 +444,28 @@ class BaseRelativityTensor(Tensor):
 
         """
         tm = sympy.Array(transformation_matrix)
+        if "l" in self.config:
+            tm_inv = sympy.Array(simplify(sympy.Matrix(tm.tolist()).inv()))
         t = self.tensor()
         for i in range(self.order):
             if self.config[i] == "u":
                 t = simplify(tensorcontraction(tensorproduct(tm, t), (1, 2 + i)))
             else:
-                t = simplify(tensorcontraction(tensorproduct(tm, t), (0, 2 + i)))
+                t = simplify(tensorcontraction(tensorproduct(tm_inv, t), (0, 2 + i)))
             dest = list(range(len(t.shape)))
             dest.remove(0)
             dest.insert(i, 0)
             t = sympy.permutedims(t, dest)
 
+        parent_metric = None
+        if self._parent_metric is not None and self._parent_metric is not self:
+            parent_metric = self._parent_metric.lorentz_transform(transformation_matrix)
+
         return BaseRelativityTensor(
             t,
             syms=self.syms,
             config=self.config,
-            parent_metric=None,
+            parent_metric=parent_metric,
             variables=self.variables,
             functions=self.functions,
             name=_change_name(self.name, context="__lt"),
