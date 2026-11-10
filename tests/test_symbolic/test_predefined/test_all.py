@@ -1,8 +1,13 @@
 import numpy as np
 import pytest
-from sympy import Array, sqrt, symbols, tanh
+from sympy import Array, simplify, sqrt, symbols, tanh
 
-from einsteinpy.symbolic import MetricTensor, RicciTensor, simplify_sympy_array
+from einsteinpy.symbolic import (
+    MetricTensor,
+    RicciScalar,
+    RicciTensor,
+    simplify_sympy_array,
+)
 from einsteinpy.symbolic.predefined import (
     AlcubierreWarp,
     AntiDeSitter,
@@ -95,6 +100,13 @@ def test_AlcubierreWarp_metric():
         ]
     )
     assert metric.tensor() == expected
+
+
+def test_DeSitter_has_constant_ricci_scalar():
+    metric = DeSitter()
+    al = symbols("alpha")
+    R = RicciScalar.from_metric(metric).expr
+    assert simplify(R - 12 / al**2) == 0
 
 
 def test_Minkowski_equality():

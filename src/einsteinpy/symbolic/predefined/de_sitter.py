@@ -42,7 +42,7 @@ def DeSitter():
 
     """
     coords = symbols("t x y z")
-    t = coords[1]
+    t = coords[0]
     al = symbols("alpha")
     expr = exp(2 * t / al)
     metric = diag(-1, expr, expr, expr).tolist()
