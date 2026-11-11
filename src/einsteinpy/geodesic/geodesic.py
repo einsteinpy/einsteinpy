@@ -2,7 +2,7 @@ import warnings
 
 import numpy as np
 
-from einsteinpy.integrators import GeodesicIntegrator
+from einsteinpy.integrators import GeodesicIntegrator, NumericalErrorExceedTolerance
 
 from .utils import _P, _kerr, _kerrnewman, _sch
 
@@ -197,7 +197,9 @@ class Geodesic:
             Warnings are shown for every step, where numerical errors
             exceed specified tolerance (controlled by ``rtol`` and ``atol``)
             Defaults to ``False``
-
+        exit_when_exceed_numerical_error : bool
+            Whether to exit when numerical errors exceed tolerance
+            Defaults to ``False``
         """
         g, g_prms = self.metric, self.metric_params
         q0, p0 = self.position, self.momentum
@@ -209,6 +211,9 @@ class Geodesic:
         order = kwargs.get("order", 2)
         omega = kwargs.get("omega", 1.0)
         sw = kwargs.get("suppress_warnings", False)
+        exit_when_exceed_numerical_error = kwargs.get(
+            "exit_when_exceed_numerical_error", False
+        )
         steps = np.arange(N)
 
         geodint = GeodesicIntegrator(
@@ -224,10 +229,21 @@ class Geodesic:
             order=order,
             omega=omega,
             suppress_warnings=sw,
+            exit_when_exceed_numerical_error=exit_when_exceed_numerical_error,
         )
 
-        for i in steps:
-            geodint.step()
+        try:
+            finished_step = 0
+            for i in steps:
+                geodint.step()
+                finished_steps = i
+        except NumericalErrorExceedTolerance:
+            warnings.warn(
+                f"Integration exceed tolerance which triggers the early return"
+                f", take only step = 1 ~ {finished_steps + 1}"
+                f" (exit_when_exceed_numerical_error=True)",
+                RuntimeWarning,
+            )
 
         vecs = np.array(geodint.results, dtype=float)
 
@@ -250,9 +266,9 @@ class Geodesic:
 
             cart_results = np.vstack((t, x, y, z, pt, pr, pth, pph)).T
 
-            return steps, cart_results
+            return steps[: finished_step + 1], cart_results
 
-        return steps, results
+        return steps[: finished_step + 1], results
 
 
 class Nulllike(Geodesic):
@@ -323,7 +339,9 @@ class Nulllike(Geodesic):
             Warnings are shown for every step, where numerical errors
             exceed specified tolerance (controlled by ``rtol`` and ``atol``)
             Defaults to ``False``
-
+        exit_when_exceed_numerical_error : bool
+            Whether to exit when numerical errors exceed tolerance
+            Defaults to ``False``
         """
         super().__init__(
             metric=metric,
@@ -404,7 +422,9 @@ class Timelike(Geodesic):
             Warnings are shown for every step, where numerical errors
             exceed specified tolerance (controlled by ``rtol`` and ``atol``)
             Defaults to ``False``
-
+        exit_when_exceed_numerical_error : bool
+            Whether to exit when numerical errors exceed tolerance
+            Defaults to ``False``
         """
         super().__init__(
             metric=metric,
