@@ -13,6 +13,7 @@ CHANGES
 - [#704]: Fixed #698, Solar mass, solar radius and the cosmological constant now come from astropy (IAU 2015 and Planck 2018)
 - [#706]: Fixed the Bessel function arguments in BesselGravitationalWave
 - [#672]: Added the Friedmann-Lemaître-Robertson-Walker and Kerr-Newman-de Sitter metrics under predefined symbolic metrics
+- [#690]: Fixed #664, `_P` now supports general metrics with arbitrary off-diagonal components
 
 0.5.0 - 2026-10-21
 -----
