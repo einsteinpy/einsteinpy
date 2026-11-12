@@ -17,6 +17,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         syms,
         config="ulll",
         parent_metric=None,
+        parent_spacetime=None,
         name="RiemannCurvatureTensor",
     ):
         """
@@ -32,6 +33,8 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
             Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
             Metric Tensor related to this Riemann Curvature Tensor.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "RiemannCurvatureTensor".
 
@@ -46,7 +49,12 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
 
         """
         super(RiemannCurvatureTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 4
         if not len(config) == self._order:
