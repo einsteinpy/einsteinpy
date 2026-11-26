@@ -32,7 +32,7 @@ class RK4naive:
         self.t_bound = t_bound
         self.step_size = stepsize
         self._fun = fun
-        self.direction = 1 * (self.t_bound >= t0) - 1 * (not self.t_bound < t0)
+        self.direction = 1 * (self.t_bound >= t0) - 1 * (self.t_bound < t0)
 
     def step(self):
         """
