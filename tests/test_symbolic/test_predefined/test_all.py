@@ -1,11 +1,12 @@
 import numpy as np
 import pytest
-from sympy import Array, simplify, sqrt, symbols, tanh
+from sympy import Array, diff, log, simplify, sqrt, symbols, tanh
 
 from einsteinpy.symbolic import (
     MetricTensor,
     RicciScalar,
     RicciTensor,
+    constants,
     simplify_sympy_array,
 )
 from einsteinpy.symbolic.predefined import (
@@ -114,6 +115,25 @@ def test_Minkowski_equality():
     assert simplify_sympy_array(MinkowskiCartesian().tensor()) == simplify_sympy_array(
         Minkowski().tensor()
     )
+
+
+def test_JanisNewmanWinicour_scalar_field_and_Schwarzschild_limit():
+    c, G = constants.c, constants.G
+    gam, M, r = symbols("gam M r")
+    # gam = 1 is Schwarzschild, which uses the opposite signature
+    jnw = JanisNewmanWinicour(gam=1).tensor()
+    sch = Schwarzschild(sch=2 * G * M / c**2).tensor()
+    assert simplify_sympy_array(jnw + sch) == Array(np.zeros((4, 4), dtype=int))
+    # A massless scalar field phi(r) only sources R_rr, which is
+    # (1 - gam^2) / 2 * (d ln(alpha) / dr)^2
+    ric = RicciTensor.from_metric(JanisNewmanWinicour()).tensor()
+    alpha = 1 - 2 * G * M / (c**2 * gam * r)
+    expected = (1 - gam**2) / 2 * diff(log(alpha), r) ** 2
+    for i in range(4):
+        for j in range(4):
+            if (i, j) != (1, 1):
+                assert simplify(ric[i, j]) == 0
+    assert simplify(ric[1, 1] - expected) == 0
 
 
 def test_BesselGravitationalWave_is_vacuum():

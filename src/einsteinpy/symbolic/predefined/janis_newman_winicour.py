@@ -30,7 +30,7 @@ def JanisNewmanWinicour(
     metric = diag(
         -1 * (alpha**gam),
         (alpha**-gam) / (c**2),
-        (r**2) * (alpha ** (-gam + 1)),
-        (r**2) * (alpha ** (-gam + 1)) * (sin(th) ** 2),
+        (r**2) * (alpha ** (-gam + 1)) / (c**2),
+        (r**2) * (alpha ** (-gam + 1)) * (sin(th) ** 2) / (c**2),
     ).tolist()
     return MetricTensor(metric, coords, "ll", name="JanisNewmanWinicourMetric")
