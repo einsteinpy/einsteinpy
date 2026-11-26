@@ -14,6 +14,7 @@ CHANGES
 - [#706]: Fixed the Bessel function arguments in BesselGravitationalWave
 - [#672]: Added the Friedmann-Lemaître-Robertson-Walker and Kerr-Newman-de Sitter metrics under predefined symbolic metrics
 - [#710]: Fixed the angular components of JanisNewmanWinicour, which were missing a factor 1/c**2
+- [#713]: Fixed #711, RK4naive now stops at t_bound instead of stepping past it
 
 0.5.0 - 2026-10-21
 -----
