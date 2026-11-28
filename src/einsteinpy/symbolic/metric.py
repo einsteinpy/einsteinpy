@@ -54,18 +54,22 @@ class MetricTensor(BaseRelativityTensor):
         Returns
         -------
         ~einsteinpy.symbolic.metric.MetricTensor
-            New Metric with new configuration. Defaults to 'uu'
+            New Metric with new configuration.
 
         Raises
         ------
         ValueError
-            Raised when new configuration is not 'll' or 'uu'.
-            This constraint is in place because we are dealing with Metric Tensor.
+            Raised when the length of new configuration is not 2.
 
         """
         if newconfig == self.config:
             return self
-        if newconfig == "uu" or newconfig == "ll":
+            
+        if len(newconfig) != 2:
+            raise ValueError("Configuration should have exactly 2 indices for MetricTensor")
+            
+        # For 'uu' or 'll' configurations, we can use the inverse matrix
+        if (newconfig == "uu" and self.config == "ll") or (newconfig == "ll" and self.config == "uu"):
             inv_met = MetricTensor(
                 sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
                 self.syms,
@@ -74,10 +78,26 @@ class MetricTensor(BaseRelativityTensor):
             )
             inv_met._invmetric = self
             return inv_met
-
-        raise ValueError(
-            "Configuration can't have one upper and one lower index in Metric Tensor."
-        )
+            
+        # For mixed indices (like 'ul' or 'lu'), we handle differently
+        # For a metric, this is equivalent to the Kronecker delta or identity matrix
+        if (newconfig == "ul" or newconfig == "lu"):
+            # Create an identity matrix of the same dimension as the metric
+            dim = len(self.syms)
+            identity_list = [[0 for _ in range(dim)] for _ in range(dim)]
+            for i in range(dim):
+                identity_list[i][i] = 1
+                
+            mixed_met = MetricTensor(
+                identity_list,
+                self.syms,
+                config=newconfig,
+                name=_change_name(self.name, context="__" + newconfig),
+            )
+            return mixed_met
+            
+        # For other configurations (which should not occur for a rank-2 tensor)
+        raise ValueError(f"Invalid configuration '{newconfig}' for MetricTensor")
 
     def inv(self):
         """
