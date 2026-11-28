@@ -19,6 +19,8 @@ class DualNumber:
 
     """
 
+    __slots__ = ("val", "deriv")
+
     def __init__(self, val, deriv):
         """
         Constructor
@@ -224,12 +226,29 @@ def _jacobian_g(g, g_prms, coords, wrt):
         w.r.t a particular coordinate, at ``coords``
 
     """
+    if wrt not in [0, 1, 2, 3]:
+        raise ValueError(f"wrt takes values from [0, 1, 2, 3]. Supplied value: {wrt}")
+
+    dual_coords = [
+        DualNumber(coords[0], 0.0),
+        DualNumber(coords[1], 0.0),
+        DualNumber(coords[2], 0.0),
+        DualNumber(coords[3], 0.0),
+    ]
+    dual_coords[wrt].deriv = 1.0
+
+    # A single evaluation of the metric on dual numbers carries the derivative
+    # of every component, so the metric is evaluated once per coordinate,
+    # instead of once per (component, coordinate) pair, as in ``_diff_g``.
+    g_dual = g(dual_coords, *g_prms)
+
     J = np.zeros((4, 4))
 
     for i in range(4):
-        for j in range(4):
-            if i <= j:
-                J[i, j] = _diff_g(g, g_prms, coords, (i, j), wrt)
+        for j in range(i, 4):
+            gij = g_dual[i, j]
+            if isinstance(gij, DualNumber):
+                J[i, j] = gij.deriv
 
     J = J + J.T - np.diag(np.diag(J))
 
