@@ -9,7 +9,9 @@ class MetricTensor(BaseRelativityTensor):
     Class to define a metric tensor for a space-time
     """
 
-    def __init__(self, arr, syms, config="ll", name="GenericMetricTensor"):
+    def __init__(
+        self, arr, syms, config="ll", parent_spacetime=None, name="GenericMetricTensor"
+    ):
         """
         Constructor and Initializer
 
@@ -35,7 +37,12 @@ class MetricTensor(BaseRelativityTensor):
 
         """
         super(MetricTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=self, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=self,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 2
         self._invmetric = None
@@ -66,14 +73,7 @@ class MetricTensor(BaseRelativityTensor):
         if newconfig == self.config:
             return self
         if newconfig == "uu" or newconfig == "ll":
-            inv_met = MetricTensor(
-                sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
-                self.syms,
-                config=newconfig,
-                name=_change_name(self.name, context="__" + newconfig),
-            )
-            inv_met._invmetric = self
-            return inv_met
+            return self.inv()
 
         raise ValueError(
             "Configuration can't have one upper and one lower index in Metric Tensor."
@@ -91,10 +91,14 @@ class MetricTensor(BaseRelativityTensor):
 
         """
         if self._invmetric is None:
-            if self.config == "ll":
-                self._invmetric = self.change_config("uu")
-            else:
-                self._invmetric = self.change_config("ll")
+            newconfig = "ll" if self.config == "uu" else "uu"
+            self._invmetric = MetricTensor(
+                sympy.simplify(sympy.Matrix(self.arr.tolist()).inv()).tolist(),
+                self.syms,
+                config=newconfig,
+                name=_change_name(self.name, context="__" + newconfig),
+            )
+            self._invmetric._invmetric = self
         return self._invmetric
 
     def lower_config(self):
@@ -134,3 +138,14 @@ class MetricTensor(BaseRelativityTensor):
             config=self._config,
             name=_change_name(self.name, context="__lt"),
         )
+
+    def determinant(self):
+        """
+        Returns the determinant of the given metric tensor
+
+        Returns
+        ---
+            ~sympy.core.mul.Mul
+                Sympy multiplication object
+        """
+        return sympy.Matrix(self.lower_config().tensor()).det()

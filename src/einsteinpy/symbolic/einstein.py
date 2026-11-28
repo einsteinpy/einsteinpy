@@ -11,7 +11,13 @@ class EinsteinTensor(BaseRelativityTensor):
     """
 
     def __init__(
-        self, arr, syms, config="ll", parent_metric=None, name="EinsteinTensor"
+        self,
+        arr,
+        syms,
+        config="ll",
+        parent_metric=None,
+        parent_spacetime=None,
+        name="EinsteinTensor",
     ):
         """
         Constructor and Initializer
@@ -27,6 +33,8 @@ class EinsteinTensor(BaseRelativityTensor):
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Einstein Tensor.
             Defaults to None.
+        parent_spacetime : ~einsteinpy.symbolic.spacetime.GenericSpacetime or None
+            Spacetime object associated with this Tensor.
         name : str
             Name of the Tensor. Defaults to "EinsteinTensor".
 
@@ -41,7 +49,12 @@ class EinsteinTensor(BaseRelativityTensor):
 
         """
         super(EinsteinTensor, self).__init__(
-            arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
+            arr=arr,
+            syms=syms,
+            config=config,
+            parent_metric=parent_metric,
+            parent_spacetime=parent_spacetime,
+            name=name,
         )
         self._order = 2
         if not len(config) == self._order:
@@ -52,13 +65,33 @@ class EinsteinTensor(BaseRelativityTensor):
         t_ricci = RicciTensor.from_metric(metric)
         r_scalar = RicciScalar.from_riccitensor(t_ricci, t_ricci.parent_metric)
         einstein_tensor = (
-            t_ricci.tensor() - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
+            t_ricci.change_config("ll").tensor()
+            - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
         )
         return cls(
             einstein_tensor,
             metric.syms,
             config="ll",
             parent_metric=t_ricci.parent_metric,
+        )
+
+    @classmethod
+    def from_ricci(cls, ricci, ricci_scalar=None):
+        metric = ricci.parent_metric
+        r_scalar = (
+            RicciScalar.from_riccitensor(ricci, metric)
+            if ricci_scalar is None
+            else ricci_scalar
+        )
+        einstein_tensor = (
+            ricci.change_config("ll").tensor()
+            - (1 / 2) * metric.lower_config().tensor() * r_scalar.expr
+        )
+        return cls(
+            einstein_tensor,
+            metric.syms,
+            config="ll",
+            parent_metric=metric,
         )
 
     def change_config(self, newconfig="ul", metric=None):
