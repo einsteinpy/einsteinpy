@@ -157,39 +157,22 @@ class GeodesicIntegrator:
         g = self.metric
         g_prms = self.metric_params
 
-        HA1 = np.array(
-            [
-                q1,
-                _flow_A(g, g_prms, q1, p1, q2, p2, 0.5 * dl)[1],
-                _flow_A(g, g_prms, q1, p1, q2, p2, 0.5 * dl)[0],
-                p2,
-            ]
-        )
-        HB1 = np.array(
-            [
-                _flow_B(g, g_prms, HA1[0], HA1[1], HA1[2], HA1[3], 0.5 * dl)[0],
-                HA1[1],
-                HA1[2],
-                _flow_B(g, g_prms, HA1[0], HA1[1], HA1[2], HA1[3], 0.5 * dl)[1],
-            ]
-        )
+        # Each flow is evaluated once and both of its outputs are used.
+        # Every flow costs several metric evaluations, so calling it once
+        # per output (as was done before) doubled the cost of a step.
+        q2_next, p1_next = _flow_A(g, g_prms, q1, p1, q2, p2, 0.5 * dl)
+        HA1 = np.array([q1, p1_next, q2_next, p2])
+
+        q1_next, p2_next = _flow_B(g, g_prms, HA1[0], HA1[1], HA1[2], HA1[3], 0.5 * dl)
+        HB1 = np.array([q1_next, HA1[1], HA1[2], p2_next])
+
         HC = _flow_mixed(HB1[0], HB1[1], HB1[2], HB1[3], dl, omg)
-        HB2 = np.array(
-            [
-                _flow_B(g, g_prms, HC[0], HC[1], HC[2], HC[3], 0.5 * dl)[0],
-                HC[1],
-                HC[2],
-                _flow_B(g, g_prms, HC[0], HC[1], HC[2], HC[3], 0.5 * dl)[1],
-            ]
-        )
-        HA2 = np.array(
-            [
-                HB2[0],
-                _flow_A(g, g_prms, HB2[0], HB2[1], HB2[2], HB2[3], 0.5 * dl)[1],
-                _flow_A(g, g_prms, HB2[0], HB2[1], HB2[2], HB2[3], 0.5 * dl)[0],
-                HB2[3],
-            ]
-        )
+
+        q1_next, p2_next = _flow_B(g, g_prms, HC[0], HC[1], HC[2], HC[3], 0.5 * dl)
+        HB2 = np.array([q1_next, HC[1], HC[2], p2_next])
+
+        q2_next, p1_next = _flow_A(g, g_prms, HB2[0], HB2[1], HB2[2], HB2[3], 0.5 * dl)
+        HA2 = np.array([HB2[0], p1_next, q2_next, HB2[3]])
 
         return HA2
 
